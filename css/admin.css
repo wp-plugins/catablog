@@ -1,0 +1,47 @@
+body {
+	
+}
+
+
+#icon-catablog {
+	-moz-background-clip: border;
+	-moz-background-inline-policy: continuous;
+	-moz-background-origin: padding;
+	background: transparent url('./../images/cb_icon_32.png') no-repeat scroll left top;
+}
+
+
+.cb_icon_column {
+	width: 80px;
+	text-align: center !important;
+}
+
+.cb_handle_column {
+	width: 40px;
+}
+
+.cb_item_icon {
+	width: 50px;
+	height: 50px;
+	border: 0 none;
+}
+
+
+.column-rm {
+	width: 6em;
+}
+
+
+.handle {
+	width: 20px;
+	height: 40px;
+	margin: 5px;
+	background-color: #444;
+}
+
+
+.demo_box {
+	background-color: #ccc;
+	border: 1px #999 solid;
+	margin: 0 0 10px 0;
+}
