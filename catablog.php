@@ -6,11 +6,11 @@
  */
 /*
 Plugin Name: CataBlog
-Plugin URI: http://www.illproductions.net
+Plugin URI: http://catablog.illproductions.net
 Description: Lets you create a discography of albums or any other catalog you want and display it easily on any page you want.
 Author: Zachary Segal
 Version: 0.65
-Author URI: http://www.illproductions.net
+Author URI: http://catablog.illproductions.net/about/
 */
 
 /*  Copyright 2009  Zachary Segal  (email : zac@illproductions.net)
