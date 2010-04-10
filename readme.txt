@@ -18,13 +18,6 @@ CataBlog allows you to catalog any item you want and show it to the world throug
 1. Activate the plugin through the `Plugins` menu in WordPress
 1. Place `[catablog]` in your page's or post's main body
 
-== Frequently Asked Questions ==
-
-
-== Screenshots ==
-
-== Changelog ==
-
 == Upgrade Notice ==
 
 = 0.6.5 =
