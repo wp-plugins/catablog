@@ -1,8 +1,6 @@
 === CataBlog ===
 Contributors: macguru2000
-Author link: http://catablog.illproductions.net/about/
-Plugin link: http://catablog.illproductions.net
-Donate link: http://catablog.illproductions.net
+Donate link: http://catablog.illproductions.net/donate/
 Tags: catalog, image, library
 Requires at least: 2.5
 Tested up to: 2.9.2
