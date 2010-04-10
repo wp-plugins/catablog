@@ -21,3 +21,19 @@ Markdown parsed.
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Place `[catablog]` in your templates
 
+== Frequently Asked Questions ==
+
+
+== Screenshots ==
+
+== Changelog ==
+
+== Upgrade Notice ==
+
+= 0.6.5 =
+This version is the initial release.
+
+== Arbitrary section ==
+
+Zachary Segal
+http://www.illproductions.net
