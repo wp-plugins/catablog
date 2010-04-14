@@ -10,14 +10,4 @@ jQuery(document).ready(function() {
 	});
 	
 	
-	// reorder items
-	jQuery('#catablog_items tbody').sortable({
-		containment: 'parent',
-		handle: 'div.handle',
-		stop: function(event, ui) {
-			alert(ui);
-		}
-	});
-	jQuery('#catablog_items tbody').disableSelection();
-	
 });

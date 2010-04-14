@@ -39,6 +39,9 @@ class CataBlog {
 		$this->directories['thumbnails'] = WP_CONTENT_DIR . "/uploads/catablog/thumbnails";
 		$this->directories['originals']  = WP_CONTENT_DIR . "/uploads/catablog/originals";
 		
+		$this->urls['plugin']     = WP_CONTENT_URL . "/plugins/catablog";
+		$this->urls['css']        = WP_CONTENT_URL . "/plugins/catablog/css";
+		$this->urls['javascript'] = WP_CONTENT_URL . "/plugins/catablog/js";
 		$this->urls['thumbnails'] = WP_CONTENT_URL . "/uploads/catablog/thumbnails";
 		$this->urls['originals']  = WP_CONTENT_URL . "/uploads/catablog/originals";
 	}
@@ -68,15 +71,15 @@ class CataBlog {
 	**********************************************/
 	public function admin_head() {
 		wp_enqueue_script('jquery');
-		wp_enqueue_script('catablog-admin-js', WP_PLUGIN_URL . '/catablog/js/catablog-admin.js');
-		wp_enqueue_style('catablog-admin-css', WP_PLUGIN_URL . '/catablog/css/catablog-admin.css');
+		wp_enqueue_script('catablog-admin-js', $this->urls['javascript'] . '/catablog-admin.js');
+		wp_enqueue_style('catablog-admin-css', $this->urls['css'] . '/catablog-admin.css');
 	}
 	
 	public function admin_menu() {
-		add_menu_page("CataBlog &rsaquo; View", "CataBlog", 8, __FILE__, "", WP_PLUGIN_URL . "/catablog/images/cb_icon_16.png");
-		add_submenu_page(__FILE__, "CataBlog &rsaquo; View", 'Manage', 8, __FILE__, array(&$this, 'admin_view'));
-		add_submenu_page(__FILE__, "CataBlog &rsaquo; Edit", 'Add New', 8, 'catablog_edit', array(&$this, 'admin_edit'));
-		add_submenu_page(__FILE__, "CataBlog &rsaquo; Options", 'Options', 8, 'catablog_options', array(&$this, 'admin_options'));
+		add_menu_page("CataBlog &rsaquo; View", "CataBlog", $this->user_level, $this->plugin_file, "", $this->urls['plugin']."/images/cb_icon_16.png");
+		add_submenu_page($this->plugin_file, "CataBlog &rsaquo; View", 'Manage', $this->user_level, $this->plugin_file, array(&$this, 'admin_view'));
+		add_submenu_page($this->plugin_file, "CataBlog &rsaquo; Edit", 'Add New', $this->user_level, 'catablog_edit', array(&$this, 'admin_edit'));
+		add_submenu_page($this->plugin_file, "CataBlog &rsaquo; Options", 'Options', $this->user_level, 'catablog_options', array(&$this, 'admin_options'));
 	}
 	
 	
