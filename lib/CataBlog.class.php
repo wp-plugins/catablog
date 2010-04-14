@@ -68,7 +68,7 @@ class CataBlog {
 	**********************************************/
 	public function admin_head() {
 		wp_enqueue_script('jquery');
-		wp_enqueue_script('catablog-admin-js', WP_PLUGIN_URL . '/catablog/scrips/catablog-admin.js');
+		wp_enqueue_script('catablog-admin-js', WP_PLUGIN_URL . '/catablog/js/catablog-admin.js');
 		wp_enqueue_style('catablog-admin-css', WP_PLUGIN_URL . '/catablog/css/catablog-admin.css');
 	}
 	
