@@ -13,7 +13,7 @@ global $wpdb;
 $new_image = $_FILES['image']['error'] != 4;
 if ($new_image) {
 	$tmp = $_FILES['image']['tmp_name'];
-	$new = WP_CONTENT_DIR . '/catablog/' . string2slug($_FILES['image']['name']);
+	$new = WP_CONTENT_DIR . '/uploads/catablog/thumbnails/' . string2slug($_FILES['image']['name']);
 	
 	if (is_file($new)) {
 		echo "filename already exists, please rename uploaded image";
@@ -31,7 +31,9 @@ if ($new_image) {
 		$upload = imagecreatefromjpeg($tmp);
 		imagecopyresampled($canvas, $upload, 0, 0, 0, 0, $final_size, $final_size, $width, $height);
 
-		imagejpeg($canvas, $new, 80);		
+		imagejpeg($canvas, $new, 80);	
+		
+		move_uploaded_file($_FILES['image']['tmp_name'], WP_CONTENT_DIR.'/uploads/catablog/originals/'.string2slug($_FILES['image']['name']));
 	}
 	
 }

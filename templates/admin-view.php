@@ -40,7 +40,7 @@
 					<?php /*><th class="check-column"><input type="checkbox" /></th>*/?>
 					<td><?php echo $result->order ?></td>
 					<td class="cb_icon_column">
-						<img src="<?php echo get_bloginfo('wpurl').'/wp-content/catablog/'.$result->image ?>" class="cb_item_icon" width="50" height="50" />
+						<img src="<?php echo get_bloginfo('wpurl').'/wp-content/uploads/catablog/thumbnails/'.$result->image ?>" class="cb_item_icon" width="50" height="50" />
 					</td>
 					<td><a href="<?php echo $edit ?>" title="Edit CataBlog Item"><?php echo htmlspecialchars($result->title, ENT_QUOTES, 'UTF-8') ?></a></td>
 					<td><?php echo htmlspecialchars($result->link, ENT_QUOTES, 'UTF-8') ?></td>

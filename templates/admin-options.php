@@ -19,11 +19,16 @@
 		
 		<p class="submit">
 			<input type="submit" id="save_changes" class="button-primary" value="<?php _e('Save Changes') ?>" />
-			<span> or <a href="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog/catablog.php' ?>">back to list</a></span>
+			<span> or <a href="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog/lib/CataBlog.class.php' ?>">back to list</a></span>
 		</p>
 	</form>
 	
 	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			var size = <?php echo get_option('image_size') ?> - 1;
+			jQuery('#demo_box').css({width:size, height:size});
+		});
+		
 		jQuery('#image_size').bind('keyup', function() {
 			var v = this.value;
 			if (is_integer(v)) {
