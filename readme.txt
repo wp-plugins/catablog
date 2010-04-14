@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.net/donate/
 Tags: catalog, image, library
 Requires at least: 2.5
 Tested up to: 2.9.2
-Stable tag: trunk
+Stable tag: 0.6.5
 
 CataBlog allows you to catalog any item you want and show it to the world through your blog.
 
