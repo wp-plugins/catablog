@@ -12,6 +12,7 @@
 				<th class="manage-column">Title</th>
 				<th class="manage-column">Link</th>
 				<th class="manage-column">Description</th>
+				<th class="manage-column">Tags</th>
 				<th class="manage-column column-rm">Delete</th>
 			</tr>
 		</thead>
@@ -23,6 +24,7 @@
 				<th class="manage-column">Title</th>
 				<th class="manage-column">Link</th>
 				<th class="manage-column">Description</th>
+				<th class="manage-column">Tags</th>
 				<th class="manage-column">Delete</th>
 			</tr>
 		</tfoot>
@@ -45,6 +47,7 @@
 					<td><a href="<?php echo $edit ?>" title="Edit CataBlog Item"><?php echo htmlspecialchars($result->title, ENT_QUOTES, 'UTF-8') ?></a></td>
 					<td><?php echo htmlspecialchars($result->link, ENT_QUOTES, 'UTF-8') ?></td>
 					<td><?php echo nl2br(htmlspecialchars($result->description, ENT_QUOTES, 'UTF-8')) ?></td>
+					<td><?php echo htmlspecialchars($result->tags, ENT_QUOTES, 'UTF-8') ?></td>
 					<td><a href="<?php echo $remove ?>" class="remove_link" title="Remove CataBlog Item">remove</td>
 				</tr>
 			<?php endforeach; ?>

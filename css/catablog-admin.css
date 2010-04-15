@@ -3,6 +3,32 @@ body {
 }
 
 
+
+
+#image_uploader {
+	padding: 5px;
+	margin: 0 0 1em 0;
+	border: 1px rgb(223,223,223) solid;
+	background-color: #fff;
+	width: 400px;
+	-webkit-border-radius: 4px;
+}
+
+#image_uploader input {
+	margin: 0 0 0 20px;
+	border: 0 none;
+	background-color: #fff;
+}
+#image_uploader img {
+	width: 100px;
+	height: 100px;
+	float: left;
+	border: 1px rgb(223,223,223) solid;
+	-webkit-border-radius: 2px;
+}
+
+
+
 #icon-catablog {
 	-moz-background-clip: border;
 	-moz-background-inline-policy: continuous;
@@ -44,4 +70,15 @@ body {
 	background-color: #ccc;
 	border: 1px #999 solid;
 	margin: 0 0 10px 0;
+}
+
+
+
+
+.clear_float:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear:both;
+	visibility: hidden;
 }

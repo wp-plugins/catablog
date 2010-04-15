@@ -8,7 +8,7 @@
 		<div id='demo_box' class='demo_box' style='width:200px; height:200px;'>&nbsp;</div>
 		
 		<label for='image_size'>Image Size:</label>
-		<input type='text' name='image_size' id='image_size' size='5' value='<?php echo get_option('image_size') ?>' >
+		<input type='text' name='image_size' id='image_size' size='5' value='<?php echo get_option('catablog_image_size') ?>' >
 		<span>pixels</span><br />
 		
 		<small id="image_size_error" class="error hidden">your image size must be a positive integer<br /></small>
@@ -25,7 +25,7 @@
 	
 	<script type="text/javascript">
 		jQuery(document).ready(function() {
-			var size = <?php echo get_option('image_size') ?> - 1;
+			var size = <?php echo get_option('catablog_image_size') ?> - 1;
 			jQuery('#demo_box').css({width:size, height:size});
 		});
 		

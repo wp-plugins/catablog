@@ -13,7 +13,7 @@ class CataBlog {
 	private $wpdb         = null;
 	private $items        = array();
 	private $version      = "0.6.5";
-	private $db_version   = "0.1";
+	private $db_version   = 2;
 	private $db_table     = "catablog";
 	private $user_level   = 8;
 	private $directories  = array();
@@ -54,7 +54,7 @@ class CataBlog {
 	**********************************************/
 	public function registerWordPressHooks() {
 		register_activation_hook($this->plugin_file, array(&$this, 'install'));
-		register_deactivation_hook($this->plugin_file, array(&$this, 'uninstall'));
+		register_deactivation_hook($this->plugin_file, array(&$this, 'deactivate'));
 		
 		add_action('admin_init', array(&$this, 'admin_head'));
 		add_action('admin_menu', array(&$this, 'admin_menu'));
@@ -96,8 +96,13 @@ class CataBlog {
 	public function admin_edit() {
 		if (isset($_POST['save'])) {
 			// save record
-			$this->save_item();
-			$this->admin_view();
+			if ($this->save_item() == false) {
+				$result = $_REQUEST;
+				require($this->directories['template'] . '/admin-edit.php');
+			}
+			else {
+				$this->admin_view();
+			}
 		}
 		elseif (isset($_REQUEST['action'])) {
 			if ($_REQUEST['action'] == 'remove') {
@@ -125,7 +130,7 @@ class CataBlog {
 	public function admin_options() {
 		if (isset($_POST['save'])) {
 			if (true) {
-				update_option('image_size', $_REQUEST['image_size']);
+				update_option('catablog_image_size', $_REQUEST['image_size']);
 				$this->wp_message("Thumbnail Size Set To " . $_REQUEST['image_size'] . " Pixels");
 			}
 		}
@@ -152,8 +157,11 @@ class CataBlog {
 	}
 
 	public function frontend_content($atts) {
-		$results = $this->get_items();
-		$size    = get_option('image_size');
+		extract(shortcode_atts(array('tag'=>false), $atts));
+		
+		$results = $this->get_items($tag);
+		
+		$size    = get_option('catablog_image_size');
 		$ml      = ($size + 10) . 'px';
 
 		$cb_catalog = "";
@@ -187,35 +195,78 @@ class CataBlog {
 	**  Plugin Activate and Deactivate Actions
 	**********************************************/
 	public function install() {
-		// create the plugin's database
+		
 		$table = $this->db_table;
-		echo $structure = "CREATE TABLE $table (
-			`id` INT(9) NOT NULL AUTO_INCREMENT,
-			`order` INT(9) NOT NULL,
-			`image` VARCHAR(255) NOT NULL,
-			`title` VARCHAR(255) NOT NULL,
-			`link` TEXT,
-			`description` TEXT,
-			UNIQUE KEY id (id)
-		);";
-		$this->wpdb->query($structure);
+		if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+			// no table in database, create one
+			echo "create table";
+			$sql = "CREATE TABLE $table (
+				`id` INT(9) NOT NULL AUTO_INCREMENT,
+				`order` INT(9) NOT NULL,
+				`image` VARCHAR(255) NOT NULL,
+				`title` VARCHAR(255) NOT NULL,
+				`link` TEXT,
+				`description` TEXT,
+				`tags` VARCHAR(255) NOT NULL,
+				UNIQUE KEY id (id)
+			);";
+			
+			$this->wpdb->query($sql);
+			update_option('catablog_db_version', $this->db_version);
+		}
+		else {
+			if ($this->db_version > get_option('catablog_db_version')) {
+				// table is out of date, update it
+				echo "update table";
+				$sql = "CREATE TABLE $table (
+					`id` INT(9) NOT NULL AUTO_INCREMENT,
+					`order` INT(9) NOT NULL,
+					`image` VARCHAR(255) NOT NULL,
+					`title` VARCHAR(255) NOT NULL,
+					`link` TEXT,
+					`description` TEXT,
+					`tags` VARCHAR(255) NOT NULL,
+					UNIQUE KEY id (id)
+				);";
 				
+				require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+				dbDelta($sql);
+				
+				update_option('catablog_db_version', $this->db_version);
+			}
+			else { 
+				echo "table already updated";
+				// table is there and a newer version, leave alone 
+			}
+		}
+		
+		// $this->wpdb->query($structure);
+		
 		// reset the image size to default
-		update_option('image_size', 200);
+		update_option('catablog_image_size', 200);
 		
 		// make directory for image storage
 		$dirs = array('uploads', 'thumbnails', 'originals');
 		foreach ($dirs as $dir) {
-			mkdir($this->directories[$dir]);
+			$is_dir  = is_dir($this->directories[$dir]);
+			$is_file = is_file($this->directories[$dir]);
+			if (!$is_dir && !$is_file) {
+				mkdir($this->directories[$dir]);
+			}
 		}
 	}
-
+	
+	public function deactivate() {
+		// do nothing;
+	}
+	
 	public function uninstall() {
 		$table = $this->db_table;
 		$tear_down = "DROP TABLE $table;";
 		$this->wpdb->query($tear_down);
 								
-		delete_option('image_size');
+		delete_option('catablog_db_version');
+		delete_option('catablog_image_size');
 		
 		$dirs = array('thumbnails', 'originals', 'uploads');
 		foreach ($dirs as $dir) {
@@ -255,9 +306,16 @@ class CataBlog {
 	/**********************************************
 	**  Private Database Methods
 	**********************************************/
-	private function get_items() {
+	private function get_items($tag=false) {
 		$table = $this->db_table;
-		$query = $this->wpdb->prepare("SELECT * FROM $table ORDER BY `order`", array());
+		$tag;
+		if ($tag) {
+			$query = $this->wpdb->prepare("SELECT * FROM `$table` WHERE `tags` LIKE %s ORDER BY `order`", array('%s'=>"%$tag%"));
+		}
+		else {
+			$query = $this->wpdb->prepare("SELECT * FROM $table ORDER BY `order`", array());
+		}
+				
 		return $this->wpdb->get_results($query);
 	}
 	
@@ -290,21 +348,38 @@ class CataBlog {
 	}
 	
 	private function save_item() {
-		$new_image = $_FILES['image']['error'] != 4;
+		$escaped_post = array_map('stripslashes_deep', $_POST);
 		
+		$new_image  = $_FILES['image']['error'] != 4;
+		$image_name = sanitize_title($escaped_post['title']) . ".jpg";
+		
+		// PROCESS IMAGE
 		if ($new_image) {
 			$tmp = $_FILES['image']['tmp_name'];
-			$filepath_thumb    = $this->directories['thumbnails'] . '/' . $this->string2slug($_FILES['image']['name']);
-			$filepath_original = $this->directories['originals'] . '/' . $this->string2slug($_FILES['image']['name']);
+			$filepath_thumb    = $this->directories['thumbnails'] . "/$image_name";
+			$filepath_original = $this->directories['originals'] . "/$image_name";
 			
-			if (is_file($filepath_thumb) && is_file($filepath_original)) {
-				$this->wp_message('Filename already exists, please rename image before trying to upload it again.');
-				return false;
-			}
+			// if (is_file($filepath_thumb) && is_file($filepath_original)) {
+			// 	$this->wp_message('Filename already exists, please rename image before trying to upload it again.');
+			// 	return false;
+			// }
 
 			if (is_uploaded_file($tmp)) {
 				list($width, $height) = getimagesize($tmp);
-				$final_size = get_option('image_size');
+				
+				$size = getimagesize($tmp);
+				// print_r($size);
+				
+				$width  = $size[0];
+				$height = $size[1];
+				$format = $size['mime'];
+				
+				if ($width < 1 || $height < 1 || $format != 'image/jpeg') {
+					$this->wp_error('Image Error: None Supported Format');
+					return false;
+				}
+				
+				$final_size = get_option('catablog_image_size');
 
 				$canvas = imagecreatetruecolor($final_size, $final_size);
 				$bg_color = imagecolorallocate($canvas, 0, 0, 0);
@@ -316,44 +391,64 @@ class CataBlog {
 				imagejpeg($canvas, $filepath_thumb, 80);	
 				move_uploaded_file($tmp, $filepath_original);
 			}
+			else {
+				$this->wp_error('Image Error: None Supported Format');
+				$_REQUEST['image'] = $_REQUEST['saved_image'];
+				return false;
+			}
 
 		}
-
+		
+		
+		
+		// PROCESS DATABASE
 		$table = $this->db_table;
-		$image = $this->string2slug($_FILES['image']['name']);
-		$title = $_REQUEST['title'];
-		$link  = $_REQUEST['link'];
-		$desc  = $_REQUEST['description'];
-		$order = $_REQUEST['order'];
-
+		$title = $escaped_post['title'];
+		$link  = $escaped_post['link'];
+		$desc  = $escaped_post['description'];
+		$tags  = $escaped_post['tags'];
+		$order = $escaped_post['order'];
+		$image = $image_name;
+		
 		if (isset($_REQUEST['id'])) {
 			// old entry, need to update row
 			$id = $_REQUEST['id'];
 			if ($new_image) {
-				$this->wpdb->update($table, array('order'=>$order, 'image'=>$image, 'title'=>$title, 'link'=>$link, 'description'=>$desc), array('id'=>$id), array('%d', '%s', '%s', '%s', '%s'), array('%d'));
+				$this->wpdb->update($table, array('order'=>$order, 'image'=>$image, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags), array('id'=>$id), array('%d', '%s', '%s', '%s', '%s', '%s'), array('%d'));
 			}
 			else {
-				$this->wpdb->update($table, array('order'=>$order, 'title'=>$title, 'link'=>$link, 'description'=>$desc), array('id'=>$id), array('%d', '%s', '%s', '%s'), array('%d'));		
+				$this->wpdb->update($table, array('order'=>$order, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags), array('id'=>$id), array('%d', '%s', '%s', '%s', '%s'), array('%d'));
 			}
 			
 			$this->wp_message('Your Changes Have Been Saved');
 		} else {
 			// new entry, need to insert row
-			$this->wpdb->insert($table, array('order'=>$order, 'image'=>$image, 'title'=>$title, 'link'=>$link, 'description'=>$desc), array('%d', '%s', '%s', '%s', '%s'));
+			$this->wpdb->insert($table, array('order'=>$order, 'image'=>$image, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags), array('%d', '%s', '%s', '%s', '%s', '%s'));
 			$this->wp_message('New Catalog Item Added');
-		}		
+		}
+		
+		return true;		
 	}
 	
 	
 	private function string2slug($string) {
-		$string = strtolower(trim($string));
-		$string = preg_replace('/[^a-z0-9-.]/', '-', $string);
-		$string = preg_replace('/-+/', "-", $string);
-		return $string;
+		
+		return sanitize_title($string);
+		
+		// $string = strtolower(trim($string));
+		// 		$string = preg_replace('/[^a-z0-9-.]/', '-', $string);
+		// 		$string = preg_replace('/-+/', "-", $string);
+		// 		return $string;
 	}
 	
 	private function wp_message($message) {
 		echo "<div id='message' class='updated'>";
+		echo "	<strong>$message</strong>";
+		echo "</div>";
+	}
+	
+	private function wp_error($message) {
+		echo "<div id='error' class='error'>";
 		echo "	<strong>$message</strong>";
 		echo "</div>";
 	}
