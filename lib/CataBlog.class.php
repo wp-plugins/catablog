@@ -12,7 +12,8 @@ class CataBlog {
 	**********************************************/
 	private $wpdb         = null;
 	private $items        = array();
-	private $version      = "0.6.5";
+	private $version      = "0.7.1";
+	private $dir_version  = 1;
 	private $db_version   = 2;
 	private $db_table     = "catablog";
 	private $user_level   = 8;
@@ -38,6 +39,7 @@ class CataBlog {
 		$this->directories['uploads']    = WP_CONTENT_DIR . "/uploads/catablog";
 		$this->directories['thumbnails'] = WP_CONTENT_DIR . "/uploads/catablog/thumbnails";
 		$this->directories['originals']  = WP_CONTENT_DIR . "/uploads/catablog/originals";
+		$this->directories['old_pics']   = WP_CONTENT_DIR . "/catablog";
 		
 		$this->urls['plugin']     = WP_CONTENT_URL . "/plugins/catablog";
 		$this->urls['css']        = WP_CONTENT_URL . "/plugins/catablog/css";
@@ -145,15 +147,11 @@ class CataBlog {
 	** Frontend Actions
 	**********************************************/
 	public function frontend_head() {
-		if (file_exists(get_stylesheet_directory().'/catablog.css')) {
-			echo '<link rel="stylesheet" type="text/css" href="'. get_stylesheet_directory() .'/catablog.css" media="all" />';
+		$path = get_template_directory().'/catablog/style.css';
+		if (file_exists($path)) {
+			echo '	<link rel="stylesheet" type="text/css" href="'.get_bloginfo('template_url').'/catablog/style.css" media="all" />';
 		}
-		else if (file_exists(get_template_directory().'/catablog.css')) {
-			echo '<link rel="stylesheet" type="text/css" href="'. get_template_directory() .'/catablog.css" media="all" />';
-		}
-		else {
-			echo '<link rel="stylesheet" type="text/css" href="'. WP_PLUGIN_URL .'/catablog/css/catablog.css" media="all" />';
-		}
+		echo '	<link rel="stylesheet" type="text/css" href="'. WP_PLUGIN_URL .'/catablog/css/catablog.css" media="all" />';
 	}
 
 	public function frontend_content($atts) {
@@ -197,9 +195,12 @@ class CataBlog {
 	public function install() {
 		
 		$table = $this->db_table;
+		
+		// NO CATABLOG TABLE IN THE DATABASE. CREATE NEW INSTALLATION
 		if ($this->wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
-			// no table in database, create one
-			echo "create table";
+			// no table in database, wipe everything and start over
+			$this->uninstall();
+			
 			$sql = "CREATE TABLE $table (
 				`id` INT(9) NOT NULL AUTO_INCREMENT,
 				`order` INT(9) NOT NULL,
@@ -210,14 +211,29 @@ class CataBlog {
 				`tags` VARCHAR(255) NOT NULL,
 				UNIQUE KEY id (id)
 			);";
-			
 			$this->wpdb->query($sql);
+			
+			// update application options
 			update_option('catablog_db_version', $this->db_version);
+			update_option('catablog_dir_version', $this->dir_version);
+			update_option('catablog_image_size', 200);
+			
+			// make all directories for image storage
+			$dirs = array('uploads', 'thumbnails', 'originals');
+			foreach ($dirs as $dir) {
+				$is_dir  = is_dir($this->directories[$dir]);
+				$is_file = is_file($this->directories[$dir]);
+				if (!$is_dir && !$is_file) {
+					mkdir($this->directories[$dir]);
+				}
+			}
 		}
+		
+		// A TABLE EXISTS, LETS UPDATE IT AND THEN UPDATE OUR OPTIONS AND DIRECTORY SCHEMA
 		else {
 			if ($this->db_version > get_option('catablog_db_version')) {
+				
 				// table is out of date, update it
-				echo "update table";
 				$sql = "CREATE TABLE $table (
 					`id` INT(9) NOT NULL AUTO_INCREMENT,
 					`order` INT(9) NOT NULL,
@@ -228,31 +244,62 @@ class CataBlog {
 					`tags` VARCHAR(255) NOT NULL,
 					UNIQUE KEY id (id)
 				);";
-				
 				require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 				dbDelta($sql);
 				
+				// Transform the old image_size option into catablog_image_size
+				if (get_option('catablog_image_size') === false) {
+					if (get_option('image_size') === false) {
+						update_option('catablog_image_size', 200);
+					}
+					else {
+						update_option('catablog_image_size', get_option('image_size'));
+						delete_option('image-size');
+					}
+				}
+				else {
+					if (get_option('image_size')) {
+						delete_option('image-size');
+					}
+				}
+				
+				// update application options
 				update_option('catablog_db_version', $this->db_version);
+				update_option('catablog_dir_version', $this->dir_version);
+				
+				
+				// see if the old and new image directory exists
+				$old_directory_exists = false;
+				if (is_dir($this->directories['old_pics'])) {
+					$old_directory_exists = true;
+				}
+				
+				$new_directory_exists = false;
+				if (is_dir($this->directories['uploads'])) {
+					$new_directory_exists = true;
+				}
+				
+				if ($old_directory_exists) {
+					if ($new_directory_exists) {
+						$this->remove_old_pics();
+					}
+					else {
+						$this->make_new_pic_directories();
+						$this->transfer_old_pics_to_new();
+						$this->remove_old_pics();
+					}
+				}
+				else {
+					if ($new_directory_exists) {
+						// do nothing
+					}
+					else {
+						$this->make_new_pic_directories();
+					}
+				}
+				
 			}
-			else { 
-				echo "table already updated";
-				// table is there and a newer version, leave alone 
-			}
-		}
-		
-		// $this->wpdb->query($structure);
-		
-		// reset the image size to default
-		update_option('catablog_image_size', 200);
-		
-		// make directory for image storage
-		$dirs = array('uploads', 'thumbnails', 'originals');
-		foreach ($dirs as $dir) {
-			$is_dir  = is_dir($this->directories[$dir]);
-			$is_file = is_file($this->directories[$dir]);
-			if (!$is_dir && !$is_file) {
-				mkdir($this->directories[$dir]);
-			}
+			else { /* table is there and a newer version, leave alone */ }
 		}
 	}
 	
@@ -266,8 +313,82 @@ class CataBlog {
 		$this->wpdb->query($tear_down);
 								
 		delete_option('catablog_db_version');
+		delete_option('catablog_dir_version');
 		delete_option('catablog_image_size');
 		
+		$this->remove_old_pics();
+		$this->remove_new_pics();
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	private function make_new_pic_directories() {
+		
+		// determine which directories need to be made for storing images
+		$dirs = array(0=>'uploads', 1=>'thumbnails', 2=>'originals');
+		if (is_dir($this->dirs['uploads'])) {
+			unset($directories[0]); // so far so good, catablog directory in uploads folder
+			if (is_dir($this->dirs['thumbnails'])) {
+				unset($directories[1]); // still good, thumbnails directory in uploads/catablog
+			}
+			if (is_dir($this->dirs['originals'])) {
+				unset($directories[2]); // all directories are present, originals directory in uploads/catablog
+			}
+		}
+		
+		// create the determined directories from the last step
+		foreach ($dirs as $dir) {
+			$is_dir  = is_dir($this->directories[$dir]);
+			$is_file = is_file($this->directories[$dir]);
+			if (!$is_dir && !$is_file) {
+				mkdir($this->directories[$dir]);
+			}
+		}
+	}
+	
+	private function transfer_old_pics_to_new() {
+		// if old directory exists move files to the new thumbnails directory
+		$old_thumbnail_dir = $this->directories['old_pics'];
+		
+		if (is_dir($old_thumbnail_dir)) {
+		    $ignore = array('cgi-bin', '.', '..');
+		    $dh = @opendir($old_thumbnail_dir);
+		    while (false !== ($file = readdir($dh))) {
+		        if (!in_array($file, $ignore)) {
+					$extension = substr( $file , (strrpos('.')+1) );
+					if ($extension == 'jpg') {
+						rename("$old_thumbnail_dir/$file", $this->directories['thumbnails']."/$file");
+					}
+		        }
+		    }
+		    closedir($dh);
+		}
+	}
+	
+	private function remove_old_pics() {
+		$mydir = $this->directories['old_pics'];
+		if (is_dir($mydir)) {
+			$d = dir($mydir);
+			while ($entry = $d->read()) { 
+				if ($entry != "." && $entry != "..") {
+					unlink($mydir . '/' . $entry); 
+				} 
+			} 
+			$d->close(); 
+
+			rmdir($mydir);		
+		}
+		else {
+			unlink($mydir);
+		}
+	}
+	
+	private function remove_new_pics() {
 		$dirs = array('thumbnails', 'originals', 'uploads');
 		foreach ($dirs as $dir) {
 			$mydir = $this->directories[$dir];
@@ -286,8 +407,9 @@ class CataBlog {
 				unlink($mydir);
 			}
 		}
-
 	}
+	
+	
 	
 	
 	

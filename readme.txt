@@ -2,9 +2,9 @@
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.net/donate/
 Tags: catalog, discography, library, collection, organize, media, images, products, rolodex, manifests, listing, list
-Requires at least: 2.5
+Requires at least: 2.6
 Tested up to: 2.9.2
-Stable tag: 0.7.0
+Stable tag: 0.7.1
 
 CataBlog allows you to create a catalog of "items" for your blog to show the world.
 
@@ -19,6 +19,10 @@ CataBlog allows you to catalog pretty much any item you would want and share it 
 1. Place `[catablog]` in your page's or post's main body
 
 == Upgrade Notice ==
+
+= 0.7.1 =
+Fixed numerous small bugs
+Upgrading from 0.6.5 should now be smoother
 
 = 0.7.0 =
 Tags attribute added to catalog items.
