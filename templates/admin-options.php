@@ -5,10 +5,10 @@
 		
 	<form method="post" action="">
 		
-		<div id='demo_box' class='demo_box' style='width:200px; height:200px;'>&nbsp;</div>
+		<div id='demo_box' class='demo_box' style='width:<?php echo $thumbnail_size ?>px; height:<?php echo $thumbnail_size ?>px;'>&nbsp;</div>
 		
 		<label for='image_size'>Image Size:</label>
-		<input type='text' name='image_size' id='image_size' size='5' value='<?php echo get_option('catablog_image_size') ?>' >
+		<input type='text' name='image_size' id='image_size' size='5' value='<?php echo $thumbnail_size ?>' >
 		<span>pixels</span><br />
 		
 		<small id="image_size_error" class="error hidden">your image size must be a positive integer<br /></small>
@@ -19,30 +19,38 @@
 		
 		<p class="submit">
 			<input type="submit" id="save_changes" class="button-primary" value="<?php _e('Save Changes') ?>" />
-			<span> or <a href="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog/catablog.php' ?>">back to list</a></span>
+			<span> or <a href="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-edit' ?>">back to list</a></span>
 		</p>
 	</form>
 	
 	<script type="text/javascript">
-		jQuery(document).ready(function() {
+		jQuery(document).ready(function($) {
 			var size = <?php echo get_option('catablog_image_size') ?> - 1;
-			jQuery('#demo_box').css({width:size, height:size});
-		});
-		
-		jQuery('#image_size').bind('keyup', function() {
-			var v = this.value;
-			if (is_integer(v)) {
-				jQuery('#save_changes').attr('disabled', false);
-				jQuery('#save_changes').attr('class', 'button-primary');
-				jQuery('#image_size_error').hide();
+			$('#demo_box').css({width:size, height:size});
+			
+			$('#image_size').bind('keydown', function(event) {
+				var step = 5;
+				var keycode = event.keyCode;
 				
-				resize_box(v);
-			}
-			else {
-				jQuery('#save_changes').attr('disabled', true);
-				jQuery('#save_changes').attr('class', '');
-				jQuery('#image_size_error').show();
-			}
+				if (keycode == 40) { this.value = parseInt(this.value) - step; }
+				if (keycode == 38) { this.value = parseInt(this.value) + step; }
+			});
+			
+			$('#image_size').bind('keyup', function(event) {
+				var v = this.value;
+				if (is_integer(v)) {
+					$('#save_changes').attr('disabled', false);
+					$('#save_changes').attr('class', 'button-primary');
+					$('#image_size_error').hide();
+				
+					resize_box(v);
+				}
+				else {
+					$('#save_changes').attr('disabled', true);
+					$('#save_changes').attr('class', '');
+					$('#image_size_error').show();
+				}
+			});
 		});
 		
 		function is_integer(s) {

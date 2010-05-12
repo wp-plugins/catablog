@@ -4,7 +4,7 @@
 	
 	<p>&nbsp;</p>
 	
-	<form method="post" action="" enctype="multipart/form-data">
+	<form method="post" action="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-new' ?>" enctype="multipart/form-data">
 		
 		<label for="image">Image:</label><br />
 		<p id="image_uploader" class="clear_float">
@@ -17,7 +17,7 @@
 		<br /><br />
 		
 		<label for="title">Title:</label><br />
-		<input type="text" name="title" id="title" size="50" value="<?php echo htmlspecialchars($result['title'], ENT_QUOTES, 'UTF-8') ?>" />
+		<input type="text" name="title" id="title" size="50" maxlength="200" value="<?php echo htmlspecialchars($result['title'], ENT_QUOTES, 'UTF-8') ?>" />
 		<br /><br />
 		
 		<label for="title">Link:</label><br />
@@ -40,7 +40,7 @@
 
 		<p class="submit">
 			<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
-			<span> or <a href="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog/catablog.php' ?>">back to list</a></span>
+			<span> or <a href="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-edit' ?>">back to list</a></span>
 		</p>
 	</form>
 </div>

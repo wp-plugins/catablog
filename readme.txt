@@ -2,9 +2,9 @@
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.net/donate/
 Tags: catalog, discography, library, collection, organize, media, images, products, rolodex, manifests, listing, list
-Requires at least: 2.6
+Requires at least: 2.9
 Tested up to: 2.9.2
-Stable tag: 0.7.1
+Stable tag: 0.7.5
 
 CataBlog allows you to create a catalog of "items" for your blog to show the world.
 

@@ -2,8 +2,8 @@
 /*
 Plugin Name: CataBlog
 Plugin URI: http://catablog.illproductions.net
-Description: CataBlog allows you to catalog any item you want and show it to the world through your blog. Upload Images and then add titles, links and descriptions of the images and watch how easy it is to keep track of all your important stuff.
-Version: 0.7.1
+Description: CataBlog allows you to create a catalog of items for your blog. Upload Images and then add titles, links and descriptions for each item. Now it's super easy to keep track of all your stuff.
+Version: 0.7.5
 Author: Zachary Segal
 Author URI: http://catablog.illproductions.net/about/
 
