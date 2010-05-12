@@ -78,6 +78,11 @@ form#catablog-options fieldset {
 .jPicker {
 	display: block;
 }
+.jPicker td.Text input {
+	-moz-box-sizing: padding-box !important;
+
+	font-size: 11px;
+}
 
 
 

@@ -6,7 +6,7 @@ Requires at least: 2.9
 Tested up to: 2.9.2
 Stable tag: 0.7.5
 
-CataBlog allows you to create a catalog of "items" for your blog to show the world.
+CataBlog allows you to create a catalog of "items" in your blog.
 
 == Description ==
 
@@ -19,6 +19,14 @@ CataBlog allows you to catalog pretty much any item you would want and share it 
 1. Place `[catablog]` in your page's or post's main body
 
 == Upgrade Notice ==
+
+= 0.7.5 =
+WARNING: Upon upgrade this version will destroy all your previously saved CataBlog data. Back it up.
+Images now maintain their aspect ration and are no longer distorted when being resized.
+Background color for resized images can be set in the options page.
+Catalog items can be reordered with a simple drag and drop interface.
+Simplified the installation code to make future upgrades smoother.
+More small tweaks, enhancements and bug fixes.
 
 = 0.7.1 =
 Fixed numerous small bugs
