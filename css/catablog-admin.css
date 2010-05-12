@@ -71,6 +71,15 @@ body {
 
 
 
+form#catablog-options fieldset {
+	margin: 0 0 2em 0;
+}
+
+.jPicker {
+	display: block;
+}
+
+
 
 .demo_box {
 	background-color: #ccc;

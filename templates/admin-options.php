@@ -3,17 +3,24 @@
 	<h2>CataBlog Options</h2>
 	<br />
 		
-	<form method="post" action="">
+	<form id="catablog-options" method="post" action="">
 		
-		<div id='demo_box' class='demo_box' style='width:<?php echo $thumbnail_size ?>px; height:<?php echo $thumbnail_size ?>px;'>&nbsp;</div>
+		<fieldset>
+			<div id='demo_box' class='demo_box' style='width:<?php echo $thumbnail_size ?>px; height:<?php echo $thumbnail_size ?>px;'>&nbsp;</div>
+			
+			<label for='image_size'>Image Size:</label>
+			<input type='text' name='image_size' id='image_size' size='5' value='<?php echo $thumbnail_size ?>' />
+			<span>pixels</span><br />
 		
-		<label for='image_size'>Image Size:</label>
-		<input type='text' name='image_size' id='image_size' size='5' value='<?php echo $thumbnail_size ?>' >
-		<span>pixels</span><br />
+			<small id="image_size_error" class="error hidden">your image size must be a positive integer<br /></small>
+			<small>this will change the display size of all images, images you uploaded previously may look pixelated due to poor resolution.</small>
+		</fieldset>
 		
-		<small id="image_size_error" class="error hidden">your image size must be a positive integer<br /></small>
-		<small>this will change the display size of all images, images you uploaded previously may look pixelated due to poor resolution.</small>
-		
+		<fieldset>
+			<label for="background_color">Thumbnail Background Color:</label>
+			<input type='hidden' name='bg_color' id='bg_color' value='<?php echo $background_color ?>' />
+			<div id="picker"></div>
+		</fieldset>
 		
 		<input type="hidden" name="save" id="save" value="yes" />
 		
@@ -25,6 +32,13 @@
 	
 	<script type="text/javascript">
 		jQuery(document).ready(function($) {
+			
+			$('#bg_color').jPicker({
+				window: {position: {x:'right', y:'bottom'}},
+				images: {clientPath:"<?php echo get_bloginfo('wpurl') ?>/wp-content/plugins/catablog/images/jPicker/"}
+			});
+			
+			
 			var size = <?php echo get_option('catablog_image_size') ?> - 1;
 			$('#demo_box').css({width:size, height:size});
 			

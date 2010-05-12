@@ -24,6 +24,7 @@ class CataBlog {
 	// default image sizes
 	private $default_thumbnail_size = 100;
 	private $default_image_size     = 600;
+	private $default_bg_color       = "ffffff";
 	
 	// two private arrays for storing common file paths
 	private $directories   = array();
@@ -92,8 +93,11 @@ class CataBlog {
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery-ui-core');
 		wp_enqueue_script('jquery-ui-sortable');
+		wp_enqueue_script('jpicker', $this->urls['javascript'] . '/jpicker-1.1.2.min.js');
 		wp_enqueue_script('catablog-admin-js', $this->urls['javascript'] . '/catablog-admin.js');
+		
 		wp_enqueue_style('catablog-admin-css', $this->urls['css'] . '/catablog-admin.css');
+		wp_enqueue_style('jpicker-css', $this->urls['css'] . '/jPicker.css');
 	}
 	
 	public function admin_menu() {
@@ -153,13 +157,16 @@ class CataBlog {
 		if (isset($_POST['save'])) {
 			if (true) {
 				$this->options['thumbnail-size'] = $_REQUEST['image_size'];
+				$this->options['background-color'] = $_REQUEST['bg_color'];
 				update_option($this->options_name, $this->options);
 				
-				$this->wp_message("Thumbnail Size Set To " . $_REQUEST['image_size'] . " Pixels");
+				$this->wp_message("CataBlog Options Saved");
 			}
 		}
 		
 		$thumbnail_size = $this->options['thumbnail-size'];
+		$background_color = $this->options['background-color'];
+		
 		require($this->directories['template'] . '/admin-options.php');
 	}
 	
@@ -263,10 +270,11 @@ class CataBlog {
 	
 	private function install_options() {
 		$options = array();
-		$options['db-version']      = $this->db_version;
-		$options['dir-version']     = $this->dir_version;
-		$options['thumbnail-size']  = $this->default_thumbnail_size;
-		$options['image-size']      = $this->default_image_size;
+		$options['db-version']       = $this->db_version;
+		$options['dir-version']      = $this->dir_version;
+		$options['thumbnail-size']   = $this->default_thumbnail_size;
+		$options['image-size']       = $this->default_image_size;
+		$options['background-color'] = $this->default_bg_color;
 		
 		update_option($this->options_name, $options);
 	}
@@ -488,9 +496,10 @@ class CataBlog {
 				return false;
 			}
 			
-			// create a blank white canvas of user specified size
-			$canvas = imagecreatetruecolor($canvas_size, $canvas_size);
-			$bg_color = imagecolorallocate($canvas, 255, 255, 255);
+			// create a blank canvas of user specified size and color
+			$bg_color = $this->html2rgb($this->options['background-color']);
+			$canvas   = imagecreatetruecolor($canvas_size, $canvas_size);
+			$bg_color = imagecolorallocate($canvas, $bg_color[0], $bg_color[1], $bg_color[2]);
 			imagefill($canvas, 0, 0, $bg_color);
 			
 			
@@ -545,7 +554,27 @@ class CataBlog {
 	
 	
 	
-	
+	private function html2rgb($color) {
+		if ($color[0] == '#') {
+			$color = substr($color, 1);
+		}
+		
+		if (strlen($color) == 6) {
+			list($r, $g, $b) = array($color[0].$color[1], $color[2].$color[3], $color[4].$color[5]);
+		}
+		elseif (strlen($color) == 3) {
+			list($r, $g, $b) = array($color[0].$color[0], $color[1].$color[1], $color[2].$color[2]);
+		}
+		else {
+			return false;
+		}
+		
+		$r = hexdec($r);
+		$g = hexdec($g);
+		$b = hexdec($b);
+		
+		return array($r, $g, $b);
+	}
 	
 	private function string2slug($string) {
 		return sanitize_title($string);
