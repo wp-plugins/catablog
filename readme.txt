@@ -10,6 +10,15 @@ CataBlog allows you to create a catalog of "items" in your blog.
 
 == Description ==
 
+WARNING: Upon upgrading to this version you will destroy all your previously saved CataBlog data. Back it up.
+
+New Features:
+- Images now maintain their aspect ration and are no longer distorted when being resized.
+- Background color for resized images can be set in the options page.
+- Catalog items can be reordered with a simple drag and drop interface.
+- Simplified the installation code to make future upgrades smoother.
+- More small tweaks, enhancements and bug fixes.
+
 CataBlog allows you to catalog pretty much any item you would want and share it through your blog. Upload an images and then give it a title, link, description and tags. Simple easy design makes it child's play  to keep track of all your different catalogs.
 
 == Installation ==
