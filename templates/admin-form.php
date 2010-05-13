@@ -12,9 +12,11 @@
 			<input type="file" name="image" id="image" size="20" />
 		</p>
 		
+		<?php /*
 		<label for="order">Order:</label><br />
 		<input type="text" name="order" id="order" size="5" value="<?php echo htmlspecialchars($result['order'], ENT_QUOTES, 'UTF-8') ?>" />
 		<br /><br />
+		*/ ?>
 		
 		<label for="title">Title:</label><br />
 		<input type="text" name="title" id="title" size="50" maxlength="200" value="<?php echo htmlspecialchars($result['title'], ENT_QUOTES, 'UTF-8') ?>" />
