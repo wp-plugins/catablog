@@ -30,10 +30,12 @@ New Features:
 = What browsers do you support =
 
 The CataBlog Admin section is made to work best with these browsers:
-1 Internet Explorer 8+
-1 FireFox 2+
-1 Opera 10+
-1 Safari & Chrome
+
+1. Internet Explorer 8+
+1. FireFox 2+
+1. Opera 10+
+1. Safari & Chrome
+
 
 = I installed CataBlog, now where is it? =
 
