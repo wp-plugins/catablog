@@ -339,6 +339,12 @@ class CataBlog {
 			
 			update_option($this->options_name, $options);
 		}
+		else {
+			$this->options['db-version']        = $this->db_version;
+			$this->options['dir-version']       = $this->dir_version;
+			
+			update_option($this->options_name, $this->options);
+		}
 	}
 	
 	private function install_database() {
