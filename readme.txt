@@ -18,7 +18,7 @@ New Features:
 
 * Stable release candidate
 * PayPal support, give CataBlog items a price and product code to easily setup a store.
-* Allow users to decide if they want the thumbnails to be a cropped version of the original.
+* Many new thumbnail generator options such as: cropping, background color, alpha transparency and more.
 
 == Installation ==
 
