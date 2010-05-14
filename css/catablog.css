@@ -1,6 +1,6 @@
 .catablog_row {
 	clear: left;
-	margin: 0 0 2em 0;
+	margin: 0 0 0.5em 0;
 }
 
 .catablog_image {
@@ -14,3 +14,10 @@
 	
 }
 
+.clearFloat {
+	content: ".";
+	display: block;
+	height: 0;
+	clear:both;
+	visibility: hidden;
+}

@@ -25,7 +25,7 @@
 				</p>
 				<p>
 					<label>Thumbnail Background Color:</label>
-					<input type="text" name="bg_color" id="bg_color" size="7" value="<?php echo $background_color ?>" />
+					<input type="text" name="bg_color" id="bg_color" size="7" maxlength="6" value="<?php echo $background_color ?>" />
 					<span id="red"></span>
 					<span id="green"></span>
 					<span id="blue"></span>
@@ -45,6 +45,12 @@
 			
 			<label for="paypal_email">Account Email Address:</label>
 			<input type="text" name="paypal_email" id="paypal_email" size="50" value="<?php echo $paypal_email ?>" />
+			
+			<p><small>
+				Enter in an email address here that has been registered with <a href="http://www.paypal.com">PayPal</a> and
+				you will enable the <strong>Store Front</strong> mode of CataBlog. This will allow you to give an item a price and product code.
+				When an item has a price above zero a "Add to Cart" button appear under the description of that CataBlog item.
+			</small></p>
 		</fieldset>
 		
 		<input type="hidden" name="save" id="save" value="yes" />		
@@ -53,29 +59,13 @@
 			<span> or <a href="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-edit' ?>">back to list</a></span>
 		</p>
 	</form>
+	
+	<?php //print_r($this->options)?>
+	
 </div>
 
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
-		
-		function hexFromRGB (r, g, b) {
-			var hex = [
-				r.toString(16),
-				g.toString(16),
-				b.toString(16)
-			];
-			$.each(hex, function (nr, val) {
-				if (val.length == 1) {
-					hex[nr] = '0' + val;
-				}
-			});
-			return hex.join('').toUpperCase();
-		}
-		
-		function HexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
-		function HexToG(h) {return parseInt((cutHex(h)).substring(2,4),16)}
-		function HexToB(h) {return parseInt((cutHex(h)).substring(4,6),16)}
-		function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}
 		
 		function refreshSwatch() {
 			var red = $("#red").slider("value")
@@ -86,12 +76,15 @@
 			$('#bg_color').val(hex);
 		}
 		
+		
 		function setSliders(hex) {
 			$("#red").slider("value", HexToR(hex));
 			$("#green").slider("value", HexToG(hex));
 			$("#blue").slider("value", HexToB(hex));
 			refreshSwatch();
 		}
+		
+		
 		
 		$("#red, #green, #blue").slider({
 			orientation: 'horizontal',
@@ -102,6 +95,8 @@
 		});
 		setSliders('<?php echo $background_color ?>')
 		
+		
+		
 		$('#bg_color').bind('blur', function(event) {
 			if (this.value.length != 6) {
 				alert('Please make sure to enter a full 6 character hexadecimal color code.')
@@ -110,8 +105,12 @@
 			setSliders(this.value)
 		});
 		
+		
+		
 		var size = <?php echo get_option('catablog_image_size') ?> - 1;
 		$('#demo_box').css({width:size, height:size});
+		
+		
 		
 		$('#image_size').bind('keydown', function(event) {
 			var step = 5;
@@ -120,6 +119,8 @@
 			if (keycode == 40) { this.value = parseInt(this.value) - step; }
 			if (keycode == 38) { this.value = parseInt(this.value) + step; }
 		});
+		
+		
 		
 		$('#image_size').bind('keyup', function(event) {
 			var v = this.value;

@@ -71,6 +71,15 @@ body {
 
 
 
+form#catablog-form input#image {
+	width: 250px;
+	border: 1px #666 solid;
+}
+
+
+
+
+
 form#catablog-options fieldset {
 	margin: 1em 0;
 	padding: 10px;

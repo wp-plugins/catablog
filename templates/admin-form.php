@@ -4,12 +4,14 @@
 	
 	<p>&nbsp;</p>
 	
-	<form method="post" action="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-new' ?>" enctype="multipart/form-data">
+	<form id="catablog-form" method="post" action="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-new' ?>" enctype="multipart/form-data">
 		
 		<label for="image">Image:</label><br />
 		<p id="image_uploader" class="clear_float">
-			<img src="<?php echo get_bloginfo('wpurl').'/wp-content/uploads/catablog/thumbnails/'.$result['image'] ?>" id="image_preview" />
+			<?php $filename = (isset($result['preview_image']))? $result['preview_image'] : $result['image'] ?>
+			<img src="<?php echo get_bloginfo('wpurl').'/wp-content/uploads/catablog/thumbnails/'.$filename ?>" id="image_preview" />
 			<input type="file" name="image" id="image" size="20" />
+			<input type="hidden" name="preview_image" id="preview_image" value="<?php echo $filename ?>" />
 		</p>
 		
 		<label for="title">Title:</label><br />
@@ -50,3 +52,11 @@
 		</p>
 	</form>
 </div>
+
+<script type="text/javascript">
+	jQuery(document).ready(function($) {
+		$('#image').bind('change', function(event) {
+			$('#title').focus();
+		});
+	});
+</script>

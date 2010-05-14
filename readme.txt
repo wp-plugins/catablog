@@ -47,10 +47,11 @@ Login to the Admin section of your WordPress blog and go to the CataBlog section
 
 == Changelog ==
 
-= 0.8.0 =
+= 0.8 =
 * Stable release candidate
 * PayPal support, give CataBlog items a price and product code to easily setup a store.
 * Allow users to decide if they want the thumbnails to be a cropped version of the original.
+* Supports JPEG, GIF and PNG graphic formats including alpha transparency.
 
 = 0.7.6 =
 * Fixed readme.txt file so users will be warned of potential data loss when upgrading.

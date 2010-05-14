@@ -58,7 +58,7 @@
 						<img src="<?php echo get_bloginfo('wpurl').'/wp-content/uploads/catablog/thumbnails/'.$result->image ?>" class="cb_item_icon" width="50" height="50" />
 					</td>
 					<td>
-						<strong><a href="<?php echo $edit ?>" title="Edit CataBlog Item"><?php echo htmlspecialchars($result->title, ENT_QUOTES, 'UTF-8') ?></a></strong>
+						<strong><a href="<?php echo $edit ?>" title="Edit CataBlog Item"><?php echo htmlentities($result->title, ENT_QUOTES, 'UTF-8') ?></a></strong>
 						<div class="row-actions">
 							<span><a href="<?php echo $edit ?>">Edit</a></span>
 							<span> | </span>
@@ -66,8 +66,8 @@
 						</div>
 					</td>
 					<td><?php echo htmlspecialchars($result->link, ENT_QUOTES, 'UTF-8') ?></td>
-					<td><?php echo nl2br(htmlspecialchars($result->description, ENT_QUOTES, 'UTF-8')) ?></td>
-					<td><?php echo htmlspecialchars($result->tags, ENT_QUOTES, 'UTF-8') ?></td>
+					<td><?php echo nl2br(htmlentities($result->description, ENT_QUOTES, 'UTF-8')) ?></td>
+					<td><?php echo str_replace(" ", "<br />", htmlspecialchars($result->tags, ENT_QUOTES, 'UTF-8')) ?></td>
 					<?php if (mb_strlen($this->options['paypal-email']) > 0): ?>
 						<td><?php echo htmlspecialchars($result->price, ENT_QUOTES, 'UTF-8') ?></td>
 						<td><?php echo htmlspecialchars($result->product_code, ENT_QUOTES, 'UTF-8') ?></td>
@@ -81,12 +81,25 @@
 </div>
 
 <script type="text/javascript">
+	var timer = null;
 	jQuery(document).ready(function($) {
+		
+		$('a.remove_link').bind('click', function(e) {
+			if (confirm('Are you sure you want to delete this catablog item?')) {
+				return true;
+			}
+			return false;
+		});
+		
+		
 		$("#catablog_items tbody").sortable({
 			forcePlaceholderSize: true,
 			axis: 'y',
 			handle: 'span.cb_item_handle',
 			opacity: 0.7,
+			start: function(event, ui) {
+				clearTimeout(timer);
+			},
 			update: function(event, ui) {
 				var ids = [];
 				$('#catablog_items tbody tr').each(function(i) {
@@ -104,9 +117,9 @@
 				$('#message strong').html('Saving New Order...');
 				$.post(ajaxurl, params, function(data) {	
 					$('#message strong').html('New Order Saved');
-					setTimeout(function() {
-						$('#message').hide(1000);
-					}, 4000);
+					timer = setTimeout(function() {
+						$('#message').hide(500);
+					}, 8000);
 				});
 				
 			}

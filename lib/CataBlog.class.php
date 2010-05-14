@@ -8,8 +8,8 @@ class CataBlog {
 	
 	// plugin component version numbers
 	private $version     = "0.8";
-	private $dir_version = 1;
-	private $db_version  = 3;
+	private $dir_version = 2;
+	private $db_version  = 4;
 	private $debug       = false;
 	
 	// wordpress database object and options
@@ -130,7 +130,7 @@ class CataBlog {
 		if (isset($_POST['save'])) {
 			// save record
 			if ($this->save_item() == false) {
-				$result = $_REQUEST;
+				$result = array_map('stripslashes_deep', $_POST);
 				require($this->directories['template'] . '/admin-form.php');
 			}
 			else {
@@ -165,12 +165,14 @@ class CataBlog {
 		if (isset($_POST['save'])) {
 			if (true) {
 				$recalculate_thumbnails = false;
+				$save_message           = "CataBlog Options Saved";
 				
 				$image_size_different   = $_REQUEST['image_size'] != $this->options['thumbnail-size'];
 				$bg_color_different     = $_REQUEST['bg_color'] != $this->options['background-color'];
 				$keep_ratio_different   = $_REQUEST['keep_aspect_ratio'] != $this->options['keep-aspect-ratio'];
 				if ($image_size_different || $bg_color_different || $keep_ratio_different) {
 					$recalculate_thumbnails = true;
+					$save_message           = "CataBlog Options Saved & Thumbnails Regenerated";
 				}
 				
 				$this->options['thumbnail-size'] = $_REQUEST['image_size'];
@@ -183,7 +185,7 @@ class CataBlog {
 					$this->regenerate_all_thumbnails();
 				}
 				
-				$this->wp_message("CataBlog Options Saved");
+				$this->wp_message($save_message);
 			}
 		}
 		
@@ -208,7 +210,7 @@ class CataBlog {
 		$stats['MySQL_Version']     = $this->wpdb->get_var("SELECT version()");
 		$stats['Thumbnail_Disc_Usage'] = round($thumbnail_size, 2) . " MB";
 		$stats['Original_Upload_Disc_Usage'] = round($original_size, 2) . " MB";
-		$stats['Total_Library_Disc_Usage'] = round(($thumbnail_size + $original_size), 2) . " MB";
+		$stats['Total_Library_Disc_Usage'] = (round($thumbnail_size, 2) + round($original_size, 2)) . " MB";
 		
 		require($this->directories['template'] . '/admin-about.php');
 	}
@@ -271,12 +273,12 @@ class CataBlog {
 		extract(shortcode_atts(array('tag'=>false), $atts));
 		
 		$results = $this->get_items($tag);
-		
 		$size    = $this->options['thumbnail-size'];
 		$ml      = ($size + 10) . 'px';
 		
-		require($this->directories['template'] . '/frontend-view.php');
-		//return $cb_catalog;
+		ob_start();
+		include $this->directories['template'] . '/frontend-view.php';
+		return ob_get_clean();
 	}
 	
 	
@@ -287,12 +289,6 @@ class CataBlog {
 
 	
 
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -331,14 +327,18 @@ class CataBlog {
 	
 	
 	private function install_options() {
-		$options = array();
-		$options['db-version']       = $this->db_version;
-		$options['dir-version']      = $this->dir_version;
-		$options['thumbnail-size']   = $this->default_thumbnail_size;
-		$options['image-size']       = $this->default_image_size;
-		$options['background-color'] = $this->default_bg_color;
-		
-		update_option($this->options_name, $options);
+		if ($this->options == false) {
+			$options = array();
+			$options['db-version']        = $this->db_version;
+			$options['dir-version']       = $this->dir_version;
+			$options['thumbnail-size']    = $this->default_thumbnail_size;
+			$options['image-size']        = $this->default_image_size;
+			$options['background-color']  = $this->default_bg_color;
+			$options['paypal-email']      = "";
+			$options['keep-aspect-ratio'] = false;
+			
+			update_option($this->options_name, $options);
+		}
 	}
 	
 	private function install_database() {
@@ -409,11 +409,12 @@ class CataBlog {
 	
 	
 	
-
-	
-	
 	
 
+	
+	
+	
+	
 	
 	
 	
@@ -487,7 +488,6 @@ class CataBlog {
 		$link  = trim($escaped_post['link']);
 		$desc  = trim($escaped_post['description']);
 		$tags  = trim($escaped_post['tags']);
-		$order = trim($escaped_post['order']);
 		$price = trim($escaped_post['price']);
 		$code  = trim($escaped_post['product_code']);
 		
@@ -510,10 +510,6 @@ class CataBlog {
 				return false;
 			}
 		}
-		// if (is_numeric($order) === false) {
-		// 	$this->wp_error("The order must be a whole number");
-		// 	return false;
-		// }
 		
 		
 		if ($new_image) {
@@ -529,16 +525,16 @@ class CataBlog {
 			// old entry, need to update row
 			$id = $_REQUEST['id'];
 			if ($new_image) {
-				$this->wpdb->update($table, array('order'=>$order, 'image'=>$image_name, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags, 'price'=>$price, 'product_code'=>$code), array('id'=>$id), array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s'), array('%d'));
+				$this->wpdb->update($table, array('image'=>$image_name, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags, 'price'=>$price, 'product_code'=>$code), array('id'=>$id), array('%s', '%s', '%s', '%s', '%s', '%d', '%s'), array('%d'));
 			}
 			else {
-				$this->wpdb->update($table, array('order'=>$order, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags, 'price'=>$price, 'product_code'=>$code), array('id'=>$id), array('%d', '%s', '%s', '%s', '%s', '%d', '%s'), array('%d'));
+				$this->wpdb->update($table, array('title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags, 'price'=>$price, 'product_code'=>$code), array('id'=>$id), array('%s', '%s', '%s', '%s', '%d', '%s'), array('%d'));
 			}
 			
 			$this->wp_message('Your Changes Have Been Saved');
 		} else {
 			// new entry, need to insert row
-			$this->wpdb->insert($table, array('order'=>$order, 'image'=>$image_name, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags), array('%d', '%s', '%s', '%s', '%s', '%s'));
+			$this->wpdb->insert($table, array('order'=>0, 'image'=>$image_name, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags, 'price'=>$price, 'product_code'=>$code), array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s'));
 			$this->wp_message('New Catalog Item Added');
 		}
 		
@@ -648,6 +644,10 @@ class CataBlog {
 			$this->generate_thumbnail($file, $filepath, true);
 		}
 	}
+	
+	
+	
+	
 	
 	
 	

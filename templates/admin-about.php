@@ -30,7 +30,7 @@
 	
 	<p>
 		<a href="#reset" class="button" id="button-reset">Reset</a>
-		<small>Clears out your entire catalog, deleting all photos and data permanently. Sometimes you can use this to fix an improper install.</small>
+		<small>Reset your entire catalog, deleting all photos and custom data permanently. Sometimes you can use this to fix an improper install.</small>
 	</p>
 	
 </div>
