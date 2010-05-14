@@ -29,6 +29,14 @@ New Features:
 
 == Frequently Asked Questions ==
 
+= What browsers do you support =
+
+The CataBlog Admin section is made to work best with these browsers:
+1 Internet Explorer 8+
+1 FireFox 2+
+1 Opera 10+
+1 Safari & Chrome
+
 = I installed CataBlog, now where is it? =
 
 Look for the CataBlog section in your WordPress admin section either at the very bottom of the left hand menu or underneath the comments section.
@@ -39,11 +47,16 @@ Login to the Admin section of your WordPress blog and go to the CataBlog section
 
 == Changelog ==
 
+= 0.8.0 =
+* Stable release candidate
+* PayPal support, give CataBlog items a price and product code to easily setup a store
+* Allow users to decide if they want the thumbnails to be a cropped version of the original
+
 = 0.7.6 =
 * Fixed readme.txt file so users will be warned of potential data loss when upgrading.
 
 = 0.7.5 =
-* Images now maintain their aspect ration and are no longer distorted when being resized.
+* Images now maintain their aspect ratio and are no longer distorted when being resized.
 * Background color for resized images can be set in the options page.
 * Catalog items can be reordered with a simple drag and drop interface.
 * Simplified the installation code to make future upgrades smoother.

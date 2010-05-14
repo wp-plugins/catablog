@@ -1,9 +1,13 @@
 <div class="wrap">
 	<div id="icon-catablog" class="icon32"><br /></div>
 	<h2>Manage CataBlog <a href="admin.php?page=catablog-new" class="button add-new-h2">Add New</a></h2>
-
+	
+	<div id="message" class="updated hide">
+		<strong>&nbsp;</strong>
+	</div>
+	
 	<form method="post" action="">	
-	<table id="catablog_items" class="widefat post fixed" cellspacing="0">
+	<table id="catablog_items" class="widefat post" cellspacing="0">
 		<thead>
 			<tr>
 				<?php /*<th class="manage-column column-cb check-column"><input type="checkbox" /></th>*/?>
@@ -13,6 +17,10 @@
 				<th class="manage-column">Link</th>
 				<th class="manage-column">Description</th>
 				<th class="manage-column">Tags</th>
+				<?php if (mb_strlen($this->options['paypal-email']) > 0): ?>
+					<th class="manage-column">Price</th>
+					<th class="manage-column">Product Code</th>
+				<?php endif ?>
 			</tr>
 		</thead>
 		<tfoot>
@@ -24,6 +32,10 @@
 				<th class="manage-column">Link</th>
 				<th class="manage-column">Description</th>
 				<th class="manage-column">Tags</th>
+				<?php if (mb_strlen($this->options['paypal-email']) > 0): ?>
+					<th class="manage-column">Price</th>
+					<th class="manage-column">Product Code</th>
+				<?php endif ?>
 			</tr>
 		</tfoot>
 		
@@ -56,6 +68,10 @@
 					<td><?php echo htmlspecialchars($result->link, ENT_QUOTES, 'UTF-8') ?></td>
 					<td><?php echo nl2br(htmlspecialchars($result->description, ENT_QUOTES, 'UTF-8')) ?></td>
 					<td><?php echo htmlspecialchars($result->tags, ENT_QUOTES, 'UTF-8') ?></td>
+					<?php if (mb_strlen($this->options['paypal-email']) > 0): ?>
+						<td><?php echo htmlspecialchars($result->price, ENT_QUOTES, 'UTF-8') ?></td>
+						<td><?php echo htmlspecialchars($result->product_code, ENT_QUOTES, 'UTF-8') ?></td>
+					<?php endif ?>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>
@@ -67,6 +83,7 @@
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
 		$("#catablog_items tbody").sortable({
+			forcePlaceholderSize: true,
 			axis: 'y',
 			handle: 'span.cb_item_handle',
 			opacity: 0.7,
@@ -83,8 +100,13 @@
 					'ids[]':    ids
 				}
 				
-				$.post(ajaxurl, params, function(data) {
-					//console.log(data);
+				$('#message').show();
+				$('#message strong').html('Saving New Order...');
+				$.post(ajaxurl, params, function(data) {	
+					$('#message strong').html('New Order Saved');
+					setTimeout(function() {
+						$('#message').hide(1000);
+					}, 4000);
 				});
 				
 			}

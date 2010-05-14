@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.7.5";
+	private $version     = "0.8";
 	private $dir_version = 1;
 	private $db_version  = 3;
 	private $debug       = false;
@@ -77,6 +77,8 @@ class CataBlog {
 		
 		//ajax actions
 		add_action('wp_ajax_catablog_reorder', array($this, 'ajax_reorder_items'));
+		add_action('wp_ajax_catablog_reset', array($this, 'ajax_reset_all'));
+		// add_action('wp_ajax_catablog_recalc_thumbs', array($this, 'ajax_recalc_thumbs'));
 		
 		// frontend actions
 		add_action('wp_head', array(&$this, 'frontend_head'));
@@ -90,14 +92,19 @@ class CataBlog {
 	**  Admin Panel Integration Points
 	**********************************************/
 	public function admin_head() {
-		wp_enqueue_script('jquery');
-		wp_enqueue_script('jquery-ui-core');
-		wp_enqueue_script('jquery-ui-sortable');
+		wp_deregister_script('jquery');
+		wp_deregister_script('jquery-ui');
+		
+		wp_register_script('jquery', $this->urls['javascript'].'/jquery-1.4.2.min.js');
+		
+		// wp_enqueue_script('jquery-ui-core');
+		// wp_enqueue_script('jquery-ui-sortable');
+		wp_enqueue_script('jquery-ui', $this->urls['javascript'] . '/jquery-ui-1.8.1.custom.min.js');
 		wp_enqueue_script('jpicker', $this->urls['javascript'] . '/jpicker-1.1.2.min.js');
 		wp_enqueue_script('catablog-admin-js', $this->urls['javascript'] . '/catablog-admin.js');
 		
 		wp_enqueue_style('catablog-admin-css', $this->urls['css'] . '/catablog-admin.css');
-		wp_enqueue_style('jpicker-css', $this->urls['css'] . '/jPicker.css');
+		wp_enqueue_style('jquery-ui-lightness', $this->urls['css'] . '/ui-lightness/jquery-ui-1.8.1.custom.css');
 	}
 	
 	public function admin_menu() {
@@ -105,6 +112,7 @@ class CataBlog {
 		add_submenu_page('catablog-edit', "Edit CataBlog", 'Edit', $this->user_level, 'catablog-edit', array(&$this, 'admin_list'));
 		add_submenu_page('catablog-edit', "Add New CataBlog", 'Add New', $this->user_level, 'catablog-new', array(&$this, 'admin_item'));
 		add_submenu_page('catablog-edit', "CataBlog Options", 'Options', $this->user_level, 'catablog-options', array(&$this, 'admin_options'));
+		add_submenu_page('catablog-edit', 'About CataBlog', 'About', $this->user_level, 'catablog-about', array(&$this, 'admin_about'));
 	}
 	
 	
@@ -156,18 +164,53 @@ class CataBlog {
 	public function admin_options() {
 		if (isset($_POST['save'])) {
 			if (true) {
+				$recalculate_thumbnails = false;
+				
+				$image_size_different   = $_REQUEST['image_size'] != $this->options['thumbnail-size'];
+				$bg_color_different     = $_REQUEST['bg_color'] != $this->options['background-color'];
+				$keep_ratio_different   = $_REQUEST['keep_aspect_ratio'] != $this->options['keep-aspect-ratio'];
+				if ($image_size_different || $bg_color_different || $keep_ratio_different) {
+					$recalculate_thumbnails = true;
+				}
+				
 				$this->options['thumbnail-size'] = $_REQUEST['image_size'];
 				$this->options['background-color'] = $_REQUEST['bg_color'];
+				$this->options['paypal-email'] = $_REQUEST['paypal_email'];
+				$this->options['keep-aspect-ratio'] = $_REQUEST['keep_aspect_ratio'];
 				update_option($this->options_name, $this->options);
+				
+				if ($recalculate_thumbnails) {
+					$this->regenerate_all_thumbnails();
+				}
 				
 				$this->wp_message("CataBlog Options Saved");
 			}
 		}
 		
-		$thumbnail_size = $this->options['thumbnail-size'];
-		$background_color = $this->options['background-color'];
+		$thumbnail_size    = $this->options['thumbnail-size'];
+		$background_color  = $this->options['background-color'];
+		$paypal_email      = $this->options['paypal-email'];
+		$keep_aspect_ratio = $this->options['keep-aspect-ratio'];
 		
 		require($this->directories['template'] . '/admin-options.php');
+	}
+	
+	public function admin_about() {
+		$thumb_dir    = new CataBlog_Directory($this->directories['thumbnails']);
+		$original_dir = new CataBlog_Directory($this->directories['originals']);
+		$thumbnail_size = $thumb_dir->getDirectorySize() / (1024 * 1024);
+		$original_size  = $original_dir->getDirectorySize() / (1024 * 1024);
+		
+		$stats = array();
+		$stats['CataBlog Version']  = $this->version;
+		$stats['System Versions']    = apache_get_version();
+		$stats['PHP_Memory']        = (memory_get_peak_usage(true) / (1024 * 1024)) . " MB";
+		$stats['MySQL_Version']     = $this->wpdb->get_var("SELECT version()");
+		$stats['Thumbnail_Disc_Usage'] = round($thumbnail_size, 2) . " MB";
+		$stats['Original_Upload_Disc_Usage'] = round($original_size, 2) . " MB";
+		$stats['Total_Library_Disc_Usage'] = round(($thumbnail_size + $original_size), 2) . " MB";
+		
+		require($this->directories['template'] . '/admin-about.php');
 	}
 	
 	
@@ -176,7 +219,6 @@ class CataBlog {
 	**  Admin Panel AJAX Actions
 	**********************************************/
 	public function ajax_reorder_items() {
-		// $t = microtime(true);
 		check_ajax_referer('catablog-reorder', 'security');
 		
 		$ids    = $_POST['ids'];
@@ -186,7 +228,27 @@ class CataBlog {
 			$this->wpdb->update($this->db_table, array('order'=>$i), array('id'=>$ids[$i]), array('%d'), array('%d'));
 		}
 		
-		// echo "time: " . (microtime(true) - $t);
+		die();
+	}
+	
+	public function ajax_reset_all() {
+		check_ajax_referer('catablog-reset', 'security');
+		
+		$this->remove_legacy_data();
+		$this->remove_options();
+		$this->remove_database();
+		$this->remove_directories();
+		
+		$this->install_options();
+		$this->install_database();
+		$this->install_directories();
+		
+		die();
+	}
+	
+	public function ajax_recalc_thumbs() {
+		check_ajax_referer('catablog-recalc-thumbs', 'security');
+		$this->regenerate_all_thumbnails();
 		die();
 	}
 	
@@ -426,6 +488,8 @@ class CataBlog {
 		$desc  = trim($escaped_post['description']);
 		$tags  = trim($escaped_post['tags']);
 		$order = trim($escaped_post['order']);
+		$price = trim($escaped_post['price']);
+		$code  = trim($escaped_post['product_code']);
 		
 		$new_image  = $_FILES['image']['error'] != 4;
 		$image_name = sanitize_title($title) . "-" . time() . ".jpg";
@@ -440,6 +504,12 @@ class CataBlog {
 			$this->wp_error('The title can not be more then 200 characters long');
 			return false;
 		}
+		if (mb_strlen($price) > 0) {
+			if (is_numeric($price) == false || $price < 0) {
+				$this->wp_error('The item price must be a positive integer');
+				return false;
+			}
+		}
 		// if (is_numeric($order) === false) {
 		// 	$this->wp_error("The order must be a whole number");
 		// 	return false;
@@ -447,9 +517,11 @@ class CataBlog {
 		
 		
 		if ($new_image) {
-			if ($this->generate_thumbnail($image_name) === false) {
+			$upload = $_FILES['image']['tmp_name'];
+			if ($this->generate_thumbnail($image_name, $upload) === false) {
 				return false;
 			}
+			move_uploaded_file($upload, $this->directories['originals'] . "/$image_name");
 		}
 		
 		
@@ -457,10 +529,10 @@ class CataBlog {
 			// old entry, need to update row
 			$id = $_REQUEST['id'];
 			if ($new_image) {
-				$this->wpdb->update($table, array('order'=>$order, 'image'=>$image_name, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags), array('id'=>$id), array('%d', '%s', '%s', '%s', '%s', '%s'), array('%d'));
+				$this->wpdb->update($table, array('order'=>$order, 'image'=>$image_name, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags, 'price'=>$price, 'product_code'=>$code), array('id'=>$id), array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s'), array('%d'));
 			}
 			else {
-				$this->wpdb->update($table, array('order'=>$order, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags), array('id'=>$id), array('%d', '%s', '%s', '%s', '%s'), array('%d'));
+				$this->wpdb->update($table, array('order'=>$order, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags, 'price'=>$price, 'product_code'=>$code), array('id'=>$id), array('%d', '%s', '%s', '%s', '%s', '%d', '%s'), array('%d'));
 			}
 			
 			$this->wp_message('Your Changes Have Been Saved');
@@ -481,12 +553,14 @@ class CataBlog {
 	
 	
 	
-	private function generate_thumbnail($image_name) {
-		$tmp = $_FILES['image']['tmp_name'];
+	private function generate_thumbnail($image_name, $image_path, $bypass=false) {
+				
+		$tmp = $image_path;
 		$filepath_thumb    = $this->directories['thumbnails'] . "/$image_name";
 		$filepath_original = $this->directories['originals'] . "/$image_name";
 
-		if (is_uploaded_file($tmp)) {
+		
+		if (is_uploaded_file($tmp) || $bypass) {
 			
 			list($width, $height, $format) = getimagesize($tmp);
 			$canvas_size = $this->options['thumbnail-size'];
@@ -521,35 +595,60 @@ class CataBlog {
 			
 			$x_offset = 0;
 			$y_offset = 0;
-			if ($height > $width) {    // resize to the height
-				$ratio      = $canvas_size / $height;
-				$new_height = $height * $ratio;
-				$new_width  = $width * $ratio;
-				$x_offset   = ($canvas_size - $new_width) / 2;
+			if ($this->options['keep-aspect-ratio']) {
+				if ($height > $width) {    // resize to the height
+					$ratio      = $canvas_size / $height;
+					$new_height = $height * $ratio;
+					$new_width  = $width * $ratio;
+					$x_offset   = ($canvas_size - $new_width) / 2;
+				}
+				else {    // resize to the width
+					$ratio      = $canvas_size / $width;
+					$new_height = $height * $ratio;
+					$new_width  = $width * $ratio;
+					$y_offset   = ($canvas_size - $new_height) / 2;
+				}
 			}
-			else {    // resize to the width
-				$ratio      = $canvas_size / $width;
-				$new_height = $height * $ratio;
-				$new_width  = $width * $ratio;
-				$y_offset   = ($canvas_size - $new_height) / 2;
+			else {
+				if ($height > $width) {    // resize to the height
+					$ratio      = $canvas_size / $width;
+					$new_height = $height * $ratio;
+					$new_width  = $width * $ratio;
+					$y_offset   = ($canvas_size - $new_height) / 2;
+				}
+				else {    // resize to the width
+					$ratio      = $canvas_size / $height;
+					$new_height = $height * $ratio;
+					$new_width  = $width * $ratio;
+					$x_offset   = ($canvas_size - $new_width) / 2;
+				}
 			}
+			
 			
 			if ($this->debug) {
 				echo "offset: $x_offset, $y_offset<br>width: $width, $new_width<br>height: $height, $new_height";
 			}
 			
 			imagecopyresampled($canvas, $upload, $x_offset, $y_offset, 0, 0, $new_width, $new_height, $width, $height);
-			
 			imagejpeg($canvas, $filepath_thumb, 80);	
-			move_uploaded_file($tmp, $filepath_original);
+			
 		}
 		else {
-			$this->wp_error('Image Error: None Supported Format');
+			$this->wp_error('Image Error: Image Not Uploaded Correctly');
 			$_REQUEST['image'] = $_REQUEST['saved_image'];
 			
 			return false;
 		}
 	}
+	
+	private function regenerate_all_thumbnails() {
+		$dir = new CataBlog_Directory($this->directories['originals']);
+		foreach ($dir->getFileArray() as $file) {
+			$filepath = $this->directories['originals'] . "/" . $file;
+			$this->generate_thumbnail($file, $filepath, true);
+		}
+	}
+	
 	
 	
 	

@@ -12,12 +12,6 @@
 			<input type="file" name="image" id="image" size="20" />
 		</p>
 		
-		<?php /*
-		<label for="order">Order:</label><br />
-		<input type="text" name="order" id="order" size="5" value="<?php echo htmlspecialchars($result['order'], ENT_QUOTES, 'UTF-8') ?>" />
-		<br /><br />
-		*/ ?>
-		
 		<label for="title">Title:</label><br />
 		<input type="text" name="title" id="title" size="50" maxlength="200" value="<?php echo htmlspecialchars($result['title'], ENT_QUOTES, 'UTF-8') ?>" />
 		<br /><br />
@@ -33,6 +27,16 @@
 		<label for="description">Description:</label><br />
 		<textarea name="description" id="description" cols="45" rows="6"><?php echo htmlspecialchars($result['description'], ENT_QUOTES, 'UTF-8') ?></textarea>
 		<br /><br />
+		
+		<?php if (mb_strlen($this->options['paypal-email']) > 0): ?>
+			<label for="price">Item Price:</label><br />
+			<input type="text" name="price" id="price" size="10" value="<?php echo htmlspecialchars($result['price'], ENT_QUOTES, 'UTF-8') ?>">
+			<br /><br />
+			
+			<label for="product_code">Product Code:</label><br />
+			<input type="text" name="product_code" id="product_code" size="50" value="<?php echo htmlspecialchars($result['product_code'], ENT_QUOTES, 'UTF-8') ?>">
+			<br /><br />
+		<?php endif ?>
 		
 		<input type="hidden" id="save" name="save" value="yes" />
 		<?php if (isset($_REQUEST['id'])): ?>
