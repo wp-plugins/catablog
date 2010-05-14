@@ -1,25 +1,23 @@
 === CataBlog ===
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.net/donate/
-Tags: catalog, discography, library, collection, organize, media, images, products, rolodex, manifests, listing, list
+Tags: plugin, admin, catalog, discography, library, collection, paypal, organize, media, image, photo, thumbnail, product, rolodex, manifest, listing, list, gallery
 Requires at least: 2.9
 Tested up to: 2.9.2
 Stable tag: 0.7.6
 
-CataBlog allows you to create a catalog of "items" in your blog.
+CataBlog allows you to create catalogs for your blog.
 
 == Description ==
 
-WARNING: Upon upgrading to this version you will destroy all your previously saved CataBlog data. Please back it up as necessary.
+WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
 
-CataBlog allows you to catalog pretty much any item you would want and share it through your blog. Upload an images and then give it a title, link, description and tags. Simple easy design makes it child's play  to keep track of all your different catalogs.
+CataBlog allows you to catalog pretty much anything you would want and share it through your blog. Upload an images and then give it a title, link, description. Use tags to organize your catalog items into multiple catalogs. Simple easy design makes it child's play  to keep track of all your different catalogs.
 
 New Features:
-* Images now maintain their aspect ration and are no longer distorted when being resized.
-* Background color for resized images can be set in the options page.
-* Catalog items can be reordered with a simple drag and drop interface.
-* Simplified the installation code to make future upgrades smoother.
-* More small tweaks, enhancements and bug fixes.
+* Stable release candidate
+* PayPal support, give CataBlog items a price and product code to easily setup a store.
+* Allow users to decide if they want the thumbnails to be a cropped version of the original.
 
 == Installation ==
 
@@ -49,8 +47,8 @@ Login to the Admin section of your WordPress blog and go to the CataBlog section
 
 = 0.8.0 =
 * Stable release candidate
-* PayPal support, give CataBlog items a price and product code to easily setup a store
-* Allow users to decide if they want the thumbnails to be a cropped version of the original
+* PayPal support, give CataBlog items a price and product code to easily setup a store.
+* Allow users to decide if they want the thumbnails to be a cropped version of the original.
 
 = 0.7.6 =
 * Fixed readme.txt file so users will be warned of potential data loss when upgrading.
@@ -76,8 +74,17 @@ Login to the Admin section of your WordPress blog and go to the CataBlog section
 
 == Upgrade Notice ==
 
+= 0.8.0 =
+
+WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
+
+= 0.7.6 =
+
+WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
+
 = 0.7.5 =
-WARNING: Upon upgrading to this version all your previously saved CataBlog data will be destroyed. Please back up your information and pictures as necessary.
+
+WARNING: If you upgrade to this version you will destroy all previously saved CataBlog data. Please back it up as necessary.
 
 == Arbitrary section ==
 
