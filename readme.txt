@@ -15,9 +15,10 @@ WARNING: If you are upgrading to this version from a version prior to 0.7.5 you 
 CataBlog allows you to catalog pretty much anything you would want and share it through your blog. Upload an images and then give it a title, link, description. Use tags to organize your catalog items into multiple catalogs. Simple easy design makes it child's play  to keep track of all your different catalogs.
 
 New Features:
+
 * Stable release candidate
 * PayPal support, give CataBlog items a price and product code to easily setup a store.
-* Allow users to decide if they want the thumbnails to be a cropped version of the original.
+* Many new thumbnail generator options such as: cropping, background color, alpha transparency and more.
 
 == Installation ==
 
