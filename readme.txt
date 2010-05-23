@@ -10,6 +10,8 @@ CataBlog allows you to create catalogs for your blog.
 
 == Description ==
 
+ATTENTION: This version fixes a crucial memory leak, please make sure to upgrade to it immediately if you are using a version above 0.7.5, thanks.
+
 WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
 
 CataBlog allows you to catalog pretty much anything you would want and share it through your blog. Upload an images and then give it a title, link, description. Use tags to organize your catalog items into multiple catalogs. Simple easy design makes it child's play  to keep track of all your different catalogs.
@@ -17,6 +19,7 @@ CataBlog allows you to catalog pretty much anything you would want and share it 
 New Features:
 
 * Stable release candidate
+* Efficient with system resources
 * PayPal support, give CataBlog items a price and product code to easily setup a store.
 * Many new thumbnail generator options such as: cropping, background color, alpha transparency and more.
 
@@ -46,7 +49,15 @@ Look for the CataBlog section in your WordPress admin section either at the very
 
 Login to the Admin section of your WordPress blog and go to the CataBlog section by clicking its icon right below the comments section. Now you can click "Add New" next to the page title or in the CataBlog menu section.
 
+= Where can I learn more about CataBlog? =
+
+goto http://catablog.illproductions.net and read the documentation.
+
 == Changelog ==
+
+= 0.8.1 =
+* Memory leak fix, the plugin is much efficient with system resources and memory.
+* Now the plugin automatically creates the wp-content/uploads directory on installation if it doesn't exist.
 
 = 0.8 =
 * Stable release candidate
@@ -77,6 +88,10 @@ Login to the Admin section of your WordPress blog and go to the CataBlog section
 * This version is the initial release.
 
 == Upgrade Notice ==
+
+= 0.8.1 =
+
+ATTENTION: Please upgrade to this version immediately, a bug that let the plugin slowly use all your system RAM has been fixed. The plugin is much more efficient.
 
 = 0.8.0 =
 

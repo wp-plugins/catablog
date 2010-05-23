@@ -13,7 +13,6 @@ class CataBlog {
 	private $debug       = false;
 	
 	// wordpress database object and options
-	private $wpdb         = null;
 	private $options      = array();
 	private $options_name = 'catablog-options';
 	
@@ -34,9 +33,8 @@ class CataBlog {
 	
 	public function __construct() {
 		
-		// embed the wp database class into the plugin class
 		global $wpdb;
-		$this->wpdb = $wpdb;
+		
 		$this->db_table = $wpdb->prefix . $this->db_table;
 		
 		// get plugin options from wp database
@@ -46,6 +44,7 @@ class CataBlog {
 		$this->plugin_file               = WP_CONTENT_DIR . "/plugins/catablog/catablog.php";
 		$this->directories['plugin']     = WP_CONTENT_DIR . "/plugins/catablog";
 		$this->directories['template']   = WP_CONTENT_DIR . "/plugins/catablog/templates";
+		$this->directories['wp_uploads'] = WP_CONTENT_DIR . "/uploads";
 		$this->directories['uploads']    = WP_CONTENT_DIR . "/uploads/catablog";
 		$this->directories['thumbnails'] = WP_CONTENT_DIR . "/uploads/catablog/thumbnails";
 		$this->directories['originals']  = WP_CONTENT_DIR . "/uploads/catablog/originals";
@@ -198,6 +197,8 @@ class CataBlog {
 	}
 	
 	public function admin_about() {
+		global $wpdb;
+		
 		$thumb_dir    = new CataBlog_Directory($this->directories['thumbnails']);
 		$original_dir = new CataBlog_Directory($this->directories['originals']);
 		$thumbnail_size = $thumb_dir->getDirectorySize() / (1024 * 1024);
@@ -207,7 +208,7 @@ class CataBlog {
 		$stats['CataBlog Version']  = $this->version;
 		$stats['System Versions']    = apache_get_version();
 		$stats['PHP_Memory']        = (memory_get_peak_usage(true) / (1024 * 1024)) . " MB";
-		$stats['MySQL_Version']     = $this->wpdb->get_var("SELECT version()");
+		$stats['MySQL_Version']     = $wpdb->get_var("SELECT version()");
 		$stats['Thumbnail_Disc_Usage'] = round($thumbnail_size, 2) . " MB";
 		$stats['Original_Upload_Disc_Usage'] = round($original_size, 2) . " MB";
 		$stats['Total_Library_Disc_Usage'] = (round($thumbnail_size, 2) + round($original_size, 2)) . " MB";
@@ -221,13 +222,15 @@ class CataBlog {
 	**  Admin Panel AJAX Actions
 	**********************************************/
 	public function ajax_reorder_items() {
+		global $wpdb;
+		
 		check_ajax_referer('catablog-reorder', 'security');
 		
 		$ids    = $_POST['ids'];
 		$length = count($ids);
 		
 		for ($i=0; $i < $length; $i++) {
-			$this->wpdb->update($this->db_table, array('order'=>$i), array('id'=>$ids[$i]), array('%d'), array('%d'));
+			$wpdb->update($this->db_table, array('order'=>$i), array('id'=>$ids[$i]), array('%d'), array('%d'));
 		}
 		
 		die();
@@ -248,11 +251,11 @@ class CataBlog {
 		die();
 	}
 	
-	public function ajax_recalc_thumbs() {
-		check_ajax_referer('catablog-recalc-thumbs', 'security');
-		$this->regenerate_all_thumbnails();
-		die();
-	}
+	// public function ajax_recalc_thumbs() {
+	// 	check_ajax_referer('catablog-recalc-thumbs', 'security');
+	// 	$this->regenerate_all_thumbnails();
+	// 	die();
+	// }
 	
 	
 	
@@ -297,12 +300,14 @@ class CataBlog {
 	
 	
 	public function activate() {
+		global $wpdb;
+		
 		$options  = get_option($this->options_name);
 		$table = $this->db_table;
 		
 		$this->remove_legacy_data();
 		
-		if($this->wpdb->get_var("show tables like '$table'") != $table) {
+		if($wpdb->get_var("show tables like '$table'") != $table) {
 			// no table present, maybe do something
 		}
 		
@@ -353,7 +358,7 @@ class CataBlog {
 	}
 	
 	private function install_directories() {
-		$dirs = array(0=>'uploads', 1=>'thumbnails', 2=>'originals');
+		$dirs = array(0=>'wp_uploads', 1=>'uploads', 2=>'thumbnails', 3=>'originals');
 		
 		foreach ($dirs as $dir) {
 			$is_dir  = is_dir($this->directories[$dir]);
@@ -371,9 +376,11 @@ class CataBlog {
 	}
 	
 	private function remove_database() {
+		global $wpdb;
+		
 		$table = $this->db_table;
 		$drop = "DROP TABLE $table";
-		$this->wpdb->query($drop);
+		$wpdb->query($drop);
 	}
 	
 	private function remove_directories() {
@@ -398,6 +405,8 @@ class CataBlog {
 	}
 	
 	private function remove_legacy_data() {
+		global $wpdb;
+		
 		// remove legacy options
 		delete_option('image_size');
 		delete_option('catablog_db_version');
@@ -407,9 +416,9 @@ class CataBlog {
 		// remove legacy database tables
 		$tables = array('disc_history', 'catablog');
 		foreach ($tables as $table) {
-			$table = $this->wpdb->prefix . $table;
+			$table = $wpdb->prefix . $table;
 			$drop  = "DROP TABLE $table";
-			$this->wpdb->query($drop);
+			$wpdb->query($drop);
 		}
 	}
 	
@@ -446,30 +455,36 @@ class CataBlog {
 	}
 	
 	private function get_items($tag=false) {
+		global $wpdb;
+		
 		$table = $this->db_table;
 		$tag;
 		if ($tag) {
-			$query = $this->wpdb->prepare("SELECT * FROM `$table` WHERE `tags` LIKE %s ORDER BY `order`", array('%s'=>"%$tag%"));
+			$query = $wpdb->prepare("SELECT * FROM `$table` WHERE `tags` LIKE %s ORDER BY `order`", array('%s'=>"%$tag%"));
 		}
 		else {
-			$query = $this->wpdb->prepare("SELECT * FROM $table ORDER BY `order`", array());
+			$query = $wpdb->prepare("SELECT * FROM $table ORDER BY `order`", array());
 		}
 				
-		return $this->wpdb->get_results($query);
+		return $wpdb->get_results($query);
 	}
 	
 	private function get_item($id) {
+		global $wpdb;
+		
 		$table = $this->db_table;
-		$query = $this->wpdb->prepare("SELECT * FROM $table WHERE `id`=%d", $id);
-		return $this->wpdb->get_row($query, ARRAY_A);
+		$query = $wpdb->prepare("SELECT * FROM $table WHERE `id`=%d", $id);
+		return $wpdb->get_row($query, ARRAY_A);
 	}
 	
 	private function delete_item($id) {
+		global $wpdb;
+		
 		$table = $this->db_table;
 		
 		// delete images
-		$query = $this->wpdb->prepare("SELECT image FROM $table WHERE `id`=%d", $id);
-		$db_filename = $this->wpdb->get_var($query);
+		$query = $wpdb->prepare("SELECT image FROM $table WHERE `id`=%d", $id);
+		$db_filename = $wpdb->get_var($query);
 		
 		$dirs = array('originals', 'thumbnails');
 		foreach ($dirs as $dir) {
@@ -479,12 +494,13 @@ class CataBlog {
 			}			
 		}
 		
-		$query = $this->wpdb->prepare("DELETE FROM $table WHERE `id`=%d;", $id);
-		$this->wpdb->query($query);
-		$this->wpdb->flush();
+		$query = $wpdb->prepare("DELETE FROM $table WHERE `id`=%d;", $id);
+		$wpdb->query($query);
+		$wpdb->flush();
 	}
 	
 	private function save_item() {
+		global $wpdb;
 		
 		// Set variables from $_POST and $_FILE
 		$escaped_post = array_map('stripslashes_deep', $_POST);
@@ -531,16 +547,16 @@ class CataBlog {
 			// old entry, need to update row
 			$id = $_REQUEST['id'];
 			if ($new_image) {
-				$this->wpdb->update($table, array('image'=>$image_name, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags, 'price'=>$price, 'product_code'=>$code), array('id'=>$id), array('%s', '%s', '%s', '%s', '%s', '%d', '%s'), array('%d'));
+				$wpdb->update($table, array('image'=>$image_name, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags, 'price'=>$price, 'product_code'=>$code), array('id'=>$id), array('%s', '%s', '%s', '%s', '%s', '%d', '%s'), array('%d'));
 			}
 			else {
-				$this->wpdb->update($table, array('title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags, 'price'=>$price, 'product_code'=>$code), array('id'=>$id), array('%s', '%s', '%s', '%s', '%d', '%s'), array('%d'));
+				$wpdb->update($table, array('title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags, 'price'=>$price, 'product_code'=>$code), array('id'=>$id), array('%s', '%s', '%s', '%s', '%d', '%s'), array('%d'));
 			}
 			
 			$this->wp_message('Your Changes Have Been Saved');
 		} else {
 			// new entry, need to insert row
-			$this->wpdb->insert($table, array('order'=>0, 'image'=>$image_name, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags, 'price'=>$price, 'product_code'=>$code), array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s'));
+			$wpdb->insert($table, array('order'=>0, 'image'=>$image_name, 'title'=>$title, 'link'=>$link, 'description'=>$desc, 'tags'=>$tags, 'price'=>$price, 'product_code'=>$code), array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s'));
 			$this->wp_message('New Catalog Item Added');
 		}
 		
