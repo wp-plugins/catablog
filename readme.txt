@@ -56,8 +56,8 @@ goto http://catablog.illproductions.net and read the documentation.
 == Changelog ==
 
 = 0.8.1 =
-* Memory leak fix, the plugin is much efficient with system resources and memory.
-* Now the plugin automatically creates the wp-content/uploads directory on installation if it doesn't exist.
+* Memory leak fix, the plugin is more efficient with system resources and memory.
+* Now the plugin automatically creates the wp-content/uploads directory on installation if it doesn't already exist.
 
 = 0.8 =
 * Stable release candidate
