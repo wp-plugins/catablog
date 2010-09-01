@@ -1,6 +1,10 @@
 <div class="wrap">
 	<div id="icon-catablog" class="icon32"><br /></div>
-	<h2>Manage CataBlog <a href="admin.php?page=catablog-new" class="button add-new-h2">Add New</a></h2>
+	<h2>
+		<span>Manage CataBlog</span>
+		<a href="admin.php?page=catablog-new" class="button add-new-h2">Add New</a>
+		<a href="#sort" id="enable_sort" class="button add-new-h2">Change Order</a>
+	</h2>
 	
 	<div id="message" class="updated hide">
 		<strong>&nbsp;</strong>
@@ -11,7 +15,7 @@
 		<thead>
 			<tr>
 				<?php /*<th class="manage-column column-cb check-column"><input type="checkbox" /></th>*/?>
-				<th class="manage-column cb_order_column"></th>
+				<?php /*<th class="manage-column cb_order_column"></th>*/?>
 				<th class="manage-column cb_icon_column">Image</th>
 				<th class="manage-column">Title</th>
 				<th class="manage-column">Link</th>
@@ -26,7 +30,7 @@
 		<tfoot>
 			<tr>
 				<?php /*><th class="manage-column column-cb check-column"><input type="checkbox" /></th>*/?>
-				<th class="manage-column cb_order_column"></th>
+				<?php /*<th class="manage-column cb_order_column"></th>*/?>
 				<th class="manage-column cb_icon_column">Image</th>
 				<th class="manage-column">Title</th>
 				<th class="manage-column">Link</th>
@@ -50,11 +54,13 @@
 				<?php $remove = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-new&amp;action=remove&amp;id='.$result->id ?>
 				<tr>
 					<?php /*><th class="check-column"><input type="checkbox" /></th>*/?>
+					<?php /*
 					<td class="cb_order_column">
 						<span class="cb_item_handle" title="Drag To Reorder Items">&nbsp;</span>
-						<input type="hidden" name="catablog-item-id" value="<?php echo $result->id ?>" />
 					</td>
+					*/?>
 					<td class="cb_icon_column">
+						<input type="hidden" name="catablog-item-id" value="<?php echo $result->id ?>" />
 						<img src="<?php echo get_bloginfo('wpurl').'/wp-content/uploads/catablog/thumbnails/'.$result->image ?>" class="cb_item_icon" width="50" height="50" />
 					</td>
 					<td>
@@ -93,37 +99,57 @@
 		
 		
 		$("#catablog_items tbody").sortable({
+			disabled: true,
 			forcePlaceholderSize: true,
 			axis: 'y',
-			handle: 'span.cb_item_handle',
-			opacity: 0.7,
-			start: function(event, ui) {
-				clearTimeout(timer);
-			},
-			update: function(event, ui) {
-				var ids = [];
-				$('#catablog_items tbody tr').each(function(i) {
-					var id = $('td:first input', this).attr('value');
-					ids.push(id);
-				});
+			opacity: 0.7
+		});
+		
+		
+		$('#enable_sort').bind('click', function(event) {
+			var tbody = $('#catablog_items tbody');
+			if ($(this).hasClass('button-primary')) {
+				// lock the order
+				tbody.enableSelection();
+				tbody.removeClass('sort_enabled');
+				tbody.sortable('option', 'disabled', true);
 				
-				var params = {
-					'action':   'catablog_reorder',
-					'security': '<?php echo wp_create_nonce("catablog-reorder") ?>',
-					'ids[]':    ids
-				}
+				ajax_save_order();
 				
-				$('#message').show();
-				$('#message strong').html('Saving New Order...');
-				$.post(ajaxurl, params, function(data) {	
-					$('#message strong').html('New Order Saved');
-					timer = setTimeout(function() {
-						$('#message').hide(500);
-					}, 8000);
-				});
-				
+				$(this).html('Change Order').removeClass('button-primary');
+			}
+			else {
+				// enable DnD order changing
+				tbody.disableSelection();
+				tbody.addClass('sort_enabled')
+				tbody.sortable('option', 'disabled', false);
+
+				$(this).html('Save Order').addClass('button-primary');
 			}
 		});
-		$("#catablog_items tbody").disableSelection();
+		
+		function ajax_save_order() {
+			var ids = [];
+			$('#catablog_items tbody tr').each(function(i) {
+				var id = $('td:first input', this).attr('value');
+				ids.push(id);
+			});
+			
+			var params = {
+				'action':   'catablog_reorder',
+				'security': '<?php echo wp_create_nonce("catablog-reorder") ?>',
+				'ids[]':    ids
+			}
+			
+			$('#message').show();
+			$('#message strong').html('Saving New Order...');
+			$.post(ajaxurl, params, function(data) {
+				$('#message strong').html('New Order Saved');
+				timer = setTimeout(function() {
+					$('#message').hide(500);
+				}, 8000);
+			});
+		}
+		
 	});
 </script>

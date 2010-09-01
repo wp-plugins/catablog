@@ -1,27 +1,23 @@
 === CataBlog ===
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.net/donate/
-Tags: plugin, admin, catalog, discography, library, collection, paypal, organize, media, image, photo, thumbnail, product, rolodex, manifest, listing, list, gallery
+Tags: plugin, admin, catalog, gallery, discography, library, collection, paypal, organize, media, image, photo, thumbnail, product, rolodex, manifest, listing, list
 Requires at least: 2.9
-Tested up to: 2.9.2
+Tested up to: 3.0.1
 Stable tag: 0.8.1
 
-CataBlog allows you to create catalogs for your blog.
+CataBlog is a simple tool for creating catalogs and image galleries inside your blog.
 
 == Description ==
 
-ATTENTION: This version fixes a crucial memory leak, please make sure to upgrade to it immediately if you are using a version above 0.7.5, thanks.
-
-WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
-
-CataBlog allows you to catalog pretty much anything you would want and share it through your blog. Upload an images and then give it a title, link, description. Use tags to organize your catalog items into multiple catalogs. Simple easy design makes it child's play  to keep track of all your different catalogs.
+CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use tags to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too, now with the new `lightbox effect` which can be turned on in one simple step. Easy, intuitive design makes it child's play to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
 New Features:
 
-* Stable release candidate
-* Efficient with system resources
-* PayPal support, give CataBlog items a price and product code to easily setup a store.
-* Many new thumbnail generator options such as: cropping, background color, alpha transparency and more.
+* JavaScript Lightbox type effect can now be enabled for larger previews of your catalog item's thumbnails.
+* Catalog items are not sortable in the list view until you enter sort mode, helping stop accidental modifications.
+
+WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
 
 == Installation ==
 
@@ -43,17 +39,21 @@ The CataBlog Admin section is made to work best with these browsers:
 
 = I installed CataBlog, now where is it? =
 
-Look for the CataBlog section in your WordPress admin section either at the very bottom of the left hand menu or underneath the comments section.
+Look for CataBlog in your WordPress Admin Panel right underneath the Comments section.
 
 = How do I add a new item to my catalog? =
 
-Login to the Admin section of your WordPress blog and go to the CataBlog section by clicking its icon right below the comments section. Now you can click "Add New" next to the page title or in the CataBlog menu section.
+Login to the Admin Panel of your WordPress blog and go to the CataBlog section by clicking its icon right below the Comments section. Now you can click "Add New" next to the page title or in the CataBlog menu itself.
 
 = Where can I learn more about CataBlog? =
 
-goto http://catablog.illproductions.net and read the documentation.
+go to http://catablog.illproductions.net to learn more about CataBlog and its official documentation.
 
 == Changelog ==
+
+= 0.8.5 =
+* JavaScript Lightbox type effect can now be enabled for larger previews of your catalog item's thumbnails.
+* Catalog items are not sortable in the list view until you enter sort mode, helping stop accidental modifications.
 
 = 0.8.1 =
 * Memory leak fix, the plugin is more efficient with system resources and memory.
@@ -88,6 +88,12 @@ goto http://catablog.illproductions.net and read the documentation.
 * This version is the initial release.
 
 == Upgrade Notice ==
+
+= 0.8.5 =
+
+Relatively minor upgrade offering a new features that lets people enlarge your thumbnails with a lightbox style effect.
+
+WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
 
 = 0.8.1 =
 

@@ -7,8 +7,8 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.8.1";
-	private $dir_version = 2;
+	private $version     = "0.8.5";
+	private $dir_version = 3;
 	private $db_version  = 4;
 	private $debug       = false;
 	
@@ -47,6 +47,7 @@ class CataBlog {
 		$this->directories['wp_uploads'] = WP_CONTENT_DIR . "/uploads";
 		$this->directories['uploads']    = WP_CONTENT_DIR . "/uploads/catablog";
 		$this->directories['thumbnails'] = WP_CONTENT_DIR . "/uploads/catablog/thumbnails";
+		$this->directories['fullsize']   = WP_CONTENT_DIR . "/uploads/catablog/fullsize";
 		$this->directories['originals']  = WP_CONTENT_DIR . "/uploads/catablog/originals";
 		$this->directories['old_pics']   = WP_CONTENT_DIR . "/catablog";
 		$this->urls['plugin']     = WP_CONTENT_URL . "/plugins/catablog";
@@ -71,15 +72,18 @@ class CataBlog {
 		// admin actions
 		add_action('admin_menu', array(&$this, 'admin_menu'));
 		if(strpos($_SERVER['QUERY_STRING'], 'catablog') !== false) {
-			add_action('admin_init', array(&$this, 'admin_head'));
+			add_action('admin_init', array(&$this, 'admin_init'));
 		}
 		
 		//ajax actions
 		add_action('wp_ajax_catablog_reorder', array($this, 'ajax_reorder_items'));
 		add_action('wp_ajax_catablog_reset', array($this, 'ajax_reset_all'));
+		add_action('wp_ajax_catablog_flush_fullsize', array($this, 'ajax_flush_fullsize'));
+		add_action('wp_ajax_catablog_render_fullsize', array($this, 'ajax_render_fullsize'));
 		// add_action('wp_ajax_catablog_recalc_thumbs', array($this, 'ajax_recalc_thumbs'));
 		
 		// frontend actions
+		add_action('wp_enqueue_scripts', array(&$this, 'frontend_init'));
 		add_action('wp_head', array(&$this, 'frontend_head'));
 		add_shortcode('catablog', array(&$this, 'frontend_content'));
 	}
@@ -90,17 +94,14 @@ class CataBlog {
 	/**********************************************
 	**  Admin Panel Integration Points
 	**********************************************/
-	public function admin_head() {
+	public function admin_init() {
 		wp_deregister_script('jquery');
 		wp_deregister_script('jquery-ui');
+		wp_deregister_script('catablog-ui');
 		
 		wp_register_script('jquery', $this->urls['javascript'].'/jquery-1.4.2.min.js');
-		
-		// wp_enqueue_script('jquery-ui-core');
-		// wp_enqueue_script('jquery-ui-sortable');
 		wp_enqueue_script('jquery-ui', $this->urls['javascript'] . '/jquery-ui-1.8.1.custom.min.js');
-		wp_enqueue_script('jpicker', $this->urls['javascript'] . '/jpicker-1.1.2.min.js');
-		wp_enqueue_script('catablog-admin-js', $this->urls['javascript'] . '/catablog-admin.js');
+		wp_enqueue_script('catablog-admin', $this->urls['javascript'] . '/catablog-admin.js');
 		
 		wp_enqueue_style('catablog-admin-css', $this->urls['css'] . '/catablog-admin.css');
 		wp_enqueue_style('jquery-ui-lightness', $this->urls['css'] . '/ui-lightness/jquery-ui-1.8.1.custom.css');
@@ -169,19 +170,31 @@ class CataBlog {
 				$image_size_different   = $_REQUEST['image_size'] != $this->options['thumbnail-size'];
 				$bg_color_different     = $_REQUEST['bg_color'] != $this->options['background-color'];
 				$keep_ratio_different   = $_REQUEST['keep_aspect_ratio'] != $this->options['keep-aspect-ratio'];
+				$fullsize_different     = $_REQUEST['lightbox_image_size'] != $this->options['image-size'];
 				if ($image_size_different || $bg_color_different || $keep_ratio_different) {
 					$recalculate_thumbnails = true;
-					$save_message           = "CataBlog Options Saved & Thumbnails Regenerated";
+					$save_message          .= " - Thumbnails Regenerated";
+				}
+				if ($_REQUEST['lightbox_enabled']) {
+					if ($fullsize_different) {
+						$recalculate_fullsize = true;
+						$save_message        .= " - Full Size Images Regenerated";						
+					}
 				}
 				
-				$this->options['thumbnail-size'] = $_REQUEST['image_size'];
-				$this->options['background-color'] = $_REQUEST['bg_color'];
-				$this->options['paypal-email'] = $_REQUEST['paypal_email'];
+				$this->options['thumbnail-size']    = $_REQUEST['image_size'];
+				$this->options['image-size']        = $_REQUEST['lightbox_image_size'];
+				$this->options['lightbox-enabled']  = $_REQUEST['lightbox_enabled'];
+				$this->options['background-color']  = $_REQUEST['bg_color'];
+				$this->options['paypal-email']      = $_REQUEST['paypal_email'];
 				$this->options['keep-aspect-ratio'] = $_REQUEST['keep_aspect_ratio'];
 				update_option($this->options_name, $this->options);
 				
 				if ($recalculate_thumbnails) {
 					$this->regenerate_all_thumbnails();
+				}
+				if ($recalculate_fullsize) {
+					$this->regenerate_all_fullsize();
 				}
 				
 				$this->wp_message($save_message);
@@ -189,6 +202,8 @@ class CataBlog {
 		}
 		
 		$thumbnail_size    = $this->options['thumbnail-size'];
+		$lightbox_size     = $this->options['image-size'];
+		$lightbox_enabled  = $this->options['lightbox-enabled'];
 		$background_color  = $this->options['background-color'];
 		$paypal_email      = $this->options['paypal-email'];
 		$keep_aspect_ratio = $this->options['keep-aspect-ratio'];
@@ -200,18 +215,27 @@ class CataBlog {
 		global $wpdb;
 		
 		$thumb_dir    = new CataBlog_Directory($this->directories['thumbnails']);
+		$fullsize_dir = new CataBlog_Directory($this->directories['fullsize']);
 		$original_dir = new CataBlog_Directory($this->directories['originals']);
 		$thumbnail_size = $thumb_dir->getDirectorySize() / (1024 * 1024);
+		$fullsize_size  = $fullsize_dir->getDirectorySize() / (1024 * 1024);
 		$original_size  = $original_dir->getDirectorySize() / (1024 * 1024);
 		
 		$stats = array();
-		$stats['CataBlog Version']  = $this->version;
-		$stats['System Versions']    = apache_get_version();
-		$stats['PHP_Memory']        = (memory_get_peak_usage(true) / (1024 * 1024)) . " MB";
-		$stats['MySQL_Version']     = $wpdb->get_var("SELECT version()");
-		$stats['Thumbnail_Disc_Usage'] = round($thumbnail_size, 2) . " MB";
+		$stats['CataBlog_Version'] = $this->version;
+		$stats['MySQL_Version']    = $wpdb->get_var("SELECT version()");
+		$stats['PHP_Version']      = phpversion();
+		
+		$stats['PHP_Memory_Usage'] = round((memory_get_peak_usage(true) / (1024 * 1024)), 2) . " MB";
+		$stats['PHP_Memory_Limit'] = preg_replace('/[^0-9]/', '', ini_get('memory_limit')) . " MB";
+		
+		$stats['Max_Uploaded_File_Size']     = ini_get('upload_max_filesize');
+		$stats['Max_Post_size']              = ini_get('post_max_size');
+		
+		$stats['Thumbnail_Disc_Usage']       = round($thumbnail_size, 2) . " MB";
+		$stats['Full_Size_Disc_Usage']       = round($fullsize_size, 2) . " MB";
 		$stats['Original_Upload_Disc_Usage'] = round($original_size, 2) . " MB";
-		$stats['Total_Library_Disc_Usage'] = (round($thumbnail_size, 2) + round($original_size, 2)) . " MB";
+		$stats['Total_Library_Disc_Usage']   = (round($thumbnail_size, 2) + round($fullsize_size, 2) + round($original_size, 2)) . " MB";
 		
 		require($this->directories['template'] . '/admin-about.php');
 	}
@@ -251,6 +275,31 @@ class CataBlog {
 		die();
 	}
 	
+	public function ajax_flush_fullsize() {
+		check_ajax_referer('catablog-flush-fullsize', 'security');
+		
+		$this->remove_directories(array('fullsize'));
+		
+		$dir = 'fullsize';
+		$is_dir  = is_dir($this->directories[$dir]);
+		$is_file = is_file($this->directories[$dir]);
+		if (!$is_dir && !$is_file) {
+			mkdir($this->directories[$dir]);
+		}
+		
+		$this->options['lightbox-enabled'] = false;
+		update_option($this->options_name, $this->options);
+	}
+	
+	public function ajax_render_fullsize() {
+		check_ajax_referer('catablog-render-fullsize', 'security');
+		
+		$this->regenerate_all_fullsize();
+		
+		$this->options['lightbox-enabled'] = true;
+		update_option($this->options_name, $this->options);
+	}
+	
 	// public function ajax_recalc_thumbs() {
 	// 	check_ajax_referer('catablog-recalc-thumbs', 'security');
 	// 	$this->regenerate_all_thumbnails();
@@ -264,6 +313,13 @@ class CataBlog {
 	/**********************************************
 	** Frontend Actions
 	**********************************************/
+	public function frontend_init() {
+		if ($this->options['lightbox-enabled']) {
+			wp_enqueue_script('jquery');
+			wp_enqueue_script('catablog-ui', $this->urls['javascript'] . '/catablog-ui.js');			
+		}
+	}
+	
 	public function frontend_head() {
 		$path = get_template_directory().'/catablog/style.css';
 		if (file_exists($path)) {
@@ -341,6 +397,7 @@ class CataBlog {
 			$options['background-color']  = $this->default_bg_color;
 			$options['paypal-email']      = "";
 			$options['keep-aspect-ratio'] = false;
+			$options['lightbox-enabled']  = false;
 			
 			update_option($this->options_name, $options);
 		}
@@ -358,7 +415,7 @@ class CataBlog {
 	}
 	
 	private function install_directories() {
-		$dirs = array(0=>'wp_uploads', 1=>'uploads', 2=>'thumbnails', 3=>'originals');
+		$dirs = array(0=>'wp_uploads', 1=>'uploads', 2=>'thumbnails', 3=>'originals', 4=>'fullsize');
 		
 		foreach ($dirs as $dir) {
 			$is_dir  = is_dir($this->directories[$dir]);
@@ -383,8 +440,11 @@ class CataBlog {
 		$wpdb->query($drop);
 	}
 	
-	private function remove_directories() {
-		$dirs = array('thumbnails', 'originals', 'uploads');
+	private function remove_directories($dirs=null) {
+		if ($dirs === null) {
+			$dirs = array('fullsize', 'thumbnails', 'originals', 'uploads');
+		}
+		
 		foreach ($dirs as $dir) {
 			$mydir = $this->directories[$dir];
 			if (is_dir($mydir)) {
@@ -403,6 +463,7 @@ class CataBlog {
 			}
 		}
 	}
+	
 	
 	private function remove_legacy_data() {
 		global $wpdb;
@@ -486,7 +547,7 @@ class CataBlog {
 		$query = $wpdb->prepare("SELECT image FROM $table WHERE `id`=%d", $id);
 		$db_filename = $wpdb->get_var($query);
 		
-		$dirs = array('originals', 'thumbnails');
+		$dirs = array('originals', 'thumbnails', 'fullsize');
 		foreach ($dirs as $dir) {
 			$file_path = $this->directories[$dir] . '/' . $db_filename;
 			if (is_file($file_path)) {
@@ -539,6 +600,12 @@ class CataBlog {
 			if ($this->generate_thumbnail($image_name, $upload) === false) {
 				return false;
 			}
+			if ($this->options['lightbox-enabled']) {
+				if ($this->generate_fullsize($image_name, $upload) === false) {
+					return false;
+				}				
+			}
+			
 			move_uploaded_file($upload, $this->directories['originals'] . "/$image_name");
 		}
 		
@@ -567,18 +634,16 @@ class CataBlog {
 	
 	
 	
+
 	
-	
-	
-	
-	private function generate_thumbnail($image_name, $image_path, $bypass=false) {
+	private function generate_thumbnail($image_name, $image_path, $force_regenerate=false) {
 				
 		$tmp = $image_path;
 		$filepath_thumb    = $this->directories['thumbnails'] . "/$image_name";
 		$filepath_original = $this->directories['originals'] . "/$image_name";
 
 		
-		if (is_uploaded_file($tmp) || $bypass) {
+		if (is_uploaded_file($tmp) || $force_regenerate) {
 			
 			list($width, $height, $format) = getimagesize($tmp);
 			$canvas_size = $this->options['thumbnail-size'];
@@ -648,7 +713,73 @@ class CataBlog {
 			}
 			
 			imagecopyresampled($canvas, $upload, $x_offset, $y_offset, 0, 0, $new_width, $new_height, $width, $height);
-			imagejpeg($canvas, $filepath_thumb, 80);	
+			imagejpeg($canvas, $filepath_thumb, 90);	
+			
+		}
+		else {
+			$error_link = '[<a href="http://catablog.illproductions.net/errors#max-upload" target="_blank">Explain More</a>]';
+			$this->wp_error("Image Error: Image Not Uploading, Check Your PHP Max Upload Size $error_link");
+			$_REQUEST['image'] = $_REQUEST['saved_image'];
+			
+			return false;
+		}
+	}
+	
+	
+	private function generate_fullsize($image_name, $image_path, $force_regenerate=false) {
+				
+		$tmp = $image_path;
+		$filepath_fullsize = $this->directories['fullsize'] . "/$image_name";
+		$filepath_original = $this->directories['originals'] . "/$image_name";
+
+		
+		if (is_uploaded_file($tmp) || $force_regenerate) {
+			
+			list($width, $height, $format) = getimagesize($tmp);
+			$canvas_size = $this->options['image-size'];
+			
+			if ($width < 1 || $height < 1) {
+				$this->wp_error('Image Error: None Supported Format');
+				return false;
+			}
+			
+			if ($width < $canvas_size && $height < $canvas_size) {
+				//original is smaller, do nothing....
+			}
+			
+			
+			$ratio = ($height > $width)? ($canvas_size / $height) : ($canvas_size / $width);			
+			$new_height = $height * $ratio;
+			$new_width  = $width * $ratio;
+			
+			
+			// create a blank canvas of user specified size
+			$bg_color = $this->html2rgb($this->options['background-color']);
+			$canvas   = imagecreatetruecolor($new_width, $new_height);
+			
+			
+			switch($format) {
+				case IMAGETYPE_GIF:
+					$upload = imagecreatefromgif($tmp);
+					break;
+				case IMAGETYPE_JPEG:
+					$upload = imagecreatefromjpeg($tmp);
+					break;
+				case IMAGETYPE_PNG:
+					$upload = imagecreatefrompng($tmp);
+					break;
+				default:
+					$this->wp_error('Image Error: None Supported Format');
+					return false;
+			}
+				
+			
+			if ($this->debug) {
+				echo "offset: $x_offset, $y_offset<br>width: $width, $new_width<br>height: $height, $new_height";
+			}
+			
+			imagecopyresampled($canvas, $upload, $x_offset, $y_offset, 0, 0, $new_width, $new_height, $width, $height);
+			imagejpeg($canvas, $filepath_fullsize, 80);	
 			
 		}
 		else {
@@ -659,11 +790,20 @@ class CataBlog {
 		}
 	}
 	
+	
 	private function regenerate_all_thumbnails() {
 		$dir = new CataBlog_Directory($this->directories['originals']);
 		foreach ($dir->getFileArray() as $file) {
 			$filepath = $this->directories['originals'] . "/" . $file;
 			$this->generate_thumbnail($file, $filepath, true);
+		}
+	}
+	
+	private function regenerate_all_fullsize() {
+		$dir = new CataBlog_Directory($this->directories['originals']);
+		foreach ($dir->getFileArray() as $file) {
+			$filepath = $this->directories['originals'] . "/" . $file;
+			$this->generate_fullsize($file, $filepath, true);
 		}
 	}
 	

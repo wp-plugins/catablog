@@ -17,3 +17,21 @@ function hexFromRGB (r, g, b) {
 	return hex.join('').toUpperCase();
 }
 
+
+
+function show_load() {
+	jQuery('body').append("<div id='catablog_load_curtain' />");
+	jQuery('#catablog_load_curtain').append("<div id='catablog_load_display' >processing</div>");
+	
+	jQuery('#catablog_load_curtain').fadeTo(200, 0.8);
+}
+
+function hide_load() {
+	// $('#catablog_load_display').html('finishing');
+	
+	setTimeout(function() {
+		jQuery('#catablog_load_curtain').fadeOut(400, function() {
+			jQuery(this).remove();
+		});
+	}, 500);
+}

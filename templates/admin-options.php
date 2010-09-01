@@ -10,7 +10,7 @@
 			<div id="thumbnail_settings">
 				<p>
 					<label for='image_size'>Thumbnail Size:</label>
-					<input type='text' name='image_size' id='image_size' size='5' value='<?php echo $thumbnail_size ?>' />
+					<input type='text' name='image_size' id='image_size' class='arrow_edit' size='5' value='<?php echo $thumbnail_size ?>' />
 					<span>pixels</span><br />
 				
 					<small id="image_size_error" class="error hidden">your thumbnail size must be a positive integer<br /></small>
@@ -38,6 +38,25 @@
 				<div id='demo_box' class='demo_box' style='width:<?php echo $thumbnail_size ?>px; height:<?php echo $thumbnail_size ?>px;'>&nbsp;</div>
 			</div>
 			
+		</fieldset>
+		
+		<fieldset>
+			<legend>Full Size LightBox</legend>
+			
+			<p>
+				<?php $checked = ($lightbox_enabled)? "checked='checked'" : "" ?>
+				<label for="lightbox_enabled">Enable LightBox Feature:</label>
+				<input type="checkbox" name="lightbox_enabled" id="lightbox_enabled" <?php echo $checked ?> /><br/>
+				<small>this will allow people to enlarge an image thumbnail with a lightbox style javascript effect.</small>
+			</p>
+			
+			<p>
+				<label for='lightbox_image_size'>LightBox Size:</label>
+				<input type='text' name='lightbox_image_size' id='lightbox_image_size' class='arrow_edit' size='5' value='<?php echo $lightbox_size ?>' />
+				<span>pixels</span><br />
+				<small id="image_size_error_two" class="error hidden">your lightbox size must be a positive integer<br /></small>
+				<small>This is the maximum length of either the height or width, depending on whichever is longer in the original uploaded image.</small>
+			</p>
 		</fieldset>
 		
 		<fieldset>
@@ -112,7 +131,7 @@
 		
 		
 		
-		$('#image_size').bind('keydown', function(event) {
+		$('input.arrow_edit').bind('keydown', function(event) {
 			var step = 5;
 			var keycode = event.keyCode;
 			
@@ -122,19 +141,75 @@
 		
 		
 		
-		$('#image_size').bind('keyup', function(event) {
+		$('input.arrow_edit').bind('keyup', function(event) {
 			var v = this.value;
-			if (is_integer(v)) {
+			if (is_integer(v) && (v > 0)) {
+				$(this).siblings('small.error').hide();
+				if ($(this).attr('id') == 'image_size') {
+					resize_box(v);
+				}
+			}
+			else {
+				$(this).siblings('small.error').show();
+			}
+			
+			possibly_disable_save_button();
+		});
+		
+		function possibly_disable_save_button() {
+			if ($('small.error:visible').size() == 0) {
 				$('#save_changes').attr('disabled', false);
 				$('#save_changes').attr('class', 'button-primary');
-				$('#image_size_error').hide();
-			
-				resize_box(v);
 			}
 			else {
 				$('#save_changes').attr('disabled', true);
-				$('#save_changes').attr('class', '');
-				$('#image_size_error').show();
+				$('#save_changes').attr('class', 'button-disabled');
+			}
+		}
+		
+		
+		var lightbox_button   = $('#lightbox_enabled');
+		var lightbox_fieldset = lightbox_button.parent().parent();
+		
+		if (lightbox_button.attr('checked') == false) {
+			$('input.arrow_edit', lightbox_fieldset).attr('readonly', true);
+			lightbox_fieldset.addClass('disabled');
+		}
+		
+		lightbox_button.bind('click', function(event) {
+			if (this.checked) {
+				// enable lightbox
+				if (!confirm('Enabling the lightbox feature may take some time because it must generate full size versions for all your pictures. Are you sure you want to do this?')) {
+					$(this).attr('checked', false);
+					return false;
+				}
+				
+				show_load();
+				
+				lightbox_fieldset.removeClass('disabled');
+				$('input.arrow_edit', lightbox_fieldset).attr('readonly', false);
+				
+				var params = { 'action':'catablog_render_fullsize', 'security':'<?php echo wp_create_nonce("catablog-render-fullsize") ?>' }
+				$.post(ajaxurl, params, function(data) {
+					hide_load();
+				});
+			}
+			else {
+				// disable lightbox
+				if (!confirm('Disabling the lightbox feature will also clear your full size images directory. Are you sure you want to do this?')) {
+					$(this).attr('checked', true);
+					return false;
+				}
+				
+				show_load();
+				
+				lightbox_fieldset.addClass('disabled');
+				$('input.arrow_edit', lightbox_fieldset).attr('readonly', true);
+				
+				var params = { 'action':'catablog_flush_fullsize', 'security':'<?php echo wp_create_nonce("catablog-flush-fullsize") ?>' }
+				$.post(ajaxurl, params, function(data) {
+					hide_load();
+				});
 			}
 		});
 	});
@@ -147,4 +222,7 @@
 		var speed = 100;
 		jQuery('#demo_box').animate({width:(num-1), height:(num-1)}, speed);
 	}
+	
+	
+	
 </script>
