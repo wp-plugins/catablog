@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.net/donate/
 Tags: plugin, admin, catalog, gallery, discography, library, collection, paypal, organize, media, image, photo, thumbnail, product, rolodex, manifest, listing, list
 Requires at least: 2.9
 Tested up to: 3.0.1
-Stable tag: 0.8.1
+Stable tag: 0.8.5
 
 CataBlog is a simple tool for creating catalogs and image galleries inside your blog.
 
