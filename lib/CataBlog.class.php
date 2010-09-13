@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.8.5";
+	private $version     = "0.8.6";
 	private $dir_version = 3;
 	private $db_version  = 4;
 	private $debug       = false;
@@ -84,7 +84,6 @@ class CataBlog {
 		
 		// frontend actions
 		add_action('wp_enqueue_scripts', array(&$this, 'frontend_init'));
-		add_action('wp_head', array(&$this, 'frontend_head'));
 		add_shortcode('catablog', array(&$this, 'frontend_content'));
 	}
 	
@@ -95,16 +94,20 @@ class CataBlog {
 	**  Admin Panel Integration Points
 	**********************************************/
 	public function admin_init() {
+		if(strpos($_SERVER['QUERY_STRING'], 'catablog-export') !== false) {
+			$this->admin_export();
+		}
+		
 		wp_deregister_script('jquery');
 		wp_deregister_script('jquery-ui');
 		wp_deregister_script('catablog-ui');
 		
-		wp_register_script('jquery', $this->urls['javascript'].'/jquery-1.4.2.min.js');
-		wp_enqueue_script('jquery-ui', $this->urls['javascript'] . '/jquery-ui-1.8.1.custom.min.js');
-		wp_enqueue_script('catablog-admin', $this->urls['javascript'] . '/catablog-admin.js');
+		wp_register_script('jquery', $this->urls['javascript'].'/jquery-1.4.2.min.js', false, '1.4.2');
+		wp_enqueue_script('jquery-ui', $this->urls['javascript'] . '/jquery-ui-1.8.1.custom.min.js', array('jquery'), '1.8.1');
+		wp_enqueue_script('catablog-admin', $this->urls['javascript'] . '/catablog-admin.js', array('jquery', 'jquery-ui'), '0.8.6');
 		
-		wp_enqueue_style('catablog-admin-css', $this->urls['css'] . '/catablog-admin.css');
-		wp_enqueue_style('jquery-ui-lightness', $this->urls['css'] . '/ui-lightness/jquery-ui-1.8.1.custom.css');
+		wp_enqueue_style('jquery-ui-lightness', $this->urls['css'] . '/ui-lightness/jquery-ui-1.8.1.custom.css', false, '1.8.1');
+		wp_enqueue_style('catablog-admin-css', $this->urls['css'] . '/catablog-admin.css', false, '0.8.6');
 	}
 	
 	public function admin_menu() {
@@ -112,7 +115,12 @@ class CataBlog {
 		add_submenu_page('catablog-edit', "Edit CataBlog", 'Edit', $this->user_level, 'catablog-edit', array(&$this, 'admin_list'));
 		add_submenu_page('catablog-edit', "Add New CataBlog", 'Add New', $this->user_level, 'catablog-new', array(&$this, 'admin_item'));
 		add_submenu_page('catablog-edit', "CataBlog Options", 'Options', $this->user_level, 'catablog-options', array(&$this, 'admin_options'));
+		add_submenu_page('catablog-edit', "CataBlog Import/Export", 'Import/Export', $this->user_level, 'catablog-import-export', array(&$this, 'admin_import_export'));
 		add_submenu_page('catablog-edit', 'About CataBlog', 'About', $this->user_level, 'catablog-about', array(&$this, 'admin_about'));
+		
+		// hidden pages
+		add_submenu_page('catablog-hidden', "CataBlog Import", "Import", $this->user_level, 'catablog-import', array(&$this, 'admin_import'));
+		add_submenu_page('catablog-hidden', "CataBlog Export", "Export", $this->user_level, 'catablog-export', array(&$this, 'admin_export'));
 	}
 	
 	
@@ -122,7 +130,7 @@ class CataBlog {
 	**  Admin Panel Actions
 	**********************************************/	
 	public function admin_list() {
-		$results = $this->get_items();		
+		$results = $this->get_items();
 		require_once($this->directories['template'] . '/admin-list.php');
 	}
 	
@@ -211,15 +219,47 @@ class CataBlog {
 		require($this->directories['template'] . '/admin-options.php');
 	}
 	
+	public function admin_import_export() {
+		require($this->directories['template'] . '/admin-import-export.php');
+	}
+	
+	public function admin_import() {
+
+		print_r($_REQUEST);
+		
+		require($this->directories['template'] . '/admin-import.php');
+	}
+	
+	public function admin_export() {
+		$date = date('Y-m-d');
+		header('Content-type: application/xml');
+		header('Content-Disposition: attachment; filename="catablog-backup-'.$date.'.xml"');
+		
+		$results = $this->get_items();
+		require($this->directories['template'] . '/admin-export.php');
+		die;
+	}
+	
 	public function admin_about() {
 		global $wpdb;
 		
-		$thumb_dir    = new CataBlog_Directory($this->directories['thumbnails']);
+		$thumbnail_size = 'not present';
+		$fullsize_size  = 'not present';
+		$original_size  = 'not present';
+		
+		$thumb_dir = new CataBlog_Directory($this->directories['thumbnails']);
 		$fullsize_dir = new CataBlog_Directory($this->directories['fullsize']);
 		$original_dir = new CataBlog_Directory($this->directories['originals']);
-		$thumbnail_size = $thumb_dir->getDirectorySize() / (1024 * 1024);
-		$fullsize_size  = $fullsize_dir->getDirectorySize() / (1024 * 1024);
-		$original_size  = $original_dir->getDirectorySize() / (1024 * 1024);
+		
+		if ($thumb_dir->isDirectory()) {
+			$thumbnail_size = round(($thumb_dir->getDirectorySize() / (1024 * 1024)), 2) . " MB";
+		}
+		if ($fullsize_dir->isDirectory()) {
+			$fullsize_size  = round(($fullsize_dir->getDirectorySize() / (1024 * 1024)), 2) . " MB";
+		}
+		if ($original_dir->isDirectory()) {
+			$original_size  = round(($original_dir->getDirectorySize() / (1024 * 1024)), 2) . " MB";
+		}
 		
 		$stats = array();
 		$stats['CataBlog_Version'] = $this->version;
@@ -232,13 +272,16 @@ class CataBlog {
 		$stats['Max_Uploaded_File_Size']     = ini_get('upload_max_filesize');
 		$stats['Max_Post_size']              = ini_get('post_max_size');
 		
-		$stats['Thumbnail_Disc_Usage']       = round($thumbnail_size, 2) . " MB";
-		$stats['Full_Size_Disc_Usage']       = round($fullsize_size, 2) . " MB";
-		$stats['Original_Upload_Disc_Usage'] = round($original_size, 2) . " MB";
-		$stats['Total_Library_Disc_Usage']   = (round($thumbnail_size, 2) + round($fullsize_size, 2) + round($original_size, 2)) . " MB";
+		$stats['Thumbnail_Disc_Usage']       = $thumbnail_size;
+		$stats['Full_Size_Disc_Usage']       = $fullsize_size;
+		$stats['Original_Upload_Disc_Usage'] = $original_size;
+		$stats['Total_Disc_Usage']   = (round($thumbnail_size, 2) + round($fullsize_size, 2) + round($original_size, 2)) . " MB";
 		
 		require($this->directories['template'] . '/admin-about.php');
 	}
+	
+	
+	
 	
 	
 	
@@ -315,17 +358,18 @@ class CataBlog {
 	**********************************************/
 	public function frontend_init() {
 		if ($this->options['lightbox-enabled']) {
+			// enqueue scripts
 			wp_enqueue_script('jquery');
-			wp_enqueue_script('catablog-ui', $this->urls['javascript'] . '/catablog-ui.js');			
+			wp_enqueue_script('catablog-lightbox', $this->urls['javascript'] . '/catablog.lightbox.js', array('jquery'), '0.8.6');
+			wp_enqueue_script('catablog-ui', $this->urls['javascript'] . '/catablog.ui.js', array('jquery', 'catablog-lightbox'), '0.8.6');
 		}
-	}
-	
-	public function frontend_head() {
-		$path = get_template_directory().'/catablog/style.css';
+		
+		$path = get_template_directory().'/catablog.css';
 		if (file_exists($path)) {
-			echo '	<link rel="stylesheet" type="text/css" href="'.get_bloginfo('template_url').'/catablog/style.css" media="all" />';
+			wp_enqueue_style('catablog-custom-stylesheet', get_bloginfo('template_url') . '/catablog.css', false, '0.8.6');
 		}
-		echo '	<link rel="stylesheet" type="text/css" href="'. WP_PLUGIN_URL .'/catablog/css/catablog.css" media="all" />';
+		wp_enqueue_style('catablog-stylesheet', $this->urls['css'] . '/catablog.css', false, '0.8.6');
+		
 	}
 
 	public function frontend_content($atts) {
@@ -421,7 +465,9 @@ class CataBlog {
 			$is_dir  = is_dir($this->directories[$dir]);
 			$is_file = is_file($this->directories[$dir]);
 			if (!$is_dir && !$is_file) {
-				mkdir($this->directories[$dir]);
+				if (mkdir($this->directories[$dir]) === false) {
+					// can't write to disc
+				}
 			}
 		}
 	}

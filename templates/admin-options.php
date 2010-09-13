@@ -2,7 +2,7 @@
 	<div id="icon-catablog" class="icon32"><br /></div>
 	<h2>CataBlog Options</h2>
 	
-	<form id="catablog-options" method="post" action="">
+	<form id="catablog-options" class="catablog-form" method="post" action="">
 		
 		<fieldset>
 			<legend>Thumbnails</legend>

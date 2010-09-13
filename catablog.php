@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: CataBlog
-Plugin URI: http://catablog.illproductions.net
+Plugin URI: http://catablog.illproductions.com
 Description: CataBlog allows you to create a catalog of items for your blog. Upload Images and then add titles, links and descriptions for each item. Now it's super easy to keep track of all your stuff.
-Version: 0.8.5
+Version: 0.8.6
 Author: Zachary Segal
-Author URI: http://catablog.illproductions.net/about/
+Author URI: http://catablog.illproductions.com/about/
 
 Copyright 2009  Zachary Segal  (email : zac@illproductions.net)
 
@@ -21,6 +21,16 @@ GNU General Public License for more details.
 */
 
 
+// check if PHP is version 5 and if the plugin can run
+$phpversion = phpversion();
+if (strpos($phpversion, '-') !== false) {
+	$phpversion = substr($phpversion,0,strpos($phpversion, '-'));
+}
+if (floatval($phpversion) < 5.0) {
+  die("<strong>CataBlog</strong> requires <strong>PHP5</strong> or better running on your web server. 
+		You're version of PHP is to old, please contact your hosting company or IT department for an upgrade.
+		Thanks.");
+}
 
 
 

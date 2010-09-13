@@ -1,3 +1,5 @@
+
+
 .catablog_row {
 	clear: left;
 	margin: 0 0 0.5em 0;
@@ -25,7 +27,7 @@
 
 
 #catablog_curtain {
-	display: none;
+	display: block;
 	position: absolute;
 	position: fixed;
 	top: 0px;
@@ -42,7 +44,7 @@
 	top: 100px;
 	z-index: 3100;
 }
-#catablog_lightbox div {
+#catablog_lightbox #catablog_whiteboard {
 	width: 100px;
 	height: 100px;
 	margin: 0 auto;
@@ -51,12 +53,35 @@
 	background-image: url('./../images/ajax-loader.gif');
 	background-repeat: no-repeat;
 	background-position: center center;
+	border: 1px #000 solid;
+	border-width: 0 1px 2px 0;
 }
-#catablog_lightbox div img {
+#catablog_lightbox #catablog_whiteboard img {
 	display: none;
 }
 
 
+
+#catablog_lightbox_meta {
+	display: none;
+	padding: 0.5em 0;
+}
+#catablog_lightbox_meta .catablog_lightbox_title {
+	float: left;
+	font-size: 14px !important;
+	font-weight: bold !important;
+}
+#catablog_lightbox_meta .catablog_lightbox_nav {
+	float: right;
+}
+#catablog_lightbox_meta .catablog_lightbox_nav a.disabled {
+	color: #aaa !important;
+}
+#catablog_lightbox_meta .catablog_lightbox_desc {
+	display: block;
+	clear: both;
+	line-height: 1.5;
+}
 
 
 .clearFloat {

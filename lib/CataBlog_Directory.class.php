@@ -5,7 +5,7 @@ class CataBlog_Directory {
 	private $directory = "";
 	
 	
-	function __construct($directory) {
+	public function __construct($directory) {
 		$this->directory = $directory;
 		$d = "";
 		if (is_dir($directory)) {
@@ -18,11 +18,15 @@ class CataBlog_Directory {
 			closedir($d);
 		}
 		else {
-			die("Must pass in a directory");
+			return false;
+			//die("Must pass in a directory");
 		}
 	}
 	
 	
+	public function isDirectory() {
+		return is_dir($this->directory);
+	}
 	
 	public function getFileArray() {
 		return $this->filearray;

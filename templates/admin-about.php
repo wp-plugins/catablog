@@ -12,7 +12,14 @@
 		that you rate the plugin at the <a href="http://wordpress.org/extend/plugins/catablog" target="_blank">WordPress Plugin Repository</a>.
 	</p>
 	
-	<table class="wide" cellspacing="5">
+	<p>
+		<strong>CSS Modification:</strong> You can always override CataBlog's CSS settings to create custom looks.
+		If you make a catablog.css file in your active theme's directory it will be automatically loaded and applied.
+ 		This makes it easy to prepare your custom theme for CataBlog integration and will also protect your customization
+		for future version to come.
+	</p>
+	
+	<table class="catablog_stats wide" cellspacing="5">
 		<thead>
 			<tr><td colspan="2"><h3><strong>Server Statistics</strong></h3></td></tr>
 		</thead>

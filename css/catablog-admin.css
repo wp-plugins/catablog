@@ -85,16 +85,21 @@ form#catablog-form input#image {
 
 
 
-form#catablog-options fieldset {
+form.catablog-form fieldset {
 	margin: 1em 0;
 	padding: 10px;
 	border: 1px #e3e3e3 solid;;
 	background-color: #fff;
 }
-form#catablog-options fieldset legend {
+form.catablog-form fieldset legend {
 	font-size: 18px;
 	font-weight: bold;
 }
+form.catablog-form p {
+	margin: 0 0 3em 0;
+}
+
+
 form#catablog-options #thumbnail_settings {
 	float: left;
 	width: 260px;
@@ -104,9 +109,17 @@ form#catablog-options #thumbnail_settings {
 form#catablog-options #thumbnail_preview {
 	margin: 0 0 0 300px;
 }
-form#catablog-options p {
-	margin: 0 0 3em 0;
+form#catablog-import-export fieldset div.controls {
+	float: left;
+	width: 280px;
+	
 }
+form#catablog-import-export fieldset div.advice {
+	margin: 0 0 0 300px;
+	border-left: 1px #e3e3e3 solid;
+	padding: 0 0 0 20px;
+}
+
 
 .demo_box {
 	background-color: #ccc;
@@ -154,6 +167,11 @@ form fieldset.disabled input {
 
 
 
+
+
+table.catablog_stats td {
+	padding: 0 2em 0 0;
+}
 
 
 
