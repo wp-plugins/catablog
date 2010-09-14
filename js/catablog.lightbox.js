@@ -5,7 +5,7 @@
 		var settings = {'size': size};
 		if (config) $.extend(settings, config);
 		
-		
+		var hold_click = false;
 		
 		// PlugIn Construction applied across each selected jQuery object
 		this.each(function(i) {
@@ -101,7 +101,7 @@
 					var h2 = h + jQuery('#catablog_lightbox_meta').outerHeight() + 10;
 					// console.log(h + " : " + h2);
 					jQuery(this).animate({height:h2}, 500, function() {
-						
+						hold_click = false;
 						
 						jQuery(this).children('#catablog_lightbox_meta').fadeIn(800);
 						if (supportPositionFixed() != true) {
@@ -118,37 +118,50 @@
 						});
 
 						jQuery('#catablog_lightbox_prev').bind('click', function(event) {
+							if (hold_click) {
+								return false;
+							}
+							hold_click = true;
+							
 							var selected = jQuery('img.catablog_selected');
 							var prev_row = jQuery('img.catablog_selected').parent().prev('.catablog_row');
 							
+							var new_thumbnail = null;
 							if (prev_row.size() > 0) {
-								var new_thumbnail = prev_row.children('img.catablog_image');
-								
-								selected.removeClass('catablog_selected');
-								new_thumbnail.addClass('catablog_selected');
-								
-								change_lightbox(new_thumbnail);
+								new_thumbnail = prev_row.children('img.catablog_image');
 							}
 							else {
-								
+								new_thumbnail = jQuery('div.catablog_row:last img.catablog_image');
 							}
+							
+							
+							selected.removeClass('catablog_selected');
+							new_thumbnail.addClass('catablog_selected');
+							
+							change_lightbox(new_thumbnail);
 						});
 
 						jQuery('#catablog_lightbox_next').bind('click', function(event) {
+							if (hold_click) {
+								return false;
+							}
+							hold_click = true;
+							
 							var selected = jQuery('img.catablog_selected');
 							var next_row = jQuery('img.catablog_selected').parent().next('.catablog_row');
 							
+							var new_thumbnail = null;
 							if (next_row.size() > 0) {
-								var new_thumbnail = next_row.children('img.catablog_image');
-								
-								selected.removeClass('catablog_selected');
-								new_thumbnail.addClass('catablog_selected');
-								
-								change_lightbox(next_row.children('img.catablog_image'));
+								new_thumbnail = next_row.children('img.catablog_image');
 							}
 							else {
-								
+								new_thumbnail = jQuery('div.catablog_row:first img.catablog_image');
 							}
+							
+							selected.removeClass('catablog_selected');
+							new_thumbnail.addClass('catablog_selected');
+							
+							change_lightbox(new_thumbnail);
 						});
 						
 					});

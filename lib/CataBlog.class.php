@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.8.6";
+	private $version     = "0.8.7";
 	private $dir_version = 3;
 	private $db_version  = 4;
 	private $debug       = false;
@@ -104,10 +104,10 @@ class CataBlog {
 		
 		wp_register_script('jquery', $this->urls['javascript'].'/jquery-1.4.2.min.js', false, '1.4.2');
 		wp_enqueue_script('jquery-ui', $this->urls['javascript'] . '/jquery-ui-1.8.1.custom.min.js', array('jquery'), '1.8.1');
-		wp_enqueue_script('catablog-admin', $this->urls['javascript'] . '/catablog-admin.js', array('jquery', 'jquery-ui'), '0.8.6');
+		wp_enqueue_script('catablog-admin', $this->urls['javascript'] . '/catablog-admin.js', array('jquery', 'jquery-ui'), $this->version);
 		
 		wp_enqueue_style('jquery-ui-lightness', $this->urls['css'] . '/ui-lightness/jquery-ui-1.8.1.custom.css', false, '1.8.1');
-		wp_enqueue_style('catablog-admin-css', $this->urls['css'] . '/catablog-admin.css', false, '0.8.6');
+		wp_enqueue_style('catablog-admin-css', $this->urls['css'] . '/catablog-admin.css', false, $this->version);
 	}
 	
 	public function admin_menu() {
@@ -224,8 +224,33 @@ class CataBlog {
 	}
 	
 	public function admin_import() {
-
-		print_r($_REQUEST);
+		$error = false;
+		$upload = $_FILES['catablog_data'];
+		$type = $upload['type'];
+		
+		if ($type != 'text/xml') {
+			$error = true;
+		}
+		
+		$xml_object = simplexml_load_file($upload['tmp_name']);
+		if ($xml_object === false) {
+			$error = true;
+		}
+		
+		if ($error !== false) {
+			$this->wp_error("Upload Error: make sure you are uploading a valid xml file with a '.xml' extension");
+			$this->admin_import_export();
+			return false;
+		}
+		
+		// remove all data from database if clear box is checked
+		if ($_REQUEST['catablog_clear_db'] == 'true') {
+			$this->remove_database();
+			$this->install_database();
+		}
+		
+		
+		// Private DataBase Insertion Method Called in Template:  load_xml_to_database($xml_object)
 		
 		require($this->directories['template'] . '/admin-import.php');
 	}
@@ -360,15 +385,15 @@ class CataBlog {
 		if ($this->options['lightbox-enabled']) {
 			// enqueue scripts
 			wp_enqueue_script('jquery');
-			wp_enqueue_script('catablog-lightbox', $this->urls['javascript'] . '/catablog.lightbox.js', array('jquery'), '0.8.6');
-			wp_enqueue_script('catablog-ui', $this->urls['javascript'] . '/catablog.ui.js', array('jquery', 'catablog-lightbox'), '0.8.6');
+			wp_enqueue_script('catablog-lightbox', $this->urls['javascript'] . '/catablog.lightbox.js', array('jquery'), $this->version);
+			wp_enqueue_script('catablog-ui', $this->urls['javascript'] . '/catablog.ui.js', array('jquery', 'catablog-lightbox'), $this->version);
 		}
 		
 		$path = get_template_directory().'/catablog.css';
 		if (file_exists($path)) {
-			wp_enqueue_style('catablog-custom-stylesheet', get_bloginfo('template_url') . '/catablog.css', false, '0.8.6');
+			wp_enqueue_style('catablog-custom-stylesheet', get_bloginfo('template_url') . '/catablog.css', false, $this->version);
 		}
-		wp_enqueue_style('catablog-stylesheet', $this->urls['css'] . '/catablog.css', false, '0.8.6');
+		wp_enqueue_style('catablog-stylesheet', $this->urls['css'] . '/catablog.css', false, $this->version);
 		
 	}
 
@@ -675,6 +700,47 @@ class CataBlog {
 		
 		return true;		
 	}
+	
+	private function load_xml_to_database($xml) {
+		global $wpdb;
+		$table = $this->db_table;
+		
+		$data = array();
+		foreach ($xml->item as $item) {
+			$row   = array();
+			$row['order'] = (integer) $item->order;
+			$row['image'] = (string) $item->image;
+			$row['title'] = (string) $item->title;
+			$row['link'] = (string) $item->link;
+			$row['description'] = (string) $item->description;
+			$row['tags'] = (string) $item->tags;
+			$row['price'] = (integer) $item->price;
+			$row['product_code'] = (string) $item->product_code;
+			
+			$data[] = $row;
+		}
+		
+		foreach ($data as $row) {
+			$success_message = '<li class="updated">Success: <em>' . $row['title'] . '</em> inserted into the database.</li>';
+			$error_message   = '<li class="error"><strong>Error:</strong> <em>' . $row['title'] . '</em> was not inserted into the database.</li>';
+			
+			if (mb_strlen($row['title']) < 1) {
+				echo $error_message;
+			}
+			else {
+				if (false ==! $wpdb->insert($table, $row, array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s'))) {
+					echo $success_message;
+				}
+				else {
+					echo $error_message;
+				}				
+			}
+		}
+	}
+	
+	
+	
+	
 	
 	
 	

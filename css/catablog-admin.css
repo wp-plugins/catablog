@@ -168,6 +168,12 @@ form fieldset.disabled input {
 
 
 
+#catablog-import-messages li {
+	margin: 0 0 5px 0 !important;
+}
+
+
+
 
 table.catablog_stats td {
 	padding: 0 2em 0 0;

@@ -1,7 +1,7 @@
 === CataBlog ===
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
-Tags: plugin, admin, catalog, gallery, discography, library, collection, paypal, organize, media, image, photo, thumbnail, product, rolodex, manifest, listing, list
+Tags: plugin, admin, catalog, gallery, discography, library, collection, paypal, organize, media, image, links, photo, thumbnail, product, rolodex, manifest, listing, list
 Requires at least: 2.9
 Tested up to: 3.0.1
 Stable tag: 0.8.6
@@ -14,11 +14,10 @@ CataBlog allows you to catalog pretty much anything you would want and share it 
 
 New Features:
 
-* Added the title, description and next/previous buttons to the Lightbox popup.
-* New: Export feature for saving the CataBlog database into a local XML file.
-* New: Support for a stylesheet override file, simply add catablog.css in your theme directory.
-* Fixed a few bugs and poor error messages, including a new activation check for PHP5.
-
+* Import feature for loading previously saved CataBlog backups.
+* Export feature for saving the CataBlog database into a local XML file.
+* Lightbox displays the title, description and next/previous links.
+* Support for a stylesheet override file, simply add catablog.css in your theme directory.
 
 WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
 
@@ -57,6 +56,10 @@ You can easily override CataBlog's CSS classes to create your own design and eas
 Go to http://catablog.illproductions.com, it is a place to learn and share more about your experiences with CataBlog.
 
 == Changelog ==
+
+= 0.8.7 =
+* New: Import feature for loading previously saved CataBlog backups.
+* Fix: Lightbox next and previous link bugs
 
 = 0.8.6 =
 * Added the title, description and next/previous buttons to the Lightbox popup.
@@ -101,6 +104,12 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * This version is the initial release.
 
 == Upgrade Notice ==
+
+= 0.8.7 =
+
+Added import/export of CataBlog data and fixed a few minor bugs and interface quirks.
+
+WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
 
 = 0.8.5 =
 
