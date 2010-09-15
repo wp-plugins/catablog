@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.8.7";
+	private $version     = "0.8.8";
 	private $dir_version = 3;
 	private $db_version  = 4;
 	private $debug       = false;
@@ -196,6 +196,8 @@ class CataBlog {
 				$this->options['background-color']  = $_REQUEST['bg_color'];
 				$this->options['paypal-email']      = $_REQUEST['paypal_email'];
 				$this->options['keep-aspect-ratio'] = $_REQUEST['keep_aspect_ratio'];
+				$this->options['link-target']       = $_REQUEST['link_target'];
+				
 				update_option($this->options_name, $this->options);
 				
 				if ($recalculate_thumbnails) {
@@ -215,6 +217,7 @@ class CataBlog {
 		$background_color  = $this->options['background-color'];
 		$paypal_email      = $this->options['paypal-email'];
 		$keep_aspect_ratio = $this->options['keep-aspect-ratio'];
+		$link_target       = $this->options['link-target'];
 		
 		require($this->directories['template'] . '/admin-options.php');
 	}
@@ -457,22 +460,29 @@ class CataBlog {
 	
 	
 	private function install_options() {
+		$options = array();
+		$options['db-version']        = $this->db_version;
+		$options['dir-version']       = $this->dir_version;
+		$options['thumbnail-size']    = $this->default_thumbnail_size;
+		$options['image-size']        = $this->default_image_size;
+		$options['background-color']  = $this->default_bg_color;
+		$options['paypal-email']      = "";
+		$options['keep-aspect-ratio'] = false;
+		$options['lightbox-enabled']  = false;
+		$options['link-target']       = "_blank";
+		
 		if ($this->options == false) {
-			$options = array();
-			$options['db-version']        = $this->db_version;
-			$options['dir-version']       = $this->dir_version;
-			$options['thumbnail-size']    = $this->default_thumbnail_size;
-			$options['image-size']        = $this->default_image_size;
-			$options['background-color']  = $this->default_bg_color;
-			$options['paypal-email']      = "";
-			$options['keep-aspect-ratio'] = false;
-			$options['lightbox-enabled']  = false;
-			
 			update_option($this->options_name, $options);
 		}
 		else {
 			$this->options['db-version']        = $this->db_version;
 			$this->options['dir-version']       = $this->dir_version;
+			
+			foreach ($options as $option_name => $option) {
+				if (isset($this->options[$option_name]) === false) {
+					$this->options[$option_name] = $option;
+				}
+			}
 			
 			update_option($this->options_name, $this->options);
 		}

@@ -60,6 +60,21 @@
 		</fieldset>
 		
 		<fieldset>
+			<legend>Link Settings</legend>
+			
+			<label for="link_target">Link Target:</label>
+			<select id="link_target" name="link_target">
+				<option value="_blank" <?php echo ($link_target == "_blank")? 'selected="selected"' : '' ?>>_blank</option>
+				<option value="_top" <?php echo ($link_target == "_top")? 'selected="selected"' : '' ?>>_top</option>
+				<option value="" <?php echo ($link_target == '')? 'selected="selected"' : '' ?>>_none</option>
+			</select>
+			
+			<p><small>
+				The link target setting will set the target attribute of all the catalog links.
+			</small></p>
+		</fieldset>
+		
+		<fieldset>
 			<legend>PayPal Settings</legend>
 			
 			<label for="paypal_email">Account Email Address:</label>

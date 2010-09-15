@@ -4,7 +4,8 @@
 		<img src="<?php echo $this->urls['thumbnails'].'/'.$result->image ?>" class="<?php echo $class ?>" width="<?php echo $size ?>" height="<?php echo $size ?>" title="<?php echo $result->title ?>" alt="" />
 		<h4 class='catablog_title' style='margin-left:<?php echo $ml ?>'>
 			<?php if (mb_strlen($result->link) > 0): ?>
-				<a href="<?php echo $result->link ?>"><?php echo htmlentities($result->title, ENT_QUOTES, 'UTF-8') ?></a>
+				<?php $target = (mb_strlen($this->options['link-target']) > 0)? 'target="'.$this->options['link-target'].'"' : '' ?>
+				<a href="<?php echo $result->link ?>" <?php echo $target ?> ><?php echo htmlentities($result->title, ENT_QUOTES, 'UTF-8') ?></a>
 			<?php else: ?>
 				<?php echo htmlentities($result->title, ENT_QUOTES, 'UTF-8') ?>
 			<?php endif ?>

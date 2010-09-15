@@ -14,6 +14,7 @@ CataBlog allows you to catalog pretty much anything you would want and share it 
 
 New Features:
 
+* Set the target attribute for catalog generated links
 * Import feature for loading previously saved CataBlog backups.
 * Export feature for saving the CataBlog database into a local XML file.
 * Lightbox displays the title, description and next/previous links.
@@ -56,6 +57,9 @@ You can easily override CataBlog's CSS classes to create your own design and eas
 Go to http://catablog.illproductions.com, it is a place to learn and share more about your experiences with CataBlog.
 
 == Changelog ==
+
+= 0.8.8 =
+* New: Set the target attribute for CataBlog generated links
 
 = 0.8.7 =
 * New: Import feature for loading previously saved CataBlog backups.
