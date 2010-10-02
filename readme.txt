@@ -1,7 +1,7 @@
 === CataBlog ===
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
-Tags: plugin, admin, catalog, gallery, discography, library, collection, paypal, organize, media, image, links, photo, thumbnail, product, rolodex, manifest, listing, list
+Tags: plugin, admin, image, images, posts, Post, page, links, catalog, gallery, discography, library, collection, paypal, organize, media, photo, thumbnail, product, rolodex, manifest, listing, list
 Requires at least: 2.9
 Tested up to: 3.0.1
 Stable tag: 0.8.8
@@ -19,6 +19,7 @@ New Features:
 * Export feature for saving the CataBlog database into a local XML file.
 * Lightbox displays the title, description and next/previous links.
 * Support for a stylesheet override file, simply add catablog.css in your theme directory.
+* More descriptive CSS classes to help CataBlog play nice with themes and other plugins.
 
 WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
 
@@ -58,18 +59,22 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Changelog ==
 
+= 0.8.9 =
+* Fix: Lightbox is now much prettier and has keyboard left and right arrow support.
+* Fix: Base CataBlog CSS classes have more specific display and position properties.
+
 = 0.8.8 =
-* New: Set the target attribute for CataBlog generated links
+* New: Set the target attribute for CataBlog generated links.
 
 = 0.8.7 =
 * New: Import feature for loading previously saved CataBlog backups.
-* Fix: Lightbox next and previous link bugs
+* Fix: Lightbox next and previous link bugs.
 
 = 0.8.6 =
-* Added the title, description and next/previous buttons to the Lightbox popup.
+* New: The title, description and next/previous buttons where added to the Lightbox popup.
 * New: Export feature for saving the CataBlog database into a local XML file.
 * New: Support for a stylesheet override file, simply add catablog.css in your theme directory.
-* Fixed a few bugs and poor error messages, including a new check that the server is running PHP5.
+* Fix: bugs and poor error messages, including a new check that the server is running PHP5.
 
 = 0.8.5 =
 * JavaScript Lightbox type effect can now be enabled for larger previews of your catalog item's thumbnails.

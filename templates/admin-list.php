@@ -51,7 +51,7 @@
 			<?php endif ?>
 			<?php foreach ($results as $key => $result): ?>
 				<?php $edit   = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-new&amp;action=edit&amp;id='.$result->id ?>
-				<?php $remove = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-new&amp;action=remove&amp;id='.$result->id ?>
+				<?php $remove = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-delete&amp;id='.$result->id ?>
 				<tr>
 					<?php /*><th class="check-column"><input type="checkbox" /></th>*/?>
 					<?php /*

@@ -4,7 +4,7 @@
 	
 	<p>&nbsp;</p>
 	
-	<form id="catablog-form" method="post" action="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-new' ?>" enctype="multipart/form-data">
+	<form id="catablog-form" method="post" action="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-save' ?>" enctype="multipart/form-data">
 		
 		<label for="image">Image:</label><br />
 		<p id="image_uploader" class="clear_float">
@@ -38,6 +38,9 @@
 			<label for="product_code">Product Code:</label><br />
 			<input type="text" name="product_code" id="product_code" size="50" value="<?php echo htmlspecialchars($result['product_code'], ENT_QUOTES, 'UTF-8') ?>">
 			<br /><br />
+		<?php else:?>
+			<input type="hidden" name="price" id="price" value="" />
+			<input type="hidden" name="product_code" id="product_code" value="" />
 		<?php endif ?>
 		
 		<input type="hidden" id="save" name="save" value="yes" />

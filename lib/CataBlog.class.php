@@ -7,9 +7,9 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.8.8";
+	private $version     = "0.8.9";
 	private $dir_version = 3;
-	private $db_version  = 4;
+	private $db_version  = 5;
 	private $debug       = false;
 	
 	// wordpress database object and options
@@ -32,7 +32,6 @@ class CataBlog {
 	
 	
 	public function __construct() {
-		
 		global $wpdb;
 		
 		$this->db_table = $wpdb->prefix . $this->db_table;
@@ -43,6 +42,7 @@ class CataBlog {
 		// define common directories and files for the plugin
 		$this->plugin_file               = WP_CONTENT_DIR . "/plugins/catablog/catablog.php";
 		$this->directories['plugin']     = WP_CONTENT_DIR . "/plugins/catablog";
+		$this->directories['css']        = WP_CONTENT_DIR . "/plugins/catablog/css";
 		$this->directories['template']   = WP_CONTENT_DIR . "/plugins/catablog/templates";
 		$this->directories['wp_uploads'] = WP_CONTENT_DIR . "/uploads";
 		$this->directories['uploads']    = WP_CONTENT_DIR . "/uploads/catablog";
@@ -64,6 +64,7 @@ class CataBlog {
 	**  WordPress Application Hooks
 	**********************************************/
 	public function registerWordPressHooks() {
+		
 		// install-uninstall actions
 		register_activation_hook($this->plugin_file, array(&$this, 'activate'));
 		register_deactivation_hook($this->plugin_file, array(&$this, 'deactivate'));
@@ -119,6 +120,8 @@ class CataBlog {
 		add_submenu_page('catablog-edit', 'About CataBlog', 'About', $this->user_level, 'catablog-about', array(&$this, 'admin_about'));
 		
 		// hidden pages
+		add_submenu_page('catablog-hidden', "Save CataBlog Item", "Save", $this->user_level, 'catablog-save', array(&$this, 'admin_save'));
+		add_submenu_page('catablog-hidden', "Delete CataBlog Item", "Delete", $this->user_level, 'catablog-delete', array(&$this, 'admin_delete'));
 		add_submenu_page('catablog-hidden', "CataBlog Import", "Import", $this->user_level, 'catablog-import', array(&$this, 'admin_import'));
 		add_submenu_page('catablog-hidden', "CataBlog Export", "Export", $this->user_level, 'catablog-export', array(&$this, 'admin_export'));
 	}
@@ -131,71 +134,98 @@ class CataBlog {
 	**********************************************/	
 	public function admin_list() {
 		$results = $this->get_items();
-		require_once($this->directories['template'] . '/admin-list.php');
+		include_once($this->directories['template'] . '/admin-list.php');
 	}
 	
 	public function admin_item() {
-		if (isset($_POST['save'])) {
-			// save record
-			if ($this->save_item() == false) {
-				$result = array_map('stripslashes_deep', $_POST);
-				require($this->directories['template'] . '/admin-form.php');
-			}
-			else {
-				$this->admin_list();
-			}
-		}
-		elseif (isset($_REQUEST['action'])) {
-			if ($_REQUEST['action'] == 'remove') {
-				$this->delete_item($_REQUEST['id']);
-				$this->wp_message('Catalog Item Removed Successfully');
-				$this->admin_list();
-			}
-			elseif ($_REQUEST['action'] == 'edit') {
+		if (isset($_REQUEST['action'])) {
+			if ($_REQUEST['action'] == 'edit') {
 				// edit record
 				if (isset($_REQUEST['id'])) {
 					$update = true;
 					$id = $_REQUEST['id'];
 					$result = $this->get_item($id);
 				}
-				
-				require($this->directories['template'] . '/admin-form.php');
 			}
-		} else {
+		}
+		else {
 			// view record
 			$update = false;
-			$result = array('id'=>'', 'image'=>'', 'title'=>'', 'description'=>'');
-			require($this->directories['template'] . '/admin-form.php');
-		}	
+			$result = array(
+				'id'=>'', 
+				'image'=>'', 
+				'title'=>'', 
+				'description'=>'', 
+				'link'=>'', 
+				'tags'=>'', 
+				'price'=>'', 
+				'product_code'=>''
+			);
+		}
+		
+		include_once($this->directories['template'] . '/admin-form.php');
+	}
+	
+	public function admin_delete() {
+		// need to add support for nonce check
+		if (isset($_REQUEST['id'])) {
+			$this->delete_item($_REQUEST['id']);
+			$this->wp_message('Catalog Item Removed Successfully');
+			$this->admin_list();
+		}
+	}
+	
+	public function admin_save() {
+		// need to add support for nonce check
+		if (isset($_POST['save'])) {
+			if ($this->save_item() == false) {
+				
+				$update = false;
+				if (isset($_REQUEST['id'])) {
+					$update = true;
+				}
+				
+				$result = array_map('stripslashes_deep', $_POST);
+				include_once($this->directories['template'] . '/admin-form.php');
+			}
+			else {
+				$this->admin_list();
+			}
+		}
 	}
 
 	public function admin_options() {
-		if (isset($_POST['save'])) {
-			if (true) {
+		
+		if (isset($_REQUEST['save'])) {
+			$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_options_nonce'], 'catablog_options' );
+			if ($nonce_verified) {
 				$recalculate_thumbnails = false;
+				$recalculate_fullsize   = false;
 				$save_message           = "CataBlog Options Saved";
 				
-				$image_size_different   = $_REQUEST['image_size'] != $this->options['thumbnail-size'];
+				$image_size_different   = $_REQUEST['thumbnail_size'] != $this->options['thumbnail-size'];
 				$bg_color_different     = $_REQUEST['bg_color'] != $this->options['background-color'];
-				$keep_ratio_different   = $_REQUEST['keep_aspect_ratio'] != $this->options['keep-aspect-ratio'];
+				$keep_ratio_different   = isset($_REQUEST['keep_aspect_ratio']) != $this->options['keep-aspect-ratio'];
 				$fullsize_different     = $_REQUEST['lightbox_image_size'] != $this->options['image-size'];
+				
 				if ($image_size_different || $bg_color_different || $keep_ratio_different) {
 					$recalculate_thumbnails = true;
 					$save_message          .= " - Thumbnails Regenerated";
 				}
-				if ($_REQUEST['lightbox_enabled']) {
+				
+				if (isset($_REQUEST['lightbox_enabled'])) {
 					if ($fullsize_different) {
 						$recalculate_fullsize = true;
 						$save_message        .= " - Full Size Images Regenerated";						
 					}
 				}
 				
-				$this->options['thumbnail-size']    = $_REQUEST['image_size'];
+				$this->options['thumbnail-size']    = $_REQUEST['thumbnail_size'];
 				$this->options['image-size']        = $_REQUEST['lightbox_image_size'];
-				$this->options['lightbox-enabled']  = $_REQUEST['lightbox_enabled'];
+				$this->options['lightbox-enabled']  = isset($_REQUEST['lightbox_enabled']);
 				$this->options['background-color']  = $_REQUEST['bg_color'];
 				$this->options['paypal-email']      = $_REQUEST['paypal_email'];
-				$this->options['keep-aspect-ratio'] = $_REQUEST['keep_aspect_ratio'];
+				$this->options['keep-aspect-ratio'] = isset($_REQUEST['keep_aspect_ratio']);
 				$this->options['link-target']       = $_REQUEST['link_target'];
 				
 				update_option($this->options_name, $this->options);
@@ -209,6 +239,9 @@ class CataBlog {
 				
 				$this->wp_message($save_message);
 			}
+			else {
+				$this->wp_error('Form Validation Error. Please reload the page and try again.');
+			}
 		}
 		
 		$thumbnail_size    = $this->options['thumbnail-size'];
@@ -219,11 +252,11 @@ class CataBlog {
 		$keep_aspect_ratio = $this->options['keep-aspect-ratio'];
 		$link_target       = $this->options['link-target'];
 		
-		require($this->directories['template'] . '/admin-options.php');
+		include_once($this->directories['template'] . '/admin-options.php');
 	}
 	
 	public function admin_import_export() {
-		require($this->directories['template'] . '/admin-import-export.php');
+		include_once($this->directories['template'] . '/admin-import-export.php');
 	}
 	
 	public function admin_import() {
@@ -255,7 +288,7 @@ class CataBlog {
 		
 		// Private DataBase Insertion Method Called in Template:  load_xml_to_database($xml_object)
 		
-		require($this->directories['template'] . '/admin-import.php');
+		include_once($this->directories['template'] . '/admin-import.php');
 	}
 	
 	public function admin_export() {
@@ -264,9 +297,12 @@ class CataBlog {
 		header('Content-Disposition: attachment; filename="catablog-backup-'.$date.'.xml"');
 		
 		$results = $this->get_items();
-		require($this->directories['template'] . '/admin-export.php');
+		include_once($this->directories['template'] . '/admin-export.php');
+		
 		die;
 	}
+	
+	
 	
 	public function admin_about() {
 		global $wpdb;
@@ -305,7 +341,7 @@ class CataBlog {
 		$stats['Original_Upload_Disc_Usage'] = $original_size;
 		$stats['Total_Disc_Usage']   = (round($thumbnail_size, 2) + round($fullsize_size, 2) + round($original_size, 2)) . " MB";
 		
-		require($this->directories['template'] . '/admin-about.php');
+		include_once($this->directories['template'] . '/admin-about.php');
 	}
 	
 	
@@ -371,12 +407,6 @@ class CataBlog {
 		update_option($this->options_name, $this->options);
 	}
 	
-	// public function ajax_recalc_thumbs() {
-	// 	check_ajax_referer('catablog-recalc-thumbs', 'security');
-	// 	$this->regenerate_all_thumbnails();
-	// 	die();
-	// }
-	
 	
 	
 	
@@ -392,20 +422,18 @@ class CataBlog {
 			wp_enqueue_script('catablog-ui', $this->urls['javascript'] . '/catablog.ui.js', array('jquery', 'catablog-lightbox'), $this->version);
 		}
 		
+		wp_enqueue_style('catablog-stylesheet', $this->urls['css'] . '/catablog.css', false, $this->version);
+		
 		$path = get_template_directory().'/catablog.css';
 		if (file_exists($path)) {
 			wp_enqueue_style('catablog-custom-stylesheet', get_bloginfo('template_url') . '/catablog.css', false, $this->version);
 		}
-		wp_enqueue_style('catablog-stylesheet', $this->urls['css'] . '/catablog.css', false, $this->version);
-		
 	}
 
 	public function frontend_content($atts) {
 		extract(shortcode_atts(array('tag'=>false), $atts));
 		
 		$results = $this->get_items($tag);
-		$size    = $this->options['thumbnail-size'];
-		$ml      = ($size + 10) . 'px';
 		
 		ob_start();
 		include $this->directories['template'] . '/frontend-view.php';
@@ -434,14 +462,13 @@ class CataBlog {
 		$table = $this->db_table;
 		
 		$this->remove_legacy_data();
-		
-		if($wpdb->get_var("show tables like '$table'") != $table) {
-			// no table present, maybe do something
-		}
-		
-		$this->install_options();
-		$this->install_database();
 		$this->install_directories();
+		$this->install_options();
+		
+		// if no table present, install the database
+		if($wpdb->get_var("show tables like '$table'") != $table) {
+			$this->install_database();
+		}
 	}
 
 	public function deactivate() {
@@ -489,7 +516,7 @@ class CataBlog {
 	}
 	
 	private function install_database() {
-		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+		include_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 		dbDelta($this->get_database_schema());
 	}
 	
@@ -500,13 +527,27 @@ class CataBlog {
 			$is_dir  = is_dir($this->directories[$dir]);
 			$is_file = is_file($this->directories[$dir]);
 			if (!$is_dir && !$is_file) {
-				if (mkdir($this->directories[$dir]) === false) {
-					// can't write to disc
+				if (mkdir($this->directories[$dir]) == false) {
+					// couldn't write the file to disc
 				}
 			}
 		}
 	}
 	
+	
+	private function test_php_writable() {
+		$error = false;
+		$dirs = array('uploads');
+		
+		foreach ($dirs as $dir) {
+			if (mkdir($this->directories[$dir]) === false) {
+				$error = true;
+				break;
+			}
+		}
+		
+		return $error;
+	}
 	
 	
 	private function remove_options() {
@@ -559,8 +600,10 @@ class CataBlog {
 		$tables = array('disc_history', 'catablog');
 		foreach ($tables as $table) {
 			$table = $wpdb->prefix . $table;
-			$drop  = "DROP TABLE $table";
-			$wpdb->query($drop);
+			if ($wpdb->get_var("show tables like '$table'") == $table) {
+				$drop  = "DROP TABLE $table";
+				$wpdb->query($drop);
+			}			
 		}
 	}
 	
@@ -900,7 +943,7 @@ class CataBlog {
 				echo "offset: $x_offset, $y_offset<br>width: $width, $new_width<br>height: $height, $new_height";
 			}
 			
-			imagecopyresampled($canvas, $upload, $x_offset, $y_offset, 0, 0, $new_width, $new_height, $width, $height);
+			imagecopyresampled($canvas, $upload, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
 			imagejpeg($canvas, $filepath_fullsize, 80);	
 			
 		}
@@ -928,6 +971,35 @@ class CataBlog {
 			$this->generate_fullsize($file, $filepath, true);
 		}
 	}
+	
+	
+	private function regenerate_css_styles() {
+		
+		$path   = $this->directories['css'] . '/catablog.css';
+		$styles = file_get_contents($path);
+		
+		// extract catablog-row css class
+		$catablog_row_css_start  = stripos($styles, '.catablog-row {');
+		$catablog_row_css_end    = stripos($styles, '}', $catablog_row_css_start);
+		$catablog_row_css_length = $catablog_row_css_end - $catablog_row_css_start;
+		$catablog_row_css        = substr($styles, $catablog_row_css_start, $catablog_row_css_length);
+		
+		// replace old thumbnail size with new one
+		$pattern                 = '/(\d+)px/i';
+		$new_size                = $this->options['thumbnail-size'] . "px";
+		$catablog_row_css        =  preg_replace($pattern, $new_size, $catablog_row_css);
+		
+		// rebuild the css stylesheet with modified catablog-row class
+		$styles_start = substr($styles, 0, $catablog_row_css_start);
+		$styles_end   = substr($styles, $catablog_row_css_end);
+		$styles = $styles_start . $catablog_row_css . $styles_end;
+		
+		if (file_put_contents($path, $styles) === false) {
+			$this->wp_error('Error: did not have permission to update catablog.css, please update it manually');
+		}
+	}
+	
+	
 	
 	
 	
@@ -974,6 +1046,7 @@ class CataBlog {
 		echo "	<strong>$message</strong>";
 		echo "</div>";
 	}
+	
 	
 	
 	

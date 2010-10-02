@@ -9,11 +9,11 @@
 			
 			<div id="thumbnail_settings">
 				<p>
-					<label for='image_size'>Thumbnail Size:</label>
-					<input type='text' name='image_size' id='image_size' class='arrow_edit' size='5' value='<?php echo $thumbnail_size ?>' />
+					<label for='thumbnail_size'>Thumbnail Size:</label>
+					<input type='text' name='thumbnail_size' id='thumbnail_size' class='arrow_edit' size='5' value='<?php echo $thumbnail_size ?>' />
 					<span>pixels</span><br />
 				
-					<small id="image_size_error" class="error hidden">your thumbnail size must be a positive integer<br /></small>
+					<small class="error hidden">your thumbnail size must be a positive integer<br /></small>
 					<small>this will change the display size of all images, images you uploaded previously may look pixelated due to poor resolution.</small>
 				</p>
 				<p>
@@ -30,8 +30,6 @@
 					<span id="green"></span>
 					<span id="blue"></span>
 				</p>
-
-				<?php /*<a href="#reset" class="button" id="button-recalc-thumbs">Recalculate All Thumbnails</a> */ ?>
 			</div>
 			
 			<div id="thumbnail_preview">
@@ -54,7 +52,7 @@
 				<label for='lightbox_image_size'>LightBox Size:</label>
 				<input type='text' name='lightbox_image_size' id='lightbox_image_size' class='arrow_edit' size='5' value='<?php echo $lightbox_size ?>' />
 				<span>pixels</span><br />
-				<small id="image_size_error_two" class="error hidden">your lightbox size must be a positive integer<br /></small>
+				<small class="error hidden">your lightbox size must be a positive integer<br /></small>
 				<small>This is the maximum length of either the height or width, depending on whichever is longer in the original uploaded image.</small>
 			</p>
 		</fieldset>
@@ -87,6 +85,7 @@
 			</small></p>
 		</fieldset>
 		
+		<?php wp_nonce_field( 'catablog_options', '_catablog_options_nonce', false, true ) ?>
 		<input type="hidden" name="save" id="save" value="yes" />		
 		<p class="submit">
 			<input type="submit" id="save_changes" class="button-primary" value="<?php _e('Save Changes') ?>" />
@@ -160,7 +159,7 @@
 			var v = this.value;
 			if (is_integer(v) && (v > 0)) {
 				$(this).siblings('small.error').hide();
-				if ($(this).attr('id') == 'image_size') {
+				if ($(this).attr('id') == 'thumbnail_size') {
 					resize_box(v);
 				}
 			}

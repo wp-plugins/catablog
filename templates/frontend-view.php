@@ -1,8 +1,14 @@
+<?php $size = $this->options['thumbnail-size'] ?>
+<?php $ml   = ($size + 10) . 'px' ?>
+
 <?php foreach ($results as $result): ?>
-	<div class='catablog_row'>
-		<?php $class = ($this->options['lightbox-enabled'])? "catablog_image clickable" : "catablog_image" ?>
-		<img src="<?php echo $this->urls['thumbnails'].'/'.$result->image ?>" class="<?php echo $class ?>" width="<?php echo $size ?>" height="<?php echo $size ?>" title="<?php echo $result->title ?>" alt="" />
-		<h4 class='catablog_title' style='margin-left:<?php echo $ml ?>'>
+	<div class='catablog-row' style="min-height:<?php echo $size ?>px; height:auto !important; height:<?php echo $size ?>px;">
+		
+		<?php $class = ($this->options['lightbox-enabled'])? "catablog-image catablog-clickable" : "catablog-image" ?>
+		<?php $html_attr = "class='$class' width='$size' height='$size' title='$result->title' alt=''" ?>
+		<img src="<?php echo $this->urls['thumbnails'].'/'.$result->image ?>" <?php echo $html_attr ?> />
+		
+		<h4 class='catablog-title' style='margin-left:<?php echo $ml ?>'>
 			<?php if (mb_strlen($result->link) > 0): ?>
 				<?php $target = (mb_strlen($this->options['link-target']) > 0)? 'target="'.$this->options['link-target'].'"' : '' ?>
 				<a href="<?php echo $result->link ?>" <?php echo $target ?> ><?php echo htmlentities($result->title, ENT_QUOTES, 'UTF-8') ?></a>
@@ -11,8 +17,8 @@
 			<?php endif ?>
 		</h4>
 		
-		<p class='catablog_description' style='margin-left:<?php echo $ml ?>'>
-			<?php echo nl2br(htmlentities($result->description, ENT_QUOTES, 'UTF-8')) ?>
+		<p class='catablog-description' style='margin-left:<?php echo $ml ?>'>
+			<?php echo nl2br($result->description) ?>
 		</p>
 		
 		<?php if (mb_strlen($this->options['paypal-email']) > 0 && $result->price > 0): ?>
@@ -33,6 +39,5 @@
 			
 		<?php endif ?>
 		
-		<span class="clearFloat">&nbsp;</span>
 	</div>
 <?php endforeach ?>

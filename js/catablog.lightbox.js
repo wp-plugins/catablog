@@ -11,8 +11,8 @@
 		this.each(function(i) {
 			
 			$(this).bind('click', function(event) {
-				$('img.catablog_selected').removeClass('catablog_selected');
-				$(this).addClass('catablog_selected');
+				$('img.catablog-selected').removeClass('catablog-selected');
+				$(this).addClass('catablog-selected');
 				
 				open_lightbox(this);
 			});
@@ -28,14 +28,15 @@
 		
 		
 		// Private Functions
-		function open_lightbox(obj) {
+		function open_lightbox(img) {
+			var support_fixed   = supportPositionFixed();
 			var curtain_density = 0.85;
 			var fadein_speed    = 0;
 			var page_top        = jQuery(document).scrollTop() + 30;
 			
 			// add the curtain div into the DOM
-			jQuery('body').append("<div id='catablog_curtain'>&nbsp;</div>");
-			var curtain = jQuery('#catablog_curtain');
+			jQuery('body').append("<div id='catablog-curtain'>&nbsp;</div>");
+			var curtain = jQuery('#catablog-curtain');
 			
 			// alert(curtain.css);
 
@@ -45,189 +46,225 @@
 			});
 			curtain.css('opacity', curtain_density);
 			
-			if (supportPositionFixed() != true) {
+			if (!support_fixed) {
 				var window_height   = jQuery(window).height();
 				var document_height = jQuery(document).height();
 				curtain.css('position', 'absolute');
 				curtain.height(document_height);
 			}
+			
+			// if (supportPositionFixed() != true) {
+			// 	jQuery('#catablog-curtain').height(jQuery(document).height());
+			// }
 
 
 			// add the lightbox div into the DOM
-			jQuery('body').append("<div id='catablog_lightbox'><div id='catablog_whiteboard'></div></div>");
-			var lightbox = jQuery('#catablog_lightbox');
-
-			// bind the lightbox click and fade the load indicator into view
+			jQuery('body').append("<div id='catablog-lightbox'><div id='catablog-whiteboard'></div></div>");
+			var lightbox = jQuery('#catablog-lightbox');
+			
+			
+			if (!support_fixed) {
+				lightbox.css('top', page_top);	
+			}
+			
+			// MAKE NOTE HERE
 			lightbox.bind('click', function() {
 				close_lightbox();
-			})
-			lightbox.css('top', page_top);
-			lightbox.fadeIn(fadein_speed);
+			});
+			jQuery('#catablog-whiteboard').bind('click', function(event) {
+				event.stopPropagation();
+				return false;
+			});
+			
+			
+			lightbox.show();
 
 
 			// load the full size picture and expand the lightbox to fit the images dimensions
 			var fullsize_pic = new Image();
 			fullsize_pic.onload = function() {
-				var meta = calculateMeta(obj);
+				var meta = calculateMeta(img);
 				expand_lightbox(this, meta);
 			}
 			
-			fullsize_pic.src = obj.src.replace("/catablog/thumbnails", "/catablog/fullsize");
+			fullsize_pic.src = img.src.replace("/catablog/thumbnails", "/catablog/fullsize");
 			
 		}
 		
 		
 		function expand_lightbox(img, meta) {
-			var lightbox = jQuery('#catablog_lightbox div');
-			var speed    = 600;
+			
+			var lightbox = jQuery('#catablog-whiteboard');
+			
+			
 			var w = img.width;
 			var h = img.height;
 			var s = img.src;
+			
+			
+			var title = "<h4 class='catablog-lightbox-title'>" + meta.title + "</h4>";
+			var description = "<p class='catablog-lightbox-desc'>" + meta.description + "</p>";
+			var nav =  meta.nav;
+			
+			// attach image and navigation
+			jQuery(lightbox).append("<div id='catablog-lightbox-image'></div>");
+			jQuery('#catablog-lightbox-image').append("<img src='"+s+"' />");
+			jQuery('#catablog-lightbox-image').append(nav);
+			jQuery('#catablog-lightbox-image a').height(h);
+			
+			// attach meta data below image
+			jQuery(lightbox).append("<div id='catablog-lightbox-meta'></div>");
+			jQuery('#catablog-lightbox-meta').append(title);
+			jQuery('#catablog-lightbox-meta').append(description);
+			
+			// console.log(jQuery('#catablog-lightbox-meta'));
+			
 
-			lightbox.animate({width:w, height:h}, speed, function() {
-				jQuery(this).append("<img src='"+s+"' />");
-				// jQuery(this).css('backgroundImage', 'url()');
-				jQuery(this).children('img').fadeIn(800);
-
-				jQuery(this).animate({height:h}, speed, function() {
+			
+			
+			// console.log(h + ":" + meta_height + ":" + full_height);
+			
+			
+			lightbox.animate({width:w, height:h}, 400, function() {
+				var full_height = h + jQuery('#catablog-lightbox-meta').outerHeight();
+				
+				jQuery(this).children('#catablog-lightbox-meta').show();
+				jQuery(this).animate({height:full_height}, 400, function() {
+					hold_click = false;
+					listenForKeyStroke();
+				})
+				
+				jQuery('#catablog-lightbox-image').fadeIn(400, function() {
 					
-					var title = "<p class='catablog_lightbox_title'>" + meta.title + "<br />" + meta.buynow + "</p>";
-					var number = "<small class='catablog_lightbox_page'>" + "</small>";
-					var navigation = "<small class='catablog_lightbox_nav'>" + meta.nav + "</small>";
-					var description = "<small class='catablog_lightbox_desc'>" + meta.description + "</small>";
-					
-					jQuery(this).append("<div id='catablog_lightbox_meta'>" + title + navigation + description +  "</div>");
-					
-					var h2 = h + jQuery('#catablog_lightbox_meta').outerHeight() + 10;
-					// console.log(h + " : " + h2);
-					jQuery(this).animate({height:h2}, 500, function() {
-						hold_click = false;
-						
-						jQuery(this).children('#catablog_lightbox_meta').fadeIn(800);
-						if (supportPositionFixed() != true) {
-							jQuery('#catablog_curtain').height(jQuery(document).height());
-						}
-						
-						
-						
-						/************
-						**  Lightbox Event Bindings
-						************/
-						jQuery('#catablog_lightbox_meta').bind('click', function(event) {
-							event.stopPropagation();
-						});
-
-						jQuery('#catablog_lightbox_prev').bind('click', function(event) {
-							if (hold_click) {
-								return false;
-							}
-							hold_click = true;
-							
-							var selected = jQuery('img.catablog_selected');
-							var prev_row = jQuery('img.catablog_selected').parent().prev('.catablog_row');
-							
-							var new_thumbnail = null;
-							if (prev_row.size() > 0) {
-								new_thumbnail = prev_row.children('img.catablog_image');
-							}
-							else {
-								new_thumbnail = jQuery('div.catablog_row:last img.catablog_image');
-							}
-							
-							
-							selected.removeClass('catablog_selected');
-							new_thumbnail.addClass('catablog_selected');
-							
-							change_lightbox(new_thumbnail);
-						});
-
-						jQuery('#catablog_lightbox_next').bind('click', function(event) {
-							if (hold_click) {
-								return false;
-							}
-							hold_click = true;
-							
-							var selected = jQuery('img.catablog_selected');
-							var next_row = jQuery('img.catablog_selected').parent().next('.catablog_row');
-							
-							var new_thumbnail = null;
-							if (next_row.size() > 0) {
-								new_thumbnail = next_row.children('img.catablog_image');
-							}
-							else {
-								new_thumbnail = jQuery('div.catablog_row:first img.catablog_image');
-							}
-							
-							selected.removeClass('catablog_selected');
-							new_thumbnail.addClass('catablog_selected');
-							
-							change_lightbox(new_thumbnail);
-						});
-						
-					});
+				});
+				
+				
+				
+				/************
+				**  Bind next and previous photo buttons
+				************/
+				jQuery('#catablog-lightbox-prev').bind('click', function(event) {
+					navigate_lightbox('prev');
+					return false;
 				});
 
-			});
-		}
-		
-		function close_lightbox() {
-			var fadeout_speed = 300;
+				jQuery('#catablog-lightbox-next').bind('click', function(event) {
+					navigate_lightbox('next');
+					return false;
+				});
+				
 
-			jQuery('#catablog_curtain').fadeOut(fadeout_speed, function() {
-				jQuery(this).remove();
+
 			});
-			jQuery('#catablog_lightbox').fadeOut(fadeout_speed, function() {
-				jQuery(this).remove();
-			});
-			jQuery('img.catablog_selected').removeClass('catablog_selected');
 		}
 		
 		
 		function change_lightbox(img) {
-			var lightBox = jQuery('#catablog_lightbox > div');
-			
-			lightBox.children().fadeOut(500, function() {
+			var speed = 150;
+			jQuery('#catablog-whiteboard > div').fadeOut(speed, function() {
 				jQuery(this).remove();
 			});
 			
-			var t = setTimeout(function() {
-				//lightBox.animate({width:100, height:100}, 500, function() {
-						// load the full size picture and expand the lightbox to fit the images dimensions
-					var fullsize_pic = new Image();
-					fullsize_pic.onload = function() {
-						var prev_button  = "<a href='#prev' id='catablog_lightbox_prev'>prev</a>";
-						var next_button  = "<a href='#next' id='catablog_lightbox_next'>next</a>";
-						
-						var meta = calculateMeta(img);
-						expand_lightbox(this, meta);
-					};
-					
-				  fullsize_pic.src = jQuery(img).attr('src').replace("/catablog/thumbnails", "/catablog/fullsize");
-				  
-			  //});
-			}, 700);
+			var reload = setTimeout(function() {
+				
+				var fullsize_pic = new Image();
+				fullsize_pic.onload = function() {
+					var meta = calculateMeta(img);
+					expand_lightbox(this, meta);
+				};
+				
+				fullsize_pic.src = jQuery(img).attr('src').replace("/catablog/thumbnails", "/catablog/fullsize");
+				
+			}, speed);
+			
+		}
+		
+		
+		function navigate_lightbox(direction) {
+			if (hold_click) {
+				return false;
+			}
+			console.log('click');
+			hold_click = true;
+			unlistenForKeyStroke();
 			
 			
+			var selected = jQuery('img.catablog-selected');
+			var new_row  = null;
+			
+			if (direction == 'next') {
+				new_row = selected.parent().next('.catablog-row');
+				if (new_row.size() < 1) {
+					new_row = jQuery('div.catablog-row:first');
+				}
+			}
+			else if (direction == 'prev') {
+				new_row = selected.parent().prev('.catablog-row');
+				if (new_row.size() < 1) {
+					new_row = jQuery('div.catablog-row:last');
+				}
+			}
+			
+			
+			// console.log(new_row);
+			
+			
+			new_thumbnail = new_row.children('.catablog-image');
+			
+			
+			selected.removeClass('catablog-selected');
+			new_thumbnail.addClass('catablog-selected');
+			
+			change_lightbox(new_thumbnail);
+		}
+		
+		
+		function close_lightbox() {
+			unlistenForKeyStroke();
+			
+			var fadeout_speed = 300;
+			
+			jQuery('#catablog-curtain').fadeOut(fadeout_speed, function() {
+				jQuery(this).remove();
+			});
+			jQuery('#catablog-lightbox').fadeOut(fadeout_speed, function() {
+				jQuery(this).remove();
+			});
+			jQuery('img.catablog-selected').removeClass('catablog-selected');
 		}
 		
 		
 		
 		function calculateMeta(obj) {
-			var prev_button  = "<a href='#prev' id='catablog_lightbox_prev'>prev</a>";
-			var next_button  = "<a href='#next' id='catablog_lightbox_next'>next</a>";
+			var prev_button  = "<a href='#prev' id='catablog-lightbox-prev'><span class='catablog-lightbox-nav-label'>PREV</span></a>";
+			var next_button  = "<a href='#next' id='catablog-lightbox-next'><span class='catablog-lightbox-nav-label'>NEXT</span></a>";
 			
 			var meta = {};
 			
-			meta.title       = jQuery(obj).siblings('.catablog_title').html();
-			meta.description = jQuery(obj).siblings('.catablog_description').html();
+			meta.title       = jQuery(obj).siblings('.catablog-title').html();
+			meta.description = jQuery(obj).siblings('.catablog-description').html();
 			meta.buynow = "";
-			meta.nav    = prev_button + " | " + next_button;
+			
+			meta.nav   = "";
+			var row = jQuery(obj).parent();
+			if (row.prev('.catablog-row').size() > 0) {
+				meta.nav += prev_button;
+			}
+			if (row.next('.catablog-row').size() > 0) {
+				meta.nav += next_button;
+			}
+			
 			
 			return meta;
 		}
 		
 		
 		
+		
+		
+		/******************************
+		**   SUPPORT METHODS
+		******************************/
 		function supportPositionFixed() {
 			var isSupported = null;
 			if (document.createElement) {
@@ -245,9 +282,24 @@
 			}
 			return isSupported;
 		}
-
-
 		
+		function listenForKeyStroke() {
+			jQuery(document).bind('keyup', function(event) {
+				var key_code = (event.keyCode ? event.keyCode : event.which);
+				if (key_code == 39) {
+					// forward arrow pressed
+					jQuery('#catablog-lightbox-next').click();
+				}
+				if (key_code == 37) {
+					// backwards arrow pressed
+					jQuery('#catablog-lightbox-prev').click();
+				}
+			});
+		}
+		
+		function unlistenForKeyStroke() {
+			jQuery(document).unbind('keyup');
+		}
 		
 		
 		
