@@ -9,7 +9,7 @@ function hexFromRGB (r, g, b) {
 		g.toString(16),
 		b.toString(16)
 	];
-	$.each(hex, function (nr, val) {
+	jQuery.each(hex, function (nr, val) {
 		if (val.length == 1) {
 			hex[nr] = '0' + val;
 		}

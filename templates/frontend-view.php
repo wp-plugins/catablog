@@ -2,6 +2,8 @@
 <?php $ml   = ($size + 10) . 'px' ?>
 
 <?php foreach ($results as $result): ?>
+	
+	
 	<div class='catablog-row' style="min-height:<?php echo $size ?>px; height:auto !important; height:<?php echo $size ?>px;">
 		
 		<?php $class = ($this->options['lightbox-enabled'])? "catablog-image catablog-clickable" : "catablog-image" ?>
@@ -22,12 +24,12 @@
 		</p>
 		
 		<?php if (mb_strlen($this->options['paypal-email']) > 0 && $result->price > 0): ?>
-			<form method='post' action='https://www.paypal.com/cgi-bin/webscr' target='paypal'>
+			<form method='post' action='https://www.paypal.com/cgi-bin/webscr' target='paypal' style='margin-left:<?php echo $ml ?>'>
 				<input type='hidden' name='cmd' value='_cart'>
 				<input type='hidden' name='business' value='<?php echo htmlspecialchars($this->options['paypal-email'], ENT_QUOTES, 'UTF-8') ?>'>
 				<input type='hidden' name='item_name' value='<?php echo htmlspecialchars($result->title, ENT_QUOTES, 'UTF-8') ?>'>
 				<input type='hidden' name='item_number' value='<?php echo htmlspecialchars($result->product_code, ENT_QUOTES, 'UTF-8') ?>'>
-				<input type='hidden' name='amount' value='<?php echo htmlspecialchars($result->price, ENT_QUOTES, 'UTF-8') ?>'>
+				<input type='hidden' name='amount' value='<?php echo number_format($result->price, 2) ?>'>
 
 				<input type='hidden' name='shipping' value='0.00'>
 				<input type='hidden' name='currency_code' value='USD'>

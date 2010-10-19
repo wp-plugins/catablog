@@ -21,10 +21,8 @@
 				<th class="manage-column">Link</th>
 				<th class="manage-column">Description</th>
 				<th class="manage-column">Tags</th>
-				<?php if (mb_strlen($this->options['paypal-email']) > 0): ?>
-					<th class="manage-column">Price</th>
-					<th class="manage-column">Product Code</th>
-				<?php endif ?>
+				<th class="manage-column">Price</th>
+				<th class="manage-column">Product Code</th>
 			</tr>
 		</thead>
 		<tfoot>
@@ -36,10 +34,8 @@
 				<th class="manage-column">Link</th>
 				<th class="manage-column">Description</th>
 				<th class="manage-column">Tags</th>
-				<?php if (mb_strlen($this->options['paypal-email']) > 0): ?>
-					<th class="manage-column">Price</th>
-					<th class="manage-column">Product Code</th>
-				<?php endif ?>
+				<th class="manage-column">Price</th>
+				<th class="manage-column">Product Code</th>
 			</tr>
 		</tfoot>
 		
@@ -50,7 +46,7 @@
 				</tr>
 			<?php endif ?>
 			<?php foreach ($results as $key => $result): ?>
-				<?php $edit   = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-new&amp;action=edit&amp;id='.$result->id ?>
+				<?php $edit   = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-edit&amp;id='.$result->id ?>
 				<?php $remove = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-delete&amp;id='.$result->id ?>
 				<tr>
 					<?php /*><th class="check-column"><input type="checkbox" /></th>*/?>
@@ -61,7 +57,7 @@
 					*/?>
 					<td class="cb_icon_column">
 						<input type="hidden" name="catablog-item-id" value="<?php echo $result->id ?>" />
-						<img src="<?php echo get_bloginfo('wpurl').'/wp-content/uploads/catablog/thumbnails/'.$result->image ?>" class="cb_item_icon" width="50" height="50" />
+						<a href="<?php echo $edit ?>"><img src="<?php echo get_bloginfo('wpurl').'/wp-content/uploads/catablog/thumbnails/'.$result->image ?>" class="cb_item_icon" width="50" height="50" /></a>
 					</td>
 					<td>
 						<strong><a href="<?php echo $edit ?>" title="Edit CataBlog Item"><?php echo htmlentities($result->title, ENT_QUOTES, 'UTF-8') ?></a></strong>
@@ -74,10 +70,9 @@
 					<td><?php echo htmlspecialchars($result->link, ENT_QUOTES, 'UTF-8') ?></td>
 					<td><?php echo nl2br(htmlentities($result->description, ENT_QUOTES, 'UTF-8')) ?></td>
 					<td><?php echo str_replace(" ", "<br />", htmlspecialchars($result->tags, ENT_QUOTES, 'UTF-8')) ?></td>
-					<?php if (mb_strlen($this->options['paypal-email']) > 0): ?>
-						<td><?php echo htmlspecialchars($result->price, ENT_QUOTES, 'UTF-8') ?></td>
-						<td><?php echo htmlspecialchars($result->product_code, ENT_QUOTES, 'UTF-8') ?></td>
-					<?php endif ?>
+					<?php $currency = "" ?>
+					<td><?php echo (((float) $result->price) > 0)? $currency. number_format($result->price, 2) : "" ?></td>
+					<td><?php echo htmlspecialchars($result->product_code, ENT_QUOTES, 'UTF-8') ?></td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>

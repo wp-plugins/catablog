@@ -5,7 +5,7 @@
 	
 	<item>
 		<id><?php echo $result->id ?></id>
-		<order><?php echo $result->order ?></order>
+		<ordinal><?php echo $result->ordinal ?></ordinal>
 		<image><![CDATA[<?php echo $result->image ?>]]></image>
 		<title><![CDATA[<?php echo $result->title ?>]]></title>
 		<link><![CDATA[<?php echo $result->link ?>]]></link>

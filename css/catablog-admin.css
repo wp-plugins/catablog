@@ -1,5 +1,5 @@
 body {
-	
+	min-width: 1000px !important;
 }
 
 
@@ -14,27 +14,8 @@ body {
 	background-color: #fee;
 }
 
-#image_uploader {
-	padding: 5px;
-	margin: 0 0 1em 0;
-	border: 1px rgb(223,223,223) solid;
-	background-color: #fff;
-	width: 400px;
-	-webkit-border-radius: 4px;
-}
 
-#image_uploader input {
-	margin: 0 0 0 20px;
-	border: 0 none;
-	background-color: #fff;
-}
-#image_uploader img {
-	width: 100px;
-	height: 100px;
-	float: left;
-	border: 1px rgb(223,223,223) solid;
-	-webkit-border-radius: 2px;
-}
+
 
 
 
@@ -42,7 +23,7 @@ body {
 	-moz-background-clip: border;
 	-moz-background-inline-policy: continuous;
 	-moz-background-origin: padding;
-	background: transparent url('./../images/cb_icon_32.png') no-repeat scroll left top;
+	background: transparent url('./../images/catablog-icon-32.png') no-repeat scroll left top;
 }
 
 .cb_order_column {
@@ -63,6 +44,7 @@ body {
 	cursor: move;
 }
 .cb_item_icon {
+	display: block;
 	width: 50px;
 	height: 50px;
 	border: 0 none;
@@ -76,10 +58,171 @@ body {
 
 
 
-form#catablog-form input#image {
-	width: 250px;
-	border: 1px #666 solid;
+
+
+
+#catablog-edit {
+	position: relative;
 }
+#catablog-edit-main {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 282px;
+	min-width: 450px;
+}
+
+
+
+
+
+
+#catablog-edit-main-text {
+	margin: 0 0 0 110px;
+	border-width: 0 !important;
+	padding: 0 0 9px 9px !important;
+}
+#catablog-edit-main-text input {
+	width: 100%;
+	font-size: 18px;
+	line-height: 20px;
+	padding: 3px;
+	color: #464646;
+}
+#catablog-edit-main-text textarea {
+	width: 100%;
+}
+
+
+
+
+
+
+
+#catablog-edit-main-image {
+	position: relative;
+	float: left;
+	margin: 0;
+	width: 100px;
+	border: 0 none !important;
+	padding: 0 !important;
+}
+#catablog-edit-main-image img#catablog-image-preview {
+	width: 100px;
+	height: 100px;
+}
+#catablog-edit-main-image input {
+	display: block;
+}
+
+
+
+
+#catablog-edit-main-image #select-image-button {
+	width: 100px;
+	height: 30px;
+	margin: 10px 0;
+    background: url('./../images/catablog-admin-select-image.png') 0 0 no-repeat;
+
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+
+	
+}
+#catablog-edit-main-image #new_image {
+	position: relative;
+	height: 100%;
+	width: auto;
+	cursor: pointer;
+	 
+	opacity: 0;
+	-moz-opacity: 0;
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);
+}
+
+
+
+
+#catablog-edit-main-image #catablog-edit-main-image strong {
+	color: #c00;
+}
+
+#catablog-edit-main-image #no-image-icon {
+	width: 98px;
+	height: 38px;
+	line-height: 15px;
+	padding: 30px 0;
+	border: 1px #ddd solid;
+	background-color: #ededed;
+	background-image: url('/wp-admin/images/gray-grad.png');
+	background-position: left bottom;
+	background-repeat: repeat-x;
+	font-weight: bold;
+	margin: 0;
+	text-align: center;
+	color: #900;
+	border-radius: 3px;
+}
+
+
+
+
+
+
+
+
+#catablog-edit-main-save {
+	border-width: 0 0 0 0 !important;
+	margin: 0 0 0 110px;
+}
+
+
+
+
+
+
+
+#catablog-edit-params {
+	position: absolute;
+	top: 0px;
+	right: 16px;
+	width: 250px;
+}
+#catablog-edit-params input.text-field {
+	width: 100%;
+	margin: 0 0 0.5em 0;
+}
+
+
+
+
+
+
+
+
+form#catablog-edit fieldset {
+	padding: 0;
+	margin: 0 0 16px 0;
+	border: 0 none;
+}
+form#catablog-edit fieldset h3 {
+	font-size: 12px;
+	font-weight: bold;
+	padding: 6px;
+	background-image: url('/wp-admin/images/gray-grad.png');
+	margin: 0;
+	border-radius: 6px 6px 0 0;
+	color: #464646;
+	border: 1px #ddd solid;
+}
+form#catablog-edit fieldset div {
+	border: 1px #ddd solid;
+	border-width: 0 1px 1px 1px;
+	padding: 9px;
+}
+
+
 
 
 
@@ -96,7 +239,7 @@ form.catablog-form fieldset legend {
 	font-weight: bold;
 }
 form.catablog-form p {
-	margin: 0 0 3em 0;
+	margin: 0;
 }
 
 
@@ -136,6 +279,33 @@ form fieldset.disabled input {
 	color: #888 !important;
 }
 
+
+
+
+
+
+
+form#catablog-view {}
+form#catablog-view #catablog-view-menu {
+	display: block;
+	margin: 0 0 10px 0;
+	padding: 3px;
+	margin: 0 0 10px 0;
+	width: 100%;
+}
+form#catablog-view #catablog-view-set {
+	display: block;
+	margin: 0 0 10px 0;
+	padding: 3px 0;
+	margin: 0;
+	width: 100%;
+	text-align: center;
+}
+form#catablog-view #catablog-view-code {
+	width: 100%;
+	height: 25em;
+	overflow: auto;
+}
 
 
 
