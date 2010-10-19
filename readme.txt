@@ -12,22 +12,24 @@ CataBlog is a comprehensive and effortless tool that allows you to create catalo
 
 CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use tags to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too, now with the new `lightbox effect` which can be turned on in one simple step. Easy, intuitive design makes it child's play to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
-New Features:
+Highlighted Features:
 
-* Set the target attribute for catalog generated links
-* Import feature for loading previously saved CataBlog backups.
-* Export feature for saving the CataBlog database into a local XML file.
-* Lightbox displays the title, description and next/previous links.
-* Support for a stylesheet override file, simply add catablog.css in your theme directory.
-* More descriptive CSS classes to help CataBlog play nice with themes and other plugins.
+* New view controls lets you choose exactly how your catalog's html is rendered.
+* Built in view templates for catalogs, galleries and PayPal shopping carts.
+* Easy management of your catalog with a superiorly designed admin control panels.
+* Import and Export features for loading previously saved CataBlog database backups.
+* The LightBox display shows full size photos along with the title, description and next/previous links.
 
-WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
+NOTE: please export your database to xml before upgrading, just incase.
+
+PLEASE: read notes about upgrading from versions older then 0.7.6
 
 == Installation ==
 
 1. Upload `catablog` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the `Plugins` menu in WordPress
-1. Place `[catablog]` in your page's or post's main body
+1. Create catalog items by uploading image files
+1. Sprinkle the `[catablog]` shortcode throughout your blog to show your catalog
 
 == Frequently Asked Questions ==
 
@@ -58,6 +60,12 @@ You can easily override CataBlog's CSS classes to create your own design and eas
 Go to http://catablog.illproductions.com, it is a place to learn and share more about your experiences with CataBlog.
 
 == Changelog ==
+
+= 0.9.0 =
+* New: Controls of the HTML code rendered by CataBlog.
+* New: View templates for general catalogs, galleries and PayPal shopping carts.
+* New: Edit item form has been redesigned into a friendlier form.
+* Fix: Various tweaks and updates to the admin panel interfaces.
 
 = 0.8.9 =
 * Fix: Lightbox is now much prettier and has keyboard left and right arrow support.
@@ -113,6 +121,12 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * This version is the initial release.
 
 == Upgrade Notice ==
+
+= 0.9.0 =
+
+NOTE: A column in the database has been renamed because the original label was a reserved mysql keyword. This update was well tested and should not provide any problems, but just incase you should backup your database with the xml export feature before you upgrade. Thanks.
+
+WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
 
 = 0.8.7 =
 
