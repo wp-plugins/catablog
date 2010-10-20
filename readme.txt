@@ -18,6 +18,7 @@ Upgraders:
 * Backup `wp-content/uploads/catablog` to your local computer.
 
 Highlighted Features:
+
 * New view controls lets you choose exactly how your catalog's html is rendered.
 * Built in view templates for catalogs, galleries and PayPal shopping carts.
 * Easy management of your catalog with a superiorly designed admin control panels.
