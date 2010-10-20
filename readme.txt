@@ -65,6 +65,9 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Changelog ==
 
+= 0.9.2 =
+* Fix: Bug that could cause page not to render
+
 = 0.9.1 =
 * New: Unlock the catablog image folders for easy FTP uploading.
 * New: Regenerate all catablog image content with a button click.
@@ -131,6 +134,10 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * This version is the initial release.
 
 == Upgrade Notice ==
+
+= 0.9.2 =
+
+NOTE: Use this version over 0.9.1 in all cases they are identical except one line of code that may cause problems with other plugins.
 
 = 0.9.1 =
 

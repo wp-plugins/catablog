@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.9.1";
+	private $version     = "0.9.2";
 	private $dir_version = 3;
 	private $db_version  = 6;
 	private $debug       = false;
@@ -526,7 +526,7 @@ class CataBlog {
 			$values['title']        = (mb_strlen($result->link) > 0)? "<a href='$result->link' target='".$this->options['link-target']."'>$result->title</a>" : $result->title;
 			$values['title-text']   = $result->title;
 			$values['link']         = $result->link;
-			$values['description']  = do_shortcode($result->description);
+			$values['description']  = $result->description;
 			$values['price']        = $result->price;
 			$values['product-code'] = $result->product_code;
 			
