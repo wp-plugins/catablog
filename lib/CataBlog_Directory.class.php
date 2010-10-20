@@ -12,7 +12,9 @@ class CataBlog_Directory {
 			$d = opendir($directory) or die("Could not open directory.");
 			while (false !== ($f=readdir($d))) {
 				if (is_file("$directory/$f")) {
-					$this->filearray[] = $f;
+					if (substr($f, 0, 1) != '.') {
+						$this->filearray[] = $f;
+					}
 				}
 			}
 			closedir($d);

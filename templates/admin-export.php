@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?php echo '<?xml version="1.0" encoding="UTF-8" ?>' ?>
 
 <catablog_items date="<?php echo date('Y-m-d') ?>" time="<?php echo date('H:i:s') ?>">
 	<?php foreach ($results as $result): ?>

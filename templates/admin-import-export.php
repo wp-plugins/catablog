@@ -8,15 +8,15 @@
 			<?php $function_exists = true;//function_exists('simplexml_load_file') ?>
 			<?php $disabled = ($function_exists)? '' : 'disabled="disabled"'?>
 			
-				<legend>Import</legend>
+				<legend>DataBase Import</legend>
 
 				<div id="import-controls" class="controls">
 				
-					<p><input type="file" name="catablog_data" id="catablog_data" <?php echo $disabled ?> /></p>
-				
-					<p>
-						<label for="catablog_clear_db">Replace All Data:</label>
+					<p><input type="file" name="catablog_data" id="catablog_data" <?php echo $disabled ?> /></p><br />
+					
+					<p style="margin-bottom:5px;">&nbsp;
 						<input type="checkbox" name="catablog_clear_db" id="catablog_clear_db" value="true" <?php echo $disabled ?> />
+						<label for="catablog_clear_db">Replace All Data:</label>
 					</p>
 				
 					<input type="submit" class="button" value="Load XML BackUp File" <?php echo $disabled ?> />
@@ -44,7 +44,7 @@
 		</fieldset>
 		
 		<fieldset>
-			<legend>Export</legend>
+			<legend>DataBase Export</legend>
 			
 			<div id="export-controls" class="controls">
 				<br />
@@ -58,6 +58,56 @@
 					To backup your images, simple copy the <em>catablog</em> directory in 
 					<em>wp-content</em> to a secure location.
 				</small>
+			</div>
+		</fieldset>
+		
+		<fieldset>
+			<legend>Upload Folder Permissions</legend>
+			
+			<div class="controls">
+				<?php $permissions = substr(sprintf('%o', fileperms($this->directories['uploads'])), -4) ?>
+				<?php if ($permissions == '0777'): ?>
+					<p>CataBlog Upload Folder is <strong>Unlocked</strong></p>
+				<?php elseif ($permissions == '0755'): ?>
+					<p>CataBlog Upload Folder is <strong>Locked</strong></p>
+				<?php else: ?>
+					<p>Error: You may be on a windows server...</p>
+				<?php endif ?>
+				<br />
+				<a href="admin.php?page=catablog-lock-folders" class="button">Lock Folders</a>
+				<a href="admin.php?page=catablog-unlock-folders" class="button">Unlock Folders</a>				
+			</div>
+			<div class="advice">
+				<p><small>
+					You may lock and unlock your <em>catablog</em> folders with 
+					these controls. The idea is to unlock the folders, use your FTP client to 
+					upload your original files and then lock the folders to protect them from hackers.
+					After unlocking your directories please upload the original files directly
+					into the <strong>wp-content/uploads/catablog/originals/</strong> folder without replacing it.
+					<strong>Do not replace any of the CataBlog created folders</strong>.
+					You should then regenerate all your thumbnail and lightbox pictures below.
+					These controls may not work on a Windows server, it depends on your
+					servers PHP settings and if the chmod command is supported. 
+				</small></p>
+			</div>
+			
+		</fieldset>
+		
+		<fieldset>
+			<legend>Regenerate Images</legend>
+			
+			<div class="controls">
+				<br />
+				<a href="admin.php?page=catablog-regenerate-images" class="button">Regenerate Now</a>
+			</div>
+			<div class="advice">
+				<p><small>
+					Click the <em>Regenerate Now</em> button to recreate all the
+					thumbnail and lightbox images that CataBlog has generated over
+					the time you have used it. This is also useful when restoring exported
+					data from another version of CataBlog. after you have uploaded your
+					original images you must regenerate your images so they display properly.
+				</small></p>
 			</div>
 		</fieldset>
 	</form>

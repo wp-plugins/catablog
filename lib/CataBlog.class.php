@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.9.0";
+	private $version     = "0.9.1";
 	private $dir_version = 3;
 	private $db_version  = 6;
 	private $debug       = false;
@@ -128,6 +128,10 @@ class CataBlog {
 		add_submenu_page('catablog-hidden', "Delete CataBlog Item", "Delete", $this->user_level, 'catablog-delete', array(&$this, 'admin_delete'));
 		add_submenu_page('catablog-hidden', "CataBlog Import", "Import", $this->user_level, 'catablog-import', array(&$this, 'admin_import'));
 		add_submenu_page('catablog-hidden', "CataBlog Export", "Export", $this->user_level, 'catablog-export', array(&$this, 'admin_export'));
+		
+		add_submenu_page('catablog-hidden', "CataBlog Unlock Folders", "Unlock Folders", $this->user_level, 'catablog-unlock-folders', array(&$this, 'admin_unlock_folders'));
+		add_submenu_page('catablog-hidden', "CataBlog Lock Folders", "Lock Folders", $this->user_level, 'catablog-lock-folders', array(&$this, 'admin_lock_folders'));
+		add_submenu_page('catablog-hidden', "CataBlog Regenerate Images", "Regenerate Images", $this->user_level, 'catablog-regenerate-images', array(&$this, 'admin_regenerate_images'));
 	}
 	
 	
@@ -335,6 +339,35 @@ class CataBlog {
 	}
 	
 	
+	public function admin_unlock_folders() {
+		if ($this->unlock_directories()) {
+			$this->wp_message("The CataBlog upload directories have been unlocked.");
+		}
+		else {
+			$this->wp_error("Are you using a unix based server?");
+		}
+		include_once($this->directories['template'] . '/admin-import-export.php');
+	}
+
+
+	public function admin_lock_folders() {
+		if ($this->lock_directories()) {
+			$this->wp_message("The CataBlog upload directories have been locked.");
+		}
+		else {
+			$this->wp_error("Are you using a unix based server?");
+		}
+		include_once($this->directories['template'] . '/admin-import-export.php');
+	}
+	
+	
+	public function admin_regenerate_images() {
+		$this->regenerate_all_thumbnails();
+		$this->regenerate_all_fullsize();
+		$this->wp_message("The CataBlog generated images have been regenerated.");
+		include_once($this->directories['template'] . '/admin-import-export.php');
+	}
+	
 	
 	public function admin_about() {
 		global $wpdb;
@@ -493,7 +526,7 @@ class CataBlog {
 			$values['title']        = (mb_strlen($result->link) > 0)? "<a href='$result->link' target='".$this->options['link-target']."'>$result->title</a>" : $result->title;
 			$values['title-text']   = $result->title;
 			$values['link']         = $result->link;
-			$values['description']  = $result->description;
+			$values['description']  = do_shortcode($result->description);
 			$values['price']        = $result->price;
 			$values['product-code'] = $result->product_code;
 			
@@ -645,6 +678,38 @@ class CataBlog {
 				}
 			}
 		}
+	}
+	
+	private function unlock_directories() {
+		$success = true;
+		$dirs = array(1=>'uploads', 2=>'thumbnails', 3=>'originals', 4=>'fullsize');
+		
+		foreach ($dirs as $dir) {
+			$is_dir  = is_dir($this->directories[$dir]);
+			if ($is_dir) {
+				if (chmod($this->directories[$dir], 0777) === false) {
+					$success = false;
+				}
+			}
+		}
+		
+		return $success;
+	}
+	
+	private function lock_directories() {
+		$success = true;
+		$dirs = array(1=>'uploads', 2=>'thumbnails', 3=>'originals', 4=>'fullsize');
+		
+		foreach ($dirs as $dir) {
+			$is_dir  = is_dir($this->directories[$dir]);
+			if ($is_dir) {
+				if (chmod($this->directories[$dir], 0755) === false) {
+					$success = false;
+				}
+			}
+		}
+		
+		return $success;
 	}
 	
 	
@@ -951,7 +1016,6 @@ class CataBlog {
 
 	
 	private function generate_thumbnail($image_name, $image_path, $force_regenerate=false) {
-				
 		$tmp = $image_path;
 		$filepath_thumb    = $this->directories['thumbnails'] . "/$image_name";
 		$filepath_original = $this->directories['originals'] . "/$image_name";

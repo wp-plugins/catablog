@@ -12,8 +12,12 @@ CataBlog is a comprehensive and effortless tool that allows you to create catalo
 
 CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use tags to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too, now with the new `lightbox effect` which can be turned on in one simple step. Easy, intuitive design makes it child's play to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
-Highlighted Features:
+Upgraders:
 
+* Please export your database to xml before upgrading, just incase.
+* Backup `wp-content/uploads/catablog` to your local computer.
+
+Highlighted Features:
 * New view controls lets you choose exactly how your catalog's html is rendered.
 * Built in view templates for catalogs, galleries and PayPal shopping carts.
 * Easy management of your catalog with a superiorly designed admin control panels.
@@ -60,6 +64,12 @@ You can easily override CataBlog's CSS classes to create your own design and eas
 Go to http://catablog.illproductions.com, it is a place to learn and share more about your experiences with CataBlog.
 
 == Changelog ==
+
+= 0.9.1 =
+* New: Unlock the catablog image folders for easy FTP uploading.
+* New: Regenerate all catablog image content with a button click.
+* Fix: Some people could not export due to a PHP config conflict.
+* Fix: Small user interface tweaks
 
 = 0.9.0 =
 * New: Controls of the HTML code rendered by CataBlog.
@@ -121,6 +131,10 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * This version is the initial release.
 
 == Upgrade Notice ==
+
+= 0.9.1 =
+
+NOTE: A small upgrade to the code, nothing major.
 
 = 0.9.0 =
 
