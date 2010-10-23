@@ -182,9 +182,7 @@ jQuery(function($) {
 				
 				var fullsize_pic = new Image();
 				fullsize_pic.onload = function() {
-					console.log("loaded: " + this.src);
 					var meta = calculateMeta(row);
-					console.log(meta);
 					expand_lightbox(this, meta);
 				};
 				
