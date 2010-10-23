@@ -15,7 +15,7 @@ CataBlog allows you to catalog pretty much anything you would want and share it 
 Upgraders:
 
 * Please export your database to xml before upgrading, just incase.
-* Backup `wp-content/uploads/catablog` to your local computer.
+* Backup the `wp-content/uploads/catablog` folder to your local computer.
 
 Highlighted Features:
 
@@ -43,7 +43,7 @@ PLEASE: read notes about upgrading from versions older then 0.7.6
 The CataBlog Admin section is made to work best with these browsers:
 
 1. Internet Explorer 8+
-1. FireFox 2+
+1. FireFox 3+
 1. Opera 10+
 1. Safari & Chrome
 
@@ -65,6 +65,11 @@ You can easily override CataBlog's CSS classes to create your own design and eas
 Go to http://catablog.illproductions.com, it is a place to learn and share more about your experiences with CataBlog.
 
 == Changelog ==
+
+= 0.9.3 =
+* New: View settings now have separate template code for items and their "buy now" buttons.
+* Fix: Lightbox JavaScript effect is now more stable and flexible with html layouts.
+* Fix: Hard returns will be rendered as line breaks again.
 
 = 0.9.2 =
 * Fix: Bug that could cause page not to render
@@ -135,6 +140,10 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * This version is the initial release.
 
 == Upgrade Notice ==
+
+= 0.9.3 =
+
+NOTE: Small upgrade here, no really big changes in the database that a few savings of the view templates wouldn't fix anyways.
 
 = 0.9.2 =
 

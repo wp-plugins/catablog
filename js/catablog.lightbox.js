@@ -42,7 +42,7 @@ jQuery(function($) {
 		function open_lightbox(row) {
 			// get the image inside the row
 			
-			var img = jQuery(row).children('img.catablog-image').get(0);
+			var img = jQuery(row).find('img.catablog-image').get(0);
 			
 			var support_fixed   = supportPositionFixed();
 			var curtain_density = 0.85;
@@ -174,23 +174,25 @@ jQuery(function($) {
 			var row   = jQuery(img).parent().get(0);
 			var speed = 150;
 			
-			jQuery('#catablog-whiteboard > div').fadeOut(speed, function() {
+			jQuery('#catablog-lightbox-meta').fadeOut(speed, function() {
 				jQuery(this).remove();
 			});
-			
-			var reload = setTimeout(function() {
+			jQuery('#catablog-lightbox-image').fadeOut(speed, function() {
+				jQuery(this).remove();
 				
 				var fullsize_pic = new Image();
 				fullsize_pic.onload = function() {
+					console.log("loaded: " + this.src);
 					var meta = calculateMeta(row);
+					console.log(meta);
 					expand_lightbox(this, meta);
 				};
 				
 				// alert(img.src.replace("/catablog/thumbnails", "/catablog/fullsize"));
 				fullsize_pic.src = img.src.replace("/catablog/thumbnails", "/catablog/fullsize");
 				
-			}, speed);
-			
+				
+			});			
 		}
 		
 		
@@ -219,7 +221,7 @@ jQuery(function($) {
 				}
 			}
 			
-			new_thumbnail = new_row.children('.catablog-image').get(0);
+			new_thumbnail = new_row.find('.catablog-image').get(0);
 			
 			selected.removeClass('catablog-selected');
 			new_row.addClass('catablog-selected');
@@ -251,8 +253,8 @@ jQuery(function($) {
 			
 			var meta = {};
 			
-			meta.title       = jQuery(row).children('.catablog-title').html();
-			meta.description = jQuery(row).children('.catablog-description').html();
+			meta.title       = row.find('.catablog-title').html();
+			meta.description = row.find('.catablog-description').html();
 			meta.buynow = "";
 			
 			meta.nav   = "";

@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.9.2";
+	private $version     = "0.9.3";
 	private $dir_version = 3;
 	private $db_version  = 6;
 	private $debug       = false;
@@ -273,7 +273,10 @@ class CataBlog {
 			$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_options_nonce'], 'catablog_options' );
 			if ($nonce_verified) {
 				$escaped_post = array_map('stripslashes_deep', $_REQUEST);
-				$this->options['view-theme'] = trim($escaped_post['view-code']);
+				
+				$this->options['view-theme']  = trim($escaped_post['view-code-template']);
+				$this->options['view-buynow'] = trim($escaped_post['view-code-buynow']);
+				
 				update_option($this->options_name, $this->options);
 				
 				$this->wp_message('CataBlog View Saved.');
@@ -517,26 +520,42 @@ class CataBlog {
 		
 		$results = $this->get_items($tag);
 		foreach ($results as $result) {
+			
+			// check if theme is empty, if so use default theme
 			$string = $this->options['view-theme'];
 			if (mb_strlen($string) == 0) {
 				$string = file_get_contents($this->directories['template'] . '/views/default.htm');
 			}
 			
-			$values['image']        = $this->urls['thumbnails'] . "/$result->image";
-			$values['title']        = (mb_strlen($result->link) > 0)? "<a href='$result->link' target='".$this->options['link-target']."'>$result->title</a>" : $result->title;
-			$values['title-text']   = $result->title;
-			$values['link']         = $result->link;
-			$values['description']  = $result->description;
-			$values['price']        = $result->price;
-			$values['product-code'] = $result->product_code;
+			// set the values of the item into an array
+			$values['image']           = $this->urls['thumbnails'] . "/$result->image";
+			$values['title']           = (mb_strlen($result->link) > 0)? "<a href='$result->link' target='".$this->options['link-target']."'>$result->title</a>" : $result->title;
+			$values['title-text']      = $result->title;
+			$values['link']            = $result->link;
+			$values['description']     = nl2br($result->description);
+			$values['price']           = number_format($result->price, 2, '.', '');
+			$values['product-code']    = $result->product_code;
 			
+			
+			// generate the buy now button if the price of the item is greater then 0
+			$buy_now_button = '';
+			if ($result->price > 0) {
+				$buy_now_button = $this->options['view-buynow'];
+				foreach ($values as $key => $value) {
+					$search         = "%" . strtoupper($key) . "%";
+					$buy_now_button = str_replace($search, $value, $buy_now_button);
+				}
+			}
+			$values['buy-now-button']  = $buy_now_button;
+			
+			// loop through each items array of values and replace tokens
 			foreach($values as $key => $value) {
 				$search  = "%" . strtoupper($key) . "%";
 				$string  = str_replace($search, $value, $string);
 			}
-			
+						
+			// write the string to the current output buffer
 			echo $string;
-			
 		}
 		
 		
@@ -619,6 +638,7 @@ class CataBlog {
 		$options['lightbox-enabled']  = false;
 		$options['link-target']       = "_blank";
 		$options['view-theme']        = file_get_contents($this->directories['template'] . '/views/default.htm');
+		$options['view-buynow']       = '';
 		
 		if ($this->options == false) {
 			update_option($this->options_name, $options);
