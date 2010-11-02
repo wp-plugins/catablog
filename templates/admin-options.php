@@ -433,28 +433,6 @@
 		
 		
 		
-		// 
-		// $('#catablog-unlock-folders').bind('click', function(event) {
-		// 	var params = { 'action':'catablog_unlock_folders', 'security':'<?php echo wp_create_nonce("catablog-unlock-folders") ?>' }
-		// 	$.post(ajaxurl, params, function(data) {
-		// 		try {
-		// 			var data = eval(data);
-		// 			var message = "<div id='message' class='updated'><strong>"+data.message+"</strong></div>";
-		// 			$('#catablog-options').prepend(message)
-		// 			var time1 = setTimeout(function() {
-		// 				$('#message.updated').fadeOut()
-		// 			}, 2000);
-		// 		}
-		// 		catch(e) {
-		// 			alert(e);
-		// 		}
-		// 	});
-		// 	return false;
-		// });
-		
-		
-		
-		
 		
 		
 		
