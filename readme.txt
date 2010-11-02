@@ -1,7 +1,7 @@
 === CataBlog ===
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
-Tags: plugin, admin, image, images, posts, Post, page, links, catalog, gallery, discography, library, collection, paypal, organize, media, photo, thumbnail, product, rolodex, manifest, listing, list
+Tags: plugin, admin, image, images, posts, Post, page, links, catalog, gallery, discography, library, collection, paypal, organize, media, photo, thumbnail, product, rolodex, manifest, listing, list, category, categories, custom post type, custom post, custom taxonomy
 Requires at least: 2.9
 Tested up to: 3.0.1
 Stable tag: 0.9.5
@@ -19,10 +19,10 @@ Upgraders:
 
 Highlighted Features:
 
-* Complete WordPress integration, no longer does CataBlog mess with your database.
+* Complete WordPress integration, CataBlog does not mess with your database.
 * Tags have been replaced with a more familiar `Categories` feature.
 * The Options Page is better organized and supports more options.
-* New template controls lets you choose exactly how your catalog's HTML is rendered.
+* New template controls let you choose exactly how your catalog's HTML is rendered.
 * Easy management of your catalog with superiorly designed admin control panels.
 * Import and Export features for saving and loading catalogs.
 
