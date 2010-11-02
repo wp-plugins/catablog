@@ -1,4 +1,5 @@
 <div class="wrap">
+	
 	<div id="icon-catablog" class="icon32"><br /></div>
 	<h2>
 		<span>Manage CataBlog</span>
@@ -10,6 +11,12 @@
 		<strong>&nbsp;</strong>
 	</div>
 	
+	<noscript>
+		<div class="error">
+			<strong>You must have a JavaScript enabled browser to change the order of your items on this page.</strong>
+		</div>
+	</noscript>
+	
 	<form method="post" action="">	
 	<table id="catablog_items" class="widefat post" cellspacing="0">
 		<thead>
@@ -20,7 +27,7 @@
 				<th class="manage-column">Title</th>
 				<th class="manage-column">Link</th>
 				<th class="manage-column">Description</th>
-				<th class="manage-column">Tags</th>
+				<th class="manage-column">Categories</th>
 				<th class="manage-column">Price</th>
 				<th class="manage-column">Product Code</th>
 			</tr>
@@ -33,7 +40,7 @@
 				<th class="manage-column">Title</th>
 				<th class="manage-column">Link</th>
 				<th class="manage-column">Description</th>
-				<th class="manage-column">Tags</th>
+				<th class="manage-column">Categories</th>
 				<th class="manage-column">Price</th>
 				<th class="manage-column">Product Code</th>
 			</tr>
@@ -45,9 +52,10 @@
 					<td colspan='5'>No CataBlog Items</td>
 				</tr>
 			<?php endif ?>
-			<?php foreach ($results as $key => $result): ?>
-				<?php $edit   = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-edit&amp;id='.$result->id ?>
-				<?php $remove = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-delete&amp;id='.$result->id ?>
+			<?php foreach ($results as $result): ?>
+				<?php $edit   = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-edit&amp;id='.$result->getId() ?>
+				<?php $remove = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-delete&amp;id='.$result->getId() ?>
+				
 				<tr>
 					<?php /*><th class="check-column"><input type="checkbox" /></th>*/?>
 					<?php /*
@@ -56,23 +64,23 @@
 					</td>
 					*/?>
 					<td class="cb_icon_column">
-						<input type="hidden" name="catablog-item-id" value="<?php echo $result->id ?>" />
-						<a href="<?php echo $edit ?>"><img src="<?php echo get_bloginfo('wpurl').'/wp-content/uploads/catablog/thumbnails/'.$result->image ?>" class="cb_item_icon" width="50" height="50" /></a>
+						<input type="hidden" name="catablog-item-id" value="<?php echo $result->getId() ?>" />
+						<a href="<?php echo $edit ?>"><img src="<?php echo get_bloginfo('wpurl').'/wp-content/uploads/catablog/thumbnails/'.$result->getImage() ?>" class="cb_item_icon" width="50" height="50" /></a>
 					</td>
 					<td>
-						<strong><a href="<?php echo $edit ?>" title="Edit CataBlog Item"><?php echo htmlentities($result->title, ENT_QUOTES, 'UTF-8') ?></a></strong>
+						<strong><a href="<?php echo $edit ?>" title="Edit CataBlog Item"><?php echo htmlentities($result->getTitle(), ENT_QUOTES, 'UTF-8') ?></a></strong>
 						<div class="row-actions">
 							<span><a href="<?php echo $edit ?>">Edit</a></span>
 							<span> | </span>
 							<span class="trash"><a href="<?php echo $remove ?>" class="remove_link">Trash</a></span>
 						</div>
 					</td>
-					<td><?php echo htmlspecialchars($result->link, ENT_QUOTES, 'UTF-8') ?></td>
-					<td><?php echo nl2br(htmlentities($result->description, ENT_QUOTES, 'UTF-8')) ?></td>
-					<td><?php echo str_replace(" ", "<br />", htmlspecialchars($result->tags, ENT_QUOTES, 'UTF-8')) ?></td>
+					<td><?php echo htmlspecialchars($result->getLink(), ENT_QUOTES, 'UTF-8') ?></td>
+					<td><?php echo nl2br(htmlentities($result->getDescription(), ENT_QUOTES, 'UTF-8')) ?></td>
+					<td><?php echo htmlspecialchars(implode(', ', $result->getCategories()), ENT_QUOTES, 'UTF-8') ?></td>
 					<?php $currency = "" ?>
-					<td><?php echo (((float) $result->price) > 0)? $currency. number_format($result->price, 2) : "" ?></td>
-					<td><?php echo htmlspecialchars($result->product_code, ENT_QUOTES, 'UTF-8') ?></td>
+					<td><?php echo (((float) $result->getPrice()) > 0)? $currency. number_format($result->getPrice(), 2) : "" ?></td>
+					<td><?php echo htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8') ?></td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>

@@ -32,14 +32,7 @@
 		<?php endforeach ?>
 		</tbody>
 	</table>
-	
-	<br /><br />
-	
-	<p>
-		<a href="#reset" class="button" id="button-reset">Reset</a>
-		<small>Reset your entire catalog, deleting all photos and custom data permanently. Sometimes you can use this to fix an improper install.</small>
-	</p>
-	
+
 </div>
 
 <script type="text/javascript">
@@ -48,16 +41,6 @@
 			if (!confirm("Are you sure you want to reset CataBlog and delete all your data?")) {
 				return false;
 			}
-			
-			var params = { 'action':'catablog_reset', 'security':'<?php echo wp_create_nonce("catablog-reset") ?>' }
-			$.post(ajaxurl, params, function(data) {
-				$('#button-reset').blur();
-				alert('You have successfully removed all data pertaining to CataBlog');
-				window.location.reload();
-			});
-			
-			return false;	
-			
 		});
 	});
 </script>

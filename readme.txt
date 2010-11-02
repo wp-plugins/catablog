@@ -10,22 +10,21 @@ CataBlog is a comprehensive and effortless tool that allows you to create catalo
 
 == Description ==
 
-CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use tags to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too, now with the new `lightbox effect` which can be turned on in one simple step. Easy, intuitive design makes it child's play to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
+CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use categories to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too with the `LightBox` effect, it can be enabled with one click. Easy, intuitive and smart design makes it trivial to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
 Upgraders:
 
 * Please export your database to xml before upgrading, just incase.
-* Backup the `wp-content/uploads/catablog` folder to your local computer.
+* Backup the `catablog` folder in your WordPress uploads folder.
 
 Highlighted Features:
 
-* New view controls lets you choose exactly how your catalog's html is rendered.
-* Built in view templates for catalogs, galleries and PayPal shopping carts.
-* Easy management of your catalog with a superiorly designed admin control panels.
-* Import and Export features for loading previously saved CataBlog database backups.
-* The LightBox display shows full size photos along with the title, description and next/previous links.
-
-NOTE: please export your database to xml before upgrading, just incase.
+* Complete WordPress integration, no longer does CataBlog mess with your database.
+* Tags have been replaced with a more familiar `Categories` feature.
+* The Options Page is better organized and supports more options.
+* New template controls lets you choose exactly how your catalog's HTML is rendered.
+* Easy management of your catalog with superiorly designed admin control panels.
+* Import and Export features for saving and loading catalogs.
 
 PLEASE: read notes about upgrading from versions older then 0.7.6
 
@@ -65,6 +64,12 @@ You can easily override CataBlog's CSS classes to create your own design and eas
 Go to http://catablog.illproductions.com, it is a place to learn and share more about your experiences with CataBlog.
 
 == Changelog ==
+
+= 0.9.5 =
+* Fix: CataBlog no longer modifies the database directly, preferring built in WordPress functions instead.
+* New: Tags have been replaced with a more WordPress like categories feature.
+* New: Options page now has a better organized tabbed interface.
+* Fix: Various small user interface tweaks and bug fixes.
 
 = 0.9.3 =
 * New: View settings now have separate template code for items and their "buy now" buttons.
@@ -140,6 +145,10 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * This version is the initial release.
 
 == Upgrade Notice ==
+
+= 0.9.5 =
+
+WARNING: Complete removal of all database manipulation code from CataBlog. This is very good, as all data storage and retrieval will be delegated by built in WordPress functions. To upgrade you will be required to Export and then Import your catalog data. After a successful Import, you may remove the old data from your database in the CataBlog > Options > Systems section . You should leave the images folder alone, as nothing much has changed when it comes to uploads and storage.
 
 = 0.9.3 =
 

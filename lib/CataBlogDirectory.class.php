@@ -1,6 +1,6 @@
 <?php
 
-class CataBlog_Directory {
+class CataBlogDirectory {
 	private $filearray = array();
 	private $directory = "";
 	

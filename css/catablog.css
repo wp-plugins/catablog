@@ -87,7 +87,6 @@
 }
 #catablog-lightbox {
 	display: none;
-	position: fixed !important;
 	position: absolute;
 	width: 100%;
 	top: 50px;
@@ -117,6 +116,7 @@
 	position: relative;
 	display: none;
 	padding: 0.5em 0;
+	background: #fff;
 }
 #catablog-lightbox-meta .catablog-lightbox-title {
 	font-size: 14px !important;

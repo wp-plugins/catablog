@@ -76,11 +76,8 @@ jQuery(function($) {
 			// add the lightbox div into the DOM
 			jQuery('body').append("<div id='catablog-lightbox'><div id='catablog-whiteboard'></div></div>");
 			var lightbox = jQuery('#catablog-lightbox');
-			
-			
-			if (!support_fixed) {
-				lightbox.css('top', page_top);	
-			}
+			lightbox.css('top', page_top);	
+
 			
 			// MAKE NOTE HERE
 			lightbox.bind('click', function() {
@@ -122,6 +119,7 @@ jQuery(function($) {
 			
 			// attach image and navigation
 			jQuery(lightbox).append("<div id='catablog-lightbox-image' />");
+			jQuery('#catablog-lightbox-image').height(h);
 			if (!jQuery('#catablog-lightbox-image').append("<img src='"+s+"' />")) {
 				alert('fail appending')
 			};

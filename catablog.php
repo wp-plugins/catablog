@@ -3,7 +3,7 @@
 Plugin Name: CataBlog
 Plugin URI: http://catablog.illproductions.com
 Description: CataBlog is a comprehensive and effortless tool that allows you to create catalogs and galleries for your blog.
-Version: 0.9.3
+Version: 0.9.5
 Author: Zachary Segal
 Author URI: http://catablog.illproductions.com/about/
 
@@ -27,27 +27,44 @@ if (strpos($phpversion, '-') !== false) {
 	$phpversion = substr($phpversion,0,strpos($phpversion, '-'));
 }
 if (floatval($phpversion) < 5.0) {
-  die("<strong>CataBlog</strong> requires <strong>PHP5</strong> or better running on your web server. 
+  die("<strong>CataBlog</strong> requires <strong>PHP 5</strong> or better running on your web server. 
 		You're version of PHP is to old, please contact your hosting company or IT department for an upgrade.
 		Thanks.");
 }
 
 
+// check if GD Library is loaded
+if (!extension_loaded('gd') || !function_exists('gd_info')) {
+    die("<strong>CataBlog</strong> requires the <strong>GD Library</strong> be installed on your
+		web server's version of PHP. Please contact your hosting company or IT department for
+		more information. Thanks.");
+}
 
 
+// check WordPress version
+global $wp_version;
+if (version_compare($wp_version, '2.6', '<=')) {
+	die("<strong>CataBlog</strong> requires <strong>WordPress version 2.6</strong> or above. Please
+	upgrade WordPress or contact your system administrator about upgrading.");
+}
 
 
-
-// load libraries
+// load necessary libraries
 require('lib/CataBlog.class.php');
-require('lib/CataBlog_Directory.class.php');
-
-$catablog = new CataBlog();
-$catablog->registerWordPressHooks();
+require('lib/CataBlogItem.class.php');
+require('lib/CataBlogDirectory.class.php');
 
 
+// create CataBlog class and hook into WordPress
+$wp_plugin_catablog_class = new CataBlog();
+$wp_plugin_catablog_class->registerWordPressHooks();
 
 
+// Declare a function for use in custom wordpress templates
+function catablog_show_items($category=null) {
+	global $wp_plugin_catablog_class;
+	echo $wp_plugin_catablog_class->frontend_content(array('category'=>$category));
+}
 
 
 
