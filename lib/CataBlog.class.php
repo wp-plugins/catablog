@@ -777,11 +777,12 @@ class CataBlog {
 			wp_enqueue_script('catablog-lightbox', $this->urls['javascript'] . '/catablog.lightbox.js', array('jquery'), $this->version);
 		}
 		
-		wp_enqueue_style('catablog-stylesheet', $this->urls['css'] . '/catablog.css', false, $this->version);
-		
 		$path = get_stylesheet_directory().'/catablog.css';
 		if (file_exists($path)) {
 			wp_enqueue_style('catablog-stylesheet', get_bloginfo('stylesheet_directory') . '/catablog.css', false, $this->version);
+		}
+		else {
+			wp_enqueue_style('catablog-stylesheet', $this->urls['css'] . '/catablog.css', false, $this->version);
 		}
 	}
 	
