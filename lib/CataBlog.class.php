@@ -192,7 +192,7 @@ class CataBlog {
 			global $wpdb;
 			$table = $this->db_table;
 			if (($wpdb->get_var("SHOW TABLES LIKE '$table'") == $table)) {
-				$read_this_link = "<a href='http://catablog.illproductions.net/old-database-removed/' target='_blank'>Read This</a>";
+				$read_this_link = "<a href='http://catablog.illproductions.net/2010/11/old-database-removed/' target='_blank'>Read This</a>";
 				$this->wp_error("OLD CATABLOG TABLE PRESENT! $read_this_link Immediately To Fix.");
 			}
 		}
