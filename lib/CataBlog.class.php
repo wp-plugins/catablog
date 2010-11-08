@@ -1224,7 +1224,7 @@ class CataBlog {
 					case UPLOAD_ERR_EXTENSION:
 						return "A PHP Extension Is Blocking PHP From Excepting Uploads, Please Contact The System Admin.";
 						break;
-					defaut:
+					default:
 						return "An Unknown Upload Error Has Occurred";
 				}
 			}
