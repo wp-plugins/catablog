@@ -46,7 +46,7 @@
 						<input type="text" name="title" id="catablog-title" maxlength="200" tabindex="2" value="<?php echo htmlspecialchars($result->getTitle(), ENT_QUOTES, 'UTF-8') ?>" />
 						<br /><br />
 						<label for="catablog-description">Description [<small>excepts html formatting</small>]</label>
-						<textarea name="description" id="catablog-description" cols="45" rows="20" tabindex="2"><?php echo htmlspecialchars($result->getDescription(), ENT_QUOTES, 'UTF-8') ?></textarea>
+						<textarea name="description" id="catablog-description" tabindex="2"><?php echo htmlspecialchars($result->getDescription(), ENT_QUOTES, 'UTF-8') ?></textarea>
 					</div>
 					
 					<div id="catablog-edit-main-save">

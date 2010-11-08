@@ -69,8 +69,16 @@ body {
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	right: 282px;
-/*	min-width: 450px;*/
+	right: 266px;
+}
+#catablog-edit-params {
+	position: relative;
+	width: 250px;
+	margin: 0 0 0 auto;
+}
+#catablog-edit-params input.text-field {
+	width: 100%;
+	margin: 0 0 0.5em 0;
 }
 
 
@@ -92,6 +100,7 @@ body {
 }
 #catablog-edit-main-text textarea {
 	width: 100%;
+	height: 30em;
 }
 
 
@@ -213,18 +222,10 @@ body {
 
 
 
-
-
-#catablog-edit-params {
-	position: absolute;
-	top: 0px;
-	right: 16px;
-	width: 250px;
+#catablog-options {
+	display: block;
 }
-#catablog-edit-params input.text-field {
-	width: 100%;
-	margin: 0 0 0.5em 0;
-}
+
 
 
 
@@ -287,7 +288,6 @@ form#catablog-edit fieldset div {
 }
 
 .catablog-options-panel {
-	display: block;
 	margin: 0 0 0 100px !important;
 	min-height: 320px;
 	padding: 1em;
@@ -384,6 +384,54 @@ form#catablog-view #catablog-view-menu {
 	width: 100%;
 }
 */
+
+
+
+
+
+
+
+
+
+
+
+#catablog-progress {
+	position: relative;
+	height: 3em;
+	line-height: 3em;
+	border: 1px #e8e8e8 solid;
+	background-color: #fff;
+	padding: 0 1em;
+	margin: 0 0 1em 0;
+	border-radius: 15px;
+}
+#catablog-progress-text {
+	position: relative;
+	padding: 0;
+	margin: 0;
+}
+#catablog-progress-bar {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 100%;
+	width: 0%;
+	background-color: #7dc2fd;
+	border-radius: 15px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.9.5";
+	private $version     = "0.9.6";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -92,11 +92,15 @@ class CataBlog {
 		add_action('wp_ajax_catablog_delete_category', array($this, 'ajax_delete_category'));
 		add_action('wp_ajax_catablog_flush_fullsize', array($this, 'ajax_flush_fullsize'));
 		add_action('wp_ajax_catablog_render_fullsize', array($this, 'ajax_render_fullsize'));
+		add_action('wp_ajax_catablog_render_images', array(&$this, 'ajax_render_images'));
 		
 		// register frontend actions
 		add_action('wp_enqueue_scripts', array(&$this, 'frontend_init'));
 		add_action('wp_print_footer_scripts', array(&$this, 'frontend_footer'));
 		add_shortcode('catablog', array(&$this, 'frontend_content'));
+		
+		// global $wp_filter; echo "<pre>";
+		// print_r($wp_filter);
 	}
 	
 	
@@ -283,6 +287,8 @@ class CataBlog {
 	}
 	
 	public function admin_options() {
+		$recalculate = false;
+		
 		if (isset($_REQUEST['save'])) {
 			$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_options_nonce'], 'catablog_options' );
 			if ($nonce_verified) {
@@ -304,43 +310,40 @@ class CataBlog {
 				// set recalculation of thumbnails and update post message
 				if ($image_size_different || $bg_color_different || $keep_ratio_different) {
 					$recalculate_thumbnails = true;
-					$save_message          .= " - Thumbnails Regenerated";
 				}
 				
 				// set recalculation of fullsize images and update post message
 				if (isset($post_vars['lightbox_enabled'])) {
 					if ($fullsize_different) {
 						$recalculate_fullsize = true;
-						$save_message        .= " - Full Size Images Regenerated";						
 					}
 				}
 				
 				// save new plugins options to database
-				$this->options['thumbnail-size']    = $post_vars['thumbnail_size'];
-				$this->options['image-size']        = $post_vars['lightbox_image_size'];
-				$this->options['lightbox-enabled']  = isset($post_vars['lightbox_enabled']);
-				$this->options['background-color']  = $post_vars['bg_color'];
-				$this->options['paypal-email']      = $post_vars['paypal_email'];
-				$this->options['keep-aspect-ratio'] = isset($post_vars['keep_aspect_ratio']);
-				$this->options['link-target']       = $post_vars['link_target'];
-				$this->options['view-theme']        = $post_vars['view-code-template'];
-				$this->options['view-buynow']       = $post_vars['view-code-buynow'];
+				$this->options['thumbnail-size']     = $post_vars['thumbnail_size'];
+				$this->options['image-size']         = $post_vars['lightbox_image_size'];
+				$this->options['lightbox-enabled']   = isset($post_vars['lightbox_enabled']);
+				$this->options['background-color']   = $post_vars['bg_color'];
+				$this->options['paypal-email']       = $post_vars['paypal_email'];
+				$this->options['keep-aspect-ratio']  = isset($post_vars['keep_aspect_ratio']);
+				$this->options['link-target']        = $post_vars['link_target'];
+				$this->options['view-theme']         = $post_vars['view-code-template'];
+				$this->options['view-buynow']        = $post_vars['view-code-buynow'];
+				$this->options['filter-description'] = isset($post_vars['wp-filters-enabled']);
+				$this->options['nl2br-description']  = isset($post_vars['nl2br-enabled']);
 				$this->update_options();
 				
-				// load imported data into database, possibly removing previous data
-				//
 				
 				// recalculate thumbnail and fullsize images if necessary
 				if ($recalculate_thumbnails || $recalculate_fullsize) {
-					$items = CataBlogItem::getItems();
+					$recalculate = true;
+					$save_message .= " - Please Let The Rendering Below Complete Before Navigating Away From This Page.";
+					
+					$items    = CataBlogItem::getItems();
+					$item_ids = array();
 					foreach ($items as $item) {
-						if ($recalculate_thumbnails) {
-							$item->makeThumbnail();
-						}
-						if ($recalculate_fullsize) {
-							$item->makeFullsize();
-						}
-					}
+						$item_ids[] = $item->getId();
+					}					
 				}
 				
 								
@@ -351,13 +354,15 @@ class CataBlog {
 			}
 		}
 		
-		$thumbnail_size    = $this->options['thumbnail-size'];
-		$lightbox_size     = $this->options['image-size'];
-		$lightbox_enabled  = $this->options['lightbox-enabled'];
-		$background_color  = $this->options['background-color'];
-		$paypal_email      = $this->options['paypal-email'];
-		$keep_aspect_ratio = $this->options['keep-aspect-ratio'];
-		$link_target       = $this->options['link-target'];
+		$thumbnail_size     = $this->options['thumbnail-size'];
+		$lightbox_size      = $this->options['image-size'];
+		$lightbox_enabled   = $this->options['lightbox-enabled'];
+		$background_color   = $this->options['background-color'];
+		$paypal_email       = $this->options['paypal-email'];
+		$keep_aspect_ratio  = $this->options['keep-aspect-ratio'];
+		$link_target        = $this->options['link-target'];
+		$wp_filters_enabled = $this->options['filter-description'];
+		$nl2br_enabled      = $this->options['nl2br-description'];
 		
 		include_once($this->directories['template'] . '/admin-options.php');
 	}
@@ -424,7 +429,9 @@ class CataBlog {
 			$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_save_nonce'], 'catablog_save' );
 			if ($nonce_verified) {
 				
-				$post_vars = array_map('stripslashes_deep', $_POST);
+				$post_vars = $_POST;
+				$post_vars = array_map('stripslashes_deep', $post_vars);
+				// $post_vars = array_map('trim', $post_vars);
 				
 				$post_vars['categories'] = (isset($post_vars['categories']))? $post_vars['categories'] : array();
 				foreach ($post_vars['categories'] as $key => $value) {
@@ -473,23 +480,25 @@ class CataBlog {
 	public function admin_import() {
 		$error = false;
 		
-		if ($_FILES['catablog_data']['error'] == UPLOAD_ERR_NO_FILE) {
-			$error = ('No File Selected For Import.');
+		
+		
+		$file_error_check = $this->check_file_upload_errors();
+		if ($file_error_check !== true) {
+			$error = ($file_error_check);
 		}
 		else {
+			
+			// TODO: Possibly add a mime-type check here
+			
 			$upload = $_FILES['catablog_data'];
-			$type = $upload['type'];
-
-			if ($type != 'text/xml') {
-				$error = ('Uploaded file not a XML file.');
-			}
-			else {
-				libxml_use_internal_errors(true);
-				$xml_object = simplexml_load_file($upload['tmp_name']);
-				if ($xml_object === false) {
-					$error = ('Uploaded XML file could not be parsed, check that the files contents are valid XML.');
-				}							
-			}
+			
+			libxml_use_internal_errors(true);
+			
+			$xml_object = simplexml_load_file($upload['tmp_name']);
+			if ($xml_object === false) {
+				$error = ('Uploaded XML File Could Not Be Parsed, Check That The File\'s Content Is Valid XML.');
+			}							
+			// }
 		}
 		
 		
@@ -509,6 +518,11 @@ class CataBlog {
 			$items = CataBlogItem::getItems();
 			foreach ($items as $item) {
 				$item->delete(false);
+			}
+			
+			$terms = get_terms($this->custom_tax_name, 'hide_empty=0');
+			foreach ($terms as $term) {
+				wp_delete_term($term->term_id, $this->custom_tax_name);
 			}
 		}
 		
@@ -583,29 +597,15 @@ class CataBlog {
 	
 	
 	public function admin_regenerate_images() {
-		$error = false;
-		$items = CataBlogItem::getItems();
+		
+		$items    = CataBlogItem::getItems();
+		$item_ids = array();
 		
 		foreach ($items as $item) {
-			if ($item->makeThumbnail() === false) {
-				$error = "Error generating images, please check that the original images are accessible to PHP and WordPress.";
-			}
-			if ($this->options['lightbox-enabled']) {
-				if ($item->makeFullsize() === false) {
-					$error = "Error generating images, please check that the original images are accessible to PHP and WordPress.";
-					break;
-				}
-			}
+			$item_ids[] = $item->getId();
 		}
 		
-		if (!$error) {
-			$this->wp_message("The CataBlog images have been regenerated.");
-		}
-		else {
-			$this->wp_error($error);
-		}
-		
-		$this->admin_options();
+		include_once($this->directories['template'] . '/admin-regenerate.php');
 	}
 	
 	public function admin_clear_old_database() {
@@ -753,6 +753,30 @@ class CataBlog {
 		$this->update_options();
 	}
 	
+	public function ajax_render_images() {
+		check_ajax_referer('catablog-render-images', 'security');
+		
+		$id   = $_REQUEST['id'];
+		$item = CataBlogItem::getItem($id);
+		
+		$complete = $item->MakeThumbnail();
+		if ($complete !== true) {
+			echo "({'success':false, 'error':'$complete'})";
+			die;
+		}
+		
+		if ($this->options['lightbox-enabled']) {
+			$complete = $item->MakeFullsize();
+			if ($complete !== true) {
+				echo "({'success':false, 'error':'$complete'})";
+				die;				
+			}
+		}
+		
+		echo "({'success':true, 'message':'render complete'})";
+		die;
+	}
+	
 
 
 
@@ -814,10 +838,10 @@ class CataBlog {
 			$category = $tag;
 		}
 		
-		// start the output buffer
+		// get items and start the output buffer
+		$results = CataBlogItem::getItems($category, true);
 		ob_start();
 		
-		$results = CataBlogItem::getItems($category);
 		foreach ($results as $result) {
 			
 			// check if theme is empty, if so use default theme
@@ -826,13 +850,21 @@ class CataBlog {
 				$string = file_get_contents($this->directories['template'] . '/views/default.htm');
 			}
 			
+			// filter description if neccessary
+			$description = $result->getDescription();
+			if ($this->options['filter-description']) {
+				$description = apply_filters('the_content', $description);				
+			}
+			if ($this->options['nl2br-description']) {
+				$description = nl2br($description);
+			}
 			
 			// set the values of the item into an array
 			$values['image']           = $this->urls['thumbnails'] . "/". $result->getImage();
 			$values['title']           = (mb_strlen($result->getLink()) > 0)? "<a href='".$result->getLink()."' target='".$this->options['link-target']."'>".$result->getTitle()."</a>" : $result->getTitle();
 			$values['title-text']      = $result->getTitle();
 			$values['link']            = $result->getLink();
-			$values['description']     = nl2br($result->getDescription());
+			$values['description']     = $description;
 			$values['price']           = number_format(((float)($result->getPrice())), 2, '.', '');
 			$values['product-code']    = $result->getProductCode();
 			
@@ -893,24 +925,26 @@ class CataBlog {
 	
 	private function install_options() {
 		$default_options = array();
-		$default_options['db-version']        = $this->db_version;
-		$default_options['dir-version']       = $this->dir_version;
-		$default_options['thumbnail-size']    = $this->default_thumbnail_size;
-		$default_options['image-size']        = $this->default_image_size;
-		$default_options['background-color']  = $this->default_bg_color;
-		$default_options['paypal-email']      = "";
-		$default_options['keep-aspect-ratio'] = false;
-		$default_options['lightbox-enabled']  = false;
-		$default_options['link-target']       = "_blank";
-		$default_options['view-theme']        = file_get_contents($this->directories['template'] . '/views/default.htm');
-		$default_options['view-buynow']       = '';
+		$default_options['db-version']         = $this->db_version;
+		$default_options['dir-version']        = $this->dir_version;
+		$default_options['thumbnail-size']     = $this->default_thumbnail_size;
+		$default_options['image-size']         = $this->default_image_size;
+		$default_options['background-color']   = $this->default_bg_color;
+		$default_options['paypal-email']       = "";
+		$default_options['keep-aspect-ratio']  = false;
+		$default_options['lightbox-enabled']   = false;
+		$default_options['link-target']        = "_blank";
+		$default_options['view-theme']         = file_get_contents($this->directories['template'] . '/views/default.htm');
+		$default_options['view-buynow']        = '';
+		$default_options['filter-description'] = false;
+		$default_options['nl2br-description']  = true;
 		
 		if ($this->options == false) {
 			$this->options = $default_options;
 			$this->update_options();
 		}
 		else {
-			foreach ($options as $option_name => $option) {
+			foreach ($default_options as $option_name => $option) {
 				if (isset($this->options[$option_name]) === false) {
 					$this->options[$option_name] = $option;
 				}
@@ -1051,29 +1085,45 @@ class CataBlog {
 			
 			$terms = array();
 			if (isset($item->tags)) {
-				$terms = explode(' ', ((string) $item->tags));
+				$tags  = (string) $item->tags;
+				$terms = explode(' ', trim($tags));
 			}
 			else {
 				foreach($item->categories as $categories) {
 					foreach ($categories as $category) {
-						$terms[] = $category;
+						$terms[] = (string) $category;
 					}
 				}
 			}
 			
 			foreach ($terms as $key => $term) {
-				$term_object = get_term_by('name', $term, $this->custom_tax_name);
-				if ($term_object !== false) {
-					$terms[$key] = ((integer) $term_object->term_id);
-				}
-				else {
-					$category_slug = $this->string2slug($term);
-					$attr          = array('slug'=>$category_slug);
-					$new_term_id   = wp_insert_term($term, $this->custom_tax_name, $attr);
-					if ($new_term_id > 0) {
-						$terms[$key] = (integer) $new_term_id['term_id'];						
+				if (mb_strlen($term) > 0) {
+					$term_object = get_term_by('name', $term, $this->custom_tax_name);
+					if ($term_object !== false) {
+						$terms[$key] = ((integer) $term_object->term_id);
 					}
-				}
+					else {
+						$category_slug = $this->string2slug($term);
+						$attr          = array('slug'=>$category_slug);
+						$insert_return = wp_insert_term($term, $this->custom_tax_name, $attr);
+						
+						if ($insert_return instanceof WP_Error) {
+							foreach ($insert_return->get_error_messages() as $error) {
+								echo "<li class='error'>Create Term Error - <strong>".$row['title']."</strong>: $error</li>";
+							}
+						}
+						else {
+							if (isset($new_term_id['term_id'])) {
+								$new_term_id = $new_term_id['term_id'];
+								if ($new_term_id > 0) {
+									$terms[$key] = (integer) $new_term_id;
+								}
+							}							
+						}
+
+
+					}					
+				} 
 			}
 			
 			$row['categories']   = $terms;
@@ -1149,7 +1199,39 @@ class CataBlog {
 	/*****************************************************
 	**       - HELPER METHODS
 	*****************************************************/
-	
+	private function check_file_upload_errors() {
+		foreach($_FILES as $file) {
+			if ($file['error'] > 0) {
+				switch($file['error']) {
+					case UPLAOD_ERR_INI_SIZE:
+						return "Uploaded File Exceeded The PHP Configurations Max File Size.";
+						break;
+					case UPLOAD_ERR_FORM_SIZE:
+						return "Upload File Exceeded The HTML Form\'s Max File Size.";
+						break;
+					case UPLOAD_ERR_PARTIAL:
+						return "File Only Partially Uploaded, Please Try Again.";
+						break;
+					case UPLOAD_ERR_NO_FILE:
+						return "No File Selected For Upload. Please Resubmit The Form.";
+						break;
+					case UPLOAD_ERR_NO_TMP_DIR:
+						return "Your Server\'s PHP Configuration Does Not Have A Temporary Folder For Uploads, Please Contact The System Admin.";
+						break;
+					case UPLOAD_ERR_CANT_WRITE:
+						return "Your Server\'s PHP Configuration Can Not Write To Disc, Please Contact The System Admin.";
+						break;
+					case UPLOAD_ERR_EXTENSION:
+						return "A PHP Extension Is Blocking PHP From Excepting Uploads, Please Contact The System Admin.";
+						break;
+					defaut:
+						return "An Unknown Upload Error Has Occurred";
+				}
+			}
+		}
+		
+		return true;
+	}
 	private function update_options() {
 		update_option($this->options_name, $this->options);
 	}

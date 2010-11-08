@@ -8,12 +8,26 @@
 	<div id="icon-catablog" class="icon32"><br /></div>
 	<h2>CataBlog Options</h2>
 	
+	<noscript>
+		<div class="error">
+			<strong>You must have a JavaScript enabled browser to change the CataBlog options.</strong>
+		</div>
+	</noscript>
+	
+	<?php if ($recalculate): ?>
+		<div id="catablog-progress">
+			<div id="catablog-progress-bar"></div>
+			<h3 id="catablog-progress-text">Processing...</h5>
+		</div>
+	<?php endif ?>
+	
 	<form action="admin.php?page=catablog-options" id="catablog-options" class="catablog-form" method="post">
 		
 		<ul id="catablog-options-menu">
 			<li><a href="#thumbnails">Thumbnails</a></li>
 			<li><a href="#lightbox">LightBox</a></li>
-			<li><a href="#titlelink">Title Link</a></li>
+			<li><a href="#title">Title</a></li>
+			<li><a href="#description">Description</a></li>
 			<li><a href="#template">Template</a></li>
 			<li><a href="#store">Store</a></li>
 			<li><a id="catablog-options-menu-export" href="#export">Export</a></li>
@@ -23,9 +37,7 @@
 		
 		
 		<?php /*  THUMBNAIL SETTINGS PANEL */ ?>
-		<fieldset id="catablog-options-thumbnails" class="catablog-options-panel hide">
-			<legend>Thumbnails</legend>
-			
+		<div id="catablog-options-thumbnails" class="catablog-options-panel">
 			<p>
 				<label for='thumbnail_size'>Thumbnail Size:</label>
 				<input type='text' name='thumbnail_size' id='thumbnail_size' class='arrow_edit' size='5' value='<?php echo $thumbnail_size ?>' />
@@ -55,14 +67,12 @@
 					<span id='demo_box' class='demo_box' style='width:<?php echo $thumbnail_size - 1 ?>px; height:<?php echo $thumbnail_size - 1 ?>px;'>&nbsp;</span>
 				</p>
 			</div>
-		</fieldset>
+		</div>
 		
 		
 		
 		<?php /*  LIGHTBOX SETTINGS PANEL  */ ?>
-		<fieldset id="catablog-options-lightbox" class="catablog-options-panel hide">
-			<legend>Full Size LightBox</legend>
-			
+		<div id="catablog-options-lightbox" class="catablog-options-panel hide">
 			<p>
 				<?php $checked = ($lightbox_enabled)? "checked='checked'" : "" ?>
 				<label for="lightbox_enabled">Enable LightBox Feature:</label>
@@ -77,11 +87,11 @@
 				<small class="error hidden">your lightbox size must be a positive integer<br /></small>
 				<small>This is the maximum length of either the height or width, depending on whichever is longer in the original uploaded image.</small>
 			</p>
-		</fieldset>
+		</div>
 		
 		
-		<?php /*  TITLE LINK SETTINGS PANEL  */ ?>
-		<fieldset id="catablog-options-titlelink" class="catablog-options-panel hide">
+		<?php /*  TITLE SETTINGS PANEL  */ ?>
+		<div id="catablog-options-title" class="catablog-options-panel hide">
 			<p>
 				<label for="link_target">Link Target:</label>
 				<select id="link_target" name="link_target">
@@ -104,13 +114,38 @@
 				</small>
 			</p>
 			*/ ?>
-		</fieldset>
+		</div>
+		
+		
+		<?php /*  DESCRIPTION SETTINGS PANEL */ ?>
+		<div id="catablog-options-description" class="catablog-options-panel hide">
+			<p>
+				<?php $checked = ($wp_filters_enabled)? "checked='checked'" : "" ?>
+				<label for="catablog-filters-enabled">Enable WordPress Filters:</label>
+				<input type="checkbox" name="wp-filters-enabled" id="catablog-filters-enabled" <?php echo $checked ?> /><br/>
+				<small>
+					This will filter your catalog item's description through the standard WordPress filters. 
+					Be careful with this option turned on, [shortcodes] will be rendered and you can break
+					your web site by putting [catablog] in any item's description.
+				</small>
+			</p>
+			
+			<p>
+				<?php $checked = ($nl2br_enabled)? "checked='checked'" : "" ?>
+				<label for="catablog-nl2br-enabled">Enable Hard Returns:</label>
+				<input type="checkbox" name="nl2br-enabled" id="catablog-nl2br-enabled" <?php echo $checked ?> /><br/>
+				<small>
+					This will filter your catalog item's description through the standard PHP 
+					function nl2br(). This will turn all hard returns in your description into HTML
+					line break tags (&lt;br /&gt;). Turn this off if you want complete control over 
+					your descriptions HTML code.
+				</small>
+			</p>
+		</div>
 		
 		
 		<?php /*  TEMPLATE SETTINGS PANEL  */ ?>
-		<fieldset id="catablog-options-template" class="catablog-options-panel hide">
-			<legend>Template Settings</legend>
-			
+		<div id="catablog-options-template" class="catablog-options-panel hide">
 			<p>
 				<?php $views = array('- templates', 'default', 'gallery') ?>
 				<select id="catablog-view-menu" name="view">
@@ -136,14 +171,12 @@
 					at the bottom of the page to set your new view and finalize any changes.
 				</small>
 			</p>
-		</fieldset>
+		</div>
 		
 		
 		
 		<?php /* BUY NOW TEMPLATE SETTINGS PANEL */ ?>
-		<fieldset id="catablog-options-store" class="catablog-options-panel hide">
-			<legend>Buy Now Template Settings</legend>
-			
+		<div id="catablog-options-store" class="catablog-options-panel hide">
 			<p>
 				<label for="paypal_email">PayPal Account Email Address:</label>
 				<input type="text" name="paypal_email" id="paypal_email" size="50" value="<?php echo $paypal_email ?>" />
@@ -180,17 +213,14 @@
 			<?php wp_nonce_field( 'catablog_options', '_catablog_options_nonce', false, true ) ?>
 			<input id="catablog-options-submit" type="submit" class="hide" value="<?php _e('Save Changes') ?>" />
 			
-		</fieldset>
+		</div>
 	</form>	
 	
 	
 	
 	
 	<?php /*  EXPORT SETTINGS PANEL  */ ?>
-	<fieldset id="catablog-options-export" class="catablog-options-panel hide">
-		<legend>Export Settings</legend>
-		
-		
+	<div id="catablog-options-export" class="catablog-options-panel hide">
 		<p>
 			You may export your CataBlog data to a XML file which may be used to backup 
 			and protect your work. The XML file is a simple transfer of the database information
@@ -218,16 +248,14 @@
 				This directory can be located at the following path:<br />
 				<strong><?php echo $this->directories['uploads'] ?></strong>
 		</p>
-	</fieldset>
+	</div>
 	
 	
 
 
 
 	<?php /*  IMPORT SETTINGS PANEL  */ ?>
-	<fieldset id="catablog-options-import" class="catablog-options-panel hide">
-		<legend>Import Settings</legend>
-		
+	<div id="catablog-options-import" class="catablog-options-panel hide">
 		<form action="admin.php?page=catablog-import" method="post" enctype="multipart/form-data">
 			<?php $function_exists = function_exists('simplexml_load_file') ?>
 			<?php $disabled = ($function_exists)? '' : 'disabled="disabled"'?>
@@ -262,14 +290,12 @@
 				</small></p>
 			<?php endif ?>
 		</form>
-	</fieldset>
+	</div>
 	
 	
 	
 	<?php /* SYSTEM SETTINGS PANEL */ ?>
-	<fieldset id="catablog-options-system" class="catablog-options-panel hide">
-		<legend>System Settings</legend>
-		
+	<div id="catablog-options-system" class="catablog-options-panel hide">
 		<p>
 		<?php $permissions = substr(sprintf('%o', fileperms($this->directories['uploads'])), -4) ?>
 		<?php if ($permissions == '0777'): ?>
@@ -335,7 +361,7 @@
 		<?php endif ?>
 		
 		
-	</fieldset>
+	</div>
 	
 	
 	
@@ -350,15 +376,20 @@
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
 		
-		
+		/****************************************
+		** BIND SAVE CHANGES BUTTON
+		****************************************/
 		$('#save_changes').bind('click', function(event) {
+			var form_action = $('#catablog-options').attr('action');
+			var active_tab  = $('#catablog-options-menu li a.selected').attr('href');
+			
+			$('#catablog-options').attr('action', (form_action+active_tab))
 			$('#catablog-options').submit();
 		});
 		
 		
 		/****************************************
 		** BIND OPTION PANEL TABS AND CLICK ONE
-		** panels: template, buy now
 		****************************************/		
 		$('#catablog-options-menu li a').bind('click', function(event) {
 			$('.catablog-options-panel:visible').hide();
@@ -380,7 +411,6 @@
 		
 		/****************************************
 		** BIND LOAD TEMPLATE BUTTONS
-		** panels: template, buy now
 		****************************************/
 		$('.catablog-load-code').bind('click', function(event) {
 			var id       = this.id;
@@ -398,6 +428,63 @@
 			return false;
 		});
 				
+		
+		
+		
+		<?php if ($recalculate): ?>
+		/****************************************
+		** START RECALCULATING IMAGES
+		****************************************/
+		$('#save_changes').attr('disabled', true);
+		var all_links = $('a').filter(function() {
+			return ( $(this).attr('href').charAt(0) != '#' );
+		});
+		
+		
+		all_links.bind('click', function(event) {
+			var question = 'Image changes are still rendering, are you sure you want to leave this page?';
+			if(!confirm(question)) {
+				return false;
+			}
+		});
+		
+		var catablog_items = [<?php echo implode(', ', $item_ids) ?>];
+		var total_count    = catablog_items.length;
+		
+		function renderCataBlogItem(id) {
+			$('#catablog-progress-text').text('Rendering Image ' + (total_count - catablog_items.length) + ' of ' + total_count);
+			
+			var params = {
+				'id':       id,
+				'action':   'catablog_render_images',
+				'security': '<?php echo wp_create_nonce("catablog-render-images") ?>'
+			}
+			
+			$.post(ajaxurl, params, function(data) {
+				if (catablog_items.length > 0) {
+					percent_complete = 100 - ((catablog_items.length / total_count) * 100);
+					$('#catablog-progress-bar').css('width', percent_complete + '%');
+					renderCataBlogItem(catablog_items.shift());
+				}
+				else {
+					$('#catablog-progress-bar').css('width', '100%');
+					$('#catablog-progress-text').text('Rendering Complete');
+					
+					$('#save_changes').attr('disabled', false);
+					all_links.unbind('click');
+					
+					var time1 = setTimeout(function() {
+						$('#catablog-progress').hide('slow');
+					}, 3000);
+				}
+			});
+		}
+		
+		renderCataBlogItem(catablog_items.shift());
+		
+		<?php endif ?>
+		
+		
 		
 
 		
@@ -483,6 +570,7 @@
 		}
 		
 		
+		
 		var lightbox_button   = $('#lightbox_enabled');
 		var lightbox_fieldset = lightbox_button.parent().parent();
 		
@@ -490,6 +578,24 @@
 			$('input.arrow_edit', lightbox_fieldset).attr('readonly', true);
 			lightbox_fieldset.addClass('disabled');
 		}
+		
+		lightbox_button.bind('click', function(event) {
+			if (this.checked) {
+				$('input.arrow_edit', lightbox_fieldset).attr('readonly', false);
+				lightbox_fieldset.removeClass('disabled');
+			}
+			else {
+				$('input.arrow_edit', lightbox_fieldset).attr('readonly', true);
+				lightbox_fieldset.addClass('disabled');
+			}
+		});
+		
+		
+		
+		
+		
+		/*
+		
 		
 		lightbox_button.bind('click', function(event) {
 			if (this.checked) {
@@ -527,16 +633,22 @@
 				});
 			}
 		});
+		*/
+		
+		
+		
+		function is_integer(s) {
+			return (s.toString().search(/^[0-9]+$/) == 0);
+		}
+
+		function resize_box(num) {
+			var speed = 100;
+			jQuery('#demo_box').animate({width:(num-1), height:(num-1)}, speed);
+		}
+		
 	});
 	
-	function is_integer(s) {
-		return (s.toString().search(/^[0-9]+$/) == 0);
-	}
-	
-	function resize_box(num) {
-		var speed = 100;
-		jQuery('#demo_box').animate({width:(num-1), height:(num-1)}, speed);
-	}
+
 	
 	
 	

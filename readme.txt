@@ -12,7 +12,7 @@ CataBlog is a comprehensive and effortless tool that allows you to create catalo
 
 CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use categories to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too with the `LightBox` effect, it can be enabled with one click. Easy, intuitive and smart design makes it trivial to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
-Upgraders:
+Pre Version 0.9.5 Upgrades:
 
 * Please export your database to xml before upgrading, just incase.
 * Backup the `catablog` folder in your WordPress uploads folder.
@@ -64,6 +64,16 @@ You can easily override CataBlog's CSS classes to create your own design and eas
 Go to http://catablog.illproductions.com, it is a place to learn and share more about your experiences with CataBlog.
 
 == Changelog ==
+
+= 0.9.6 =
+* New: Description field options for controlling WordPress filtering and line breaks.
+* New: Progress indicator for thumbnail and LightBox image rendering.
+* New: Newly added images will read exif orientation and rotate accordingly.
+* New: New or edited Item's will store their meta in a single array.
+* Fix: Edit Item form CSS now flows properly with the page.
+* Fix: Empty tags fields now import to the database correctly.
+* Fix: No longer checks unreliable mime-type info when importing XML.
+* Fix: All categories are now removed when "Clear All" is checked on XML import.
 
 = 0.9.5 =
 * Fix: CataBlog no longer modifies the database directly, preferring built in WordPress functions instead.
@@ -145,6 +155,10 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * This version is the initial release.
 
 == Upgrade Notice ==
+
+= 0.9.6 =
+
+Note: Small upgrade to code that does not have many significant database changes.
 
 = 0.9.5 =
 

@@ -23,7 +23,7 @@ class CataBlogItem {
 	private $_wp_upload_dir = "";
 	private $_custom_post_name = "catablog-items";
 	private $_custom_tax_name  = "catablog-terms";
-	
+	private $_post_meta_name   = "catablog-post-meta";
 	
 	// construction method
 	public function __construct($post_parameters=null) {
@@ -51,7 +51,7 @@ class CataBlogItem {
 	/*****************************************************
 	**       - FACTORY METHODS
 	*****************************************************/
-	public static function getItem($id) {
+	public static function getItem($id, $process_content=false) {
 		$post = get_post($id);
 		
 		if ($post == false) {
@@ -69,22 +69,20 @@ class CataBlogItem {
 		foreach ($terms as $term) {
 			$category_ids[$term->term_id] = $term->name;
 		}
-		
+				
 		$item->id           = $post->ID;
 		$item->title        = $post->post_title;
 		$item->description  = $post->post_content;
 		$item->categories   = $category_ids;
 		$item->order        = $post->menu_order;
 		
-		$item->image        = get_post_meta($post->ID, "catablog-image", true);
-		$item->link         = get_post_meta($post->ID, "catablog-link", true);
-		$item->price        = get_post_meta($post->ID, "catablog-price", true);
-		$item->product_code = get_post_meta($post->ID, "catablog-product-code", true);
-		// print_r($item);
+		$meta = get_post_meta($post->ID, $item->_post_meta_name, true);
+		$item->processPostMeta($meta);
+		
 		return $item;
 	}
 	
-	public static function getItems($category=false) {
+	public static function getItems($category=false, $process_content=false) {
 		$items = array();
 		$cata  = new CataBlogItem();
 		
@@ -100,7 +98,6 @@ class CataBlogItem {
 		}
 		
 		$posts = get_posts($params);
-		
 		foreach ($posts as $post) {
 			$item = new CataBlogItem();
 			
@@ -115,12 +112,10 @@ class CataBlogItem {
 			$item->description  = $post->post_content;
 			$item->categories   = $category_ids;
 			$item->order        = $post->menu_order;
-
-			$item->image        = get_post_meta($post->ID, "catablog-image", true);
-			$item->link         = get_post_meta($post->ID, "catablog-link", true);
-			$item->price        = get_post_meta($post->ID, "catablog-price", true);
-			$item->product_code = get_post_meta($post->ID, "catablog-product-code", true);
 			
+			$meta = get_post_meta($post->ID, $item->_post_meta_name, true);
+			$item->processPostMeta($meta);
+						
 			$items[] = $item;
 		}
 		
@@ -182,17 +177,13 @@ class CataBlogItem {
 			}
 		}
 		
-		// update_post_meta($this->id, "catablog-image", $this->image);
-		update_post_meta($this->id, "catablog-link", $this->link);
-		update_post_meta($this->id, "catablog-image", $this->image);
-		update_post_meta($this->id, "catablog-price", $this->price);
-		update_post_meta($this->id, "catablog-product-code", $this->product_code);
+		// update post meta
+		$this->updatePostMeta();
 		
-		// update set catagories
-		 // print_r($this->categories); print_r(array(70)); die;
+		// update post terms
 		wp_set_object_terms($this->id, $this->categories, $this->_custom_tax_name, false);
 		
-		
+		// if the image has been set after loading process image
 		if ($this->_image_changed) {
 			
 			// store the new uploaded file in the originals directory
@@ -203,7 +194,7 @@ class CataBlogItem {
 			$this->image = $sanatized_title;
 			
 			// save the new image's title to the post meta
-			update_post_meta($this->id, "catablog-image", $this->image);
+			$this->updatePostMeta();
 			
 			// remove the old files associated with this item
 			foreach ($this->_old_images as $old_image) {
@@ -226,6 +217,8 @@ class CataBlogItem {
 	
 	public function delete($remove_images=true) {
 		if ($this->id > 0) {
+			
+			$this->deletePostMeta();
 			wp_delete_post($this->id, true);
 			
 			// remove any associated images
@@ -261,11 +254,15 @@ class CataBlogItem {
 		$fullsize = $this->_wp_upload_dir . "/catablog/fullsize/" . $this->getImage();
 		$quality  = 80;
 		
+		if (is_file($original) === false) {
+			return "Original image file could not be located at $original";
+		}
+		
 		list($width, $height, $format) = getimagesize($original);
 		$canvas_size = $this->_options['image-size'];
 		
 		if ($width < 1 || $height < 1) {
-			return false;
+			return "Original image dimensions are less then 1px.";
 		}
 		
 		if ($width < $canvas_size && $height < $canvas_size) {
@@ -294,11 +291,39 @@ class CataBlogItem {
 				$upload = imagecreatefrompng($original);
 				break;
 			default:
-				return false;
+				return "Original image could not be loaded because it is an unsupported format.";
 		}
 		
 		imagecopyresampled($canvas, $upload, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-		imagejpeg($canvas, $fullsize, $quality);	
+		
+		// rotate the final canvas to match the original files orientation
+		$orientation = 1;
+		$exif = exif_read_data($original, 'EXIF', 0);
+		if ($exif) {
+			if (isset($exif['Orientation'])) {
+				$orientation = $exif['Orientation'];
+			}
+		}
+		switch ($orientation) {
+			case 1:
+				$orientation = 0;
+				break;
+			case 3:
+				$orientation = 180;
+				break;
+			case 6:
+				$orientation = -90;
+				break;
+			case 8:
+				$orientation = 90;
+				break;
+		}
+		$canvas = imagerotate($canvas, $orientation, 0);
+		
+		
+		imagejpeg($canvas, $fullsize, $quality);
+		
+		return true;
 	}
 	
 	public function makeThumbnail() {
@@ -307,15 +332,16 @@ class CataBlogItem {
 		$quality  = 90;
 		
 		if (is_file($original) === false) {
-			return false;
+			return "Original image file missing, could not be located at $original";
 		}
 		
-		list($width, $height, $format) = getimagesize($original);
+		list($width, $height, $format) = @getimagesize($original);
 		$canvas_size = $this->_options['thumbnail-size'];			
 		
 		if ($width < 1 || $height < 1) {
-			return false;
+			return "<strong>$this->title</strong>: Original image dimensions are less then 1px. Most likely PHP does not have permission to read the original file.";
 		}
+		
 		
 		// create a blank canvas of user specified size and color
 		$bg_color = $this->html2rgb($this->_options['background-color']);
@@ -335,7 +361,7 @@ class CataBlogItem {
 				$upload = imagecreatefrompng($original);
 				break;
 			default:
-				return false;
+				return "Original image could not be loaded because it is an unsupported format.";
 		}
 		
 		
@@ -371,7 +397,34 @@ class CataBlogItem {
 		}
 		
 		imagecopyresampled($canvas, $upload, $x_offset, $y_offset, 0, 0, $new_width, $new_height, $width, $height);
+		
+		// rotate the final canvas to match the original files orientation
+		$orientation = 1;
+		$exif = exif_read_data($original, 'EXIF', 0);
+		if ($exif) {
+			if (isset($exif['Orientation'])) {
+				$orientation = $exif['Orientation'];
+			}
+		}
+		switch ($orientation) {
+			case 1:
+				$orientation = 0;
+				break;
+			case 3:
+				$orientation = 180;
+				break;
+			case 6:
+				$orientation = -90;
+				break;
+			case 8:
+				$orientation = 90;
+				break;
+		}
+		$canvas = imagerotate($canvas, $orientation, $bg_color, false);
+		
 		imagejpeg($canvas, $thumb, $quality);
+		
+		return true;
 	}
 	
 	
@@ -463,6 +516,48 @@ class CataBlogItem {
 	/*****************************************************
 	**       - HELPER METHODS
 	*****************************************************/
+	private function processPostMeta($meta) {
+		if (is_array($meta)) {
+			foreach ($meta as $key => $value) {
+				$this->{str_replace('-', '_', $key)} = $value;
+			}
+		}
+		else {
+			$this->image        = get_post_meta($this->id, 'catablog-image', true);
+			$this->link         = get_post_meta($this->id, 'catablog-link', true);
+			$this->price        = get_post_meta($this->id, 'catablog-price', true);
+			$this->product_code = get_post_meta($this->id, 'catablog-product-code', true);
+		}
+	}
+	
+	private function updatePostMeta() {
+		$meta = array();
+		$meta['image']        = $this->image;
+		$meta['link']         = $this->link;
+		$meta['price']        = $this->price;
+		$meta['product-code'] = $this->product_code;
+		
+		update_post_meta($this->id, $this->_post_meta_name, $meta);
+		
+		// remove deprecated meta values from database
+		$this->deleteLegacyPostMeta();
+	}
+	
+	private function deletePostMeta() {
+		// remove deprecated meta values from database
+		$this->deleteLegacyPostMeta();
+		
+		// remove the current post meta values from database
+		delete_post_meta($this->id, $this->_post_meta_name);
+	}
+	
+	private function deleteLegacyPostMeta() {
+		delete_post_meta($this->id, 'catablog-image');
+		delete_post_meta($this->id, 'catablog-link');
+		delete_post_meta($this->id, 'catablog-price');
+		delete_post_meta($this->id, 'catablog-product-code');		
+	}
+	
 	private function getParameterArray() {
 		$param_names = array();
 		foreach ($this as $name => $value) {

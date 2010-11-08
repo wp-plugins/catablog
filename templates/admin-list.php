@@ -75,12 +75,12 @@
 							<span class="trash"><a href="<?php echo $remove ?>" class="remove_link">Trash</a></span>
 						</div>
 					</td>
-					<td><?php echo htmlspecialchars($result->getLink(), ENT_QUOTES, 'UTF-8') ?></td>
-					<td><?php echo nl2br(htmlentities($result->getDescription(), ENT_QUOTES, 'UTF-8')) ?></td>
-					<td><?php echo htmlspecialchars(implode(', ', $result->getCategories()), ENT_QUOTES, 'UTF-8') ?></td>
+					<td><?php echo htmlspecialchars($result->getLink(), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
+					<td><?php echo nl2br(htmlentities($result->getDescription(), ENT_QUOTES, 'UTF-8')) ?>&nbsp;</td>
+					<td><?php echo htmlspecialchars(implode(', ', $result->getCategories()), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
 					<?php $currency = "" ?>
-					<td><?php echo (((float) $result->getPrice()) > 0)? $currency. number_format($result->getPrice(), 2) : "" ?></td>
-					<td><?php echo htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8') ?></td>
+					<td><?php echo (((float) $result->getPrice()) > 0)? $currency. number_format($result->getPrice(), 2) : "" ?>&nbsp;</td>
+					<td><?php echo htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>
