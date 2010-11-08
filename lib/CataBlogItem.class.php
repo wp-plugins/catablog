@@ -298,12 +298,16 @@ class CataBlogItem {
 		
 		// rotate the final canvas to match the original files orientation
 		$orientation = 1;
-		$exif = exif_read_data($original, 'EXIF', 0);
-		if ($exif) {
-			if (isset($exif['Orientation'])) {
-				$orientation = $exif['Orientation'];
+		
+		if (function_exists('exif_read_data')) {
+			$exif = exif_read_data($original, 'EXIF', 0);
+			if ($exif) {
+				if (isset($exif['Orientation'])) {
+					$orientation = $exif['Orientation'];
+				}
 			}
 		}
+		
 		switch ($orientation) {
 			case 1:
 				$orientation = 0;
@@ -400,12 +404,16 @@ class CataBlogItem {
 		
 		// rotate the final canvas to match the original files orientation
 		$orientation = 1;
-		$exif = exif_read_data($original, 'EXIF', 0);
-		if ($exif) {
-			if (isset($exif['Orientation'])) {
-				$orientation = $exif['Orientation'];
+		
+		if (function_exists('exif_read_data')) {
+			$exif = exif_read_data($original, 'EXIF', 0);
+			if ($exif) {
+				if (isset($exif['Orientation'])) {
+					$orientation = $exif['Orientation'];
+				}
 			}
 		}
+		
 		switch ($orientation) {
 			case 1:
 				$orientation = 0;

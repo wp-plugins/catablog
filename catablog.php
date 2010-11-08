@@ -3,7 +3,7 @@
 Plugin Name: CataBlog
 Plugin URI: http://catablog.illproductions.com
 Description: CataBlog is a comprehensive and effortless tool that allows you to create catalogs and galleries for your blog.
-Version: 0.9.6.1
+Version: 0.9.7
 Author: Zachary Segal
 Author URI: http://catablog.illproductions.com/about/
 

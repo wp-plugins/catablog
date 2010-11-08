@@ -65,6 +65,12 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Changelog ==
 
+= 0.9.7 =
+* Fix: Only tries to read EXIF data from images if the function exists.
+
+= 0.9.6.1 = 
+* Fix: Syntax error at line 1227 fixed.
+
 = 0.9.6 =
 * New: Description field options for controlling WordPress filtering and line breaks.
 * New: Progress indicator for thumbnail and LightBox image rendering.
@@ -155,6 +161,10 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * This version is the initial release.
 
 == Upgrade Notice ==
+
+= 0.9.7 =
+
+Note: This version should be used over 0.9.6 or 0.9.6.1, thanks!
 
 = 0.9.6 =
 

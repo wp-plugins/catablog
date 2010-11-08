@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.9.6.1";
+	private $version     = "0.9.7";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -98,9 +98,6 @@ class CataBlog {
 		add_action('wp_enqueue_scripts', array(&$this, 'frontend_init'));
 		add_action('wp_print_footer_scripts', array(&$this, 'frontend_footer'));
 		add_shortcode('catablog', array(&$this, 'frontend_content'));
-		
-		// global $wp_filter; echo "<pre>";
-		// print_r($wp_filter);
 	}
 	
 	
@@ -580,7 +577,6 @@ class CataBlog {
 		}
 		
 		$this->admin_options();
-		// header("Location: admin.php?page=catablog-options#system");
 	}
 
 	public function admin_lock_folders() {
@@ -592,7 +588,6 @@ class CataBlog {
 		}
 		
 		$this->admin_options();
-		// header("Location: admin.php?page=catablog-options#system");
 	}
 	
 	
@@ -739,6 +734,8 @@ class CataBlog {
 		
 		$this->options['lightbox-enabled'] = false;
 		$this->update_options();
+		
+		die();
 	}
 	
 	public function ajax_render_fullsize() {
@@ -751,6 +748,8 @@ class CataBlog {
 		
 		$this->options['lightbox-enabled'] = true;
 		$this->update_options();
+		
+		die();
 	}
 	
 	public function ajax_render_images() {
@@ -774,7 +773,8 @@ class CataBlog {
 		}
 		
 		echo "({'success':true, 'message':'render complete'})";
-		die;
+		
+		die();
 	}
 	
 
