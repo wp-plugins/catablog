@@ -51,7 +51,7 @@ class CataBlogItem {
 	/*****************************************************
 	**       - FACTORY METHODS
 	*****************************************************/
-	public static function getItem($id, $process_content=false) {
+	public static function getItem($id) {
 		$post = get_post($id);
 		
 		if ($post == false) {
@@ -82,7 +82,7 @@ class CataBlogItem {
 		return $item;
 	}
 	
-	public static function getItems($category=false, $process_content=false) {
+	public static function getItems($category=false) {
 		$items = array();
 		$cata  = new CataBlogItem();
 		

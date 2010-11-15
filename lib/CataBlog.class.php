@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.9.7";
+	private $version     = "0.9.8";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -59,6 +59,7 @@ class CataBlog {
 		$this->urls['plugin']     = WP_CONTENT_URL . "/plugins/catablog";
 		$this->urls['css']        = WP_CONTENT_URL . "/plugins/catablog/css";
 		$this->urls['javascript'] = WP_CONTENT_URL . "/plugins/catablog/js";
+		$this->urls['images']     = WP_CONTENT_URL . "/plugins/catablog/images";
 		$this->urls['thumbnails'] = WP_CONTENT_URL . "/uploads/catablog/thumbnails";
 		$this->urls['originals']  = WP_CONTENT_URL . "/uploads/catablog/originals";
 	}
@@ -801,12 +802,11 @@ class CataBlog {
 			wp_enqueue_script('catablog-lightbox', $this->urls['javascript'] . '/catablog.lightbox.js', array('jquery'), $this->version);
 		}
 		
+		wp_enqueue_style('catablog-stylesheet', $this->urls['css'] . '/catablog.css', false, $this->version);
+		
 		$path = get_stylesheet_directory().'/catablog.css';
 		if (file_exists($path)) {
-			wp_enqueue_style('catablog-stylesheet', get_bloginfo('stylesheet_directory') . '/catablog.css', false, $this->version);
-		}
-		else {
-			wp_enqueue_style('catablog-stylesheet', $this->urls['css'] . '/catablog.css', false, $this->version);
+			wp_enqueue_style('catablog-custom-stylesheet', get_bloginfo('stylesheet_directory') . '/catablog.css', false, $this->version);
 		}
 	}
 	
@@ -839,7 +839,7 @@ class CataBlog {
 		}
 		
 		// get items and start the output buffer
-		$results = CataBlogItem::getItems($category, true);
+		$results = CataBlogItem::getItems($category);
 		ob_start();
 		
 		foreach ($results as $result) {

@@ -115,7 +115,8 @@
 						
 						<span class="hide">
 							<input id="catablog-new-category-input" type="text" tabindex="5" value="" />
-							<a id="catablog-new-category-submit" class="button" tabindex="6">New</a>							
+							<a href="#new-category" id="catablog-new-category-submit" class="button" tabindex="6">New</a>
+							<img src="<?php echo $this->urls['images'] ?>/ajax-loader-small.gif" id="catablog-new-category-load" class="hide" />
 						</span>
 					</div>
 					<p><small>
@@ -190,7 +191,9 @@
 		// BIND CATEGORY LIST HOVERS
 		$('#catablog-category-checklist li label').live('mouseover', function(event) {
 			$(this).addClass('hover');
-			$('a.catablog-category-delete', this).show();
+			if (!catablog_category_is_loading()) {
+				$('a.catablog-category-delete', this).show();
+			}
 		});
 		$('#catablog-category-checklist li label').live('mouseout', function(event) {
 			$(this).removeClass('hover');
@@ -201,19 +204,32 @@
 		
 		// BIND DELETE CATEGORY LINKS
 		$('#catablog-category-checklist li label a.catablog-category-delete').live('click', function(event) {
+			// stop javascript event propagation and set this variable
 			event.stopPropagation();
 			var object = this;
 			
+			// make sure category changes aren't still loading
+			if (catablog_category_is_loading()) {
+				return false;
+			}
+			
+			// confirm the deletion of the category
 			if (!confirm('Are you sure you want to delete this category? You can not undo this.')) {
 				return false;
 			}
+			
+			// show the load indicator and disable new category button
+			catablog_category_show_load();
+			
+			// setup AJAX params
 			var term_id = $(this).siblings('input').val();
 			var params  = {
 				'action':   'catablog_delete_category',
 				'security': '<?php echo wp_create_nonce("catablog-delete-category") ?>',
 				'term_id':  term_id
 			}
-
+			
+			// make AJAX call
 			$.post(ajaxurl, params, function(data) {
 				try {
 					var json = eval(data);
@@ -230,6 +246,9 @@
 				catch(error) {
 					alert(error);
 				}
+				
+				// hide load indicator and enable new category button
+				catablog_category_hide_load();
 			});
 			
 			return false;
@@ -249,18 +268,29 @@
 		
 		// BIND NEW CATEGORY FORM
 		$('#catablog-new-category-submit').bind('click', function(event) {
+			// if button disabled don't do anything
+			if (catablog_category_is_loading()) {
+				return false;
+			}
+			
+			// check if category name is set
 			var category_name = $('#catablog-new-category-input').val();
 			if (category_name == '') {
 				alert('Please make sure to enter a category name');
 				return false;
 			}
 			
+			// show load indicators and disable button
+			catablog_category_show_load();
+			
+			// set AJAX params
 			var params = {
 				'action':   'catablog_new_category',
 				'security': '<?php echo wp_create_nonce("catablog-new-category") ?>',
 				'name':     category_name
 			}
-
+			
+			// make AJAX call
 			$.post(ajaxurl, params, function(data) {
 				try {
 					var json = eval(data);
@@ -281,8 +311,28 @@
 				catch(error) {
 					alert(error);
 				}
+				
+				// hide load indicators and enable button
+				catablog_category_hide_load();
 			});
+			
+			return false;
 		});
+		
+		
+		function catablog_category_show_load() {
+			$('#catablog-new-category-load').show();
+			$('#catablog-new-category-submit').addClass('disabled');
+		}
+		
+		function catablog_category_hide_load() {
+			$('#catablog-new-category-load').hide();
+			$('#catablog-new-category-submit').removeClass('disabled');
+		}
+		
+		function catablog_category_is_loading() {
+			return $('#catablog-new-category-submit').hasClass('disabled');
+		}
 		
 		
 	});

@@ -206,7 +206,12 @@ body {
 #catablog-new-category-submit:active {
 	background-color: #555;
 }
-
+#catablog-new-category-load {
+	width: 16px;
+	height: 16px;
+	margin: 0 0 0 10px;
+	vertical-align: middle;
+}
 
 
 
