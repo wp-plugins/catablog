@@ -15,16 +15,18 @@ CataBlog allows you to catalog pretty much anything you would want and share it 
 `Pre Version 0.9.5 Upgrades:`
 
 * Please export your database to xml before upgrading, just incase.
-* Backup the `catablog` folder in your WordPress uploads folder.
+* Backup the catablog folder in your WordPress uploads folder.
+
 
 `Highlighted Features:`
 
-* Complete WordPress integration, CataBlog does not mess with your database.
-* Tags have been replaced with a more familiar `Categories` feature.
+* Complete WordPress integration, CataBlog does not touch your database.
+* Tags have been replaced with a more familiar categories feature.
 * The Options Page is better organized and supports more options.
 * New template controls let you choose exactly how your HTML is rendered.
 * Easy management of your catalog with superiorly designed admin controls.
 * Import and Export features for saving and loading catalogs.
+
 
 `IMPORTANT: read notes about upgrading from versions older then 0.7.6`
 
