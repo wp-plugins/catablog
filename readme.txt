@@ -3,7 +3,7 @@ Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, page, links, catalog, gallery, discography, library, collection, paypal, organize, media, photo, thumbnail, product, rolodex, manifest, listing, list, category, categories, custom post type, custom post, custom taxonomy
 Requires at least: 3.0
-Tested up to: 3.0.1
+Tested up to: 3.1
 Stable tag: 0.9.8
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs and galleries for your blog.
