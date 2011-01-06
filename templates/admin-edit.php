@@ -1,5 +1,5 @@
 <div class="wrap">
-	
+
 	<div id="icon-catablog" class="icon32"><br /></div>
 	<h2><?php echo ($new_item)? 'Add New CataBlog Entry' : 'Edit CataBlog Entry' ?></h2>
 
@@ -26,7 +26,7 @@
 								
 							</small></p>
 						<?php else: ?>
-							<img src="<?php echo get_bloginfo('wpurl').'/wp-content/uploads/catablog/thumbnails/'.$result->getImage() ?>" id="catablog-image-preview" />
+							<img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" id="catablog-image-preview" />
 							<input type="hidden" name="image" id="image" value="<?php echo $result->getImage() ?>" />
 							<label id="select-image-button">
 								<input type="file" id="new_image" name="new_image" tabindex="1" />
@@ -149,6 +149,8 @@
 		
 		
 	</form>
+	
+	<p><pre><?php print_r($result) ?></pre></p>
 </div>
 
 <script type="text/javascript">

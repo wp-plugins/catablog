@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.9.8";
+	private $version     = "0.9.9";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -60,8 +60,8 @@ class CataBlog {
 		$this->urls['css']        = WP_CONTENT_URL . "/plugins/catablog/css";
 		$this->urls['javascript'] = WP_CONTENT_URL . "/plugins/catablog/js";
 		$this->urls['images']     = WP_CONTENT_URL . "/plugins/catablog/images";
-		$this->urls['thumbnails'] = WP_CONTENT_URL . "/uploads/catablog/thumbnails";
-		$this->urls['originals']  = WP_CONTENT_URL . "/uploads/catablog/originals";
+		$this->urls['thumbnails'] = $wp_upload_dir['baseurl'] . "/catablog/thumbnails";
+		$this->urls['originals']  = $wp_upload_dir['baseurl'] . "/catablog/originals";
 	}
 	
 	
@@ -154,15 +154,16 @@ class CataBlog {
 
 		$params = array();
 		$params['labels']              = $post_type_labels;
-		// $params['public']              = false;
-		$params['publicly_queryable']  = true;
-		$params['show-ui']             = false;
-		$params['exclude_from_search'] = true;
+		$params['public']              = false;
+		// $params['publicly_queryable']  = false;
+		// $params['show-ui']             = false;
+		// $params['show_in_nav_menus']   = false;
+		// $params['exclude_from_search'] = true;
 		$params['supports']            = array('title', 'editor');
-		$params['description']         = "CataBlog WordPress PlugIn";
+		$params['description']         = "A CataBlog Item";
 		$params['hierarchical']        = false;
 		$params['taxonomies']          = array($this->custom_tax_name);
-		$params['rewrite']             = true;
+		$params['rewrite']             = false;
 		$params['menu_position']       = 45;
 		$params['menu_icon']           = $this->urls['plugin']."/images/catablog-icon-16.png";
 		register_post_type($this->custom_post_name, $params);
@@ -198,6 +199,14 @@ class CataBlog {
 				$this->wp_error("OLD CATABLOG TABLE PRESENT! $read_this_link Immediately To Fix.");
 			}
 		}
+		
+		// display an error message if catablog options are empty or directories are missing
+		if(strpos($_SERVER['QUERY_STRING'], 'catablog-install') === false) {
+			if ($this->is_installed() === false) {
+				$this->wp_error("CataBlog must be setup for this site before you may use it! <a href='admin.php?page=catablog-install'>Setup CataBlog Now</a>");
+			}
+		}
+		
 		
 		// load javascript libraries for admin panels
 		wp_enqueue_script('jquery');
@@ -235,6 +244,7 @@ class CataBlog {
 		add_submenu_page('catablog-hidden', "CataBlog Clear Old Data", "Clear Old Data", $this->user_level, 'catablog-clear-old-data', array(&$this, 'admin_clear_old_database'));
 		
 		// register about page actions to hidden menu
+		add_submenu_page('catablog-hidden', "CataBlog Install", "Install", $this->user_level, 'catablog-install', array(&$this, 'admin_install'));
 		add_submenu_page('catablog-hidden', "CataBlog Reset", "Reset", $this->user_level, 'catablog-reset', array(&$this, 'admin_reset_all'));
 	}
 	
@@ -611,6 +621,14 @@ class CataBlog {
 		$this->admin_options();
 	}
 	
+	public function admin_install() {
+		$this->install_options();
+		$this->install_directories();
+		
+		$this->wp_message('CataBlog options and directories have been successfully installed.');
+		$this->admin_list();
+	}
+	
 	public function admin_reset_all() {
 		// remove all catablog posts
 		$items = CataBlogItem::getItems();
@@ -917,6 +935,22 @@ class CataBlog {
 	/*****************************************************
 	**       - INSTALLATION METHODS
 	*****************************************************/
+	
+	public function is_installed() {
+		
+		if ($this->options == false) {
+			return false;
+		}		
+		$dirs = array(0=>'wp_uploads', 1=>'uploads', 2=>'thumbnails', 3=>'originals', 4=>'fullsize');
+		foreach ($dirs as $dir) {
+			$is_dir = is_dir($this->directories[$dir]);
+			if ($is_dir === false) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
 	
 	public function activate() {
 		$this->install_directories();
@@ -1251,7 +1285,7 @@ class CataBlog {
 	}
 	
 	private function wp_error($message) {
-		echo "<div id='error' class='error'>";
+		echo "<div id='message' class='error'>";
 		echo "	<strong>$message</strong>";
 		echo "</div>";
 	}

@@ -293,13 +293,21 @@ jQuery(function($) {
 		function listenForKeyStroke() {
 			jQuery(document).bind('keyup', function(event) {
 				var key_code = (event.keyCode ? event.keyCode : event.which);
-				if (key_code == 39) {
-					// forward arrow pressed
+				
+				// alert(key_code);
+				
+				var forward_keycodes = [39, 78];
+				var back_keycodes    = [37, 80];
+				var escape_keycodes  = [27];
+				
+				if (in_array(key_code, forward_keycodes)) {
 					jQuery('#catablog-lightbox-next').click();
 				}
-				if (key_code == 37) {
-					// backwards arrow pressed
+				if (in_array(key_code, back_keycodes)) {
 					jQuery('#catablog-lightbox-prev').click();
+				}
+				if (in_array(key_code, escape_keycodes)) {
+					close_lightbox();
 				}
 			});
 		}
@@ -308,7 +316,25 @@ jQuery(function($) {
 			jQuery(document).unbind('keyup');
 		}
 		
-		
+		function in_array (needle, haystack, argStrict) {
+		    var key = '', strict = !!argStrict;
+
+		    if (strict) {
+		        for (key in haystack) {
+		            if (haystack[key] === needle) {
+		                return true;
+		            }
+		        }
+		    } else {
+		        for (key in haystack) {
+		            if (haystack[key] == needle) {
+		                return true;
+		            }
+		        }
+		    }
+
+		    return false;
+		}
 		
 		
 		

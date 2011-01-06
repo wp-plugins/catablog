@@ -54,6 +54,8 @@ class CataBlogItem {
 	public static function getItem($id) {
 		$post = get_post($id);
 		
+		print_r($post);
+		
 		if ($post == false) {
 			return null;
 		}
@@ -136,6 +138,9 @@ class CataBlogItem {
 	public function validate() {
 		if (mb_strlen($this->image) < 1) {
 			return 'An item must have an image associated with it.';
+		}
+		if (!is_writable($this->_wp_upload_dir . "/catablog/originals")) {
+			return 'Can\'t write uploaded image to server, please make sure CataBlog is properly installed.';
 		}
 		if (mb_strlen($this->title) < 1) {
 			return 'An item must have a title of at least one alphanumeric character.';
@@ -525,6 +530,13 @@ class CataBlogItem {
 	**       - HELPER METHODS
 	*****************************************************/
 	private function processPostMeta($meta) {
+		
+		// deserialize meta if necessary
+		if (is_serialized($meta)) {
+			$meta = unserialize($meta);
+		}
+		
+		// loop through meta array and set properties		
 		if (is_array($meta)) {
 			foreach ($meta as $key => $value) {
 				$this->{str_replace('-', '_', $key)} = $value;

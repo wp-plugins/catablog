@@ -145,8 +145,11 @@
 	position: absolute;
 	top: 0px;
 	width: 50%;
-
+	text-decoration: none;
 	background-image: url("data:image/gif;base64,AAAA");
+}
+#catablog-lightbox-image a span:first-letter {
+	border-bottom: 1px #caa solid;
 }
 #catablog-lightbox-next:hover span, #catablog-lightbox-prev:hover span {
 	display: block !important;
@@ -186,8 +189,11 @@
 	color: #555;
 	padding: 15px;
 	font-size: 22px;
-	line-height: 30px;
 	font-weight: bold;
+	line-height: 30px;
+	text-decoration: none;
 	cursor: pointer;
 }
-
+.catablog-lightbox-nav-label:hover {
+	
+}

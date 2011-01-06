@@ -1,5 +1,5 @@
 <div class="wrap">
-	
+		
 	<div id="icon-catablog" class="icon32"><br /></div>
 	<h2>
 		<span>Manage CataBlog</span>
@@ -65,7 +65,7 @@
 					*/?>
 					<td class="cb_icon_column">
 						<input type="hidden" name="catablog-item-id" value="<?php echo $result->getId() ?>" />
-						<a href="<?php echo $edit ?>"><img src="<?php echo get_bloginfo('wpurl').'/wp-content/uploads/catablog/thumbnails/'.$result->getImage() ?>" class="cb_item_icon" width="50" height="50" /></a>
+						<a href="<?php echo $edit ?>"><img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" class="cb_item_icon" width="50" height="50" /></a>
 					</td>
 					<td>
 						<strong><a href="<?php echo $edit ?>" title="Edit CataBlog Item"><?php echo htmlentities($result->getTitle(), ENT_QUOTES, 'UTF-8') ?></a></strong>
