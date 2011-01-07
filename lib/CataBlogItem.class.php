@@ -140,6 +140,20 @@ class CataBlogItem {
 		if (!is_writable($this->_wp_upload_dir . "/catablog/originals")) {
 			return 'Can\'t write uploaded image to server, please make sure CataBlog is properly installed.';
 		}
+		if (true) {
+			$space_available = get_upload_space_available();
+			$image_size      = filesize($this->image);
+			if ($image_size > $space_available) {
+				
+				$space_available = round(($space_available / 1024 / 1024), 2);
+				$image_size      = round(($image_size / 1024 / 1024), 2);
+				
+				$error  = 'Can\'t write uploaded image to server, your storage space is exhausted.<br />';
+				$error .= 'Please delete some media files to free up space and try again.<br />';
+				$error .= 'You have '.$space_available.'MB of available space on your server and your image is '.$image_size.'MB.';
+				return $error;
+			}
+		}
 		if (mb_strlen($this->title) < 1) {
 			return 'An item must have a title of at least one alphanumeric character.';
 		}
@@ -214,6 +228,8 @@ class CataBlogItem {
 			if ($this->_options['lightbox-enabled']) {
 				$this->makeFullsize();
 			}
+			
+			delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
 		}
 		return true;
 	}
@@ -235,7 +251,9 @@ class CataBlogItem {
 					if (is_file($file)) {
 						unlink($file);
 					}
-				}				
+				}
+				
+				delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
 			}
 		}
 		
@@ -587,7 +605,8 @@ class CataBlogItem {
 	}
 	
 	private function getSanitizedTitle() {
-		return sanitize_title($this->title) . "-" . time() . ".jpg";
+		$special_chars_removed = preg_replace("/[^a-zA-Z0-9s]/", "", $this->title);
+		return sanitize_title($special_chars_removed) . "-" . time() . ".jpg";
 	}
 	
 	private function html2rgb($color) {

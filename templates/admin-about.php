@@ -34,13 +34,3 @@
 	</table>
 
 </div>
-
-<script type="text/javascript">
-	jQuery(document).ready(function($) {
-		$('#button-reset').click(function() {
-			if (!confirm("Are you sure you want to reset CataBlog and delete all your data?")) {
-				return false;
-			}
-		});
-	});
-</script>

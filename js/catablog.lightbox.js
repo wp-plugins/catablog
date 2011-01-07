@@ -5,6 +5,8 @@ jQuery(function($) {
 		var settings = {'size': size};
 		if (config) jQuery.extend(settings, config);
 		
+		var timeout = null;
+		
 		var hold_click = false;
 		
 		// PlugIn Construction applied across each selected jQuery object
@@ -19,7 +21,7 @@ jQuery(function($) {
 				
 				// if row has a src attribtue and is likely an <img /> element
 				if (this.src != undefined) {
-					row = jQuery(this).parent().get(0);
+					row = jQuery(this).closest('.catablog-row').get(0);
 				}
 				
 				// select the current row and open the lightbox
@@ -113,15 +115,17 @@ jQuery(function($) {
 			var s = img.src;
 			
 			
-			var title = "<h4 class='catablog-lightbox-title'>" + meta.title + "</h4>";
+			var title       = "<h4 class='catablog-lightbox-title'>" + meta.title + "</h4>";
 			var description = "<p class='catablog-lightbox-desc'>" + meta.description + "</p>";
-			var nav =  meta.nav;
+			var nav         = meta.nav;
+			var close       = meta.close
 			
 			// attach image and navigation
 			jQuery(lightbox).append("<div id='catablog-lightbox-image' />");
 			jQuery('#catablog-lightbox-image').height(h);
+			
 			if (!jQuery('#catablog-lightbox-image').append("<img src='"+s+"' />")) {
-				alert('fail appending')
+				alert('failed appending image to html dom');
 			};
 			jQuery('#catablog-lightbox-image').append(nav);
 			jQuery('#catablog-lightbox-image a').height(h);
@@ -131,7 +135,7 @@ jQuery(function($) {
 			jQuery('#catablog-lightbox-meta').append(title);
 			jQuery('#catablog-lightbox-meta').append(description);
 			
-			
+			jQuery('#catablog-whiteboard').append(close);
 			
 			
 			lightbox.animate({width:w, height:h}, 400, function() {
@@ -140,36 +144,18 @@ jQuery(function($) {
 				jQuery(this).children('#catablog-lightbox-meta').show();
 				jQuery(this).animate({height:full_height}, 400, function() {
 					hold_click = false;
-					listenForKeyStroke();
+					bindNavigationControls();
 				})
 				
 				jQuery('#catablog-lightbox-image').fadeIn(400, function() {
 					
 				});
-				
-				
-				
-				/************
-				**  Bind next and previous photo buttons
-				************/
-				jQuery('#catablog-lightbox-prev').bind('click', function(event) {
-					navigate_lightbox('prev');
-					return false;
-				});
-
-				jQuery('#catablog-lightbox-next').bind('click', function(event) {
-					navigate_lightbox('next');
-					return false;
-				});
-				
-
-
 			});
 		}
 		
 		
 		function change_lightbox(img) {
-			var row   = jQuery(img).parent().get(0);
+			var row   = jQuery(img).closest('.catablog-row').get(0);
 			var speed = 150;
 			
 			jQuery('#catablog-lightbox-meta').fadeOut(speed, function() {
@@ -198,7 +184,7 @@ jQuery(function($) {
 			}
 			
 			hold_click = true;
-			unlistenForKeyStroke();
+			unbindNavigationControls();
 			
 			
 			var selected = jQuery('.catablog-selected');
@@ -227,7 +213,7 @@ jQuery(function($) {
 		
 		
 		function close_lightbox() {
-			unlistenForKeyStroke();
+			unbindNavigationControls();
 			
 			var fadeout_speed = 300;
 			
@@ -244,14 +230,18 @@ jQuery(function($) {
 		
 		function calculateMeta(row) {
 			var row          = jQuery(row);
-			var prev_button  = "<a href='#prev' id='catablog-lightbox-prev'><span class='catablog-lightbox-nav-label'>PREV</span></a>";
-			var next_button  = "<a href='#next' id='catablog-lightbox-next'><span class='catablog-lightbox-nav-label'>NEXT</span></a>";
+			var prev_tip     = "You may also press P or the left arrow on your keyboard";
+			var next_tip     = "You may also press N or the right arrow on your keyboard";
+			var prev_button  = "<a href='#prev' id='catablog-lightbox-prev' class='catablog-nav' title='"+prev_tip+"'><span class='catablog-lightbox-nav-label'>PREV</span></a>";
+			var next_button  = "<a href='#next' id='catablog-lightbox-next' class='catablog-nav' title='"+next_tip+"'><span class='catablog-lightbox-nav-label'>NEXT</span></a>";
+			var close_button = "<a href='#close' id='catablog-lightbox-close' class='catablog-nav' title='Close LightBox Now'>CLOSE</a>";
 			
 			var meta = {};
 			
 			meta.title       = row.find('.catablog-title').html();
 			meta.description = row.find('.catablog-description').html();
-			meta.buynow = "";
+			meta.buynow      = "";
+			meta.close       = close_button;
 			
 			meta.nav   = "";
 			if (row.prev('.catablog-row').size() > 0) {
@@ -290,7 +280,49 @@ jQuery(function($) {
 			return isSupported;
 		}
 		
-		function listenForKeyStroke() {
+		function bindNavigationControls() {
+			
+			// bind next and previous buttons
+			jQuery('#catablog-lightbox-prev').bind('click', function(event) {
+				navigate_lightbox('prev');
+				return false;
+			});
+
+			jQuery('#catablog-lightbox-next').bind('click', function(event) {
+				navigate_lightbox('next');
+				return false;
+			});
+			
+			
+			// bind close button
+			jQuery('#catablog-lightbox-close').bind('click', function(event) {
+				close_lightbox();
+				return false;
+			});
+			jQuery('#catablog-lightbox-close').bind('mouseenter', function(event) {
+				jQuery(this).addClass('catablog-lightbox-close-hover');
+				return false;
+			});
+			jQuery('#catablog-lightbox-close').bind('mouseleave', function(event) {
+				jQuery(this).removeClass('catablog-lightbox-close-hover');
+				return false;
+			});
+			jQuery(document).bind('mousemove', function(event) {
+				var close_button = jQuery('#catablog-lightbox-close');
+				
+				if (close_button.is(':hidden')) {
+					close_button.css('zIndex', 10800);
+					close_button.fadeIn(50);
+				}
+				else {
+					hideCloseButtonTimer(close_button);
+				}
+				
+				
+				
+			});
+			
+			// bind keyboard shortcuts
 			jQuery(document).bind('keyup', function(event) {
 				var key_code = (event.keyCode ? event.keyCode : event.which);
 				
@@ -312,8 +344,26 @@ jQuery(function($) {
 			});
 		}
 		
-		function unlistenForKeyStroke() {
+		function unbindNavigationControls() {
+			jQuery('#catablog-lightbox-prev').unbind('click');
+			jQuery('#catablog-lightbox-next').unbind('click');
+			jQuery('#catablog-lightbox-close').unbind('click');
+			jQuery(document).unbind('mousemove');
 			jQuery(document).unbind('keyup');
+			
+			jQuery('#catablog-lightbox-close').fadeOut(200);
+		}
+		
+		function hideCloseButtonTimer(obj) {
+			clearTimeout(timeout);
+			timeout = setTimeout(function() {
+				if (obj.hasClass('catablog-lightbox-close-hover')) {
+					hideCloseButtonTimer(obj);
+				}
+				else {
+					obj.fadeOut(200);							
+				}
+			}, 1500);
 		}
 		
 		function in_array (needle, haystack, argStrict) {
@@ -335,7 +385,6 @@ jQuery(function($) {
 
 		    return false;
 		}
-		
 		
 		
 		

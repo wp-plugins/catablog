@@ -80,7 +80,7 @@
 	width: 100%;
 	height: 100%;
 	background-color: #000;
-	z-index: 9000;
+	z-index: 10000;
 	-moz-user-select: none;
 	-khtml-user-select: none;
 	user-select: none;
@@ -91,7 +91,7 @@
 	width: 100%;
 	top: 50px;
 	left: 0px;
-	z-index: 9200;
+	z-index: 10200;
 	-moz-user-select: none;
 	-khtml-user-select: none;
 	user-select: none;
@@ -151,18 +151,38 @@
 #catablog-lightbox-image a span:first-letter {
 	border-bottom: 1px #caa solid;
 }
-#catablog-lightbox-next:hover span, #catablog-lightbox-prev:hover span {
+#catablog-lightbox-next:hover span,
+#catablog-lightbox-prev:hover span,
+#catablog-lightbox-next:focus span,
+#catablog-lightbox-prev:focus span {
 	display: block !important;
 }
 #catablog-lightbox-next {
 	right: 0px;
+	outline: 0 none !important;
+	border: 0 none !important;
 }
 #catablog-lightbox-prev {
 	left: 0px;
+	outline: 0 none !important;
+	border: 0 none !important;
 }
-
-
-
+#catablog-lightbox-close {
+	display: block;
+	display: none;
+	position: absolute;
+	top: -14px;
+	right: -14px;
+	width: 48px;
+	height: 48px;
+	background-image: url("./../images/close-lightbox.png");
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	overflow: hidden;
+	text-indent: -9999px;
+	outline: 0 none !important;
+	border: 0 none !important;
+}
 
 #catablog-lightbox-next .catablog-lightbox-nav-label {
 	right: 0px;

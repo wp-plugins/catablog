@@ -272,9 +272,14 @@ class CataBlog {
 	}
 	
 	public function admin_new() {
-		$result = new CataBlogItem();
-		$new_item = true;
-		include_once($this->directories['template'] . '/admin-edit.php');
+		if (is_upload_space_available()) {
+			$result = new CataBlogItem();
+			$new_item = true;
+			include_once($this->directories['template'] . '/admin-edit.php');
+		}
+		else {
+			include_once($this->directories['template'] . '/admin-discfull.php');
+		}		
 	}
 	
 	public function admin_edit() {
@@ -346,6 +351,8 @@ class CataBlog {
 				if ($recalculate_thumbnails || $recalculate_fullsize) {
 					$recalculate = true;
 					$save_message .= " - Please Let The Rendering Below Complete Before Navigating Away From This Page.";
+					
+					delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
 					
 					$items    = CataBlogItem::getItems();
 					$item_ids = array();
@@ -1068,6 +1075,8 @@ class CataBlog {
 				unlink($mydir);
 			}
 		}
+		
+		delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
 	}
 	
 	private function remove_legacy_data() {
