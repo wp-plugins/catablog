@@ -65,6 +65,13 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Changelog ==
 
+= 0.9.9 =
+* Fix: Added support for WordPress MultiSite.
+* Fix: Lightbox now has keyboard shortcuts for next, previous and close.
+* Fix: Lightbox now has a close button in upper right corner.
+* Fix: Lightbox has better support for custom template layouts.
+* Fix: Sanitization of the title, which is used for the image filename, now removes special characters. 
+
 = 0.9.8 =
 * Fix: Creating and deleting categories now have load indicators for slow servers.
 * Fix: Having a catablog.css file in your theme directory does not stop the default catablog.css file from loading.
