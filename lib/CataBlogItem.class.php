@@ -54,8 +54,6 @@ class CataBlogItem {
 	public static function getItem($id) {
 		$post = get_post($id);
 		
-		print_r($post);
-		
 		if ($post == false) {
 			return null;
 		}

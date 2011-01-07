@@ -150,7 +150,6 @@
 		
 	</form>
 	
-	<p><pre><?php print_r($result) ?></pre></p>
 </div>
 
 <script type="text/javascript">
