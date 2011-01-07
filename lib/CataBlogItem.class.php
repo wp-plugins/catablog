@@ -134,13 +134,19 @@ class CataBlogItem {
 	**       - VALIDATE, SAVE & DELETE METHODS
 	*****************************************************/
 	public function validate() {
+		
+		// catablog item must have an image associated with it
 		if (mb_strlen($this->image) < 1) {
 			return 'An item must have an image associated with it.';
 		}
+		
+		// check that the originals directory exists and is writable
 		if (!is_writable($this->_wp_upload_dir . "/catablog/originals")) {
 			return 'Can\'t write uploaded image to server, please make sure CataBlog is properly installed.';
 		}
-		if (true) {
+		
+		// check if catablog is going over the storage space limit on multisite blogs
+		if (function_exists('get_upload_space_available')) {
 			$space_available = get_upload_space_available();
 			$image_size      = filesize($this->image);
 			if ($image_size > $space_available) {
@@ -154,12 +160,18 @@ class CataBlogItem {
 				return $error;
 			}
 		}
+		
+		// check that the title is at least one character long
 		if (mb_strlen($this->title) < 1) {
 			return 'An item must have a title of at least one alphanumeric character.';
 		}
+		
+		// check that the title is less then 200 characters long
 		if (mb_strlen($this->title) > 200) {
 			return 'An item\'s title can not be more then 200 characters long.';
 		}
+		
+		// check that the price is a positive integer
 		if (mb_strlen($this->price) > 0) {
 			if (is_numeric($this->price) == false || $this->price < 0) {
 				return 'An item\'s price must be a positive integer.';

@@ -272,13 +272,13 @@ class CataBlog {
 	}
 	
 	public function admin_new() {
-		if (is_upload_space_available()) {
+		if (function_exists('is_upload_space_available') && is_upload_space_available() == false) {
+			include_once($this->directories['template'] . '/admin-discfull.php');
+		}
+		else {
 			$result = new CataBlogItem();
 			$new_item = true;
 			include_once($this->directories['template'] . '/admin-edit.php');
-		}
-		else {
-			include_once($this->directories['template'] . '/admin-discfull.php');
 		}		
 	}
 	
