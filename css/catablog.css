@@ -146,7 +146,8 @@
 	top: 0px;
 	width: 50%;
 	text-decoration: none;
-	background-image: url("data:image/gif;base64,AAAA");
+	background-image: url("data:image/gif;base64,AAAA") !important;
+	background: transparent !important;
 }
 #catablog-lightbox-image a span:first-letter {
 	border-bottom: 1px #caa solid;

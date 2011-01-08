@@ -36,7 +36,7 @@ if (!extension_loaded('gd') || !function_exists('gd_info')) {
 }
 // check if mbstring Library is loaded in PHP
 if (!extension_loaded('mbstring') || !function_exists('mb_strlen')) {
-    die("<strong>CataBlog</strong> requires the <strong>GD Library</strong> be installed on your
+    die("<strong>CataBlog</strong> requires the <strong>MultiByte String Library</strong> be installed on your
 		web server's version of PHP. Please contact your hosting company or IT department for
 		more information. Thanks.");	
 }
@@ -56,9 +56,6 @@ if ($upload_directory['error']) {
 	Please contact your hosting company or IT department for more information. Thanks.");
 }
 
-
-// echo (is_multisite())? "multisite" : "single site";
-// var_dump(wp_upload_dir());
 
 
 /** LOAD PLUGIN **/
