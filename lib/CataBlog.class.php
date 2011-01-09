@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "0.9.9";
+	private $version     = "0.9.9.1";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
