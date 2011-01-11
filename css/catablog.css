@@ -146,8 +146,11 @@
 	top: 0px;
 	width: 50%;
 	text-decoration: none;
-	background-image: url("data:image/gif;base64,AAAA") !important;
 	background: transparent !important;
+	background-image: url("data:image/gif;base64,AAAA") !important;
+}
+#catablog-lightbox-image a span {
+	display: block;
 }
 #catablog-lightbox-image a span:first-letter {
 	border-bottom: 1px #caa solid;
@@ -217,4 +220,12 @@
 }
 .catablog-lightbox-nav-label:hover {
 	
+}
+.catablog-credits {
+	display: block;
+	height: 0px;
+	clear: both;
+	overflow: hidden;
+	padding: 0px;
+	margin: 0 0 1em 0;
 }

@@ -3,19 +3,39 @@ body {
 }
 
 
-#catablog_items tbody tr {
+
+#catablog_items tr {
 	background-color: #fff;
 }
-#catablog_items tbody.sort_enabled tr {
-	cursor: move;
-	background-color: #f6f6f6;	
+
+
+
+#catablog_items.sort_enabled tr,
+#catablog_items.sort_enabled li {
+	cursor: move !important;
+	background-color: #f6f6f6 !important;
 }
-#catablog_items tbody.sort_enabled tr:hover {
-	background-color: #fee;
+#catablog_items.sort_enabled tr:hover,
+#catablog_items.sort_enabled li:hover {
+	background-color: #fee !important;
+}
+#catablog_items.sort_enabled a {
+	cursor: move !important;
+}
+#catablog_items.sort_enabled div.row-actions {
+	display: none !important;
+}
+#catablog_items.sort_enabled tr th.check-column {
+	background: transparent url('./../images/sortable_handle.png') no-repeat scroll center center;
 }
 
 
-
+#catablog-view-switch  #view-switch-list {
+	background-image: url('./../images/catablog-switch-view.png') !important;
+}
+#catablog-view-switch  #view-switch-excerpt {
+	background-image: url('./../images/catablog-switch-view.png') !important;
+}
 
 
 
@@ -27,21 +47,12 @@ body {
 }
 
 .cb_order_column {
-	width: 30px;
+	width: 1px;
 	text-align: center !important;
 }
 .cb_icon_column {
 	width: 80px;
 	text-align: center !important;
-}
-
-.cb_item_handle {
-	display: block;
-	width: 20px;
-	height: 50px;
-	background-color: #aaa;
-	background: transparent url('./../images/sortable_handle.png') repeat scroll left top;
-	cursor: move;
 }
 .cb_item_icon {
 	display: block;
@@ -50,7 +61,9 @@ body {
 	border: 0 none;
 	margin: 0 auto;
 }
-
+.cb_disabled_link {
+	color: #333 !important;
+}
 
 .column-rm {
 	width: 6em;
@@ -338,6 +351,46 @@ form#catablog-edit fieldset div {
 
 
 
+
+
+
+
+#catablog_items.catablog-grid-view li {
+	display: block;
+	position: relative;	
+	float: left;
+	width: 100px;
+	border: 3px #eee solid;
+	text-align: center;
+	margin: 5px;
+	background: #fff;
+	vertical-align: top;
+}
+#catablog_items.catablog-grid-view li a.catablog-admin-thumbnail {
+	display: block;
+	width: 100px;
+	height: 100px;
+	text-decoration: none;
+	margin: 0;
+}
+#catablog_items.catablog-grid-view li a.catablog-admin-thumbnail img {
+	width: 100px;
+	height: 100px;
+	border: 0;
+}
+#catablog_items.catablog-grid-view li a.catablog-title {
+	display: block;
+	height: 2.5em;
+	line-height: 1.4;
+	margin: 0.5em;
+	overflow: hidden;
+	text-decoration: none;
+}
+#catablog_items.catablog-grid-view li input.bulk_selection {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
 
 
 

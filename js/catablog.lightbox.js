@@ -54,8 +54,6 @@ jQuery(function($) {
 			// add the curtain div into the DOM
 			jQuery('body').append("<div id='catablog-curtain'>&nbsp;</div>");
 			var curtain = jQuery('#catablog-curtain');
-			
-			// alert(curtain.css);
 
 			// bind the curtain click and fade the curtain into view
 			curtain.bind('click', function() {
@@ -170,7 +168,6 @@ jQuery(function($) {
 					expand_lightbox(this, meta);
 				};
 				
-				// alert(img.src.replace("/catablog/thumbnails", "/catablog/fullsize"));
 				fullsize_pic.src = img.src.replace("/catablog/thumbnails", "/catablog/fullsize");
 				
 				
@@ -325,8 +322,6 @@ jQuery(function($) {
 			// bind keyboard shortcuts
 			jQuery(document).bind('keyup', function(event) {
 				var key_code = (event.keyCode ? event.keyCode : event.which);
-				
-				// alert(key_code);
 				
 				var forward_keycodes = [39, 78];
 				var back_keycodes    = [37, 80];

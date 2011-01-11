@@ -135,29 +135,33 @@ class CataBlogItem {
 	*****************************************************/
 	public function validate() {
 		
+		$originals_directory = $this->_wp_upload_dir . "/catablog/originals";
+		
 		// catablog item must have an image associated with it
 		if (mb_strlen($this->image) < 1) {
 			return 'An item must have an image associated with it.';
 		}
 		
 		// check that the originals directory exists and is writable
-		if (!is_writable($this->_wp_upload_dir . "/catablog/originals")) {
+		if (!is_writable($originals_directory)) {
 			return 'Can\'t write uploaded image to server, please make sure CataBlog is properly installed.';
 		}
 		
 		// check if catablog is going over the storage space limit on multisite blogs
 		if (function_exists('get_upload_space_available')) {
-			$space_available = get_upload_space_available();
-			$image_size      = filesize($this->image);
-			if ($image_size > $space_available) {
-				
-				$space_available = round(($space_available / 1024 / 1024), 2);
-				$image_size      = round(($image_size / 1024 / 1024), 2);
-				
-				$error  = 'Can\'t write uploaded image to server, your storage space is exhausted.<br />';
-				$error .= 'Please delete some media files to free up space and try again.<br />';
-				$error .= 'You have '.$space_available.'MB of available space on your server and your image is '.$image_size.'MB.';
-				return $error;
+			if ($this->_image_changed) {
+				$space_available = get_upload_space_available();
+				$image_size      = filesize($this->image);
+				if ($image_size > $space_available) {
+
+					$space_available = round(($space_available / 1024 / 1024), 2);
+					$image_size      = round(($image_size / 1024 / 1024), 2);
+
+					$error  = 'Can\'t write uploaded image to server, your storage space is exhausted.<br />';
+					$error .= 'Please delete some media files to free up space and try again.<br />';
+					$error .= 'You have '.$space_available.'MB of available space on your server and your image is '.$image_size.'MB.';
+					return $error;
+				}				
 			}
 		}
 		
@@ -191,7 +195,6 @@ class CataBlogItem {
 		$params['post_type']     = $this->_custom_post_name;
 		$params['menu_order']    = $this->order;
 		
-		// print_r($params); die;
 		
 		if ($this->id > 0) {
 			$params['ID'] = $this->id;

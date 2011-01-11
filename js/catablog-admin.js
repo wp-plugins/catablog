@@ -35,3 +35,30 @@ function hide_load() {
 		});
 	}, 500);
 }
+
+
+function discourage_leaving_page(message) {
+	var all_links = jQuery('a').filter(function() {
+		return ( jQuery(this).attr('href').charAt(0) != '#' );
+	}).filter(function() {
+		return (jQuery(this).hasClass('cb_disabled_link') == false);
+	});
+	
+	all_links.bind('click', function(event) {
+		if (message == null) {
+			message = "Image changes are still rendering, are you sure you want to leave this page?";
+		}
+		if(!confirm(message)) {
+			return false;
+		}
+	});
+}
+
+function unbind_discourage_leaving_page() {
+	var all_links = jQuery('a').filter(function() {
+		return ( jQuery(this).attr('href').charAt(0) != '#' );
+	});
+	
+	all_links.unbind('click');
+}
+

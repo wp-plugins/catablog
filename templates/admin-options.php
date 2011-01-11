@@ -148,7 +148,7 @@
 		<div id="catablog-options-template" class="catablog-options-panel hide">
 			<p>
 				<?php $views = array('- templates', 'default', 'gallery') ?>
-				<select id="catablog-view-menu" name="view">
+				<select id="catablog-template-view-menu" name="view">
 					<?php foreach($views as $key => $view): ?>
 						<?php echo "<option value='$view'>$view</option>" ?>
 					<?php endforeach ?>
@@ -156,7 +156,7 @@
 				<a href="#set-view" id="catablog-view-set-template" class="catablog-load-code button add-new-h2">Load Template</a>
 			</p>
 			<p>
-				<textarea name="view-code-template" id="catablog-view-set-template-code" class="catablog-code"><?php echo $this->options['view-theme'] ?></textarea>
+				<textarea name="view-code-template" id="catablog-view-set-template-code" class="catablog-code" rows="10" cols="30"><?php echo $this->options['view-theme'] ?></textarea>
 				
 				<small>
 					You may change the html code rendered by <strong>CataBlog</strong> here, this
@@ -188,11 +188,11 @@
 				When an item has a price above zero a "Buy Now" button will appear under the description of that CataBlog item.
 			</small></p>
 			
-			<p><hr /></p>
+			<hr />
 			
 			<p>
 				<?php $views = array('- templates', 'paypal') ?>
-				<select id="catablog-view-menu" name="view">
+				<select id="catablog-template-store-menu" name="view">
 					<?php foreach($views as $key => $view): ?>
 						<?php echo "<option value='$view'>$view</option>" ?>
 					<?php endforeach ?>
@@ -200,7 +200,7 @@
 				<a href="#set-view" id="catablog-view-set-buynow" class="catablog-load-code button add-new-h2">Load Template</a>
 			</p>
 			<p>
-				<textarea name="view-code-buynow" id="catablog-view-set-buynow-code" class="catablog-code"><?php echo $this->options['view-buynow'] ?></textarea>
+				<textarea name="view-code-buynow" id="catablog-view-set-buynow-code" class="catablog-code" rows="10" cols="30"><?php echo $this->options['view-buynow'] ?></textarea>
 				<small>
 					You may change the html code rendered for the <strong>Buy Now</strong> button here.
 					All value tokens are available here too, so place the title, description or any other
@@ -338,6 +338,19 @@
 		
 		<hr />
 		
+		<p><label>Rescan Original Image Folder</label></p>
+		<p><a href="admin.php?page=catablog-rescan-images" class="button">Rescan Original Images Folder Now</a></p>
+		<p><small>
+			Click the <em>Rescan Now</em> button to rescan the original catablog images
+			folder and automatically import any new jpeg, gif or png images. It works simply
+			by making a list of all the image names in the database and then compares each file's
+			name in the originals folder against the list of image names in the database. Any newly
+			discovered images will automatically be made into a new catalog item. You should Regenerate Images
+			after running this command.
+		</small></p>
+		
+		<hr />
+		
 		<p><label>Reset CataBlog</label></p>
 		<p><a href="admin.php?page=catablog-reset" class="button" id="button-reset">Reset All CataBlog Data</a></p>
 		<p><small>
@@ -436,17 +449,8 @@
 		** START RECALCULATING IMAGES
 		****************************************/
 		$('#save_changes').attr('disabled', true);
-		var all_links = $('a').filter(function() {
-			return ( $(this).attr('href').charAt(0) != '#' );
-		});
 		
-		
-		all_links.bind('click', function(event) {
-			var question = 'Image changes are still rendering, are you sure you want to leave this page?';
-			if(!confirm(question)) {
-				return false;
-			}
-		});
+		discourage_leaving_page();
 		
 		var catablog_items = [<?php echo implode(', ', $item_ids) ?>];
 		var total_count    = catablog_items.length;
@@ -471,7 +475,7 @@
 					$('#catablog-progress-text').text('Rendering Complete');
 					
 					$('#save_changes').attr('disabled', false);
-					all_links.unbind('click');
+					unbind_discourage_leaving_page();
 					
 					var time1 = setTimeout(function() {
 						$('#catablog-progress').hide('slow');
@@ -589,52 +593,6 @@
 				lightbox_fieldset.addClass('disabled');
 			}
 		});
-		
-		
-		
-		
-		
-		/*
-		
-		
-		lightbox_button.bind('click', function(event) {
-			if (this.checked) {
-				// enable lightbox
-				if (!confirm('Enabling the lightbox feature may take some time because it must generate full size versions for all your pictures. Are you sure you want to do this?')) {
-					$(this).attr('checked', false);
-					return false;
-				}
-				
-				show_load();
-				
-				lightbox_fieldset.removeClass('disabled');
-				$('input.arrow_edit', lightbox_fieldset).attr('readonly', false);
-				
-				var params = { 'action':'catablog_render_fullsize', 'security':'<?php echo wp_create_nonce("catablog-render-fullsize") ?>' }
-				$.post(ajaxurl, params, function(data) {
-					hide_load();
-				});
-			}
-			else {
-				// disable lightbox
-				if (!confirm('Disabling the lightbox feature will also clear your full size images directory. Are you sure you want to do this?')) {
-					$(this).attr('checked', true);
-					return false;
-				}
-				
-				show_load();
-				
-				lightbox_fieldset.addClass('disabled');
-				$('input.arrow_edit', lightbox_fieldset).attr('readonly', true);
-				
-				var params = { 'action':'catablog_flush_fullsize', 'security':'<?php echo wp_create_nonce("catablog-flush-fullsize") ?>' }
-				$.post(ajaxurl, params, function(data) {
-					hide_load();
-				});
-			}
-		});
-		*/
-		
 		
 		
 		function is_integer(s) {

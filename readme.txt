@@ -12,40 +12,44 @@ CataBlog is a comprehensive and effortless tool that allows you to create catalo
 
 CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use categories to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too with the LightBox effect, perfect for simple galleries. Easy, intuitive and smart design makes it trivial to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
-If you have a support question, please open a new support ticket here before contacting me directly.
+If you have a support question, please open a new support ticket here or check out the documentation at the link below before contacting me directly, thanks.
+http://catablog.illproductions.com/documentation/introduction-and-installation/
+
+Highlighted Features:
+
+* New script to automatically import image files into the database.
+* New Admin Panel Controls: grid view, bulk actions and a category filter.
+* Compatible with WordPress MultiSite and Network Activation.
+* Use Categories to organize and control your catalog.
+* The Options Page is well organized and supports many configurations.
+* Template controls let you choose exactly how the HTML tags are rendered.
+* Easy management of your catalog with superiorly designed admin controls.
+* Import and Export features for saving and loading catalogs.
+* Database is modified by native WordPress functions only. 
 
 Pre Version 0.9.5 Upgrades:
 
 * Please export your database to xml before upgrading, just incase.
 * Backup the catablog folder in your WordPress site's upload folder.
 
-Highlighted Features:
-
-* Compatible with WordPress MultiSite and network activation.
-* Tags have been replaced with a more familiar categories feature.
-* The Options Page is better organized and supports more options.
-* New template controls let you choose exactly how your HTML is rendered.
-* Easy management of your catalog with superiorly designed admin controls.
-* Import and Export features for saving and loading catalogs.
-* Database is modified by native WordPress functions only. 
-
 == Installation ==
 
 1. Upload `catablog` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the `Plugins` menu in WordPress
+1. If you want you may network activate CataBlog at this point. Note that each new site you make will require an installation step, simply do so when reminded and another individual installation for your new site will be available.
 1. Create catalog items by uploading image files
-1. Sprinkle the `[catablog]` shortcode throughout your blog to show your catalog
+1. Sprinkle the `[catablog]` and `[catablog category='dog']` shortcodes throughout your blog to show your catalog
 
 == Frequently Asked Questions ==
 
 = What browsers do you support =
 
-The CataBlog Admin section is made to work best with these browsers:
+The CataBlog Admin section is made and tested to work best with these browsers:
 
-1. Internet Explorer 8+
-1. FireFox 3+
-1. Opera 10+
-1. Safari & Chrome
+1. Internet Explorer 8
+1. FireFox 3
+1. Safari 5
+1. Chrome 8
 
 
 = I installed CataBlog, now where is it? =
@@ -65,6 +69,13 @@ You can easily override CataBlog's CSS classes to create your own design and eas
 Go to http://catablog.illproductions.com, it is a place to learn and share more about your experiences with CataBlog.
 
 == Changelog ==
+
+= 1.0 =
+* New: Rescan the CataBlog originals folder for new images to add to the database.
+* New: Category filter in the CataBlog Admin Panel for quick filter previews.
+* New: Grid mode for easier resorting and photo gallery usages.
+* New: Bulk selection of items for the delete function.
+* Fix: Small interface bugs in LightBox when using an old browser.
 
 = 0.9.9 =
 * Fix: Added support for WordPress MultiSite.
