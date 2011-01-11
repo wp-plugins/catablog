@@ -326,18 +326,6 @@
 		
 		<hr />
 		
-		<p><label>Regenerate Images</label></p>
-		<p><a href="admin.php?page=catablog-regenerate-images" class="button">Regenerate All Images Now</a></p>
-		<p><small>
-				Click the <em>Regenerate Now</em> button to recreate all the
-				thumbnail and lightbox images that CataBlog has generated over
-				the time you have used it. This is also useful when restoring exported
-				data from another version of CataBlog. after you have uploaded your
-				original images you must regenerate your images so they display properly.
-		</small></p>
-		
-		<hr />
-		
 		<p><label>Rescan Original Image Folder</label></p>
 		<p><a href="admin.php?page=catablog-rescan-images" class="button">Rescan Original Images Folder Now</a></p>
 		<p><small>
@@ -347,6 +335,18 @@
 			name in the originals folder against the list of image names in the database. Any newly
 			discovered images will automatically be made into a new catalog item. You should Regenerate Images
 			after running this command.
+		</small></p>
+		
+		<hr />
+		
+		<p><label>Regenerate Images</label></p>
+		<p><a href="admin.php?page=catablog-regenerate-images" class="button">Regenerate All Images Now</a></p>
+		<p><small>
+				Click the <em>Regenerate Now</em> button to recreate all the
+				thumbnail and lightbox images that CataBlog has generated over
+				the time you have used it. This is also useful when restoring exported
+				data from another version of CataBlog. after you have uploaded your
+				original images you must regenerate your images so they display properly.
 		</small></p>
 		
 		<hr />
