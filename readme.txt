@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, page, links, catalog, gallery, discography, library, collection, paypal, organize, media, photo, thumbnail, product, rolodex, manifest, listing, list, category, categories, custom post type, custom post, custom taxonomy
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 0.9.9.1
+Stable tag: 1.0
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs and galleries for your blog.
 
@@ -68,6 +68,14 @@ You can easily override CataBlog's CSS classes to create your own design and eas
 
 Go to http://catablog.illproductions.com, it is a place to learn and share more about your experiences with CataBlog.
 
+== Screenshots ==
+
+1. Use the list view for a bird's eye view of the entire catalog.
+2. Use the grid view for bigger thumbnails and easier sorting.
+3. Easy and familiar form for making and editing catalog items.
+4. Turn your catalog into a photo gallery using custom templates.
+5. Display your catalog photos in high resolution with the LightBox.
+
 == Changelog ==
 
 = 1.0 =
@@ -91,9 +99,6 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 = 0.9.7 =
 * Fix: Only tries to read EXIF data from images if the function exists.
-
-= 0.9.6.1 = 
-* Fix: Syntax error at line 1227 fixed.
 
 = 0.9.6 =
 * New: Description field options for controlling WordPress filtering and line breaks.
@@ -149,12 +154,12 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * Fix: bugs and poor error messages, including a new check that the server is running PHP5.
 
 = 0.8.5 =
-* JavaScript Lightbox type effect can now be enabled for larger previews of your catalog item's thumbnails.
-* Catalog items are not sortable in the list view until you enter sort mode, helping stop accidental modifications.
+* New: JavaScript Lightbox type effect can now be enabled for larger previews of your catalog item's thumbnails.
+* Fix: Catalog items are not sortable in the list view until you enter sort mode, helping stop accidental modifications.
 
 = 0.8.1 =
-* Memory leak fix, the plugin is more efficient with system resources and memory.
-* Now the plugin automatically creates the wp-content/uploads directory on installation if it doesn't already exist.
+* Fix: Memory leak fix, the plugin is more efficient with system resources and memory.
+* Fix: Now the plugin automatically creates the wp-content/uploads directory on installation if it doesn't already exist.
 
 = 0.8 =
 * Stable release candidate
@@ -186,6 +191,11 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Upgrade Notice ==
 
+= 1.0 =
+
+Nothing Urgent for CataBlog 0.9.5 and Above.
+http://catablog.illproductions.com for more information and specifics.
+
 = 0.9.8 =
 
 No Upgrade Notices for CataBlog 0.9.5 and Above.
@@ -193,10 +203,6 @@ No Upgrade Notices for CataBlog 0.9.5 and Above.
 = 0.9.7 =
 
 Note: This version should be used over 0.9.6 or 0.9.6.1, thanks!
-
-= 0.9.6 =
-
-Note: Small upgrade to code that does not have many significant database changes.
 
 = 0.9.5 =
 
@@ -218,37 +224,10 @@ NOTE: A small upgrade to the code, nothing major.
 
 NOTE: A column in the database has been renamed because the original label was a reserved mysql keyword. This update was well tested and should not provide any problems, but just incase you should backup your database with the xml export feature before you upgrade. Thanks.
 
-WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
-
-= 0.8.7 =
-
-Added import/export of CataBlog data and fixed a few minor bugs and interface quirks.
-
-WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
-
-= 0.8.5 =
-
-Relatively minor upgrade offering a new features that lets people enlarge your thumbnails with a lightbox style effect.
-
-WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
-
-= 0.8.1 =
-
-ATTENTION: Please upgrade to this version immediately, a bug that let the plugin slowly use all your system RAM has been fixed. The plugin is much more efficient.
-
-= 0.8.0 =
-
-WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
-
-= 0.7.6 =
-
-WARNING: If you are upgrading to this version from a version prior to 0.7.5 you will destroy all previously saved CataBlog data. Please back it up as necessary.
-
-= 0.7.5 =
-
-WARNING: If you upgrade to this version you will destroy all previously saved CataBlog data. Please back it up as necessary.
-
 == Arbitrary section ==
 
-Zachary Segal
-http://www.illproductions.com
+
+CataBlog is written, maintained, supported and documented by Zachary Segal. Please feel free to stop by and visit http://catablog.illproductions.com and http://illproductions.com for more information about CataBlog and Zachary.
+
+
+
