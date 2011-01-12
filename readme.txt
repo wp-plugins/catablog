@@ -40,9 +40,9 @@ Please remember that CataBlog is written, maintained, supported and documented b
 
 1. Upload `catablog` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the `Plugins` menu in WordPress
-1. If you want you may network activate CataBlog at this point. Note that each new site you make will require an installation step, simply do so when reminded and another individual installation for your new site will be available.
+1. If you want you may also network activate CataBlog. Note that each new site you make will require an installation step, simply do so when reminded and all will be good.
 1. Create catalog items by uploading image files
-1. Sprinkle the `[catablog]` and `[catablog category='dog']` shortcodes throughout your blog to show your catalog
+1. Sprinkle the `[catablog]` and `[catablog category='dog']` ShortCodes throughout your blog to show your catalog
 
 
 
@@ -50,7 +50,7 @@ Please remember that CataBlog is written, maintained, supported and documented b
 
 = Where is the documentation =
 
-http://catablog.illproductions.com/documentation/introduction-and-installation/
+[Click Here](http://catablog.illproductions.com/documentation/introduction-and-installation/ "CataBlog Documentation") for the official documentation.
 
 = What browsers do you support =
 
