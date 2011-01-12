@@ -55,6 +55,7 @@ Please remember that CataBlog is written, maintained, supported and documented b
 = What browsers do you support =
 
 The CataBlog Admin section is made and tested to work best with these browsers:
+
 1. Internet Explorer 8
 1. FireFox 3
 1. Safari 5
