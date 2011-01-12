@@ -8,12 +8,13 @@ Stable tag: 1.0
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs and galleries for your blog.
 
+
+
 == Description ==
 
 CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use categories to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too with the LightBox effect, perfect for simple galleries. Easy, intuitive and smart design makes it trivial to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
-If you have a support question, please open a new support ticket here or check out the documentation at the link below before contacting me directly, thanks.
-http://catablog.illproductions.com/documentation/introduction-and-installation/
+If you have a support question, please open a new support ticket here or check out the documentation before contacting me, thanks.
 
 Highlighted Features:
 
@@ -32,6 +33,9 @@ Pre Version 0.9.5 Upgrades:
 * Please export your database to xml before upgrading, just incase.
 * Backup the catablog folder in your WordPress site's upload folder.
 
+Please remember that CataBlog is written, maintained, supported and documented by Zachary Segal. Please feel free to stop by and visit http://catablog.illproductions.com and http://illproductions.com for more information about CataBlog and Zachary anytime.
+
+
 == Installation ==
 
 1. Upload `catablog` to the `/wp-content/plugins/` directory
@@ -40,17 +44,21 @@ Pre Version 0.9.5 Upgrades:
 1. Create catalog items by uploading image files
 1. Sprinkle the `[catablog]` and `[catablog category='dog']` shortcodes throughout your blog to show your catalog
 
+
+
 == Frequently Asked Questions ==
+
+= Where is the documentation =
+
+http://catablog.illproductions.com/documentation/introduction-and-installation/
 
 = What browsers do you support =
 
 The CataBlog Admin section is made and tested to work best with these browsers:
-
 1. Internet Explorer 8
 1. FireFox 3
 1. Safari 5
 1. Chrome 8
-
 
 = I installed CataBlog, now where is it? =
 
@@ -68,6 +76,8 @@ You can easily override CataBlog's CSS classes to create your own design and eas
 
 Go to http://catablog.illproductions.com, it is a place to learn and share more about your experiences with CataBlog.
 
+
+
 == Screenshots ==
 
 1. Use the list view for a bird's eye view of the entire catalog.
@@ -75,6 +85,8 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 3. Easy and familiar form for making and editing catalog items.
 4. Turn your catalog into a photo gallery using custom templates.
 5. Display your catalog photos in high resolution with the LightBox.
+
+
 
 == Changelog ==
 
@@ -189,6 +201,8 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 = 0.6.5 =
 * This version is the initial release.
 
+
+
 == Upgrade Notice ==
 
 = 1.0 =
@@ -223,11 +237,6 @@ NOTE: A small upgrade to the code, nothing major.
 = 0.9.0 =
 
 NOTE: A column in the database has been renamed because the original label was a reserved mysql keyword. This update was well tested and should not provide any problems, but just incase you should backup your database with the xml export feature before you upgrade. Thanks.
-
-== Arbitrary section ==
-
-
-CataBlog is written, maintained, supported and documented by Zachary Segal. Please feel free to stop by and visit http://catablog.illproductions.com and http://illproductions.com for more information about CataBlog and Zachary.
 
 
 
