@@ -80,9 +80,9 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Screenshots ==
 
-1. Use the list view for a bird's eye view of the entire catalog.
+1. Use the list view for a bird's eye of the entire catalog.
 2. Use the grid view for bigger thumbnails and easier sorting.
-3. Easy and familiar form for making and editing catalog items.
+3. Easy and familiar forms for making and editing catalog items.
 4. Turn your catalog into a photo gallery using custom templates.
 5. Display your catalog photos in high resolution with the LightBox.
 
@@ -91,7 +91,7 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 == Changelog ==
 
 = 1.0 =
-* New: Rescan the CataBlog originals folder for new images to add to the database.
+* New: Rescan the originals folder for new images to add to the database.
 * New: Category filter in the CataBlog Admin Panel for quick filter previews.
 * New: Grid mode for easier resorting and photo gallery usages.
 * New: Bulk selection of items for the delete function.
