@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "1.0";
+	private $version     = "1.0.1";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -60,8 +60,9 @@ class CataBlog {
 		$this->urls['css']        = WP_CONTENT_URL . "/plugins/catablog/css";
 		$this->urls['javascript'] = WP_CONTENT_URL . "/plugins/catablog/js";
 		$this->urls['images']     = WP_CONTENT_URL . "/plugins/catablog/images";
-		$this->urls['thumbnails'] = $wp_upload_dir['baseurl'] . "/catablog/thumbnails";
 		$this->urls['originals']  = $wp_upload_dir['baseurl'] . "/catablog/originals";
+		$this->urls['thumbnails'] = $wp_upload_dir['baseurl'] . "/catablog/thumbnails";
+		$this->urls['fullsize']   = $wp_upload_dir['baseurl'] . "/catablog/fullsize";
 	}
 	
 	
@@ -982,6 +983,7 @@ class CataBlog {
 			
 			// set the values of the item into an array
 			$values['image']           = $this->urls['thumbnails'] . "/". $result->getImage();
+			$values['image-fullsize']  = $this->urls['fullsize'] . "/". $result->getImage();
 			$values['title']           = (mb_strlen($result->getLink()) > 0)? "<a href='".$result->getLink()."' target='".$this->options['link-target']."'>".$result->getTitle()."</a>" : $result->getTitle();
 			$values['title-text']      = $result->getTitle();
 			$values['link']            = $result->getLink();
