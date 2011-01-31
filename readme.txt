@@ -14,7 +14,7 @@ CataBlog is a comprehensive and effortless tool that allows you to create catalo
 
 CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use categories to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too with the LightBox effect, perfect for simple galleries. Easy, intuitive and smart design makes it trivial to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
-There is a newer beta version, 1.0.2, available in the [other versions section](http://wordpress.org/extend/plugins/catablog/download/ "Download Other Versions of CataBlog").
+There are newer beta versions available in the [other versions section](http://wordpress.org/extend/plugins/catablog/download/ "Download Other Versions of CataBlog"), check the [Changelog](http://wordpress.org/extend/plugins/catablog/changelog/ "CataBlog Versions Change Log") to see what new features were added.
 
 If you have a support question, please open a new support ticket here or check out the documentation before contacting me, thanks.
 
@@ -35,7 +35,7 @@ Pre Version 0.9.5 Upgrades:
 * Please export your database to xml before upgrading, just incase.
 * Backup the catablog folder in your WordPress site's upload folder.
 
-Please remember that CataBlog is written, maintained, supported and documented by Zachary Segal. Please feel free to stop by and visit http://catablog.illproductions.com and http://illproductions.com for more information about CataBlog and Zachary anytime.
+Please remember that CataBlog is written, maintained, supported and documented by Zachary Segal. Please feel free to stop by and visit http://catablog.illproductions.com and http://www.illproductions.com for more information about CataBlog and Zachary anytime.
 
 
 == Installation ==
@@ -224,6 +224,10 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 Nothing Urgent for CataBlog 0.9.5 and Above.
 http://catablog.illproductions.com for more information and specifics.
+
+= 1.0.2 =
+
+Beware, CataBlog's JavaScript and CSS file may not load on a page that only invokes the template function and doesn't use the shortcode.
 
 = 0.9.8 =
 
