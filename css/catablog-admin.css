@@ -307,7 +307,7 @@ form#catablog-edit fieldset div {
 
 .catablog-options-panel {
 	margin: 0 0 0 100px !important;
-	min-height: 320px;
+	min-height: 340px;
 	padding: 1em;
 	border: 1px #ddd solid;;
 	background-color: #fff;
@@ -335,10 +335,26 @@ form#catablog-edit fieldset div {
 /* CATABLOG OPTIONS - MISC CLASSES AND HELPERS */
 .catablog-options-panel #thumbnail_preview .demo_box {
 	display: block;
+	position: relative;
 	background-color: #ccc;
 	border: 1px #999 solid !important;
-	margin: 0 0 10px 0;
+	margin: 0;
+	overflow: hidden;
 }
+.catablog-options-panel #thumbnail_preview .demo_box img {
+	display: block;
+	position: absolute;
+	top: 13%;
+	left: 0px;
+	width: 100%;
+}
+.catablog-options-panel #thumbnail_preview .demo_box.crop img {
+	top: 0px;
+	left: -12%;
+	width: auto;
+	height: 100%;
+}
+
 .catablog-options-panel a.catablog-load-code {
 	vertical-align: middle;
 }
@@ -536,27 +552,17 @@ table.catablog_stats td {
 
 
 
-/* SLIDER CLASSES */
-#red, #green, #blue {
-	display: block;
-	width: 256px;
-	margin: 7px 0;
-}
-#swatch {
-	width: 120px;
-	height: 100px;
-	margin-top: 18px;
-	margin-left: 350px;
-	background-image: none;
-}
-#red .ui-slider-range { background: #ef2929; }
-#red .ui-slider-handle { border-color: #ef2929; }
-#green .ui-slider-range { background: #8ae234; }
-#green .ui-slider-handle { border-color: #8ae234; }
-#blue .ui-slider-range { background: #729fcf; }
-#blue .ui-slider-handle { border-color: #729fcf; }
 
 
+#color-picker-div {
+	z-index: 100;
+	background: #eee;
+	border: 1px solid #ccc;
+	display: none;
+	position: absolute;
+	top: 200px;
+	left: 550px;
+}
 
 
 

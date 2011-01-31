@@ -3,7 +3,7 @@
 Plugin Name: CataBlog
 Plugin URI: http://catablog.illproductions.com
 Description: CataBlog is a comprehensive and effortless tool that allows you to create catalogs and galleries for your blog.
-Version: 1.0.1
+Version: 1.0.2
 Author: Zachary Segal
 Author URI: http://catablog.illproductions.com/about/
 
@@ -30,13 +30,13 @@ if (version_compare(phpversion(), '5.0.0', '<')) {
 }
 // check if GD Library is loaded in PHP
 if (!extension_loaded('gd') || !function_exists('gd_info')) {
-    die("<strong>CataBlog</strong> requires the <strong>GD Library</strong> be installed on your
+    die("<strong>CataBlog</strong> requires that the <strong>GD Library</strong> be installed on your
 		web server's version of PHP. Please contact your hosting company or IT department for
 		more information. Thanks.");
 }
 // check if mbstring Library is loaded in PHP
 if (!extension_loaded('mbstring') || !function_exists('mb_strlen')) {
-    die("<strong>CataBlog</strong> requires the <strong>MultiByte String Library</strong> be installed on your
+    die("<strong>CataBlog</strong> requires that the <strong>MultiByte String Library</strong> be installed on your
 		web server's version of PHP. Please contact your hosting company or IT department for
 		more information. Thanks.");	
 }

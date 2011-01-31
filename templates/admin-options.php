@@ -24,15 +24,16 @@
 	<form action="admin.php?page=catablog-options" id="catablog-options" class="catablog-form" method="post">
 		
 		<ul id="catablog-options-menu">
-			<li><a href="#thumbnails">Thumbnails</a></li>
-			<li><a href="#lightbox">LightBox</a></li>
-			<li><a href="#title">Title</a></li>
-			<li><a href="#description">Description</a></li>
-			<li><a href="#template">Template</a></li>
-			<li><a href="#store">Store</a></li>
-			<li><a id="catablog-options-menu-export" href="#export">Export</a></li>
-			<li><a href="#import">Import</a></li>
-			<li><a id="catablog-options-menu-system" href="#system">Systems</a></li>
+			<li><a href="#thumbnails" title="Set size and how thumbnails will be made">Thumbnails</a></li>
+			<li><a href="#lightbox" title="">LightBox</a></li>
+			<li><a href="#title" title="">Title</a></li>
+			<li><a href="#description" title="">Description</a></li>
+			<?php /*<li><a href="#public" title="">Public</a></li> */ ?>
+			<li><a href="#template" title="Control how your catalog is rendered">Template</a></li>
+			<li><a href="#store" title="">Store</a></li>
+			<li><a id="catablog-options-menu-export" href="#export" title="">Export</a></li>
+			<li><a href="#import" title="">Import</a></li>
+			<li><a id="catablog-options-menu-system" href="#system" title="">Systems</a></li>
 		</ul>
 		
 		
@@ -40,7 +41,7 @@
 		<div id="catablog-options-thumbnails" class="catablog-options-panel">
 			<p>
 				<label for='thumbnail_size'>Thumbnail Size:</label>
-				<input type='text' name='thumbnail_size' id='thumbnail_size' class='arrow_edit' size='5' value='<?php echo $thumbnail_size ?>' />
+				<input type='text' name='thumbnail_size' id='thumbnail_size' class='integer_field' size='5' value='<?php echo $thumbnail_size ?>' />
 				<span>pixels</span><br />
 			
 				<small class="error hidden">your thumbnail size must be a positive integer<br /></small>
@@ -55,11 +56,10 @@
 			</p>
 			<p>
 				<label>Thumbnail Background Color:</label>
-				<input type="text" name="bg_color" id="bg_color" size="7" maxlength="6" value="<?php echo $background_color ?>" />
-				<span id="red"></span>
-				<span id="green"></span>
-				<span id="blue"></span>
+				<input type="text" name="bg_color" id="bg_color" size="8" maxlength="7" value="<?php echo $background_color ?>" />
+				<small><a class="hide-if-no-js" href="#" id="pickcolor"><?php _e('Select a Color'); ?></a></small>
 			</p>
+			<div id="color-picker-div">&nbsp;</div>
 			<hr />
 			<div>
 				<label>Thumbnail Preview</label>
@@ -82,7 +82,7 @@
 			
 			<p>
 				<label for='lightbox_image_size'>LightBox Size:</label>
-				<input type='text' name='lightbox_image_size' id='lightbox_image_size' class='arrow_edit' size='5' value='<?php echo $lightbox_size ?>' />
+				<input type='text' name='lightbox_image_size' id='lightbox_image_size' class='integer_field' size='5' value='<?php echo $lightbox_size ?>' />
 				<span>pixels</span><br />
 				<small class="error hidden">your lightbox size must be a positive integer<br /></small>
 				<small>This is the maximum length of either the height or width, depending on whichever is longer in the original uploaded image.</small>
@@ -94,23 +94,29 @@
 		<div id="catablog-options-title" class="catablog-options-panel hide">
 			<p>
 				<label for="link_target">Link Target:</label>
-				<select id="link_target" name="link_target">
-					<option value="_blank" <?php echo ($link_target == "_blank")? 'selected="selected"' : '' ?>>_blank</option>
-					<option value="_top" <?php echo ($link_target == "_top")? 'selected="selected"' : '' ?>>_top</option>
-					<option value="" <?php echo ($link_target == '')? 'selected="selected"' : '' ?>>_none</option>
-				</select>
-				<br />
+				<input type="text" id="link_target" name="link_target" value="<?php echo $link_target ?>" /><br />
 				<small>
-					The link target setting will set the <strong>target</strong> attribute of all the catalog title links.
+					The link target setting will set the <strong>target</strong> attribute of all the catalog title links.<br />
+					<strong>examples:</strong> _blank, _top, _self.
+				</small>
+			</p>
+			<p>
+				<label for="link_target">Link Relationship:</label>
+				<input type="text" id="link_relationship" name="link_relationship" value="<?php echo $link_relationship ?>" maxlength="30" /><br />
+				<small>
+					The link relationship will set the <strong>rel</strong> attribute of all the catalog title links.<br />
+					<strong>examples:</strong> index, next, prev, glossary, chapter, bookmark, nofollow.
 				</small>
 			</p>
 			<?php /*
 			<p>
-				<label for="link_reference">Link Reference:</label>
-				<input type="text" id="link_reference" name="link_reference" value="" />
-				<br />
+				<label for="permalink-default">Empty Links Go To Public Page:</label>
+				<?php $checked = ($permalink_default)? "checked='checked'" : "" ?>
+				<input type="checkbox" id="permalink-default" name="permalink-default" <?php echo $checked ?> /><br />
 				<small>
-					The link reference setting will set the <strong>ref</strong> attribute of all the catalog links.
+					This feature only works if you are generating individual item pages.<br />
+					When enabled all the catalog titles will link to the item's public page if the link value is empty.<br />
+					
 				</small>
 			</p>
 			*/ ?>
@@ -124,30 +130,57 @@
 				<label for="catablog-filters-enabled">Enable WordPress Filters:</label>
 				<input type="checkbox" name="wp-filters-enabled" id="catablog-filters-enabled" <?php echo $checked ?> /><br/>
 				<small>
-					This will filter your catalog item's description through the standard WordPress filters. 
-					Be careful with this option turned on, [shortcodes] will be rendered and you can break
-					your web site by putting [catablog] in any item's description.
+					Enable the standard WordPress filters for your catalog item's description.<br /> 
+					This allows you to use shortcodes and media embeds inside your catalog item descriptions.<br />
+					Please <strong>do not use the &#91;catablog&#93; shortcode</strong> inside a catalog item's description.
 				</small>
 			</p>
 			
 			<p>
 				<?php $checked = ($nl2br_enabled)? "checked='checked'" : "" ?>
-				<label for="catablog-nl2br-enabled">Enable Hard Returns:</label>
+				<label for="catablog-nl2br-enabled">Render Line Breaks:</label>
 				<input type="checkbox" name="nl2br-enabled" id="catablog-nl2br-enabled" <?php echo $checked ?> /><br/>
 				<small>
-					This will filter your catalog item's description through the standard PHP 
-					function nl2br(). This will turn all hard returns in your description into HTML
-					line break tags (&lt;br /&gt;). Turn this off if you want complete control over 
-					your descriptions HTML code.
+					Filter your catalog item's description through the standard PHP function 
+					<a href="http://php.net/manual/en/function.nl2br.php" target="_blank">nl2br()</a>.<br />
+					This will insert HTML line breaks before all new lines in your catalog descriptions.<br />
+					Turn this off if unwanted line breaks are being rendered on your page.
 				</small>
 			</p>
 		</div>
 		
 		
+		<?php /*  PUBLIC SETTINGS PANEL  */ ?>
+		<?php /*
+		<div id="catablog-options-public" class="catablog-options-panel hide">
+			<p>
+				<?php $checked = ($public_catalog_items_enabled)? "checked='checked'" : "" ?>
+				<label for="public-catalog-items">Generate Public Pages For Catalog Item:</label>
+				<input type="checkbox" name="public-catalog-items" id="public-catalog-items" <?php echo $checked ?> /><br/>
+				<small>
+					Generates a permalink for each individual CataBlog item that will display the singular item like a page.<br />
+					This will put individual catalog items in your blog's search results.<br />
+					Use the permalink structure below to control the permalink path to your catalog items.
+				</small>
+			</p>
+			
+			<p>
+				<label for="public-catalog-items">Public Page's Permalink Path:</label>
+				<input type="text" name="public-catalog-slug" id="public-catalog-slug" readonly="readonly" value="<?php echo $public_catalog_slug ?>" maxlength="200" /><br/>
+				<small>
+					Set the slug to be used in the individual catalog item's public page.<br />
+					<?php if (mb_strlen($public_catalog_slug) > 0): ?>
+						<strong>example:</strong> /<?php echo $public_catalog_slug ?>/item-name/
+					<?php endif ?>
+				</small>
+			</p>
+		</div>
+		*/ ?>
+		
 		<?php /*  TEMPLATE SETTINGS PANEL  */ ?>
 		<div id="catablog-options-template" class="catablog-options-panel hide">
 			<p>
-				<?php $views = array('- templates', 'default', 'gallery') ?>
+				<?php $views = array('- templates', 'default', 'gallery', 'grid') ?>
 				<select id="catablog-template-view-menu" name="view">
 					<?php foreach($views as $key => $view): ?>
 						<?php echo "<option value='$view'>$view</option>" ?>
@@ -308,8 +341,8 @@
 		</p>
 		
 		<p>
-		<a href="admin.php?page=catablog-lock-folders" class="button">Lock Folders</a>
-		<a href="admin.php?page=catablog-unlock-folders" class="button">Unlock Folders</a>				
+		<a href="admin.php?page=catablog-lock-folders#system" class="button">Lock Folders</a>
+		<a href="admin.php?page=catablog-unlock-folders#system" class="button">Unlock Folders</a>				
 		</p>
 		
 		<p><small>
@@ -327,7 +360,7 @@
 		<hr />
 		
 		<p><label>Rescan Original Image Folder</label></p>
-		<p><a href="admin.php?page=catablog-rescan-images" class="button">Rescan Original Images Folder Now</a></p>
+		<p><a href="admin.php?page=catablog-rescan-images" class="button js-warn">Rescan Original Images Folder Now</a></p>
 		<p><small>
 			Click the <em>Rescan Now</em> button to rescan the original catablog images
 			folder and automatically import any new jpeg, gif or png images. It works simply
@@ -340,7 +373,7 @@
 		<hr />
 		
 		<p><label>Regenerate Images</label></p>
-		<p><a href="admin.php?page=catablog-regenerate-images" class="button">Regenerate All Images Now</a></p>
+		<p><a href="admin.php?page=catablog-regenerate-images" class="button js-warn">Regenerate All Images Now</a></p>
 		<p><small>
 				Click the <em>Regenerate Now</em> button to recreate all the
 				thumbnail and lightbox images that CataBlog has generated over
@@ -352,7 +385,7 @@
 		<hr />
 		
 		<p><label>Reset CataBlog</label></p>
-		<p><a href="admin.php?page=catablog-reset" class="button" id="button-reset">Reset All CataBlog Data</a></p>
+		<p><a href="admin.php?page=catablog-reset" class="button js-warn" id="button-reset">Reset All CataBlog Data</a></p>
 		<p><small>
 			Reset your entire catalog, deleting all photos and custom data permanently. 
 			Sometimes you can use this to fix an improper install.
@@ -363,7 +396,7 @@
 			<hr />
 			
 				<p><label>Clear Legacy Database Information</label></p>
-				<p><a href="admin.php?page=catablog-clear-old-data" class="button">Clear Old Database Table</a></p>
+				<p><a href="admin.php?page=catablog-clear-old-data" class="button js-warn">Clear Old Database Table</a></p>
 				<p class="error"><small>
 					You have a database table from a version of CataBlog prior to version 0.9.5.
 					The <strong><a href="#export" onclick="jQuery('#catablog-options-menu-export').click();">Export</a></strong> feature 
@@ -381,7 +414,7 @@
 	<?php /*  SUBMIT FORM BUTTON  */ ?>
 	<p class="submit" style="margin-left:100px;">
 		<input type="button" id="save_changes" class="button-primary" value="<?php _e('Save Changes') ?>" />
-		<span> or <a href="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog' ?>">back to list</a></span>
+		<span> or <a href="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-options' ?>">reset options</a></span>
 	</p>
 	
 </div>
@@ -420,11 +453,87 @@
 		}
 		$(path).click();
 		
-
+		
+		
 		
 		/****************************************
-		** BIND LOAD TEMPLATE BUTTONS
+		** THUMBNAILS PANEL
 		****************************************/
+		// update the thumbnail preview size dynamically
+		$('#thumbnail_size').bind('keyup', function(event) {
+			var v = this.value;
+			if (is_integer(v) && (v > 0)) {
+				$(this).siblings('small.error').hide();
+				if ($(this).attr('id') == 'thumbnail_size') {
+					jQuery('#demo_box').animate({width:(v-1), height:(v-1)}, 100);
+				}
+			}
+		});
+		
+		
+		// update thumbnail preview for keep aspect ratio option
+		if ($('#keep_aspect_ratio').attr('checked') == false) {
+			$('#demo_box').addClass('crop');
+		}
+		$('#keep_aspect_ratio').bind('change', function(event) {
+			if (this.checked) {
+				$('#demo_box').removeClass('crop');
+			}
+			else {
+				$('#demo_box').addClass('crop');
+			}
+		});
+		
+		// load image for thumbnail preview
+		var thumbnail_preview = new Image;
+		thumbnail_preview.onload = function() {
+			var preview = '<img src="'+this.src+'" />';
+			$('#demo_box').append(preview);
+		}
+		thumbnail_preview.src = "<?php echo $this->urls['images'] ?>/catablog-thumbnail-preview.jpg";
+		
+		
+		
+		
+		/****************************************
+		** LIGHTBOX PANEL
+		****************************************/
+		// disable lightbox size field if the lightbox is off
+		$('#lightbox_image_size').attr('readonly', !$('#lightbox_enabled').attr('checked'));
+		$('#lightbox_enabled').bind('click', function(event) {
+			if (this.checked) {
+				$('#lightbox_image_size').attr('readonly', false);
+			}
+			else {
+				$('#lightbox_image_size').attr('readonly', true);
+			}
+		});
+		
+		
+		
+		
+		
+		/****************************************
+		** PUBLIC PANEL
+		****************************************/
+		$('#public-catalog-slug').attr('readonly', !$('#public-catalog-items').attr('checked'));
+		$('#public-catalog-items').bind('click', function(event) {
+			if (this.checked) {
+				$('#public-catalog-slug').attr('readonly', false);
+			}
+			else {
+				$('#public-catalog-slug').attr('readonly', true);
+			}
+		});	
+		
+		
+		
+		
+		
+		/****************************************
+		** TEMPLATE & BUY BUTTON PANELS
+		****************************************/
+		// bind the load buttons for the template drop down menus
 		$('.catablog-load-code').bind('click', function(event) {
 			var id       = this.id;
 			var selected = $(this).siblings('select').val();
@@ -441,13 +550,135 @@
 			return false;
 		});
 				
+		// bind the textareas in the catablog options form to accept tabs
+		$('#catablog-options textarea').bind('keydown', function(event) {
+			var item = this;
+			if(navigator.userAgent.match("Gecko")){
+				c = event.which;
+			}else{
+				c = event.keyCode;
+			}
+			if(c == 9){
+				replaceSelection(item,String.fromCharCode(9));
+				$("#"+item.id).focus();	
+				return false;
+			}
+		});
 		
 		
 		
-		<?php if ($recalculate): ?>
+		
+		
+		
+		
+		
+		
 		/****************************************
-		** START RECALCULATING IMAGES
+		** GENERAL FORM BINDINGS
 		****************************************/
+		// enter key submits form
+		$('#catablog-options input').bind('keydown', function(event) {
+			if(event.keyCode == 13){
+				$('#save_changes').click();
+				return false;
+			}
+		});
+		
+		// up and down arrow keys for changing integer values
+		$('#catablog-options input.integer_field').bind('keydown', function(event) {
+			var step = 5;
+			var keycode = event.keyCode;
+			
+			if (keycode == 40) { this.value = parseInt(this.value) - step; }
+			if (keycode == 38) { this.value = parseInt(this.value) + step; }
+		});
+		
+		// bind showing an error message when an integer value is incorrect
+		$('#catablog-options input.integer_field').bind('keyup', function(event) {
+			var v = this.value;
+			
+			if (is_integer(v) && (v > 0)) {
+				// do nothing
+			}
+			else {
+				$(this).siblings('small.error').show();
+			}
+			
+			possibly_disable_save_button();
+		});
+		
+		// confirm with javascript that the user wants to complete the action
+		$('div.catablog-options-panel a.js-warn').click(function(event) {
+			var message = $(this).html() + "?";
+			return confirm(message);
+		})
+		
+		
+		
+		
+		
+		
+		
+
+		/****************************************
+		** BIND COLOR PICKERS
+		****************************************/
+		var farbtastic;
+		function pickColor(a) {
+			farbtastic.setColor(a);
+			jQuery("#bg_color").val(a);
+			jQuery("#demo_box").css("background-color",a)
+		}
+		jQuery("#pickcolor").click(function() {
+			
+			var color_picker = jQuery("#color-picker-div");
+			color_picker.css('top', jQuery('#bg_color').offset().top);
+			color_picker.css('left', jQuery(this).offset().left);
+			color_picker.show();
+			
+			return false;
+		});
+		jQuery("#bg_color").keyup(function() {
+			var b = jQuery(this).val();
+			a = b;
+			
+			if (a[0]!="#") {
+				a = "#"+a;
+			}
+			
+			a = a.replace(/[^#a-fA-F0-9]+/,"");
+			if (a != b) {
+				jQuery("#bg_color").val(a)
+			}
+			
+			if (a.length == 4 || a.length == 7){
+				pickColor(a)
+			}
+		});	
+				
+		farbtastic = jQuery.farbtastic("#color-picker-div",function(a){
+			pickColor(a)
+		});
+		pickColor(jQuery("#bg_color").val());
+		
+		jQuery(document).mousedown(function(){
+			jQuery("#color-picker-div").each(function(){
+				var a = jQuery(this).css("display");
+				if (a == "block") {
+					jQuery(this).fadeOut(2)
+				}
+			});
+		});
+		
+		
+		
+		
+		
+		
+		/****************************************
+		** RECALCULATE IMAGES IF NECESSARY
+		****************************************/
+		<?php if ($recalculate): ?>
 		$('#save_changes').attr('disabled', true);
 		
 		discourage_leaving_page();
@@ -489,122 +720,7 @@
 		<?php endif ?>
 		
 		
-		
-
-		
-		
-		$("#red, #green, #blue").slider({
-			orientation: 'horizontal',
-			range: "min",
-			max: 255,
-			value: 127,
-			slide: refreshSwatch
-		});
-		setSliders('<?php echo $background_color ?>');
-		
-		function refreshSwatch() {
-			var red = $("#red").slider("value")
-				,green = $("#green").slider("value")
-				,blue = $("#blue").slider("value")
-				,hex = hexFromRGB(red, green, blue);
-			$("#demo_box").css("background-color", "#" + hex);
-			$('#bg_color').val(hex);
-		}
-		
-		
-		function setSliders(hex) {
-			$("#red").slider("value", HexToR(hex));
-			$("#green").slider("value", HexToG(hex));
-			$("#blue").slider("value", HexToB(hex));
-			refreshSwatch();
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		$('#bg_color').bind('blur', function(event) {
-			if (this.value.length != 6) {
-				alert('Please make sure to enter a full 6 character hexadecimal color code.')
-				this.value = "000000";
-			}
-			setSliders(this.value)
-		});
-		
-		
-		
-		$('input.arrow_edit').bind('keydown', function(event) {
-			var step = 5;
-			var keycode = event.keyCode;
-			
-			if (keycode == 40) { this.value = parseInt(this.value) - step; }
-			if (keycode == 38) { this.value = parseInt(this.value) + step; }
-		});
-		
-		
-		
-		$('input.arrow_edit').bind('keyup', function(event) {
-			var v = this.value;
-			if (is_integer(v) && (v > 0)) {
-				$(this).siblings('small.error').hide();
-				if ($(this).attr('id') == 'thumbnail_size') {
-					resize_box(v);
-				}
-			}
-			else {
-				$(this).siblings('small.error').show();
-			}
-			
-			possibly_disable_save_button();
-		});
-		
-		function possibly_disable_save_button() {
-			if ($('small.error:visible').size() == 0) {
-				$('#save_changes').attr('disabled', false);
-				$('#save_changes').attr('class', 'button-primary');
-			}
-			else {
-				$('#save_changes').attr('disabled', true);
-				$('#save_changes').attr('class', 'button-disabled');
-			}
-		}
-		
-		
-		
-		var lightbox_button   = $('#lightbox_enabled');
-		var lightbox_fieldset = lightbox_button.parent().parent();
-		
-		if (lightbox_button.attr('checked') == false) {
-			$('input.arrow_edit', lightbox_fieldset).attr('readonly', true);
-			lightbox_fieldset.addClass('disabled');
-		}
-		
-		lightbox_button.bind('click', function(event) {
-			if (this.checked) {
-				$('input.arrow_edit', lightbox_fieldset).attr('readonly', false);
-				lightbox_fieldset.removeClass('disabled');
-			}
-			else {
-				$('input.arrow_edit', lightbox_fieldset).attr('readonly', true);
-				lightbox_fieldset.addClass('disabled');
-			}
-		});
-		
-		
-		function is_integer(s) {
-			return (s.toString().search(/^[0-9]+$/) == 0);
-		}
-
-		function resize_box(num) {
-			var speed = 100;
-			jQuery('#demo_box').animate({width:(num-1), height:(num-1)}, speed);
-		}
-		
-	});
+	}); // end onReady method
 	
 
 	

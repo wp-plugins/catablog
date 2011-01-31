@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "1.0.1";
+	private $version     = "1.0.2";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -27,7 +27,7 @@ class CataBlog {
 	// default image sizes
 	private $default_thumbnail_size = 100;
 	private $default_image_size     = 600;
-	private $default_bg_color       = "ffffff";
+	private $default_bg_color       = "#ffffff";
 	
 	// two private arrays for storing common file paths
 	private $directories   = array();
@@ -100,9 +100,9 @@ class CataBlog {
 		add_action('wp_enqueue_scripts', array(&$this, 'frontend_init'));
 		add_action('wp_print_footer_scripts', array(&$this, 'frontend_footer'));
 		add_shortcode('catablog', array(&$this, 'frontend_content'));
+		
+		add_filter('the_content', array(&$this, 'frontend_catalog_item_page'));
 	}
-	
-	
 	
 	
 	
@@ -153,18 +153,22 @@ class CataBlog {
 		$post_type_labels['not_found']          = __('No '.$name.' Found');
 		$post_type_labels['not_found_in_trash'] = __('No '.$name.' in Trash');
 
+
 		$params = array();
 		$params['labels']              = $post_type_labels;
 		$params['public']              = false;
-		// $params['publicly_queryable']  = false;
 		// $params['show-ui']             = false;
-		// $params['show_in_nav_menus']   = false;
-		// $params['exclude_from_search'] = true;
+
+		$params['exclude_from_search'] = false == $this->options['public-catalog-items'];		
+		$params['publicly_queryable']  = $this->options['public-catalog-items'];
+		$params['show_in_nav_menus']   = $this->options['public-catalog-items'];
+		$params['rewrite']             = array('slug'=>$this->options['public-catalog-slug']);
+		
 		$params['supports']            = array('title', 'editor');
 		$params['description']         = "A CataBlog Item";
 		$params['hierarchical']        = false;
 		$params['taxonomies']          = array($this->custom_tax_name);
-		$params['rewrite']             = false;
+
 		$params['menu_position']       = 45;
 		$params['menu_icon']           = $this->urls['plugin']."/images/catablog-icon-16.png";
 		register_post_type($this->custom_post_name, $params);
@@ -220,9 +224,12 @@ class CataBlog {
 			}
 		}
 		
+		wp_enqueue_script('farbtastic');
+		wp_enqueue_style('farbtastic');
+		
 		
 		// load javascript libraries for admin panels
-		wp_enqueue_script('jquery');
+		wp_enqueue_script('jquery');		
 		wp_enqueue_script('jquery-ui', $this->urls['javascript'] . '/jquery-ui-1.8.1.custom.min.js', array('jquery'), '1.8.1');
 		wp_enqueue_script('catablog-admin', $this->urls['javascript'] . '/catablog-admin.js', array('jquery', 'jquery-ui'), $this->version);
 		
@@ -346,10 +353,16 @@ class CataBlog {
 				
 				// strip slashes from post values
 				$post_vars = array_map('stripslashes_deep', $_POST);
+				$post_vars = array_map('trim', $post_vars);
+				
+				// validate post data
+				$post_vars['link_relationship'] = preg_replace('/[^a-z0-9_-]/', '', $post_vars['link_relationship']);
+				
 				
 				// set default values for post message and image recalculation
 				$recalculate_thumbnails = false;
 				$recalculate_fullsize   = false;
+				$rewrite_permalinks     = false;
 				$save_message           = "CataBlog Options Saved";
 				
 				// get image size and rendering differences
@@ -370,25 +383,41 @@ class CataBlog {
 					}
 				}
 				
-				// save new plugins options to database
-				$this->options['thumbnail-size']     = $post_vars['thumbnail_size'];
-				$this->options['image-size']         = $post_vars['lightbox_image_size'];
-				$this->options['lightbox-enabled']   = isset($post_vars['lightbox_enabled']);
-				$this->options['background-color']   = $post_vars['bg_color'];
-				$this->options['paypal-email']       = $post_vars['paypal_email'];
-				$this->options['keep-aspect-ratio']  = isset($post_vars['keep_aspect_ratio']);
-				$this->options['link-target']        = $post_vars['link_target'];
-				$this->options['view-theme']         = $post_vars['view-code-template'];
-				$this->options['view-buynow']        = $post_vars['view-code-buynow'];
-				$this->options['filter-description'] = isset($post_vars['wp-filters-enabled']);
-				$this->options['nl2br-description']  = isset($post_vars['nl2br-enabled']);
-				$this->update_options();
 				
+				// test if user needs to rewrite the permalinks
+				// if ($this->options['public-catalog-items'] == false) {
+				// 	if (isset($_REQUEST['public-catalog-items'])) {
+				// 		$rewrite_permalinks = true;
+				// 	}
+				// }
+				// if ($_REQUEST['public-catalog-slug'] != $this->options['public-catalog-slug']) {
+				// 	$rewrite_permalinks = true;
+				// }
+				
+				
+				// save new plugins options to database
+				$this->options['thumbnail-size']       = $post_vars['thumbnail_size'];
+				$this->options['image-size']           = $post_vars['lightbox_image_size'];
+				$this->options['lightbox-enabled']     = isset($post_vars['lightbox_enabled']);
+				$this->options['background-color']     = $post_vars['bg_color'];
+				$this->options['paypal-email']         = $post_vars['paypal_email'];
+				$this->options['keep-aspect-ratio']    = isset($post_vars['keep_aspect_ratio']);
+				$this->options['link-target']          = strip_tags($post_vars['link_target']);
+				$this->options['link-relationship']    = strip_tags($post_vars['link_relationship']);
+				$this->options['view-theme']           = $post_vars['view-code-template'];
+				$this->options['view-buynow']          = $post_vars['view-code-buynow'];
+				$this->options['filter-description']   = isset($post_vars['wp-filters-enabled']);
+				$this->options['nl2br-description']    = isset($post_vars['nl2br-enabled']);
+				// $this->options['public-catalog-items'] = isset($post_vars['public-catalog-items']);
+				// $this->options['public-catalog-slug']  = $post_vars['public-catalog-slug'];
+				// $this->options['permalink-default']    = isset($post_vars['permalink-default']);
+				
+				$this->update_options();
 				
 				// recalculate thumbnail and fullsize images if necessary
 				if ($recalculate_thumbnails || $recalculate_fullsize) {
 					$recalculate = true;
-					$save_message .= " - Please Let The Rendering Below Complete Before Navigating Away From This Page.";
+					$save_message .= " - Please Let The Rendering Below Complete Before Navigating Away From This Page";
 					
 					delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
 					
@@ -399,6 +428,9 @@ class CataBlog {
 					}					
 				}
 				
+				// if ($rewrite_permalinks) {
+				// 					$save_message .= " - <a href='options-permalink.php'>Update Your Permalink Structure NOW</a>";
+				// 				}
 								
 				$this->wp_message($save_message);
 			}
@@ -407,15 +439,19 @@ class CataBlog {
 			}
 		}
 		
-		$thumbnail_size     = $this->options['thumbnail-size'];
-		$lightbox_size      = $this->options['image-size'];
-		$lightbox_enabled   = $this->options['lightbox-enabled'];
-		$background_color   = $this->options['background-color'];
-		$paypal_email       = $this->options['paypal-email'];
-		$keep_aspect_ratio  = $this->options['keep-aspect-ratio'];
-		$link_target        = $this->options['link-target'];
-		$wp_filters_enabled = $this->options['filter-description'];
-		$nl2br_enabled      = $this->options['nl2br-description'];
+		$thumbnail_size               = $this->options['thumbnail-size'];
+		$lightbox_size                = $this->options['image-size'];
+		$lightbox_enabled             = $this->options['lightbox-enabled'];
+		$background_color             = $this->options['background-color'];
+		$paypal_email                 = $this->options['paypal-email'];
+		$keep_aspect_ratio            = $this->options['keep-aspect-ratio'];
+		$link_target                  = $this->options['link-target'];
+		$link_relationship            = $this->options['link-relationship'];
+		$wp_filters_enabled           = $this->options['filter-description'];
+		$nl2br_enabled                = $this->options['nl2br-description'];
+		// $public_catalog_items_enabled = $this->options['public-catalog-items'];
+		// $public_catalog_slug          = $this->options['public-catalog-slug'];
+		// $permalink_default            = $this->options['permalink-default'];
 		
 		include_once($this->directories['template'] . '/admin-options.php');
 	}
@@ -702,15 +738,25 @@ class CataBlog {
 		if ($originals->isDirectory()) {
 			foreach ($originals->getFileArray() as $file) {
 				if (!in_array($file, $image_names)) {
-					$params = array();
-					$params['title']       = $file;
-					$params['image']       = $file;
 					
-					$new_item = new CataBlogItem($params);
-					$new_item->save();
+					$extension = preg_match('/\\.[^.\\s]{3,4}$/', $file, $matches);
+					$extension = $matches[0];
 					
-					$new_rows['ids'][]    = $new_item->getId();
-					$new_rows['titles'][] = $new_item->getTitle();				
+					$media_accepted = array('.jpg', '.jpeg', '.gif', '.png');
+					if (in_array($extension, $media_accepted)) {
+						$title = str_replace(array('-','_'), ' ', $file);
+						$title = str_replace($extension, '', $title);
+						
+						$params = array();
+						$params['title']       = $title;
+						$params['image']       = $file;
+
+						$new_item = new CataBlogItem($params);
+						$new_item->save();
+
+						$new_rows['ids'][]    = $new_item->getId();
+						$new_rows['titles'][] = $new_item->getTitle();				
+					}
 				}
 			}
 		}
@@ -920,23 +966,49 @@ class CataBlog {
 	**       - FRONTEND ACTIONS
 	*****************************************************/
 	public function frontend_init() {
-		if ($this->options['lightbox-enabled']) {
-			wp_enqueue_script('catablog-lightbox', $this->urls['javascript'] . '/catablog.lightbox.js', array('jquery'), $this->version);
+		global $posts;
+		$pattern = get_shortcode_regex();
+		
+		$this->load_support_files = false;
+		
+		// is a post of the catablog type
+		foreach ($posts as $post) {
+			if ($post->post_type == $this->custom_post_name) {
+				$this->load_support_files = true; //shortcode is being used on page
+			}
 		}
 		
-		wp_enqueue_style('catablog-stylesheet', $this->urls['css'] . '/catablog.css', false, $this->version);
-		
-		$path = get_stylesheet_directory().'/catablog.css';
-		if (file_exists($path)) {
-			wp_enqueue_style('catablog-custom-stylesheet', get_bloginfo('stylesheet_directory') . '/catablog.css', false, $this->version);
+		// is catablog shortcode in the posts or pages content
+		if ($this->load_support_files == false) {
+			foreach ($posts as $post) {
+				preg_match('/'.$pattern.'/s', $post->post_content, $matches);
+				if (is_array($matches) && $matches[2] == 'catablog') {
+					$this->load_support_files = true; //shortcode is being used on page
+				}
+			}			
 		}
+		
+		// only load support files if catablog shortcode was found on page
+		if ($this->load_support_files) {
+			if ($this->options['lightbox-enabled']) {
+				wp_enqueue_script('catablog-lightbox', $this->urls['javascript'] . '/catablog.lightbox.js', array('jquery'), $this->version);
+			}
+
+			wp_enqueue_style('catablog-stylesheet', $this->urls['css'] . '/catablog.css', false, $this->version);
+
+			$path = get_stylesheet_directory().'/catablog.css';
+			if (file_exists($path)) {
+				wp_enqueue_style('catablog-custom-stylesheet', get_bloginfo('stylesheet_directory') . '/catablog.css', false, $this->version);
+			}
+		}
+		
 	}
 	
 	public function frontend_footer() {
-		if (!is_admin()) {
-			if ($this->options['lightbox-enabled']) {
-				 echo "<script type='text/javascript'>jQuery(document).ready(function(){ jQuery('.catablog-clickable').catablogLightbox(); });</script>\n";
-			}			
+		if (!is_admin() && $this->options['lightbox-enabled']) {
+			if ($this->load_support_files) {
+				echo "<script type='text/javascript'>jQuery(document).ready(function(){ jQuery('.catablog-clickable').catablogLightbox(); });</script>\n";
+			}
 		}
 	}
 
@@ -944,17 +1016,6 @@ class CataBlog {
 		
 		extract(shortcode_atts(array('category'=>false, 'tag'=>false), $atts));
 			
-		$thumbnail_size = $this->options['thumbnail-size'];
-		
-		$values = array();
-		$values['image-size']        = $thumbnail_size;
-		$values['paypal-email']      = $this->options['paypal-email'];
-		$values['min-height']        = "style='min-height:$thumbnail_size"."px; height:auto !important; height:$thumbnail_size"."px;'";
-		$values['hover-title-size']  = ($thumbnail_size - 10) . 'px';
-		$values['margin-left']       = ($thumbnail_size + 10) . 'px';
-		$values['lightbox']          = ($this->options['lightbox-enabled'])? "catablog-clickable" : "";
-		
-		
 		// if an old tag attribute is used put it in categories instead
 		if ($category === false && $tag !== false) {
 			$category = $tag;
@@ -965,61 +1026,108 @@ class CataBlog {
 		ob_start();
 		
 		foreach ($results as $result) {
-			
-			// check if theme is empty, if so use default theme
-			$string = $this->options['view-theme'];
-			if (mb_strlen($string) == 0) {
-				$string = file_get_contents($this->directories['template'] . '/views/default.htm');
-			}
-			
-			// filter description if neccessary
-			$description = $result->getDescription();
-			if ($this->options['filter-description']) {
-				$description = apply_filters('the_content', $description);				
-			}
-			if ($this->options['nl2br-description']) {
-				$description = nl2br($description);
-			}
-			
-			// set the values of the item into an array
-			$values['image']           = $this->urls['thumbnails'] . "/". $result->getImage();
-			$values['image-fullsize']  = $this->urls['fullsize'] . "/". $result->getImage();
-			$values['title']           = (mb_strlen($result->getLink()) > 0)? "<a href='".$result->getLink()."' target='".$this->options['link-target']."'>".$result->getTitle()."</a>" : $result->getTitle();
-			$values['title-text']      = $result->getTitle();
-			$values['link']            = $result->getLink();
-			$values['description']     = $description;
-			$values['price']           = number_format(((float)($result->getPrice())), 2, '.', '');
-			$values['product-code']    = $result->getProductCode();
-			
-			
-			// generate the buy now button if the price of the item is greater then 0
-			$buy_now_button = '';
-			if ($values['price'] > 0) {
-				$buy_now_button = $this->options['view-buynow'];
-				foreach ($values as $key => $value) {
-					$search         = "%" . strtoupper($key) . "%";
-					$buy_now_button = str_replace($search, $value, $buy_now_button);
-				}
-			}
-			$values['buy-now-button']  = $buy_now_button;
-			
-			
-			// loop through each items array of values and replace tokens
-			foreach($values as $key => $value) {
-				$search  = "%" . strtoupper($key) . "%";
-				$string  = str_replace($search, $value, $string);
-			}
-			
-			
-			// write the string to the current output buffer
-			echo $string;
+			echo $this->frontend_render_catalog_row($result);
 		}
 		
-		echo "<p class='catablog-credits'><small>catalog generated by <a href='http://catablog.illproductions.com'>CataBlog</a></small></p>";
+		// give the credit where it is due
+		echo "<p class='catablog-credits'><!-- Catalog Content by CataBlog $this->version - http://catablog.illproductions.com/ --></p>";
 		
 		return ob_get_clean();
 	}
 	
+	public function frontend_catalog_item_page($content) {
+		global $post;
+		if ($post->post_type == $this->custom_post_name){
+			$result  = CataBlogItem::getItem($post->ID);
+			$content = $this->frontend_render_catalog_row($result, false);
+		}
+		
+		return $content;
+	}
+	
+	public function frontend_render_catalog_row($result, $show_title=true) {
+		$thumbnail_size = $this->options['thumbnail-size'];
+		
+		$values = array();
+		$values['image-size']        = $thumbnail_size;
+		$values['paypal-email']      = $this->options['paypal-email'];
+		$values['min-height']        = "style='min-height:$thumbnail_size"."px; height:auto !important; height:$thumbnail_size"."px;'";
+		$values['hover-title-size']  = ($thumbnail_size - 10) . 'px';
+		$values['margin-left']       = ($thumbnail_size + 10) . 'px';
+		$values['lightbox']          = ($this->options['lightbox-enabled'])? "catablog-clickable" : "";
+		
+		// check if theme is empty, if so use default theme
+		$string = $this->options['view-theme'];
+		if (mb_strlen($string) == 0) {
+			$string = file_get_contents($this->directories['template'] . '/views/default.htm');
+		}
+		
+		// filter description if neccessary
+		$description = $result->getDescription();
+		if ($this->options['filter-description']) {
+			$pattern     = '/\[(catablog)\b(.*?)(?:(\/))?\](?:(.+?)\[\/\2\])?/s';
+			$description = preg_replace($pattern, '', $description);
+			$description = apply_filters('the_content', $description);
+		}
+		if ($this->options['nl2br-description']) {
+			$description = nl2br($description);
+		}
+		
+		
+		$target = htmlspecialchars($this->options['link-target'], ENT_QUOTES, 'UTF-8');
+		$target = (mb_strlen($target) > 0)? "target='$target'" : "";
+		
+		$rel    = htmlspecialchars($this->options['link-relationship'], ENT_QUOTES, 'UTF-8');
+		$rel    = (mb_strlen($rel) > 0)? "rel='$rel'" : "";
+		
+		$link   = $result->getLink();
+		
+		
+		// set the title values into an array
+		if (mb_strlen($result->getLink()) > 0) {
+			$values['title'] = "<a href='$link' $target $rel>".$result->getTitle()."</a>";
+		}
+		// elseif ($this->options['permalink-default'] && $this->options['public-catalog-items']) {
+			// $link = $result->getPermalink();
+			// $values['title'] = "<a href='$link' $target $rel>".$result->getTitle()."</a>";
+		// }
+		else {
+			$values['title'] = $result->getTitle();
+		}
+		
+		// set the other values of the item into an array
+		$values['title-text']      = $result->getTitle();
+		$values['image']           = $this->urls['thumbnails'] . "/". $result->getImage();
+		$values['image-fullsize']  = $this->urls['fullsize'] . "/". $result->getImage();				
+		$values['link']            = $link;
+		$values['link-target']     = $target;
+		$values['link-rel']        = $rel;
+		$values['description']     = $description;
+		$values['price']           = number_format(((float)($result->getPrice())), 2, '.', '');
+		$values['product-code']    = $result->getProductCode();
+		
+		
+		// generate the buy now button if the price of the item is greater then 0
+		$buy_now_button = '';
+		if ($values['price'] > 0) {
+			$buy_now_button = $this->options['view-buynow'];
+			foreach ($values as $key => $value) {
+				$search         = "%" . strtoupper($key) . "%";
+				$buy_now_button = str_replace($search, $value, $buy_now_button);
+			}
+		}
+		$values['buy-now-button']  = $buy_now_button;
+		
+		
+		// loop through each items array of values and replace tokens
+		foreach($values as $key => $value) {
+			$search  = "%" . strtoupper($key) . "%";
+			$string  = str_replace($search, $value, $string);
+		}
+		
+		// write the string to the current output buffer
+		return $string;
+	}
 	
 
 	
@@ -1075,10 +1183,15 @@ class CataBlog {
 		$default_options['keep-aspect-ratio']  = false;
 		$default_options['lightbox-enabled']   = false;
 		$default_options['link-target']        = "_blank";
+		$default_options['link-relationship']  = "";
 		$default_options['view-theme']         = file_get_contents($this->directories['template'] . '/views/default.htm');
 		$default_options['view-buynow']        = '';
 		$default_options['filter-description'] = false;
 		$default_options['nl2br-description']  = true;
+		// $default_options['public-catalog-items'] = false;
+		// $default_options['public-catalog-slug']  = 'catablog-item';
+		// $default_options['permalink-default']  = false;
+		
 		
 		if ($this->options == false) {
 			$this->options = $default_options;

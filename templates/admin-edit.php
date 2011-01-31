@@ -63,6 +63,11 @@
 						<?php $save_button_label = ($new_item)? 'Create CataBlog Item' : 'Save Changes' ?>
 						<input type="submit" class="button-primary" tabindex="9" value="<?php echo $save_button_label ?>" />
 						
+						<?php if ($this->options['public-catalog-items']): ?>
+						<span> or </span>
+						<a href="<?php echo $result->getPermalink() ?>" target="_blank" class="button">View Catalog Item</a>
+						<?php endif ?>
+						
 						<span> or <a href="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog' ?>" tabindex="10">back to list</a></span>						
 					</div>
 				</div>

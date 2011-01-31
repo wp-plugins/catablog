@@ -1,31 +1,9 @@
-// color conversion, hex to rgb and rgb to hex
-function HexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
-function HexToG(h) {return parseInt((cutHex(h)).substring(2,4),16)}
-function HexToB(h) {return parseInt((cutHex(h)).substring(4,6),16)}
-function cutHex(h) {return (h.charAt(0)=="#") ? h.substring(1,7):h}
-function hexFromRGB (r, g, b) {
-	var hex = [
-		r.toString(16),
-		g.toString(16),
-		b.toString(16)
-	];
-	jQuery.each(hex, function (nr, val) {
-		if (val.length == 1) {
-			hex[nr] = '0' + val;
-		}
-	});
-	return hex.join('').toUpperCase();
-}
-
-
-
 function show_load() {
 	jQuery('body').append("<div id='catablog_load_curtain' />");
 	jQuery('#catablog_load_curtain').append("<div id='catablog_load_display' >processing</div>");
 	
 	jQuery('#catablog_load_curtain').fadeTo(200, 0.8);
 }
-
 function hide_load() {
 	// $('#catablog_load_display').html('finishing');
 	
@@ -35,6 +13,7 @@ function hide_load() {
 		});
 	}, 500);
 }
+
 
 
 function discourage_leaving_page(message) {
@@ -53,7 +32,6 @@ function discourage_leaving_page(message) {
 		}
 	});
 }
-
 function unbind_discourage_leaving_page() {
 	var all_links = jQuery('a').filter(function() {
 		return ( jQuery(this).attr('href').charAt(0) != '#' );
@@ -62,3 +40,68 @@ function unbind_discourage_leaving_page() {
 	all_links.unbind('click');
 }
 
+
+
+
+function is_integer(s) {
+	return (s.toString().search(/^[0-9]+$/) == 0);
+}
+
+
+
+
+
+function possibly_disable_save_button() {
+	if (jQuery('small.error:visible').size() == 0) {
+		jQuery('#save_changes').attr('disabled', false);
+		jQuery('#save_changes').attr('class', 'button-primary');
+	}
+	else {
+		jQuery('#save_changes').attr('disabled', true);
+		jQuery('#save_changes').attr('class', 'button-disabled');
+	}
+}
+
+
+
+
+
+function replaceSelection (input, replaceString) {
+	if (input.setSelectionRange) {
+		var selectionStart = input.selectionStart;
+		var selectionEnd = input.selectionEnd;
+		input.value = input.value.substring(0, selectionStart)+ replaceString + input.value.substring(selectionEnd);
+
+		if (selectionStart != selectionEnd){ 
+			setSelectionRange(input, selectionStart, selectionStart + 	replaceString.length);
+		}else{
+			setSelectionRange(input, selectionStart + replaceString.length, selectionStart + replaceString.length);
+		}
+
+	}else if (document.selection) {
+		var range = document.selection.createRange();
+
+		if (range.parentElement() == input) {
+			var isCollapsed = range.text == '';
+			range.text = replaceString;
+
+			 if (!isCollapsed)  {
+				range.moveStart('character', -replaceString.length);
+				range.select();
+			}
+		}
+	}
+}
+function setSelectionRange(input, selectionStart, selectionEnd) {
+  if (input.setSelectionRange) {
+    input.focus();
+    input.setSelectionRange(selectionStart, selectionEnd);
+  }
+  else if (input.createTextRange) {
+    var range = input.createTextRange();
+    range.collapse(true);
+    range.moveEnd('character', selectionEnd);
+    range.moveStart('character', selectionStart);
+    range.select();
+  }
+}
