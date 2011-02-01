@@ -7,15 +7,19 @@
 
 	<?php if ($error): ?>
 		<p>
-			You must select a XML file to be used for the import, 
-			please press back on your browser and resend the form
-			with a XML file.
+			You must select a <strong>valid XML or CSV file</strong> to be used for import.
+		</p>
+		<p>
+			You may also read more about 
+			<a href="http://catablog.illproductions.com/documentation/importing-and-exporting-catalogs/" target="_blank">importing and exporting data from CataBlog</a>.
+			<br />
+			Once you have fixed your file and its format <a href="http://workbench.local/wp-admin/admin.php?page=catablog-options#import">please try again</a>.
 		</p>
 	<?php endif ?>
 
 	<ul id="catablog-import-messages">
 		<?php if ($error === false): ?>
-			<?php $this->load_xml_to_database($xml_object) ?>
+			<?php $this->load_array_to_database($data) ?>
 		<?php endif ?>
 	</ul>	
 	

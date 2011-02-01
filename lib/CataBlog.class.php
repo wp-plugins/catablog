@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "1.0.2";
+	private $version     = "1.1";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -601,36 +601,38 @@ class CataBlog {
 	public function admin_import() {
 		$error = false;
 		
-		
-		
+		// do appropriate actions depending on format and successful upload
 		$file_error_check = $this->check_file_upload_errors();
 		if ($file_error_check !== true) {
 			$error = ($file_error_check);
 		}
 		else {
-			
-			// TODO: Possibly add a mime-type check here
-			
 			$upload = $_FILES['catablog_data'];
+			$extension = end(explode(".", strtolower($upload['name'])));
 			
-			libxml_use_internal_errors(true);
+			if ($extension == 'xml') {
+				$data = $this->xml_to_array($upload['tmp_name']);
+				if ($data === false) {
+					$error = ('Uploaded XML File Could Not Be Parsed, Check That The File\'s Content Is Valid XML.');
+				}
+			}
+			else if ($extension == 'csv') {
+				$data = $this->csv_to_array($upload['tmp_name']);
+				if (empty($data)) {
+					$error = ('Uploaded CSV File Could Not Be Parsed, Check That The File\'s Format Is Valid.');
+				}
+			}
+			else {
+				$error = ('Uploaded file was not of proper format, please make sure the filename has an xml or csv extension.');
+			}
 			
-			$xml_object = simplexml_load_file($upload['tmp_name']);
-			if ($xml_object === false) {
-				$error = ('Uploaded XML File Could Not Be Parsed, Check That The File\'s Content Is Valid XML.');
-			}							
-			// }
+			
 		}
 		
-		
+		// if there is an error display it and stop
 		if ($error !== false) {
 			$this->wp_error($error);
 			include_once($this->directories['template'] . '/admin-import.php');
-			return false;
-			
-			
-			$this->wp_error("Upload Error: make sure you are uploading a valid xml file with a '.xml' extension");
-			$this->admin_import_export();
 			return false;
 		}
 		
@@ -648,14 +650,24 @@ class CataBlog {
 		}
 		
 		
-		// Private DataBase Insertion Method Called in Template:  load_xml_to_database($xml_object)
+		// Private DataBase Insertion Method Called in Template:  load_array_to_database($data_array)
 		include_once($this->directories['template'] . '/admin-import.php');
 	}
 	
 	public function admin_export() {
 		$date = date('Y-m-d');
-		header('Content-type: application/xml');
-		header('Content-Disposition: attachment; filename="catablog-backup-'.$date.'.xml"');
+		
+		$format = 'xml';
+		if (isset($_REQUEST['format'])) {
+			if ($_REQUEST['format'] == 'csv') {
+				$format = 'csv';
+			}
+		}
+		
+		header('Content-type: application/'.$format);
+		header('Content-Disposition: attachment; filename="catablog-backup-'.$date.'.'.$format.'"');
+		header("Pragma: no-cache");
+		header("Expires: 0");
 
 		$results = CataBlogItem::getItems();
 		
@@ -686,7 +698,24 @@ class CataBlog {
 		}
 		// END TO BE REMOVED
 		
-		
+		if ($format == 'csv') {
+			ini_set('auto_detect_line_endings', true);
+			
+			$outstream   = fopen("php://output", 'w');
+			$field_names = array('order','image','title','link','description','categories','price','product_code');
+			$header      = NULL;
+			
+			foreach ($results as $result) {
+				if (!$header) {
+					fputcsv($outstream, $field_names, ',', '"');
+					$header = true;
+				}
+				fputcsv($outstream, $result->getValuesArray(), ',', '"');
+			}
+			
+			fclose($outstream);
+			die;
+		}
 		include_once($this->directories['template'] . '/admin-export.php');
 		die;
 	}
@@ -965,18 +994,18 @@ class CataBlog {
 	/*****************************************************
 	**       - FRONTEND ACTIONS
 	*****************************************************/
-	public function frontend_init() {
+	public function frontend_init($load=false) {
 		global $posts;
 		$pattern = get_shortcode_regex();
 		
-		$this->load_support_files = false;
+		$this->load_support_files = $load;
 		
-		// is a post of the catablog type
-		foreach ($posts as $post) {
-			if ($post->post_type == $this->custom_post_name) {
-				$this->load_support_files = true; //shortcode is being used on page
-			}
-		}
+		// NOT NEEDED. is a post of the catablog type
+		// foreach ($posts as $post) {
+		// 	if ($post->post_type == $this->custom_post_name) {
+		// 		$this->load_support_files = true; //shortcode is being used on page
+		// 	}
+		// }
 		
 		// is catablog shortcode in the posts or pages content
 		if ($this->load_support_files == false) {
@@ -984,6 +1013,7 @@ class CataBlog {
 				preg_match('/'.$pattern.'/s', $post->post_content, $matches);
 				if (is_array($matches) && $matches[2] == 'catablog') {
 					$this->load_support_files = true; //shortcode is being used on page
+					break;
 				}
 			}			
 		}
@@ -1322,12 +1352,22 @@ class CataBlog {
 	
 	
 	/*****************************************************
-	**       - ADMINISTRATION METHODS
+	**       - IMPORT METHODS
 	*****************************************************/
-	
-	private function load_xml_to_database($xml) {
+	public function xml_to_array($filename='') {
+		if(!file_exists($filename) || !is_readable($filename)) {
+			return FALSE;
+		}
+		
+		libxml_use_internal_errors(true);
+		$xml = simplexml_load_file($filename);
+		if ($xml === false) {
+			return FALSE;
+		}
+		
 		$data = array();
 		foreach ($xml->item as $item) {
+			// var_dump($item);
 			$row   = array();
 			
 			$row['id']           = null;
@@ -1336,7 +1376,7 @@ class CataBlog {
 			$row['title']        = (string) $item->title;
 			$row['link']         = (string) $item->link;
 			$row['description']  = (string) $item->description;
-			$row['price']        = (integer) $item->price;
+			$row['price']        = (float) $item->price;
 			$row['product_code'] = (string) $item->product_code;
 			
 			$terms = array();
@@ -1351,62 +1391,105 @@ class CataBlog {
 					}
 				}
 			}
-			
-			foreach ($terms as $key => $term) {
-				if (mb_strlen($term) > 0) {
-					$term_object = get_term_by('name', $term, $this->custom_tax_name);
-					if ($term_object !== false) {
-						$terms[$key] = ((integer) $term_object->term_id);
-					}
-					else {
-						$category_slug = $this->string2slug($term);
-						$attr          = array('slug'=>$category_slug);
-						$insert_return = wp_insert_term($term, $this->custom_tax_name, $attr);
-						
-						if ($insert_return instanceof WP_Error) {
-							foreach ($insert_return->get_error_messages() as $error) {
-								echo "<li class='error'>Create Term Error - <strong>".$row['title']."</strong>: $error</li>";
-							}
-						}
-						else {
-							if (isset($new_term_id['term_id'])) {
-								$new_term_id = $new_term_id['term_id'];
-								if ($new_term_id > 0) {
-									$terms[$key] = (integer) $new_term_id;
-								}
-							}							
-						}
-
-
-					}					
-				} 
-			}
-			
-			$row['categories']   = $terms;
-			
+			$row['categories'] = implode('|', $terms);
 			
 			$data[] = $row;
 		}
 		
+		return $data;
+	}
+	
+	public function csv_to_array($filename='', $delimiter=',') {
+		if(!file_exists($filename) || !is_readable($filename)) {
+			return FALSE;
+		}
+		
+		ini_set('auto_detect_line_endings', true);
+		
+		$header = NULL;
+		$data = array();
+		if (($handle = fopen($filename, 'r')) !== FALSE) {
+			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
+				if(!$header) {
+					$header = $row;
+					if (count($header) != 8) {
+						return $data;
+					}
+				}
+				else if (count($row) == 8) {
+					$data[] = array_combine($header, $row);
+				}
+			}
+			fclose($handle);
+		}
+		
+		return $data;
+	}
+	
+	private function load_array_to_database($data) {
+		echo "<pre>";
 		foreach ($data as $row) {
 			$success_message = '<li class="updated">Success: <em>' . $row['title'] . '</em> inserted into the database.</li>';
 			$error_message   = '<li class="error"><strong>Error:</strong> <em>' . $row['title'] . '</em> was not inserted into the database.</li>';
 			
-			if (mb_strlen($row['title']) < 1) {
+			if (mb_strlen($row['title']) < 1 || mb_strlen($row['image']) < 1) {
 				echo $error_message;
 			}
 			else {
+				$terms = (mb_strlen($row['categories']))? explode('|', $row['categories']) : array();
+				$row['categories'] = $terms;
+				
+				foreach ($terms as $key => $term) {
+					if (mb_strlen($term) > 0) {
+						$term_object = get_term_by('name', $term, $this->custom_tax_name);
+						if ($term_object !== false) {
+							$terms[$key] = ((integer) $term_object->term_id);
+						}
+						else {
+							$category_slug = $this->string2slug($term);
+							$attr          = array('slug'=>$category_slug);
+							$insert_return = wp_insert_term($term, $this->custom_tax_name, $attr);
+							
+							if ($insert_return instanceof WP_Error) {
+								foreach ($insert_return->get_error_messages() as $error) {
+									echo "<li class='error'>Create Term Error - <strong>".$row['title']."</strong>: $error</li>";
+								}
+							}
+							else {
+								if (isset($insert_return['term_id'])) {
+									$new_term_id = $insert_return['term_id'];
+									if ($new_term_id > 0) {
+										$terms[$key] = (integer) $new_term_id;
+									}
+								}							
+							}
+
+
+						}					
+					} 
+				}
+				
 				$item = new CataBlogItem($row);
 				if ($item->save() !== false) {
 					echo $success_message;
 				}
 				else {
 					echo $error_message;
-				}				
+				}
 			}
 		}
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	/*****************************************************
+	**       - ADMINISTRATION METHODS
+	*****************************************************/
 	private function unlock_directories() {
 		$success = true;
 		$dirs = array(1=>'uploads', 2=>'thumbnails', 3=>'originals', 4=>'fullsize');

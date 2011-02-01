@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: admin, image, images, posts, Post, links, catalog, gallery, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 1.0
+Stable tag: 1.1
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -20,6 +20,7 @@ If you have a support question, please open a new support ticket here or check o
 
 Highlighted Features:
 
+* Import and Export features now supports CSV format.
 * New script to automatically import image files into the database.
 * New Admin Panel Controls: grid view, bulk actions and a category filter.
 * Compatible with WordPress MultiSite and Network Activation.
@@ -92,6 +93,9 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 
 == Changelog ==
+
+= 1.1 =
+* New: Added CSV (comma separated values) support for importing and exporting catalog data.
 
 = 1.0.2 =
 * New: New grid template default for showing product grids that use the item's link.
@@ -220,14 +224,14 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Upgrade Notice ==
 
+= 1.0.2 =
+
+Beware, CataBlog's JavaScript and CSS file may not load on a page that only invokes the template function and doesn't use the shortcode.
+
 = 1.0 =
 
 Nothing Urgent for CataBlog 0.9.5 and Above.
 http://catablog.illproductions.com for more information and specifics.
-
-= 1.0.2 =
-
-Beware, CataBlog's JavaScript and CSS file may not load on a page that only invokes the template function and doesn't use the shortcode.
 
 = 0.9.8 =
 

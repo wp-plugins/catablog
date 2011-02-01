@@ -519,7 +519,17 @@ class CataBlogItem {
 	public function getCustomTaxName() {
 		return $this->_custom_tax_name;
 	}
-	
+	public function getValuesArray() {
+		$order        = $this->getOrder();
+		$image        = $this->getImage();
+		$title        = $this->getTitle();
+		$link         = $this->getLink();
+		$description  = $this->getDescription();
+		$categories   = implode('|', $this->getCategories());
+		$price        = $this->getPrice();
+		$product_code = $this->getProductCode();
+		return array($order, $image, $title, $link, $description, $categories, $price, $product_code);
+	}
 	
 	
 	

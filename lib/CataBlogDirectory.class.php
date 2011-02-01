@@ -21,7 +21,6 @@ class CataBlogDirectory {
 		}
 		else {
 			return false;
-			//die("Must pass in a directory");
 		}
 	}
 	

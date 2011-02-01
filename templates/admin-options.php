@@ -254,11 +254,13 @@
 	
 	<?php /*  EXPORT SETTINGS PANEL  */ ?>
 	<div id="catablog-options-export" class="catablog-options-panel hide">
+		<?php $function_exists = function_exists('fputcsv') ?>
+		
 		<p>
-			You may export your CataBlog data to a XML file which may be used to backup 
-			and protect your work. The XML file is a simple transfer of the database information
+			You may export your CataBlog data to a XML or CSV file which may be used to backup 
+			and protect your work. The XML or CSV file is a simple transfer of the database information
 			itself and the <strong>images are not included in this backup</strong>. To backup 
-			your images follow the directions below.
+			your images follow the directions at the bottom of the page.
 		</p>
 		
 		<?php if ($old_database_present): ?>
@@ -272,14 +274,32 @@
 		<?php endif ?>
 		
 		<p>&nbsp;</p>
-		<p><a href="admin.php?page=catablog-export" class="button">Save XML BackUp File</a></p>
-		<p>&nbsp;</p>
 		
 		<p>
-				<strong>Backing Up Images:</strong><br />
-				Please copy the <em>catablog</em> directory to a secure location.<br />
-				This directory can be located at the following path:<br />
-				<strong><?php echo $this->directories['uploads'] ?></strong>
+			<a href="admin.php?page=catablog-export&amp;format=xml" class="button">Save XML BackUp File</a>
+			<?php if ($function_exists): ?>
+				<span> | </span>
+				<a href="admin.php?page=catablog-export&amp;format=csv" class="button">Save CSV BackUp File</a>
+			<?php endif ?>
+		</p>
+		
+		<p>&nbsp;</p>
+		
+			
+		<?php if (!$function_exists): ?>
+			<p class="error"><small>
+				You must have the function 
+				<strong><a href="http://php.net/manual/en/function.fputcsv.php" target="_blank">fputcsv()</a></strong> 
+				available on your web server's version of PHP for CSV export to work.
+				Please contact your server administrator for more information regarding this error.
+			</small></p>
+		<?php endif ?>
+		
+		<p>
+			<strong>Backing Up Images:</strong><br />
+			Please copy the <em>catablog</em> directory to a secure location.<br />
+			The directory for this WordPress blog can be located on your web server at:<br />
+			<small><em><?php echo $this->directories['uploads'] ?></em></small>
 		</p>
 	</div>
 	
@@ -289,39 +309,47 @@
 
 	<?php /*  IMPORT SETTINGS PANEL  */ ?>
 	<div id="catablog-options-import" class="catablog-options-panel hide">
+		<label>Import XML/CSV Data</label>
 		<form action="admin.php?page=catablog-import" method="post" enctype="multipart/form-data">
 			<?php $function_exists = function_exists('simplexml_load_file') ?>
-			<?php $disabled = ($function_exists)? '' : 'disabled="disabled"'?>
 			
-			<p><input type="file" name="catablog_data" id="catablog_data" <?php echo $disabled ?> /></p><br />
+			<p><input type="file" name="catablog_data" id="catablog_data" /></p><br />
 			
 			<p style="margin-bottom:5px;">&nbsp;
-				<input type="checkbox" name="catablog_clear_db" id="catablog_clear_db" value="true" <?php echo $disabled ?> />
+				<input type="checkbox" name="catablog_clear_db" id="catablog_clear_db" value="true" />
 				<label for="catablog_clear_db">Replace All Data:</label>
 			</p>
 			
 			<p><input type="submit" class="button" value="<?php _e('Import CataBlog Data') ?>" /></p>
 			
-			<?php if ($function_exists): ?>
-				<p><small>
-					To import data previously saved from CataBlog simpley select the XML file 
-					you downloaded on your hard drive and click the <em>Import CataBlog Data</em>
-					button. You may choose to completely erase all your data before importing
-					by checking the <em>Replace All Data</em> checkbox. Keep in mind, this 
-					<strong>does not import images</strong>, to do that simply replace all images
-					inside the <em>originals</em> directory in
-					<em><?php echo $this->directories['uploads'] ?></em>. Once you load the
-					XML file and replace the <em>originals</em> directory content everything 
-					should be back to the way it was before after clicking <em>Regenerate All Images</em> in
-					the systems tab.
-				</small></p>
-			<?php else: ?>
+			<?php if (!$function_exists): ?>
 				<p class="error"><small>
 					You must have the <strong>Simple XML Library</strong> installed on your web server's version of PHP
 					for XML imports to work. Please contact your server administrator for more information 
 					regarding this error.
 				</small></p>
 			<?php endif ?>
+			
+			<p><small>
+				To import data into your catalog you simpley select a XML or CVS file 
+				on your hard drive and click the <em>Import CataBlog Data</em> button.
+				You may choose to completely erase all your data before importing
+				by checking the <em>Replace All Data</em> checkbox. Keep in mind, this 
+				<strong>does not import or delete images</strong>. You should replace all images
+				inside the <em>originals</em> directory in
+				<em><?php echo $this->directories['uploads'] ?></em>. Once you load the
+				XML or CVS file and replace the <em>originals</em> directory content everything 
+				should be set after you 
+				<a href="admin.php?page=catablog-regenerate-images" class="js-warn">Regenerate All Images</a> 
+				in the systems tab.
+			</small></p>
+			
+			<p><small>
+				You may view XML and CSV examples in the 
+				<a href="http://catablog.illproductions.com/documentation/importing-and-exporting-catalogs/" target="_blank">import/export documentation</a>.
+			</small></p>
+			
+
 		</form>
 	</div>
 	
