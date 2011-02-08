@@ -94,6 +94,12 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Changelog ==
 
+= 1.1.5 =
+* New: Added multiple image per catalog item support.
+* New: Thumbnail images in the admin list view are now lazy loaded.
+* New: Navigation controls in the admin edit panel.
+* Fix: Rendering thumbnail and fullsize images are now separate threads.
+
 = 1.1 =
 * New: Added CSV (comma separated values) support for importing and exporting catalog data.
 
@@ -223,6 +229,10 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 
 == Upgrade Notice ==
+
+= 1.1.5 = 
+
+Beware: this version is not ready for prime time and contains some experimental features and code.
 
 = 1.0.2 =
 
