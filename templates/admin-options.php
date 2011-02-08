@@ -14,10 +14,17 @@
 		</div>
 	</noscript>
 	
-	<?php if ($recalculate): ?>
-		<div id="catablog-progress">
-			<div id="catablog-progress-bar"></div>
-			<h3 id="catablog-progress-text">Processing...</h5>
+	<?php if ($recalculate_thumbnails): ?>
+		<div id="catablog-progress-thumbnail" class="catablog-progress">
+			<div class="catablog-progress-bar"></div>
+			<h3 class="catablog-progress-text">Processing Thumbnail Images...</h3>
+		</div>
+	<?php endif ?>
+	
+	<?php if ($recalculate_fullsize): ?>
+		<div id="catablog-progress-fullsize" class="catablog-progress">
+			<div class="catablog-progress-bar"></div>
+			<h3 class="catablog-progress-text">Waiting For Thumbnail Rendering To Finish...</h3>
 		</div>
 	<?php endif ?>
 	
@@ -57,6 +64,7 @@
 			<p>
 				<label>Thumbnail Background Color:</label>
 				<input type="text" name="bg_color" id="bg_color" size="8" maxlength="7" value="<?php echo $background_color ?>" />
+				<span class="color-swatch hide-if-no-js">&nbsp;</span>
 				<small><a class="hide-if-no-js" href="#" id="pickcolor"><?php _e('Select a Color'); ?></a></small>
 			</p>
 			<div id="color-picker-div">&nbsp;</div>
@@ -331,7 +339,7 @@
 			<?php endif ?>
 			
 			<p><small>
-				To import data into your catalog you simpley select a XML or CVS file 
+				To import data into your catalog you simply select a XML or CVS file 
 				on your hard drive and click the <em>Import CataBlog Data</em> button.
 				You may choose to completely erase all your data before importing
 				by checking the <em>Replace All Data</em> checkbox. Keep in mind, this 
@@ -656,11 +664,14 @@
 			farbtastic.setColor(a);
 			jQuery("#bg_color").val(a);
 			jQuery("#demo_box").css("background-color",a)
+			jQuery('.color-swatch').css("background-color",a);
 		}
 		jQuery("#pickcolor").click(function() {
 			
+			jQuery(this).addClass('selected');
+			
 			var color_picker = jQuery("#color-picker-div");
-			color_picker.css('top', jQuery('#bg_color').offset().top);
+			color_picker.css('top', jQuery('#bg_color').offset().top + 21);
 			color_picker.css('left', jQuery(this).offset().left);
 			color_picker.show();
 			
@@ -693,7 +704,8 @@
 			jQuery("#color-picker-div").each(function(){
 				var a = jQuery(this).css("display");
 				if (a == "block") {
-					jQuery(this).fadeOut(2)
+					jQuery('#pickcolor.selected').removeClass('selected');
+					jQuery(this).fadeOut(2);
 				}
 			});
 		});
@@ -703,50 +715,44 @@
 		
 		
 		
+		
 		/****************************************
 		** RECALCULATE IMAGES IF NECESSARY
 		****************************************/
-		<?php if ($recalculate): ?>
+			
+	<?php if ($recalculate_thumbnails || $recalculate_fullsize): ?>
 		$('#save_changes').attr('disabled', true);
+		var nonce   = '<?php echo wp_create_nonce("catablog-render-images") ?>';		
+		var images  = ["<?php echo implode('", "', $image_names) ?>"];
+		var message = "Image rendering is now complete";
+	<?php endif ?>
 		
-		discourage_leaving_page();
-		
-		var catablog_items = [<?php echo implode(', ', $item_ids) ?>];
-		var total_count    = catablog_items.length;
-		
-		function renderCataBlogItem(id) {
-			$('#catablog-progress-text').text('Rendering Image ' + (total_count - catablog_items.length) + ' of ' + total_count);
+	<?php if ($recalculate_thumbnails): ?>
+		var thumbs = images;
+		renderCataBlogItems(thumbs, 'thumbnail', nonce, function() {
+			jQuery('#catablog-progress-thumbnail .catablog-progress-text').html(message);
+			var t = setTimeout(function() {
+				jQuery('#catablog-progress-thumbnail').hide('medium');
+				jQuery('#message').hide('medium');
+			}, 2000);
+			$('#save_changes').attr('disabled', false);
+		});
+	<?php endif ?>
+	
+	<?php if ($recalculate_fullsize): ?>
+		var fullsize = images;
+		renderCataBlogItems(fullsize, 'fullsize', nonce, function() {
+			jQuery('#catablog-progress-fullsize .catablog-progress-text').html(message);
+			var t = setTimeout(function() {
+				jQuery('#catablog-progress-fullsize').hide('medium');
+				jQuery('#message').hide('medium');
+			}, 2000);
+			$('#save_changes').attr('disabled', false);
+		});
+	<?php endif ?>
 			
-			var params = {
-				'id':       id,
-				'action':   'catablog_render_images',
-				'security': '<?php echo wp_create_nonce("catablog-render-images") ?>'
-			}
 			
-			$.post(ajaxurl, params, function(data) {
-				if (catablog_items.length > 0) {
-					percent_complete = 100 - ((catablog_items.length / total_count) * 100);
-					$('#catablog-progress-bar').css('width', percent_complete + '%');
-					renderCataBlogItem(catablog_items.shift());
-				}
-				else {
-					$('#catablog-progress-bar').css('width', '100%');
-					$('#catablog-progress-text').text('Rendering Complete');
-					
-					$('#save_changes').attr('disabled', false);
-					unbind_discourage_leaving_page();
-					
-					var time1 = setTimeout(function() {
-						$('#catablog-progress').hide('slow');
-					}, 3000);
-				}
-			});
-		}
-		
-		renderCataBlogItem(catablog_items.shift());
-		
-		<?php endif ?>
-		
+			
 		
 	}); // end onReady method
 	

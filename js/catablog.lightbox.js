@@ -25,7 +25,7 @@ jQuery(function($) {
 				}
 				
 				// select the current row and open the lightbox
-				jQuery(row).addClass('catablog-selected');
+				jQuery(this).addClass('catablog-selected');
 				open_lightbox(row);
 				
 				// do not register the click
@@ -44,7 +44,7 @@ jQuery(function($) {
 		function open_lightbox(row) {
 			// get the image inside the row
 			
-			var img = jQuery(row).find('img.catablog-image').get(0);
+			var img = jQuery(row).find('img.catablog-selected').get(0);
 			
 			var support_fixed   = supportPositionFixed();
 			var curtain_density = 0.85;
@@ -185,25 +185,25 @@ jQuery(function($) {
 			
 			
 			var selected = jQuery('.catablog-selected');
-			var new_row  = null;
+			var new_image  = null;
 			
 			if (direction == 'next') {
-				new_row = selected.next('.catablog-row');
-				if (new_row.size() < 1) {
-					new_row = jQuery('.catablog-row:first');
+				new_image = selected.next('img.catablog-image');
+				if (new_image.size() < 1) {
+					new_image = jQuery('img.catablog-image:first');
 				}
 			}
 			else if (direction == 'prev') {
-				new_row = selected.prev('.catablog-row');
-				if (new_row.size() < 1) {
-					new_row = jQuery('.catablog-row:last');
+				new_image = selected.prev('img.catablog-image');
+				if (new_image.size() < 1) {
+					new_image = jQuery('img.catablog-image:last');
 				}
 			}
 			
-			new_thumbnail = new_row.find('.catablog-image').get(0);
+			new_thumbnail = new_image.get(0);
 			
 			selected.removeClass('catablog-selected');
-			new_row.addClass('catablog-selected');
+			new_image.addClass('catablog-selected');
 			
 			change_lightbox(new_thumbnail);
 		}
@@ -241,10 +241,10 @@ jQuery(function($) {
 			meta.close       = close_button;
 			
 			meta.nav   = "";
-			if (row.prev('.catablog-row').size() > 0) {
+			if (jQuery('.catablog-selected').prev('.catablog-image').size() > 0) {
 				meta.nav += prev_button;
 			}
-			if (row.next('.catablog-row').size() > 0) {
+			if (jQuery('.catablog-selected').next('.catablog-image').size() > 0) {
 				meta.nav += next_button;
 			}
 			

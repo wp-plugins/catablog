@@ -13,7 +13,7 @@
 			You may also read more about 
 			<a href="http://catablog.illproductions.com/documentation/importing-and-exporting-catalogs/" target="_blank">importing and exporting data from CataBlog</a>.
 			<br />
-			Once you have fixed your file and its format <a href="http://workbench.local/wp-admin/admin.php?page=catablog-options#import">please try again</a>.
+			Once you have fixed your file and its format <a href="/wp-admin/admin.php?page=catablog-options#import">please try again</a>.
 		</p>
 	<?php endif ?>
 

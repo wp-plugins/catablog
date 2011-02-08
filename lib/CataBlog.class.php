@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "1.1";
+	private $version     = "1.1.5";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -195,6 +195,15 @@ class CataBlog {
 			$this->admin_export();
 		}
 		
+		// if add sub image is being called go directly to admin_add_subimage method
+		if(strpos($_SERVER['QUERY_STRING'], 'catablog-add-subimage') !== false) {
+			$this->admin_add_subimage();
+		}
+		
+		if(strpos($_SERVER['QUERY_STRING'], 'catablog-remove-subimages') !== false) {
+			$this->admin_remove_subimages();
+		}
+		
 		// display a warning message if the old database table is preset
 		if(strpos($_SERVER['QUERY_STRING'], 'catablog-clear-old-data') === false) {
 			global $wpdb;
@@ -255,6 +264,8 @@ class CataBlog {
 		add_submenu_page('catablog-hidden', "Save CataBlog Item", "Save", $this->user_level, 'catablog-save', array(&$this, 'admin_save'));
 		add_submenu_page('catablog-hidden', "Delete CataBlog Item", "Delete", $this->user_level, 'catablog-delete', array(&$this, 'admin_delete'));
 		add_submenu_page('catablog-hidden', "Bulk Edit CataBlog Items", "Bulk", $this->user_level, 'catablog-bulkedit', array(&$this, 'admin_bulk_edit'));
+		add_submenu_page('catablog-hidden', "Add Sub Image to Item", "SubImage", $this->user_level, 'catablog-add-subimage', array(&$this, 'admin_add_subimage'));
+		add_submenu_page('catablog-hidden', "Delete All Sub Images", "Remove-SubImages", $this->user_level, 'catablog-remove-subimages', array(&$this, 'admin_remove_subimages'));
 		
 		// register import/export page actions to hidden menu
 		add_submenu_page('catablog-hidden', "CataBlog Import", "Import", $this->user_level, 'catablog-import', array(&$this, 'admin_import'));
@@ -330,7 +341,26 @@ class CataBlog {
 	public function admin_edit() {
 		$new_item = false;
 		if (isset($_REQUEST['id'])) {
-			$result = CataBlogItem::getItem($_REQUEST['id']);
+			
+			$prev_item = false;
+			$next_item = false;
+			$result    = false;
+			
+			
+			$items = CataBlogItem::getItems();
+			foreach ($items as $item) {
+				if ($result !== false) {
+					$next_item = $item;
+					break;
+				}
+				if ($item->getId() == $_REQUEST['id']) {
+					$result = $item;	
+				}
+				else {
+					$prev_item = $item;
+				}
+			}
+			
 			if (!$result) {
 				$result = new CataBlogItem();
 				$new_item = true;				
@@ -416,15 +446,18 @@ class CataBlog {
 				
 				// recalculate thumbnail and fullsize images if necessary
 				if ($recalculate_thumbnails || $recalculate_fullsize) {
-					$recalculate = true;
 					$save_message .= " - Please Let The Rendering Below Complete Before Navigating Away From This Page";
 					
 					delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
 					
-					$items    = CataBlogItem::getItems();
-					$item_ids = array();
+					$items       = CataBlogItem::getItems();
+					$image_names = array();
+
 					foreach ($items as $item) {
-						$item_ids[] = $item->getId();
+						$image_names[] = $item->getImage();
+						foreach ($item->getSubImages() as $image) {
+							$image_names[] = $image;
+						}
 					}					
 				}
 				
@@ -537,15 +570,73 @@ class CataBlog {
 				$validate  = $result->validate();
 				if ($validate === true) {
 					$result->save();
-					$this->admin_list();
+					// $this->admin_list();
+					$new_item = false;
+					$message = "Changes saved successfully";
+					$this->wp_message($message);
+					include_once($this->directories['template'] . '/admin-edit.php');
 				}
 				else {
 					$this->wp_error($validate);
-					include_once($this->directories['template'] . '/admin-edit.php');					
+					include_once($this->directories['template'] . '/admin-edit.php');
 				}
 			}
 		}
 	}
+	
+	public function admin_add_subimage() {
+		if (is_numeric($_POST['id'])) {
+			$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_add_subimage_nonce'], 'catablog_add_subimage' );
+			if ($nonce_verified) {
+				$result = CataBlogItem::getItem($_POST['id']);
+				$tmp_name = $_FILES['new_sub_image']['tmp_name'];
+				
+				if (mb_strlen($tmp_name) > 0) {
+					if ($result->addSubImage($tmp_name) !== true) {
+						echo "error adding sub image";
+					}
+				}
+			}
+		}
+		else {
+			echo "no item id in post, what are you doing?";
+		}
+		
+		// wp_redirect()
+		header('Location: admin.php?page=catablog-edit&id=' . $_POST['id']);
+	}
+	
+	public function admin_remove_subimages() {
+		$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_remove_subimages_nonce'], 'catablog_remove_subimages');
+		if ($nonce_verified) {
+			$to_delete = array();
+			$result    = CataBlogItem::getItem($_POST['id']);
+			$sub_images = $result->getSubImages();
+			
+			foreach ($sub_images as $key => $image) {
+				$to_delete["sub$key-original"]  = $this->directories['originals'] . "/$image";
+				$to_delete["sub$key-thumbnail"] = $this->directories['thumbnails'] . "/$image";
+				$to_delete["sub$key-fullsize"]  = $this->directories['fullsize'] . "/$image";
+			}
+			
+			foreach ($to_delete as $file) {
+				if (is_file($file)) {
+					unlink($file);
+				}
+			}
+			// echo "<pre>"; print_r($to_delete); echo "</pre>";
+			$result->setSubImages(array());
+			$result->save();
+			
+			delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
+		}
+		else {
+			echo "the form nonce was not verified, what are you doing?";
+		}
+		
+		header('Location: admin.php?page=catablog-edit&id=' . $_POST['id']);
+	}
+	
 	
 	public function admin_delete() {
 		// need to add support for nonce check
@@ -745,11 +836,14 @@ class CataBlog {
 	
 	public function admin_regenerate_images() {
 		
-		$items    = CataBlogItem::getItems();
-		$item_ids = array();
+		$items       = CataBlogItem::getItems();
+		$image_names = array();
 		
 		foreach ($items as $item) {
-			$item_ids[] = $item->getId();
+			$image_names[] = $item->getImage();
+			foreach ($item->getSubImages() as $image) {
+				$image_names[] = $image;
+			}
 		}
 		
 		include_once($this->directories['template'] . '/admin-regenerate.php');
@@ -953,24 +1047,30 @@ class CataBlog {
 	public function ajax_render_images() {
 		check_ajax_referer('catablog-render-images', 'security');
 		
-		$id   = $_REQUEST['id'];
-		$item = CataBlogItem::getItem($id);
+		$name = $_REQUEST['image'];
+		$type = $_REQUEST['type'];
 		
-		$complete = $item->MakeThumbnail();
+		$item = new CataBlogItem();
+		
+		switch ($type) {
+			case 'thumbnail':
+				$complete = $item->MakeThumbnail($name);
+				break;
+			case 'fullsize';
+				$complete = $item->MakeFullsize($name);
+				break;
+			default:
+				$complete = "unsupported image size type";
+				break;
+		}
+		
 		if ($complete !== true) {
 			echo "({'success':false, 'error':'$complete'})";
-			die;
+		}
+		else {
+			echo "({'success':true, 'message':'render $type complete'})";
 		}
 		
-		if ($this->options['lightbox-enabled']) {
-			$complete = $item->MakeFullsize();
-			if ($complete !== true) {
-				echo "({'success':false, 'error':'$complete'})";
-				die;				
-			}
-		}
-		
-		echo "({'success':true, 'message':'render complete'})";
 		
 		die();
 	}
@@ -1079,11 +1179,16 @@ class CataBlog {
 		$thumbnail_size = $this->options['thumbnail-size'];
 		
 		$values = array();
+		
+		// new set
+		
+		
+		// compatibility set
 		$values['image-size']        = $thumbnail_size;
 		$values['paypal-email']      = $this->options['paypal-email'];
 		$values['min-height']        = "style='min-height:$thumbnail_size"."px; height:auto !important; height:$thumbnail_size"."px;'";
 		$values['hover-title-size']  = ($thumbnail_size - 10) . 'px';
-		$values['margin-left']       = ($thumbnail_size + 10) . 'px';
+		$values['margin-left']       = ($thumbnail_size + 10) . 'px';		
 		$values['lightbox']          = ($this->options['lightbox-enabled'])? "catablog-clickable" : "";
 		
 		// check if theme is empty, if so use default theme
@@ -1128,7 +1233,7 @@ class CataBlog {
 		// set the other values of the item into an array
 		$values['title-text']      = $result->getTitle();
 		$values['image']           = $this->urls['thumbnails'] . "/". $result->getImage();
-		$values['image-fullsize']  = $this->urls['fullsize'] . "/". $result->getImage();				
+		$values['image-fullsize']  = $this->urls['fullsize'] . "/". $result->getImage();
 		$values['link']            = $link;
 		$values['link-target']     = $target;
 		$values['link-rel']        = $rel;
@@ -1136,6 +1241,12 @@ class CataBlog {
 		$values['price']           = number_format(((float)($result->getPrice())), 2, '.', '');
 		$values['product-code']    = $result->getProductCode();
 		
+		
+		$values['sub-images']      = "";
+		foreach ($result->getSubImages() as $image) {
+			$c = ($this->options['lightbox-enabled'])? "catablog-clickable" : "";
+			$values['sub-images'] .= "<img src='".$this->urls['thumbnails']."/$image' class='catablog-subimage catablog-image  $c' />";
+		}
 		
 		// generate the buy now button if the price of the item is greater then 0
 		$buy_now_button = '';

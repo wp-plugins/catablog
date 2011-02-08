@@ -64,6 +64,64 @@ function possibly_disable_save_button() {
 
 
 
+function renderCataBlogItems(images, type, nonce, callback) {
+	discourage_leaving_page();
+	
+	total_count = images.length;
+	renderCataBlogItem(images.shift(), type, images, nonce, total_count, callback);
+}
+
+function renderCataBlogItem(image, type, a, nonce, total_count, callback) {
+	var progress_bar  = jQuery('#catablog-progress-' + type + ' .catablog-progress-bar');
+	var progress_text = jQuery('#catablog-progress-' + type + ' .catablog-progress-text');
+	var percent_complete = 100 - ((a.length / total_count) * 100);
+	
+	progress_text.html(percent_complete.toFixed(1)+'% <small>rendering ' + (total_count - a.length) + ' of ' + total_count + " " + type + ' images </small>');
+	var params = {
+		'image':    image,
+		'type':     type,
+		'action':   'catablog_render_images',
+		'security': nonce
+	}
+	
+	jQuery.post(ajaxurl, params, function(data) {
+		try {
+			data = eval(data);
+			if (data.success == false) {
+				$('#catablog-console').append('<li class="error">' + data.error + '</li>')
+			}
+			
+		}
+		catch(e) {
+			jQuery('#catablog-console').append('<li class="error">' + e + '</li>')
+		}
+		
+		// console.log('ajax complete');
+		
+		if (a.length > 0) {
+			progress_bar.css('width', percent_complete + '%');
+			renderCataBlogItem(a.shift(), type, a, nonce, total_count, callback);
+		}
+		else {
+			progress_bar.css('width', '100%');
+			progress_text.html('Processing Complete');
+			unbind_discourage_leaving_page();
+			callback.call(this);
+		}
+	});
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function replaceSelection (input, replaceString) {

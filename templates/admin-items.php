@@ -36,7 +36,7 @@
 				<small>|</small>
 			</form>
 			
-			<form method="get" action="?page=catablog" class="alignleft actions">
+			<form method="get" action="admin.php?page=catablog" class="alignleft actions">
 				<input type="hidden" name="page" value="catablog" />
 				<select id="cat" name="category" class="postform">
 					<option value="0">View all categories</option>
@@ -61,10 +61,10 @@
 				<?php $current_cat = (isset($_GET['category']))? '&amp;category='.$_GET['category'] : '' ?>
 				
 				<a href="admin.php?page=catablog<?php echo $current_cat ?>&amp;view=list">
-					<img src="http://catablog.workbench.local/wp-includes/images/blank.gif" id="view-switch-list" <?php echo "$list_class $meta" ?> title="List View" alt="List View"/>
+					<img src="/wp-includes/images/blank.gif" id="view-switch-list" <?php echo "$list_class $meta" ?> title="List View" alt="List View"/>
 				</a>
 				<a href="admin.php?page=catablog<?php echo $current_cat ?>&amp;view=grid">
-					<img src="http://catablog.workbench.local/wp-includes/images/blank.gif" id="view-switch-excerpt" <?php echo "$grid_class $meta" ?> title="Grid View" alt="Grid View"/>
+					<img src="/wp-includes/images/blank.gif" id="view-switch-excerpt" <?php echo "$grid_class $meta" ?> title="Grid View" alt="Grid View"/>
 				</a>
 			</div>
 		</div>
@@ -86,7 +86,35 @@
 
 <script type="text/javascript">
 	var timer = null;
+	
+	// window.onload = function() {
+		// stop loading all thumbnails
+
+	// }
+	
 	jQuery(document).ready(function($) {
+			
+		calculate_lazy_loads();
+		$(window).bind('scroll resize', function(event) {
+			calculate_lazy_loads();
+		});
+		
+		
+		function calculate_lazy_loads() {
+			var scroll_top = $(window).scrollTop();
+			var scroll_bottom = scroll_top + $(window).height() - 20;
+			
+			$('#catablog_items a.lazyload').each(function() {
+				var top_offset = $(this).offset().top;
+				
+				if (scroll_bottom > top_offset) {
+					$(this).removeClass('lazyload');
+					$(this).append('<img class="cb_item_icon" />');
+					$(this).children('img').hide().attr('src', $(this).attr('rel')).fadeIn(300);
+				}
+			});
+		}
+		
 		
 		// disable item links when drag n drop is enabled
 		$('#catablog_items a').bind('click', function(e) {

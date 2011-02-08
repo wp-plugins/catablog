@@ -2,13 +2,27 @@
 
 	<div id="icon-catablog" class="icon32"><br /></div>
 	<h2><?php echo ($new_item)? 'Add New CataBlog Entry' : 'Edit CataBlog Entry' ?></h2>
-
-	
-	<form id="catablog-edit" class="catablog-form" method="post" action="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-save' ?>" enctype="multipart/form-data">
 		
+	<form id="catablog-edit" class="catablog-form" method="post" action="admin.php?page=catablog-save" enctype="multipart/form-data">
+
 		<div id="catablog-edit-main">
 			<fieldset>
-				<h3>Main</h3>
+				<h3>
+					<span class="catablog-edit-navigation" style="float:right">
+						<?php if ($prev_item != false): ?>
+							<a href="admin.php?page=catablog-edit&id=<?php echo $prev_item->getId() ?>">&larr; <?php echo $prev_item->getTitle() ?></a>
+						<?php else: ?>
+							<span class="nonessential">no previous item</span>
+						<?php endif ?>
+						<span> | </span>
+						<?php if ($next_item != false): ?>
+							<a href="admin.php?page=catablog-edit&id=<?php echo $next_item->getId() ?>"><?php echo $next_item->getTitle() ?> &rarr;</a>
+						<?php else: ?>
+							<span>no next item</span>
+						<?php endif?>
+					</span>
+					<span>Main</span>
+				</h3>
 				<div>
 					<div id="catablog-edit-main-image">
 						<?php if ($new_item): ?>
@@ -27,6 +41,20 @@
 							</small></p>
 						<?php else: ?>
 							<img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" id="catablog-image-preview" />
+							
+							<?php if (count($result->getSubImages()) > 0): ?>
+								<ul id="catablog-sub-images">
+									<?php foreach ($result->getSubImages() as $sub_image): ?>
+										<li>
+											<img src="<?php echo $this->urls['thumbnails'] . "/$sub_image" ?>" class="catablog-image-preview" />
+											<input type="hidden" name="sub_images[]" class="sub-image" value="<?php echo $sub_image ?>" />											
+										</li>
+									<?php endforeach ?>
+									<li class="clear">&nbsp;</li>
+								</ul>
+								
+							<?php endif ?>
+							
 							<input type="hidden" name="image" id="image" value="<?php echo $result->getImage() ?>" />
 							<label id="select-image-button">
 								<input type="file" id="new_image" name="new_image" tabindex="1" />
@@ -37,7 +65,13 @@
 								replacement image for your item. Again only
 								JPEG, GIF and PNG formats are accepted.
 							</small></p>
+														
 						<?php endif ?>
+						
+						
+						
+						
+						
 					</div>
 					
 					
@@ -157,6 +191,38 @@
 	
 </div>
 
+<div id="add-sub-image-window">
+	<h3><strong>Sub Images Controls</strong></h3>
+	<form id="catablog-add-subimage" class="catablog-form" method="post" action="admin.php?page=catablog-add-subimage" enctype="multipart/form-data">
+		<label for="new_sub_image">Add Sub Image:</label>
+		
+		<input type="file" id="new_sub_image" name="new_sub_image"  />
+		<input type="hidden" name="id" value="<?php echo $result->getId() ?>" >
+		
+		<?php wp_nonce_field( 'catablog_add_subimage', '_catablog_add_subimage_nonce', false, true ) ?>
+		<input type="submit" name="save" value="Submit" class="button" />
+		<p><small>
+			Select an image on your computer to upload and add to this item as a sub image.<br />
+			You	may upload JPEG, GIF and PNG graphic formats only. <br />
+			You will be adding a sub image, this upload will not replace this item's main image.
+		</small></p>
+	</form>
+	
+	<form id="catablog-remove-subimages" class="catablog-form" method="post" action="admin.php?page=catablog-remove-subimages">
+		<label>Remove Sub Images:</label>
+		
+		<input type="hidden" name="id" value="<?php echo $result->getId() ?>" />
+		<?php wp_nonce_field( 'catablog_remove_subimages', '_catablog_remove_subimages_nonce', false, true ) ?>
+		
+		<input type="submit" class="button" value="Remove All Sub Images Now" />
+		<p><small>
+			Click this button to remove all sub images from this catalog item.<br />
+			All thumbnail, full size and original image files will be <strong>permanently deleted</strong>.<br />
+			This will not remove or replace the main image from this catalog item.
+		</small></p>
+	</form>
+</div>
+
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
 		
@@ -191,6 +257,17 @@
 			
 			$('#catablog-title').focus();
 		});
+		
+		
+		
+		// BIND SORTABLE IMAGES
+		$('#catablog-sub-images').sortable({
+			cursor: 'crosshair',
+			forcePlaceholderSize: true,
+			opacity: 0.7,
+			revert: 200
+		})
+		
 		
 		
 		

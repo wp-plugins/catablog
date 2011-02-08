@@ -9,6 +9,7 @@ class CataBlogItem {
 	private $title        = "";
 	private $description  = "";
 	private $image        = "";
+	private $sub_images   = array(); 
 	private $order        = 0;
 	private $link         = "";
 	private $price        = 0;
@@ -18,13 +19,14 @@ class CataBlogItem {
 	
 	// object values not considered item properties
 	// this will be skipped in getParameterArray() method
-	private $_options       = array();
-	private $_image_changed = false;
-	private $_old_images    = array();
-	private $_wp_upload_dir = "";
-	private $_custom_post_name = "catablog-items";
-	private $_custom_tax_name  = "catablog-terms";
-	private $_post_meta_name   = "catablog-post-meta";
+	private $_options            = array();
+	private $_main_image_changed = false;
+	private $_sub_images_changed = false;
+	private $_old_images         = array();
+	private $_wp_upload_dir      = "";
+	private $_custom_post_name   = "catablog-items";
+	private $_custom_tax_name    = "catablog-terms";
+	private $_post_meta_name     = "catablog-post-meta";
 	
 	// construction method
 	public function __construct($post_parameters=null) {
@@ -152,7 +154,7 @@ class CataBlogItem {
 		
 		// check if catablog is going over the storage space limit on multisite blogs
 		if (function_exists('get_upload_space_available')) {
-			if ($this->_image_changed) {
+			if ($this->_main_image_changed) {
 				$space_available = get_upload_space_available();
 				$image_size      = filesize($this->image);
 				if ($image_size > $space_available) {
@@ -219,8 +221,7 @@ class CataBlogItem {
 		wp_set_object_terms($this->id, $this->categories, $this->_custom_tax_name, false);
 		
 		// if the image has been set after loading process image
-		if ($this->_image_changed) {
-			
+		if ($this->_main_image_changed) {
 			// store the new uploaded file in the originals directory
 			$upload_path     = $this->image;
 			$sanatized_title = $this->getSanitizedTitle();
@@ -264,7 +265,15 @@ class CataBlogItem {
 				$to_delete['original']  = $this->_wp_upload_dir . "/catablog/originals/" . $this->image;
 				$to_delete['thumbnail'] = $this->_wp_upload_dir . "/catablog/thumbnails/" . $this->image;
 				$to_delete['fullsize']  = $this->_wp_upload_dir . "/catablog/fullsize/" . $this->image;
-
+				
+				if (is_array($this->sub_images)) {
+					foreach ($this->sub_images as $key => $image) {
+						$to_delete["sub$key-original"]  = $this->_wp_upload_dir . "/catablog/originals/" . $image;
+						$to_delete["sub$key-thumbnail"] = $this->_wp_upload_dir . "/catablog/thumbnails/" . $image;
+						$to_delete["sub$key-fullsize"]  = $this->_wp_upload_dir . "/catablog/fullsize/" . $image;
+					}					
+				}
+				
 				foreach ($to_delete as $file) {
 					if (is_file($file)) {
 						unlink($file);
@@ -279,6 +288,43 @@ class CataBlogItem {
 	
 	
 	
+	public function addSubImage($tmp_path) {
+		$space_available = get_upload_space_available();
+		$image_size = filesize($tmp_path);
+		
+		if ($image_size > $space_available) {
+			$space_available = round(($space_available / 1024 / 1024), 2);
+			$image_size      = round(($image_size / 1024 / 1024), 2);
+
+			$error  = 'Can\'t write uploaded image to server, your storage space is exhausted.<br />';
+			$error .= 'Please delete some media files to free up space and try again.<br />';
+			$error .= 'You have '.$space_available.'MB of available space on your server and your image is '.$image_size.'MB.';
+			return $error;
+		}
+		
+		$sanatized_title = $this->getSanitizedTitle();
+		$move_path       = $this->_wp_upload_dir . "/catablog/originals/$sanatized_title";
+		$moved           = move_uploaded_file($tmp_path, $move_path);
+		
+		if ($moved !== true) {
+			$error = 'Could not move the uploaded file on your server';
+			return $error;
+		}
+		
+		$this->sub_images[] = $sanatized_title;
+		$this->updatePostMeta();
+		
+		// generate a thumbnail for the new image
+		$this->makeThumbnail($sanatized_title);
+		if ($this->_options['lightbox-enabled']) {
+			$this->makeFullsize($sanatized_title);
+		}
+		
+		delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
+		
+		return true;
+	}
+	
 	
 	
 	
@@ -288,9 +334,13 @@ class CataBlogItem {
 	/*****************************************************
 	**       - IMAGE GENERATION METHODS
 	*****************************************************/
-	public function makeFullsize() {
-		$original = $this->_wp_upload_dir . "/catablog/originals/" . $this->getImage();
-		$fullsize = $this->_wp_upload_dir . "/catablog/fullsize/" . $this->getImage();
+	public function makeFullsize($filepath=NULL) {
+		if ($filepath === NULL) {
+			$filepath = $this->getImage();
+		}
+		
+		$original = $this->_wp_upload_dir . "/catablog/originals/" . $filepath;
+		$fullsize = $this->_wp_upload_dir . "/catablog/fullsize/" . $filepath;
 		$quality  = 80;
 		
 		if (is_file($original) === false) {
@@ -369,9 +419,13 @@ class CataBlogItem {
 		return true;
 	}
 	
-	public function makeThumbnail() {
-		$original = $this->_wp_upload_dir . "/catablog/originals/" . $this->getImage();
-		$thumb    = $this->_wp_upload_dir . "/catablog/thumbnails/" . $this->getImage();
+	public function makeThumbnail($filepath=NULL) {
+		if ($filepath === NULL) {
+			$filepath = $this->getImage();
+		}
+		
+		$original = $this->_wp_upload_dir . "/catablog/originals/" . $filepath;
+		$thumb    = $this->_wp_upload_dir . "/catablog/thumbnails/" . $filepath;
 		$quality  = 90;
 		
 		if (is_file($original) === false) {
@@ -495,6 +549,9 @@ class CataBlogItem {
 	public function getImage() {
 		return $this->image;
 	}
+	public function getSubImages() {
+		return (is_array($this->sub_images))? $this->sub_images : array();
+	}
 	public function getOrder() {
 		return $this->order;
 	}
@@ -549,7 +606,15 @@ class CataBlogItem {
 	public function setImage($image) {
 		$this->_old_images[] = $this->image;
 		$this->image = $image;
-		$this->_image_changed = true;
+		$this->_main_image_changed = true;
+	}
+	public function setSubImage($image) {
+		$this->sub_images[] = $image;
+		$this->_sub_images_changed = true;
+	}
+	public function setSubImages($images) {
+		$this->sub_images = $images;
+		$this->_sub_images_changed = true;
 	}
 	public function setOrder($order) {
 		$this->order = $order;
@@ -603,6 +668,7 @@ class CataBlogItem {
 	private function updatePostMeta() {
 		$meta = array();
 		$meta['image']        = $this->image;
+		$meta['sub-images']   = $this->sub_images;
 		$meta['link']         = $this->link;
 		$meta['price']        = $this->price;
 		$meta['product-code'] = $this->product_code;

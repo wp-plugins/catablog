@@ -1,9 +1,9 @@
-	<form method="post" action="">	
+
 	<table class="widefat post" cellspacing="0">
 		<thead>
 			<tr>
 				<th class="manage-column column-cb check-column"><input type="checkbox" /></th>
-				<th class="manage-column cb_icon_column">Image</th>
+				<th class="manage-column cb_icon_column">Images</th>
 				<th class="manage-column">Title</th>
 				<th class="manage-column">Link</th>
 				<th class="manage-column">Description</th>
@@ -15,7 +15,7 @@
 		<tfoot>
 			<tr>
 				<th class="manage-column column-cb check-column"><input type="checkbox" /></th>
-				<th class="manage-column cb_icon_column">Image</th>
+				<th class="manage-column cb_icon_column">Images</th>
 				<th class="manage-column">Title</th>
 				<th class="manage-column">Link</th>
 				<th class="manage-column">Description</th>
@@ -38,7 +38,9 @@
 				<tr>
 					<th class="check-column"><input type="checkbox" class="bulk_selection" name="bulk_action_id" value="<?php echo $result->getId() ?>" /></th>
 					<td class="cb_icon_column">
-						<a href="<?php echo $edit ?>"><img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" class="cb_item_icon" width="50" height="50" alt="" /></a>
+						<a href="<?php echo $edit ?>" class="lazyload" rel="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>">
+							<noscript><img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" class="cb_item_icon" width="50" height="50" alt="" /></noscript>
+						</a>
 					</td>
 					<td>
 						<strong><a href="<?php echo $edit ?>" title="Edit CataBlog Item"><?php echo htmlentities($result->getTitle(), ENT_QUOTES, 'UTF-8') ?></a></strong>
@@ -59,4 +61,3 @@
 		</tbody>
 
 	</table>
-	</form>

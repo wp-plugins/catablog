@@ -9,11 +9,17 @@
 		</div>
 	</noscript>
 	
-	<div id="catablog-progress">
-		<div id="catablog-progress-bar"></div>
-		<h3 id="catablog-progress-text">Processing...</h5>
+	<div id="catablog-progress-thumbnail" class="catablog-progress">
+		<div class="catablog-progress-bar"></div>
+		<h3 class="catablog-progress-text">Processing Thumbnail Images...</h3>
 	</div>
 	
+	<?php if ($this->options['lightbox-enabled']): ?>
+	<div id="catablog-progress-fullsize" class="catablog-progress">
+		<div class="catablog-progress-bar"></div>
+		<h3 class="catablog-progress-text">Waiting For Thumbnail Rendering To Finish...</h3>
+	</div>
+	<?php endif ?>
 	
 	<ul id="catablog-console">
 		
@@ -22,46 +28,20 @@
 </div>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
+		var images  = ["<?php echo implode('", "', $image_names) ?>"];
+		var nonce   = '<?php echo wp_create_nonce("catablog-render-images") ?>';
+		var message = "Image rendering is now complete, you may now go to any other admin panel you might want.";
 		
-		var catablog_items = [<?php echo implode(', ', $item_ids) ?>];
-		var total_count    = catablog_items.length;
-		
-		discourage_leaving_page();
-		
-		function renderCataBlogItem(id) {
-			$('#catablog-progress-text').text('Processing ' + (total_count - catablog_items.length) + ' of ' + total_count + ' Items');
-			
-			var params = {
-				'id':       id,
-				'action':   'catablog_render_images',
-				'security': '<?php echo wp_create_nonce("catablog-render-images") ?>'
-			}
-			
-			$.post(ajaxurl, params, function(data) {
-				try {
-					data = eval(data);
-					if (data.success == false) {
-						$('#catablog-console').append('<li class="error">' + data.error + '</li>')
-					}
-					
-				}
-				catch(e) {
-					$('#catablog-console').append('<li class="error">' + e + '</li>')
-				}
-				
-				if (catablog_items.length > 0) {
-					percent_complete = 100 - ((catablog_items.length / total_count) * 100);
-					$('#catablog-progress-bar').css('width', percent_complete + '%');
-					renderCataBlogItem(catablog_items.shift());
-				}
-				else {
-					$('#catablog-progress-bar').css('width', '100%');
-					$('#catablog-progress-text').text('Processing Complete');
-					unbind_discourage_leaving_page();
-				}
-			});
-		}
-		renderCataBlogItem(catablog_items.shift());
+		renderCataBlogItems(images, 'thumbnail', nonce, function() {
+			<?php if ($this->options['lightbox-enabled']): ?>
+				var images = ["<?php echo implode('", "', $image_names) ?>"];
+				renderCataBlogItems(images, 'fullsize', nonce, function() {
+					jQuery('#catablog-console').append('<li class="updated">'+message+'</li>');
+				});
+			<?php else: ?>	
+				jQuery('#catablog-console').append('<li class="updated">'+message+'</li>');
+			<?php endif ?>
+		});
 		
 	});
 </script>

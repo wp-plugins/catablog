@@ -7,18 +7,42 @@
 	margin: 0;
 	padding: 5px;
 }
+
+
+.catablog-images {
+	float: left;
+	line-height: 0.7;
+	padding: 0 0 0 0;
+	margin: 0 0 0 -2%;
+}
 .catablog-image {
-	position: absolute !important;
 	display: block !important;
+	width: 100% !important;
+	height: auto !important;
 	clear: none !important;
 	float: none !important;
 }
-.catablog-image.catablog-clickable {
+.catablog-image.catablog-clickable,
+.catablog-subimage.catablog-clickable {
 	cursor: pointer;
 }
 .catablog-image.catablog-clickable:hover {
 	border-color: red;
 }
+
+
+
+.catablog-image.catablog-subimage {
+	position: relative !important;
+	display: inline !important;
+	width: 50% !important;
+	height: auto !important;
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+
+
 .catablog-title {
 	display: block !important;
 	clear: none !important;
@@ -29,7 +53,13 @@
 	clear: none !important;
 	float: none !important;
 }
-
+.catablog-description:after {
+	content: ".";
+	display: block;
+	clear: both;
+	height: 0px;
+	visibility: hidden;
+}
 .catablog-selected {
 	
 }

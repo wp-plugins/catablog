@@ -4,8 +4,8 @@
 	<h2>About CataBlog</h2>
 	
 	<p>
-		<a href="http://catablog.illproductions.net/" target="_blank">CataBlog</a> is written by 
-		<a href="http://catablog.illproductions.net/about-author/" target="_blank">Zachary Segal</a> in his spare time. 
+		<a href="http://catablog.illproductions.com/" target="_blank">CataBlog</a> is written by 
+		<a href="http://catablog.illproductions.com/about-author/" target="_blank">Zachary Segal</a> in his spare time. 
 		It is a cataloging tool for <a href="http://wordpress.org" target="_blank">WordPress</a>
 		that allows you to easily manage a list of items with automatically generated thumbnail images.
 		Use of CataBlog is completely free, even commercial sites for now, all that I ask is
