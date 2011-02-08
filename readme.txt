@@ -12,6 +12,8 @@ CataBlog is a comprehensive and effortless tool that allows you to create catalo
 
 == Description ==
 
+- NEW BETA WITH MULTIPLE IMAGE PER ITEM, CHECK OTHER VERSIONS FOR CATABLOG 1.1.5
+
 CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use categories to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too with the LightBox effect, perfect for simple galleries. Easy, intuitive and smart design makes it trivial to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
 There may also be beta versions available in the [other versions section](http://wordpress.org/extend/plugins/catablog/download/ "Download Other Versions of CataBlog"), check the [Changelog](http://wordpress.org/extend/plugins/catablog/changelog/ "CataBlog Versions Change Log") to see what new features were added.
@@ -94,6 +96,11 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Changelog ==
 
+= 1.1.5 =
+* New: Added multiple image per catalog item support.
+* New: Thumbnail images in the admin list view are now lazy loaded.
+* New: Navigation controls in the admin edit panel.
+* Fix: Rendering thumbnail and fullsize images are now separate threads.
 = 1.1 =
 * New: Added CSV (comma separated values) support for importing and exporting catalog data.
 
@@ -218,11 +225,15 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * Complete code re-factor, plugin is now encapsulated in its own class.
 
 = 0.6.5 =
-* This version is the initial release.
+* This version was the initial release.
 
 
 
 == Upgrade Notice ==
+
+= 1.1.5 = 
+
+Beware: this version is not ready for prime time and contains some experimental features and code.
 
 = 1.0.2 =
 
