@@ -79,12 +79,11 @@ body {
 	position: relative;
 }
 #catablog-edit-main {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	right: 266px;
+	position: relative;
+	margin: 0 266px 0 0;
 }
 #catablog-edit-params {
+	float: right;
 	position: relative;
 	width: 250px;
 	margin: 0 0 0 auto;
@@ -93,6 +92,10 @@ body {
 	width: 100%;
 	margin: 0 0 0.5em 0;
 }
+#catablog-edit-params input.file-field {
+	width: 96%;
+	margin: 0;
+}
 
 
 
@@ -100,7 +103,7 @@ body {
 
 
 #catablog-edit-main-text {
-	margin: 0 0 0 110px;
+	margin: 0 0 0 120px;
 	border-width: 0 !important;
 	padding: 0 0 9px 9px !important;
 }
@@ -126,7 +129,7 @@ body {
 	position: relative;
 	float: left;
 	margin: 0;
-	width: 100px;
+	width: 120px;
 	border: 0 none !important;
 	padding: 0 !important;
 }
@@ -137,6 +140,118 @@ body {
 #catablog-edit-main-image input {
 	display: block;
 }
+
+
+
+#catablog-edit-images-column {
+	background-color: #fff; 
+	border: 1px #dfdfdf solid !important;
+	border-radius: 3px;
+}
+
+#catablog-edit-images-column hr {
+	background: #dfdfdf;
+	height: 1px;
+	border: 0 none;
+}
+
+#catablog-sub-images {
+	position: relative;
+	padding:0;
+	border:0 none;
+	list-style:none;
+	width: 100px;
+}
+#catablog-sub-images li {
+	display: block;
+	position: relative;
+	margin: 0 0 5px 0;
+	cursor: move;
+}
+#catablog-sub-images li img {
+	display: block;
+	width: 100px;
+	height: 100px;
+	margin: 0;
+	padding: 0;
+	border: 0 none;
+}
+.catablog-delete-subimage {
+	display: block;
+	display: none;
+	position: absolute;
+	background: #fff;
+	top: 5px;
+	right: 5px;
+	line-height: 22px;
+	font-size: 16px;
+	padding: 0 4px 0 5px;
+	text-decoration: none;
+	border: 1px #d00 solid;
+	color: #d00;
+	cursor: pointer;
+}
+#catablog-sub-images li:hover .catablog-delete-subimage {
+	display: block;
+}
+.catablog-sub-image-trash {
+	display: block;
+	width: 49px;
+	height: 49px;
+	margin: 2px 2px 0 0;
+	background-color: #fee;
+}
+
+
+
+
+
+
+
+.catablog-modal {
+	display: none;
+	position: absolute;
+	top: 180px;
+	left: 0px;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	z-index: 1001;
+}
+.catablog-modal form {
+	width: 500px;
+	margin: 0 auto;
+}
+.catablog-modal form h3 {
+	background-image: url(http://workbench.local/wp-admin/images/gray-grad.png);
+	border: 1px solid #DDD;
+	color: #464646;
+	font-size: 12px;
+	font-weight: bold;
+	margin: 0px;
+	padding: 6px;
+	
+	-moz-border-radius: 6px 6px 0 0;
+	border-radius: 6px 6px 0 0;
+	
+	-moz-box-shadow: 2px 2px 6px #333;
+	-webkit-box-shadow: 2px 2px 6px #333;
+	box-shadow: 2px 2px 6px #333;
+}
+.catablog-modal form div {
+	border: solid #DDD;
+	border-width: 0px 1px 1px;
+	padding: 9px;
+	background-color: #fff;
+	
+	-moz-border-radius: 0 0 6px 6px;
+	border-radius: 0 0 6px 6px;
+	
+	-moz-box-shadow: 2px 2px 6px #333;
+	-webkit-box-shadow: 2px 2px 6px #333;
+	box-shadow: 2px 2px 6px #333;
+}
+
 
 
 
@@ -192,34 +307,6 @@ body {
 
 
 
-#catablog-sub-images {
-	position: relative;
-	padding:0;
-	border:0 none;
-	list-style:none;
-	width: 102px;
-}
-#catablog-sub-images li {
-	display: block;
-	float: left;
-	margin: 0;
-	cursor: move;
-}
-#catablog-sub-images li img {
-	display: block;
-	width: 49px;
-	height: 49px;
-	margin: 2px 2px 0 0;
-}
-.catablog-sub-image-trash {
-	display: block;
-	width: 49px;
-	height: 49px;
-	margin: 2px 2px 0 0;
-	background-color: #fee;
-}
-
-
 
 
 
@@ -272,7 +359,7 @@ body {
 
 #catablog-edit-main-save {
 	border-width: 0 0 0 0 !important;
-	margin: 0 0 0 110px;
+	margin: 0 0 0 130px;
 }
 
 
@@ -563,7 +650,7 @@ form#catablog-view #catablog-view-menu {
 	width: 100%;
 	height: 100%;
 	background-color: #fff;
-	z-index: 10000;
+	z-index: 1000;
 }
 #catablog_load_display {
 	position: relative;

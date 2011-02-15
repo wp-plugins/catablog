@@ -5,19 +5,15 @@
 	float: none !important;
 	
 	margin: 0;
-	padding: 5px;
+	padding: 5px 5px 15px 5px;
 }
 
 
 .catablog-images {
 	float: left;
-	line-height: 0.7;
-	padding: 0 0 0 0;
-	margin: 0 0 0 -2%;
 }
 .catablog-image {
 	display: block !important;
-	width: 100% !important;
 	height: auto !important;
 	clear: none !important;
 	float: none !important;
@@ -33,12 +29,11 @@
 
 
 .catablog-image.catablog-subimage {
-	position: relative !important;
-	display: inline !important;
-	width: 50% !important;
+	display: block !important;
+	margin: 2px 0 0 0 !important;
 	height: auto !important;
-	padding: 0 !important;
-	margin: 0 !important;
+	clear: none !important;
+	float: none !important;
 }
 
 

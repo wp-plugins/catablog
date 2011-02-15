@@ -188,13 +188,19 @@
 		<?php /*  TEMPLATE SETTINGS PANEL  */ ?>
 		<div id="catablog-options-template" class="catablog-options-panel hide">
 			<p>
-				<?php $views = array('- templates', 'default', 'gallery', 'grid') ?>
-				<select id="catablog-template-view-menu" name="view">
-					<?php foreach($views as $key => $view): ?>
-						<?php echo "<option value='$view'>$view</option>" ?>
-					<?php endforeach ?>
-				</select>
-				<a href="#set-view" id="catablog-view-set-template" class="catablog-load-code button add-new-h2">Load Template</a>
+				<?php $views = new CataBlogDirectory($this->directories['views']); //('- templates', 'default', 'gallery', 'grid') ?>
+				<?php if ($views->isDirectory()): ?>
+					<select id="catablog-template-view-menu" name="view">
+						<?php foreach($views->getFileArray() as $key => $view): ?>
+							<?php echo "<option value='$view'>$view</option>" ?>
+						<?php endforeach ?>
+					</select>
+					<a href="#set-view" id="catablog-view-set-template" class="catablog-load-code button add-new-h2">Load Template</a>
+				<?php else: ?>
+					<p class="error">Could not locate the views directory. Please reinstall CataBlog.</p>
+				<?php endif ?>
+				
+				
 			</p>
 			<p>
 				<textarea name="view-code-template" id="catablog-view-set-template-code" class="catablog-code" rows="10" cols="30"><?php echo $this->options['view-theme'] ?></textarea>
@@ -577,7 +583,7 @@
 				alert('please select a template from the drop down menu');
 			}
 			else {
-				var url = "<?php echo $this->urls['plugin'] ?>/templates/views/" + selected + ".htm";
+				var url = "<?php echo $this->urls['plugin'] ?>/templates/views/" + selected;
 				$.get(url, function(data) {
 					$('#' + id + '-code').val(data);
 				});				

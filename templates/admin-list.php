@@ -36,7 +36,10 @@
 				<?php $remove = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-delete&amp;id='.$result->getId() ?>
 				
 				<tr>
-					<th class="check-column"><input type="checkbox" class="bulk_selection" name="bulk_action_id" value="<?php echo $result->getId() ?>" /></th>
+					<th class="check-column">
+						<span>&nbsp;</span>
+						<input type="checkbox" class="bulk_selection" name="bulk_action_id" value="<?php echo $result->getId() ?>" />
+					</th>
 					<td class="cb_icon_column">
 						<a href="<?php echo $edit ?>" class="lazyload" rel="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>">
 							<noscript><img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" class="cb_item_icon" width="50" height="50" alt="" /></noscript>
@@ -51,7 +54,10 @@
 						</div>
 					</td>
 					<td><?php echo htmlspecialchars($result->getLink(), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
-					<td><?php echo nl2br(htmlentities($result->getDescription(), ENT_QUOTES, 'UTF-8')) ?>&nbsp;</td>
+					
+					<?php $descriptions = explode("\n", $result->getDescription())?>
+					
+					<td><?php echo ($this->options['nl2br-description'])? nl2br($result->getDescription()) : $result->getDescription() ?>&nbsp;</td>
 					<td><?php echo htmlspecialchars(implode(', ', $result->getCategories()), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
 					<?php $currency = "" ?>
 					<td><?php echo (((float) $result->getPrice()) > 0)? $currency. number_format($result->getPrice(), 2) : "" ?>&nbsp;</td>

@@ -56,7 +56,6 @@ class CataBlogItem {
 	*****************************************************/
 	public static function getItem($id) {
 		$post = get_post($id);
-		
 		if ($post == false) {
 			return null;
 		}
@@ -127,6 +126,47 @@ class CataBlogItem {
 		return $items;
 	}
 	
+	public static function getItemByOrder($order_number) {
+		if ($order_number < 0) {
+			return false;
+		}
+		
+		$item = false;		
+		$cata = new CataBlogItem();
+		$params = array(
+			'post_type'=> $cata->getCustomPostName(),
+			'orderby'=>'menu_order',
+			'order'=>'ASC',
+			'numberposts' => 1,
+			'offset' => $order_number,
+		);
+		
+		$posts = get_posts($params);
+		foreach ($posts as $post) {
+			
+			$item = new CataBlogItem();
+			
+			$item->id           = $post->ID;
+			$item->title        = $post->post_title;
+			$item->description  = $post->post_content;
+
+			$item->order        = $post->menu_order;
+			$item->setPermalink($post->post_name);
+
+			// NO NEED TO LOAD THIS
+			// $category_ids = array();
+			// $terms = wp_get_object_terms($post->ID, array($item->getCustomTaxName()), array());
+			// foreach ($terms as $term) {
+			//		$category_ids[$term->term_id] = $term->name;
+			// }
+			// $item->categories   = $category_ids;
+			
+			// $meta = get_post_meta($post->ID, $item->_post_meta_name, true);
+			// $item->processPostMeta($meta);
+		}
+		
+		return $item;
+	}
 	
 	
 	

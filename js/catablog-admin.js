@@ -15,6 +15,15 @@ function hide_load() {
 }
 
 
+function show_image_upload_modal() {
+	jQuery('body').append("<div id='catablog_load_curtain' />");
+	jQuery('#catablog_load_curtain').append("<div id='catablog_load_display' >processing</div>");
+	
+	jQuery('#catablog_load_curtain').fadeTo(200, 0.8);	
+}
+
+
+
 
 function discourage_leaving_page(message) {
 	var all_links = jQuery('a').filter(function() {
@@ -48,6 +57,17 @@ function is_integer(s) {
 }
 
 
+
+
+function enable_save_button() {
+	jQuery('#save_changes').attr('disabled', false);
+	jQuery('#save_changes').attr('class', 'button-primary');
+}
+
+function disable_save_button() {
+	jQuery('#save_changes').attr('disabled', true);
+	jQuery('#save_changes').attr('class', 'button-disabled');
+}
 
 
 
