@@ -50,6 +50,7 @@ class CataBlog {
 		$this->directories['css']        = WP_CONTENT_DIR . "/plugins/catablog/css";
 		$this->directories['template']   = WP_CONTENT_DIR . "/plugins/catablog/templates";
 		$this->directories['views']      = WP_CONTENT_DIR . "/plugins/catablog/templates/views";
+		$this->directories['buttons']    = WP_CONTENT_DIR . "/plugins/catablog/templates/buttons";
 		
 		$this->directories['wp_uploads'] = $wp_upload_dir['basedir'];
 		$this->directories['uploads']    = $wp_upload_dir['basedir'] . "/catablog";
@@ -61,6 +62,10 @@ class CataBlog {
 		$this->urls['css']        = WP_CONTENT_URL . "/plugins/catablog/css";
 		$this->urls['javascript'] = WP_CONTENT_URL . "/plugins/catablog/js";
 		$this->urls['images']     = WP_CONTENT_URL . "/plugins/catablog/images";
+		$this->urls['template']   = WP_CONTENT_URL . "/plugins/catablog/templates";
+		$this->urls['views']      = WP_CONTENT_URL . "/plugins/catablog/templates/views";
+		$this->urls['buttons']    = WP_CONTENT_URL . "/plugins/catablog/templates/buttons";
+		
 		$this->urls['originals']  = $wp_upload_dir['baseurl'] . "/catablog/originals";
 		$this->urls['thumbnails'] = $wp_upload_dir['baseurl'] . "/catablog/thumbnails";
 		$this->urls['fullsize']   = $wp_upload_dir['baseurl'] . "/catablog/fullsize";

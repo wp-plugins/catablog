@@ -190,12 +190,12 @@
 			<p>
 				<?php $views = new CataBlogDirectory($this->directories['views']); //('- templates', 'default', 'gallery', 'grid') ?>
 				<?php if ($views->isDirectory()): ?>
-					<select id="catablog-template-view-menu" name="view">
+					<select id="catablog-template-view-menu">
 						<?php foreach($views->getFileArray() as $key => $view): ?>
 							<?php echo "<option value='$view'>$view</option>" ?>
 						<?php endforeach ?>
 					</select>
-					<a href="#set-view" id="catablog-view-set-template" class="catablog-load-code button add-new-h2">Load Template</a>
+					<a href="<?php echo $this->urls['views'] ?>" id="catablog-view-set-template" class="catablog-load-code button add-new-h2">Load Template</a>
 				<?php else: ?>
 					<p class="error">Could not locate the views directory. Please reinstall CataBlog.</p>
 				<?php endif ?>
@@ -238,13 +238,17 @@
 			<hr />
 			
 			<p>
-				<?php $views = array('- templates', 'paypal') ?>
-				<select id="catablog-template-store-menu" name="view">
-					<?php foreach($views as $key => $view): ?>
-						<?php echo "<option value='$view'>$view</option>" ?>
-					<?php endforeach ?>
-				</select>
-				<a href="#set-view" id="catablog-view-set-buynow" class="catablog-load-code button add-new-h2">Load Template</a>
+				<?php $views = new CataBlogDirectory($this->directories['buttons']) ?>
+				<?php if ($views->isDirectory()): ?>
+					<select id="catablog-template-store-menu">
+						<?php foreach($views->getFileArray() as $key => $view): ?>
+							<?php echo "<option value='$view'>$view</option>" ?>
+						<?php endforeach ?>
+					</select>
+					<a href="<?php echo $this->urls['buttons'] ?>" id="catablog-view-set-buynow" class="catablog-load-code button add-new-h2">Load Template</a>
+				<?php else: ?>
+					<p class="error">Could not locate the views directory. Please reinstall CataBlog.</p>
+				<?php endif ?>
 			</p>
 			<p>
 				<textarea name="view-code-buynow" id="catablog-view-set-buynow-code" class="catablog-code" rows="10" cols="30"><?php echo $this->options['view-buynow'] ?></textarea>
@@ -579,16 +583,12 @@
 		$('.catablog-load-code').bind('click', function(event) {
 			var id       = this.id;
 			var selected = $(this).siblings('select').val();
-			if (selected == '- templates') {
-				alert('please select a template from the drop down menu');
-			}
-			else {
-				var url = "<?php echo $this->urls['plugin'] ?>/templates/views/" + selected;
-				$.get(url, function(data) {
-					$('#' + id + '-code').val(data);
-				});				
-			}
-
+			var url = this.href + "/" + selected;
+			alert(url);
+			$.get(url, function(data) {
+				$('#' + id + '-code').val(data);
+			});				
+			
 			return false;
 		});
 				
