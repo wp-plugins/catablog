@@ -140,6 +140,26 @@ function renderCataBlogItem(image, type, a, nonce, total_count, callback) {
 
 
 
+		
+		
+function calculate_lazy_loads() {
+	var scroll_top = jQuery(window).scrollTop();
+	var scroll_bottom = scroll_top + jQuery(window).height() - 20;
+
+	jQuery('#catablog_items a.lazyload').each(function() {
+		var top_offset = jQuery(this).offset().top;
+	
+		if (scroll_bottom > top_offset) {
+			jQuery(this).removeClass('lazyload');
+			jQuery(this).append('<img class="cb_item_icon" />');
+			jQuery(this).children('img').hide().attr('src', jQuery(this).attr('rel')).fadeIn(300);
+		}
+	});
+}
+
+
+
+
 
 
 

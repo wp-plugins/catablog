@@ -6,6 +6,11 @@
 	<item>
 		<order><?php echo $result->getOrder() ?></order>
 		<image><![CDATA[<?php echo $result->getImage() ?>]]></image>
+		<subimages>
+<?php foreach ($result->getSubImages() as $image): ?>
+			<image><![CDATA[<?php echo $image ?>]]></image>
+<?php endforeach ?>
+		</subimages>
 		<title><![CDATA[<?php echo $result->getTitle() ?>]]></title>
 		<link><![CDATA[<?php echo $result->getLink() ?>]]></link>
 		<description><![CDATA[<?php echo $result->getDescription() ?>]]></description>

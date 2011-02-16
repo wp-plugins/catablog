@@ -88,6 +88,8 @@
 			<fieldset>
 				<h3>
 					<?php if (!$new_item): ?>
+						<?php $next_item = CataBlogItem::getItemByOrder($result->getOrder() + 1) ?>
+						<?php $prev_item = CataBlogItem::getItemByOrder($result->getOrder() - 1) ?>
 						<span class="catablog-edit-navigation" style="float:right">
 							<?php if ($prev_item != false): ?>
 								<a href="admin.php?page=catablog-edit&id=<?php echo $prev_item->getId() ?>">&larr; <?php echo $prev_item->getTitle() ?></a>
@@ -128,8 +130,14 @@
 								
 								<hr />
 								
-								<a href="#replace-main-image" id="show-image-window"><small style="font-size:10px;">Replace Main Image</small></a>
-								<a href="#add-subimage" id="show-subimage-window"><small style="font-size:10px;">[+] Add Sub Image</small></a>
+								<span class="hide-if-no-js">
+									<a href="#replace-main-image" id="show-image-window"><small style="font-size:10px;">Replace Main Image</small></a>
+									<a href="#add-subimage" id="show-subimage-window"><small style="font-size:10px;">[+] Add Sub Image</small></a>	
+								</span>
+								
+								<noscript><div class="error" style="border-width:1px;">
+									<strong><small>JavaScript is required to add images.</small></strong>
+								</div></noscript>
 								
 								<hr />
 								
@@ -213,6 +221,8 @@
 			<strong>Upload A New Sub Image</strong>
 		</h3>
 		<div>
+			<p><strong>Save Other Changes Before Uploading A New Image.</strong></p>
+			
 			<input type="file" id="new_sub_image" name="new_sub_image"  />
 			<span class="nonessential"> | </span>
 			<input type="hidden" name="id" value="<?php echo $result->getId() ?>" >
@@ -235,6 +245,7 @@
 			<strong>Replace The Main Image</strong>
 		</h3>
 		<div>
+			<p><strong>Save Other Changes Before Uploading A New Image.</strong></p>
 			<input type="file" id="new_image" name="new_image"  />
 			<span class="nonessential"> | </span>
 			<input type="hidden" name="id" value="<?php echo $result->getId() ?>" >

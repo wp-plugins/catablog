@@ -26,7 +26,7 @@ body {
 	display: none !important;
 }
 #catablog_items.sort_enabled tr th.check-column {
-	background: transparent url('./../images/sortable_handle.png') no-repeat scroll center center;
+	background: transparent url('./../images/drag-handle.png') no-repeat scroll center center;
 }
 
 
@@ -69,8 +69,9 @@ body {
 	width: 6em;
 }
 
-
-
+.catablog-list-description {
+	overflow: hidden;
+}
 
 
 

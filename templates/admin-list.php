@@ -57,7 +57,7 @@
 					
 					<?php $descriptions = explode("\n", $result->getDescription())?>
 					
-					<td><?php echo ($this->options['nl2br-description'])? nl2br($result->getDescription()) : $result->getDescription() ?>&nbsp;</td>
+					<td><div class="catablog-list-description"><?php echo ($this->options['nl2br-description'])? nl2br($result->getDescription()) : $result->getDescription() ?></div></td>
 					<td><?php echo htmlspecialchars(implode(', ', $result->getCategories()), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
 					<?php $currency = "" ?>
 					<td><?php echo (((float) $result->getPrice()) > 0)? $currency. number_format($result->getPrice(), 2) : "" ?>&nbsp;</td>

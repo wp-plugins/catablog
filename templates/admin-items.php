@@ -93,29 +93,7 @@
 	// }
 	
 	jQuery(document).ready(function($) {
-			
-		calculate_lazy_loads();
-		$(window).bind('scroll resize', function(event) {
-			calculate_lazy_loads();
-		});
-		
-		
-		function calculate_lazy_loads() {
-			var scroll_top = $(window).scrollTop();
-			var scroll_bottom = scroll_top + $(window).height() - 20;
-			
-			$('#catablog_items a.lazyload').each(function() {
-				var top_offset = $(this).offset().top;
 				
-				if (scroll_bottom > top_offset) {
-					$(this).removeClass('lazyload');
-					$(this).append('<img class="cb_item_icon" />');
-					$(this).children('img').hide().attr('src', $(this).attr('rel')).fadeIn(300);
-				}
-			});
-		}
-		
-		
 		// disable item links when drag n drop is enabled
 		$('#catablog_items a').bind('click', function(e) {
 			if ($(this).hasClass('cb_disabled_link')) {
@@ -131,6 +109,16 @@
 				return true;
 			}			
 			return false;
+		});
+		
+		// hide exceptionaly long descriptions
+		// LIST VIEW ONLY!
+		$('#catablog_items div.catablog-list-description').each(function() {
+			var height = $(this).height();
+			if (height > 90) {
+				$(this).height(72);
+				$(this).after("<em>more...</em>");
+			}
 		});
 		
 		
@@ -160,6 +148,12 @@
 		$('#catablog-submit-filter').hide();
 		$('#cat.postform').bind('change', function(event) {
 			$(this).closest('form').submit();
+		});
+		
+		// lazy load the images
+		calculate_lazy_loads();
+		$(window).bind('scroll resize', function(event) {
+			calculate_lazy_loads();
 		});
 		
 		

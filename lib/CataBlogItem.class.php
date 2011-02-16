@@ -180,16 +180,44 @@ class CataBlogItem {
 	*****************************************************/
 	public function validate() {
 		
-		$originals_directory = $this->_wp_upload_dir . "/catablog/originals";
-		
 		// catablog item must have an image associated with it
 		if (mb_strlen($this->image) < 1) {
 			return 'An item must have an image associated with it.';
 		}
 		
 		// check that the originals directory exists and is writable
+		$originals_directory = $this->_wp_upload_dir . "/catablog/originals";
 		if (!is_writable($originals_directory)) {
 			return 'Can\'t write uploaded image to server, please make sure CataBlog is properly installed.';
+		}
+		
+		// check that the title is at least one character long
+		if (mb_strlen($this->title) < 1) {
+			return 'An item must have a title of at least one alphanumeric character.';
+		}
+		
+		// check that the title is less then 200 characters long
+		if (mb_strlen($this->title) > 200) {
+			return 'An item\'s title can not be more then 200 characters long.';
+		}
+		
+		// check that the price is a positive integer
+		if (mb_strlen($this->price) > 0) {
+			if (is_numeric($this->price) == false || $this->price < 0) {
+				return 'An item\'s price must be a positive integer.';
+			}
+		}
+		
+		return true;
+	}
+	
+	public function validateImage($image) {
+		list($width, $height, $format) = getimagesize($image);
+		switch($format) {
+			case IMAGETYPE_GIF: break;
+			case IMAGETYPE_JPEG: break;
+			case IMAGETYPE_PNG:	break;
+			default: return "The image could not be used because it is an unsupported format. JPEG, GIF and PNG formats only, please.";
 		}
 		
 		// check if catablog is going over the storage space limit on multisite blogs
@@ -207,23 +235,6 @@ class CataBlogItem {
 					$error .= 'You have '.$space_available.'MB of available space on your server and your image is '.$image_size.'MB.';
 					return $error;
 				}				
-			}
-		}
-		
-		// check that the title is at least one character long
-		if (mb_strlen($this->title) < 1) {
-			return 'An item must have a title of at least one alphanumeric character.';
-		}
-		
-		// check that the title is less then 200 characters long
-		if (mb_strlen($this->title) > 200) {
-			return 'An item\'s title can not be more then 200 characters long.';
-		}
-		
-		// check that the price is a positive integer
-		if (mb_strlen($this->price) > 0) {
-			if (is_numeric($this->price) == false || $this->price < 0) {
-				return 'An item\'s price must be a positive integer.';
 			}
 		}
 		
@@ -340,6 +351,16 @@ class CataBlogItem {
 			$error .= 'Please delete some media files to free up space and try again.<br />';
 			$error .= 'You have '.$space_available.'MB of available space on your server and your image is '.$image_size.'MB.';
 			return $error;
+		}
+		
+		// check if any image is of a bad format
+		list($width, $height, $format) = getimagesize($tmp_path);
+		echo $format;
+		switch($format) {
+			case IMAGETYPE_GIF: break;
+			case IMAGETYPE_JPEG: break;
+			case IMAGETYPE_PNG:	break;
+			default: return "The image could not be used because it is an unsupported format. JPEG, GIF and PNG formats only, please.";
 		}
 		
 		$sanatized_title = $this->getSanitizedTitle();
@@ -619,13 +640,14 @@ class CataBlogItem {
 	public function getValuesArray() {
 		$order        = $this->getOrder();
 		$image        = $this->getImage();
+		$subimages    = implode('|', $this->getSubImages());
 		$title        = $this->getTitle();
 		$link         = $this->getLink();
 		$description  = $this->getDescription();
 		$categories   = implode('|', $this->getCategories());
 		$price        = $this->getPrice();
 		$product_code = $this->getProductCode();
-		return array($order, $image, $title, $link, $description, $categories, $price, $product_code);
+		return array($order, $image, $subimages, $title, $link, $description, $categories, $price, $product_code);
 	}
 	
 	

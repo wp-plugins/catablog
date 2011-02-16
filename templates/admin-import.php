@@ -19,6 +19,7 @@
 
 	<ul id="catablog-import-messages">
 		<?php if ($error === false): ?>
+			<?php if ($database_cleared): ?><li class="updated">Success: <em>DataBase Cleared Successfully</em></li><?php endif ?>
 			<?php $this->load_array_to_database($data) ?>
 		<?php endif ?>
 	</ul>	

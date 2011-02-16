@@ -334,7 +334,8 @@
 			<p><input type="file" name="catablog_data" id="catablog_data" /></p><br />
 			
 			<p style="margin-bottom:5px;">&nbsp;
-				<input type="checkbox" name="catablog_clear_db" id="catablog_clear_db" value="true" />
+				<input type="checkbox" id="catablog_clear_db" value="true" checked="checked" disabled="disabled" />
+				<input type="hidden" name="catablog_clear_db" value="true" />
 				<label for="catablog_clear_db">Replace All Data:</label>
 			</p>
 			
@@ -584,7 +585,7 @@
 			var id       = this.id;
 			var selected = $(this).siblings('select').val();
 			var url = this.href + "/" + selected;
-			alert(url);
+			
 			$.get(url, function(data) {
 				$('#' + id + '-code').val(data);
 			});				
