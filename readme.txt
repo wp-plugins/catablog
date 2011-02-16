@@ -12,7 +12,7 @@ CataBlog is a comprehensive and effortless tool that allows you to create catalo
 
 == Description ==
 
-- NEW BETA AVAILABLE, CHECK OTHER VERSIONS FOR CATABLOG 1.1.5
+- ANOTHER BETA AVAILABLE, CHECK OTHER VERSIONS FOR CATABLOG 1.1.6
 
 CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use categories to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too with the LightBox effect, perfect for simple galleries. Easy, intuitive and smart design makes it trivial to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
@@ -65,6 +65,7 @@ The CataBlog Admin section is made and tested to work best with these browsers:
 1. FireFox 3
 1. Safari 5
 1. Chrome 8
+1. JavaScript Should Be Enabled
 
 = I installed CataBlog, now where is it? =
 
@@ -96,11 +97,24 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Changelog ==
 
+= 1.1.6 =
+* Fix: Better multiple image per catalog item support.
+* Fix: catablog-image CSS class reverted to stop upgrade bugs.
+* Fix: Default template reverted to stop upgrade bugs and new subimages template added.
+* Fix: Optimized next and previous item links in edit panel.
+* Fix: Long item descriptions are truncated in the admin list view.
+* Fix: Successful form submissions now forwards you to the appropriate url.
+* Fix: Lazy loaded thumbnail images in admin list view refined.
+* Fix: Better file upload validation and error messages.
+* New: List view now renders the description in html
+* New: Template drop down menus now lists all files in the directory.
+
 = 1.1.5 =
 * New: Added multiple image per catalog item support.
 * New: Thumbnail images in the admin list view are now lazy loaded.
 * New: Navigation controls in the admin edit panel.
 * Fix: Rendering thumbnail and fullsize images are now separate threads.
+
 = 1.1 =
 * New: Added CSV (comma separated values) support for importing and exporting catalog data.
 
@@ -174,62 +188,13 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * New: Edit item form has been redesigned into a friendlier form.
 * Fix: Various tweaks and updates to the admin panel interfaces.
 
-= 0.8.9 =
-* Fix: Lightbox is now much prettier and has keyboard left and right arrow support.
-* Fix: Base CataBlog CSS classes have more specific display and position properties.
-
-= 0.8.8 =
-* New: Set the target attribute for CataBlog generated links.
-
-= 0.8.7 =
-* New: Import feature for loading previously saved CataBlog backups.
-* Fix: Lightbox next and previous link bugs.
-
-= 0.8.6 =
-* New: The title, description and next/previous buttons where added to the Lightbox popup.
-* New: Export feature for saving the CataBlog database into a local XML file.
-* New: Support for a stylesheet override file, simply add catablog.css in your theme directory.
-* Fix: bugs and poor error messages, including a new check that the server is running PHP5.
-
-= 0.8.5 =
-* New: JavaScript Lightbox type effect can now be enabled for larger previews of your catalog item's thumbnails.
-* Fix: Catalog items are not sortable in the list view until you enter sort mode, helping stop accidental modifications.
-
-= 0.8.1 =
-* Fix: Memory leak fix, the plugin is more efficient with system resources and memory.
-* Fix: Now the plugin automatically creates the wp-content/uploads directory on installation if it doesn't already exist.
-
-= 0.8 =
-* Stable release candidate
-* PayPal support, give CataBlog items a price and product code to easily setup a store.
-* Allow users to decide if they want the thumbnails to be a cropped version of the original.
-* Supports JPEG, GIF and PNG graphic formats including alpha transparency.
-
-= 0.7.6 =
-* Fixed readme.txt file so users will be warned of potential data loss when upgrading.
-
-= 0.7.5 =
-* Images now maintain their aspect ratio and are no longer distorted when being resized.
-* Background color for resized images can be set in the options page.
-* Catalog items can be reordered with a simple drag and drop interface.
-* Simplified the installation code to make future upgrades smoother.
-* More small tweaks, enhancements and bug fixes.
-
-= 0.7.1 =
-* Fixed upgrade bug and numerous other small bugs.
-
-= 0.7.0 =
-* You can now tag a catalog item with multiple one word tags.
-* The shortcode now supports a tag attribute to filter the displayed items.
-* Better form handling and error messages for admin panels.
-* Complete code re-factor, plugin is now encapsulated in its own class.
-
-= 0.6.5 =
-* This version was the initial release.
-
 
 
 == Upgrade Notice ==
+
+= 1.1.6 =
+
+Beware: this version is not ready for prime time and contains some experimental features and code.
 
 = 1.1.5 = 
 
