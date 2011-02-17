@@ -1684,7 +1684,7 @@ class CataBlog {
 	}
 	
 	private function load_array_to_database($data) {
-		// echo "<pre>";
+		
 		foreach ($data as $row) {
 			$success_message = '<li class="updated">Success: <em>' . $row['title'] . '</em> inserted into the database.</li>';
 			$error_message   = '<li class="error"><strong>Error:</strong> <em>' . $row['title'] . '</em> was not inserted into the database.</li>';

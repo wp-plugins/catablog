@@ -56,7 +56,7 @@ class CataBlogItem {
 	*****************************************************/
 	public static function getItem($id) {
 		$post = get_post($id);
-		// print_r($post);
+		
 		if ($post == false) {
 			return null;
 		}
@@ -374,7 +374,6 @@ class CataBlogItem {
 		
 		// check if any image is of a bad format
 		list($width, $height, $format) = getimagesize($tmp_path);
-		echo $format;
 		switch($format) {
 			case IMAGETYPE_GIF: break;
 			case IMAGETYPE_JPEG: break;
