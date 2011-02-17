@@ -1,7 +1,7 @@
 === CataBlog ===
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
-Tags: admin, image, images, posts, Post, links, catalog, gallery, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list
+Tags: admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, thumbnail, product, listing, list
 Requires at least: 3.0
 Tested up to: 3.1
 Stable tag: 1.1
