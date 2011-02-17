@@ -97,6 +97,10 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Changelog ==
 
+= 1.1.7 =
+* Fix: Single site versions of WordPress may now upload sub images.
+* Fix: Reduced database load on frontend rendering.
+
 = 1.1.6 =
 * Fix: Better multiple image per catalog item support.
 * Fix: catablog-image CSS class reverted to stop upgrade bugs.

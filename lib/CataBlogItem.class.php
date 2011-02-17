@@ -56,6 +56,7 @@ class CataBlogItem {
 	*****************************************************/
 	public static function getItem($id) {
 		$post = get_post($id);
+		// print_r($post);
 		if ($post == false) {
 			return null;
 		}
@@ -85,7 +86,7 @@ class CataBlogItem {
 		return $item;
 	}
 	
-	public static function getItems($category=false) {
+	public static function getItems($category=false, $quick=false, $ids_only=false) {
 		$items = array();
 		$cata  = new CataBlogItem();
 		
@@ -101,14 +102,29 @@ class CataBlogItem {
 		}
 		
 		$posts = get_posts($params);
+		
+		// only return an ordered array of ids
+		if ($ids_only) {
+			$ids = array();
+			foreach ($posts as $post) {
+				$ids[] = $post->ID;
+			}
+			return $ids;
+		}
+		
+		// return an array of CataBlogItems
 		foreach ($posts as $post) {
+			
 			$item = new CataBlogItem();
 			
+			// if quick is set don't bother loading taxonomy
 			$category_ids = array();
-			$terms = wp_get_object_terms($post->ID, array($item->getCustomTaxName()), array());
-			foreach ($terms as $term) {
-				$category_ids[$term->term_id] = $term->name;
-			}
+			// if (!$quick) {
+			// 	$terms = wp_get_object_terms($post->ID, array($item->getCustomTaxName()), array());
+			// 	foreach ($terms as $term) {
+			// 		$category_ids[$term->term_id] = $term->name;
+			// 	}				
+			// }
 			
 			$item->id           = $post->ID;
 			$item->title        = $post->post_title;
@@ -126,7 +142,7 @@ class CataBlogItem {
 		return $items;
 	}
 	
-	public static function getItemByOrder($order_number) {
+	public static function getItemByOrder($order_number, $quick=true) {
 		if ($order_number < 0) {
 			return false;
 		}
@@ -152,17 +168,18 @@ class CataBlogItem {
 
 			$item->order        = $post->menu_order;
 			$item->setPermalink($post->post_name);
-
-			// NO NEED TO LOAD THIS
-			// $category_ids = array();
-			// $terms = wp_get_object_terms($post->ID, array($item->getCustomTaxName()), array());
-			// foreach ($terms as $term) {
-			//		$category_ids[$term->term_id] = $term->name;
-			// }
-			// $item->categories   = $category_ids;
 			
-			// $meta = get_post_meta($post->ID, $item->_post_meta_name, true);
-			// $item->processPostMeta($meta);
+			if (!$quick) {
+				$category_ids = array();
+				// $terms = wp_get_object_terms($post->ID, array($item->getCustomTaxName()), array());
+				// foreach ($terms as $term) {
+				// 		$category_ids[$term->term_id] = $term->name;
+				// }
+				$item->categories   = $category_ids;
+
+				$meta = get_post_meta($post->ID, $item->_post_meta_name, true);
+				$item->processPostMeta($meta);				
+			}
 		}
 		
 		return $item;
@@ -340,17 +357,19 @@ class CataBlogItem {
 	
 	
 	public function addSubImage($tmp_path) {
-		$space_available = get_upload_space_available();
-		$image_size = filesize($tmp_path);
+		if (function_exists('get_upload_space_available')) {
+			$space_available = get_upload_space_available();
+			$image_size = filesize($tmp_path);
 		
-		if ($image_size > $space_available) {
-			$space_available = round(($space_available / 1024 / 1024), 2);
-			$image_size      = round(($image_size / 1024 / 1024), 2);
+			if ($image_size > $space_available) {
+				$space_available = round(($space_available / 1024 / 1024), 2);
+				$image_size      = round(($image_size / 1024 / 1024), 2);
 
-			$error  = 'Can\'t write uploaded image to server, your storage space is exhausted.<br />';
-			$error .= 'Please delete some media files to free up space and try again.<br />';
-			$error .= 'You have '.$space_available.'MB of available space on your server and your image is '.$image_size.'MB.';
-			return $error;
+				$error  = 'Can\'t write uploaded image to server, your storage space is exhausted.<br />';
+				$error .= 'Please delete some media files to free up space and try again.<br />';
+				$error .= 'You have '.$space_available.'MB of available space on your server and your image is '.$image_size.'MB.';
+				return $error;
+			}
 		}
 		
 		// check if any image is of a bad format

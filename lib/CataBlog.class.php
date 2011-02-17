@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "1.1.6";
+	private $version     = "1.1.7";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -719,7 +719,7 @@ class CataBlog {
 					unlink($file);
 				}
 			}
-			// echo "<pre>"; print_r($to_delete); echo "</pre>";
+			
 			$result->setSubImages(array());
 			$result->save();
 			
@@ -824,9 +824,9 @@ class CataBlog {
 		// remove all data from database if clear box is checked
 		$database_cleared = false;
 		if (isset($_REQUEST['catablog_clear_db'])) {
-			$items = CataBlogItem::getItems();
+			$items = CataBlogItem::getItems(false, true, true);
 			foreach ($items as $item) {
-				$item->delete(false);
+				wp_delete_post($item, true);
 			}
 			
 			$terms = get_terms($this->custom_tax_name, 'hide_empty=0');
@@ -1001,7 +1001,7 @@ class CataBlog {
 	
 	public function admin_reset_all() {
 		// remove all catablog posts
-		$items = CataBlogItem::getItems();
+		$items = CataBlogItem::getItems(false, true);
 		foreach ($items as $item) {
 			$item->delete();
 		}
@@ -1288,7 +1288,7 @@ class CataBlog {
 		}
 		
 		// get items and start the output buffer
-		$results = CataBlogItem::getItems($category);
+		$results = CataBlogItem::getItems($category, true);
 		ob_start();
 		
 		foreach ($results as $result) {
@@ -1667,7 +1667,6 @@ class CataBlog {
 		$data = array();
 		if (($handle = fopen($filename, 'r')) !== FALSE) {
 			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
-				print_r($row);
 				if(!$header) {
 					$header = $row;
 					if (count($header) != 9) {
@@ -1729,8 +1728,11 @@ class CataBlog {
 				
 				$item = new CataBlogItem($row);
 				
-				$subimages = (mb_strlen($row['subimages']))? explode('|', $row['subimages']) : array();
-				$row['subimages'] = $subimages;
+				$subimages = $row['subimages'];
+				if (is_array($subimages) === false) {
+					$row['subimages'] = explode('|', $subimages);
+				}
+				
 				foreach ($row['subimages'] as $subimage) {
 					$item->setSubImage($subimage);
 				}
