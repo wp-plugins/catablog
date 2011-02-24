@@ -2,12 +2,12 @@
 /*
 Plugin Name: CataBlog
 Plugin URI: http://catablog.illproductions.com
-Description: CataBlog is a comprehensive and effortless tool that allows you to create catalogs and galleries for your blog.
+Description: CataBlog is a comprehensive and effortless tool that helps you create, organize and share catalogs, stores, galleries and portfolios on your blog.
 Version: 1.1.8
 Author: Zachary Segal
 Author URI: http://catablog.illproductions.com/about/
 
-Copyright 2009  Zachary Segal  (email : zac@illproductions.net)
+Copyright 2011  Zachary Segal  (email : zac@illproductions.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -68,20 +68,11 @@ require('lib/CataBlogDirectory.class.php');
 $wp_plugin_catablog_class = new CataBlog();
 $wp_plugin_catablog_class->registerWordPressHooks();
 
+
 // Declare a function for use in custom wordpress templates
 function catablog_show_items($category=null) {
 	global $wp_plugin_catablog_class;
 	$wp_plugin_catablog_class->frontend_init(true);
 	echo $wp_plugin_catablog_class->frontend_content(array('category'=>$category));
 }
-
-
-
-
-
-
-
-
-
-
 

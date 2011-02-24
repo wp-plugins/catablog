@@ -23,7 +23,7 @@
 										
 					<ul id="catablog-category-checklist" class="list:category categorychecklist form-no-clear">
 						
-						<?php $categories = get_terms($this->custom_tax_name, 'hide_empty=0') ?>						
+						<?php $categories = $this->terms ?>
 						
 						<?php if (count($categories) < 1): ?>
 							<li><span>You currently have no categories.</span></li>

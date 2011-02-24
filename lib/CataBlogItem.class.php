@@ -84,7 +84,7 @@ class CataBlogItem {
 		
 		$meta = get_post_meta($post->ID, $item->_post_meta_name, true);
 		$item->processPostMeta($meta);
-		// print_r($item);
+		
 		return $item;
 	}
 	
@@ -109,7 +109,7 @@ class CataBlogItem {
 		return $ids;
 	}
 	
-	public static function getItems($category=false, $offset=1, $limit=50, $load_categories=true) {
+	public static function getItems($category=false, $offset=1, $limit=200, $load_categories=true) {
 		$items = array();
 		
 		$cata  = new CataBlogItem();
@@ -157,7 +157,7 @@ class CataBlogItem {
 			
 			$items[] = $item;
 		}
-		// print_r($items);
+		
 		return $items;
 	}
 	
