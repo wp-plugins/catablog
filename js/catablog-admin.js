@@ -116,8 +116,6 @@ function renderCataBlogItem(image, type, a, nonce, total_count, callback) {
 			jQuery('#catablog-console').append('<li class="error">' + e + '</li>')
 		}
 		
-		// console.log('ajax complete');
-		
 		if (a.length > 0) {
 			progress_bar.css('width', percent_complete + '%');
 			renderCataBlogItem(a.shift(), type, a, nonce, total_count, callback);
@@ -140,19 +138,26 @@ function renderCataBlogItem(image, type, a, nonce, total_count, callback) {
 
 
 
-		
-		
+catablog_global_lazyload_elements = null;
+	
 function calculate_lazy_loads() {
 	var scroll_top = jQuery(window).scrollTop();
 	var scroll_bottom = scroll_top + jQuery(window).height() - 20;
+	
+	if (catablog_global_lazyload_elements == null) {
+		catablog_global_lazyload_elements = jQuery('#catablog_items a.lazyload');
+	}
+	
 
-	jQuery('#catablog_items a.lazyload').each(function() {
+	catablog_global_lazyload_elements.each(function(i) {
 		var top_offset = jQuery(this).offset().top;
 	
 		if (scroll_bottom > top_offset) {
 			jQuery(this).removeClass('lazyload');
 			jQuery(this).append('<img class="cb_item_icon" />');
 			jQuery(this).children('img').hide().attr('src', jQuery(this).attr('rel')).fadeIn(300);
+			
+			catablog_global_lazyload_elements = catablog_global_lazyload_elements.not(this);
 		}
 	});
 }

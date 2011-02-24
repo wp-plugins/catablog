@@ -33,10 +33,15 @@ body {
 #catablog-view-switch  #view-switch-list {
 	background-image: url('./../images/catablog-switch-view.png') !important;
 }
+#catablog-view-switch  #view-switch-list.current {
+	background-position: -40px;
+}
 #catablog-view-switch  #view-switch-excerpt {
 	background-image: url('./../images/catablog-switch-view.png') !important;
 }
-
+#catablog-view-switch  #view-switch-excerpt.current {
+	background-position: -60px;
+}
 
 
 #icon-catablog {
@@ -224,7 +229,7 @@ body {
 	margin: 0 auto;
 }
 .catablog-modal form h3 {
-	background-image: url(http://workbench.local/wp-admin/images/gray-grad.png);
+	background-image: url('./../images/gray-grad.png');
 	border: 1px solid #DDD;
 	color: #464646;
 	font-size: 12px;
@@ -294,7 +299,7 @@ body {
 	padding: 30px 0;
 	border: 1px #ddd solid;
 	background-color: #ededed;
-	background-image: url('/wp-admin/images/gray-grad.png');
+	background-image: url('./../images/gray-grad.png');
 	background-position: left bottom;
 	background-repeat: repeat-x;
 	font-weight: bold;
@@ -389,8 +394,9 @@ form#catablog-edit fieldset h3 {
 	font-size: 12px;
 	font-weight: bold;
 	padding: 6px;
-	background-image: url('/wp-admin/images/gray-grad.png');
+	background-image: url('./../images/gray-grad.png');
 	margin: 0;
+	-moz-border-radius: 6px 6px 0 0;
 	border-radius: 6px 6px 0 0;
 	color: #464646;
 	border: 1px #ddd solid;

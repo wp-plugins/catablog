@@ -20,14 +20,21 @@
 			</div>
 		</noscript>
 		
-		<div id="catablog-progress">
-			<div id="catablog-progress-bar"></div>
-			<h3 id="catablog-progress-text">Processing...</h5>
+		<div id="catablog-progress-thumbnail" class="catablog-progress">
+			<div class="catablog-progress-bar"></div>
+			<h3 class="catablog-progress-text">Processing Thumbnail Images...</h3>
 		</div>
+
+		<?php if ($this->options['lightbox-enabled']): ?>
+			<div id="catablog-progress-fullsize" class="catablog-progress">
+				<div class="catablog-progress-bar"></div>
+				<h3 class="catablog-progress-text">Waiting For Thumbnail Rendering To Finish...</h3>
+			</div>
+		<?php endif ?>
 		
 		<ul id="catablog-console">
 			<?php foreach ($new_rows['titles'] as $title): ?>
-				<li class="message">New Image Found, rendering images <strong><?php echo $title ?></strong></li>
+				<li class="message">New Image Found, creating catalog item <strong><?php echo $title ?></strong></li>
 			<?php endforeach ?>
 		</ul>
 	<?php endif ?>
@@ -36,10 +43,47 @@
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
 		
+		discourage_leaving_page();
+		
+		/****************************************
+		** CALCULATE NEW IMAGES
+		****************************************/
+
+		var nonce   = '<?php echo wp_create_nonce("catablog-render-images") ?>';		
+		var images  = ["<?php echo implode('", "', $new_rows['image']) ?>"];
+		var message = "Image rendering is now complete";
+
+		var thumbs = images.slice(0);
+		renderCataBlogItems(thumbs, 'thumbnail', nonce, function() {
+			jQuery('#catablog-progress-thumbnail .catablog-progress-text').html(message);
+			
+			<?php if ($this->options['lightbox-enabled']): ?>
+				var fullsize = images.slice(0);
+				renderCataBlogItems(fullsize, 'fullsize', nonce, function() {
+					jQuery('#catablog-progress-fullsize .catablog-progress-text').html(message);
+					var t = setTimeout(function() {
+						jQuery('#catablog-progress-thumbnail').hide('medium');
+						jQuery('#catablog-progress-fullsize').hide('medium');
+						jQuery('#message').hide('medium');
+					}, 2000);
+					$('#save_changes').attr('disabled', false);
+				});
+			<?php else: ?>
+				var t = setTimeout(function() {
+					jQuery('#catablog-progress-thumbnail').hide('medium');
+					jQuery('#message').hide('medium');
+				}, 2000);
+				$('#save_changes').attr('disabled', false);				
+			<?php endif ?>
+		});
+
+		
+		
+		<?php /*
 		var catablog_items = [<?php echo implode(', ', $new_rows['ids']) ?>];
 		var total_count    = catablog_items.length;
 		
-		discourage_leaving_page();
+		
 		
 		function renderCataBlogItem(id) {
 			$('#catablog-progress-text').text('Processing ' + (total_count - catablog_items.length) + ' of ' + total_count + ' Items');
@@ -76,6 +120,6 @@
 		}
 		
 		renderCataBlogItem(catablog_items.shift());
-		
+		*/ ?>
 	});
 </script>

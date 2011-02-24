@@ -13,13 +13,13 @@
 			You may also read more about 
 			<a href="http://catablog.illproductions.com/documentation/importing-and-exporting-catalogs/" target="_blank">importing and exporting data from CataBlog</a>.
 			<br />
-			Once you have fixed your file and its format <a href="/wp-admin/admin.php?page=catablog-options#import">please try again</a>.
+			Once you have fixed your file and its format <a href="admin.php?page=catablog-options#import">please try again</a>.
 		</p>
 	<?php endif ?>
 
 	<ul id="catablog-import-messages">
 		<?php if ($error === false): ?>
-			<?php if ($database_cleared): ?><li class="updated">Success: <em>DataBase Cleared Successfully</em></li><?php endif ?>
+			<?php if ($database_cleared): ?><li class="updated"><strong>DataBase Cleared Successfully</strong></li><?php endif ?>
 			<?php $this->load_array_to_database($data) ?>
 		<?php endif ?>
 	</ul>	

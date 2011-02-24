@@ -1,4 +1,3 @@
-
 	<table class="widefat post" cellspacing="0">
 		<thead>
 			<tr>
@@ -28,12 +27,15 @@
 		<tbody id="catablog_items">
 			<?php if (count($results) < 1): ?>
 				<tr>
-					<td colspan='5'>No CataBlog Items</td>
+					<td colspan='5'><p>
+						No catalog items found in <em><?php echo $selected_term_name ?></em>.<br />
+						Use the category drop down above to switch category views.
+					</p></td>
 				</tr>
 			<?php endif ?>
 			<?php foreach ($results as $result): ?>
-				<?php $edit   = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-edit&amp;id='.$result->getId() ?>
-				<?php $remove = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-delete&amp;id='.$result->getId() ?>
+				<?php $edit   = 'admin.php?page=catablog&amp;id='.$result->getId() ?>
+				<?php $remove = 'admin.php?page=catablog-delete&amp;id='.$result->getId() ?>
 				
 				<tr>
 					<th class="check-column">
@@ -58,7 +60,11 @@
 					<?php $descriptions = explode("\n", $result->getDescription())?>
 					
 					<td><div class="catablog-list-description"><?php echo ($this->options['nl2br-description'])? nl2br($result->getDescription()) : $result->getDescription() ?></div></td>
-					<td><?php echo htmlspecialchars(implode(', ', $result->getCategories()), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
+					
+					
+					<td><?php echo implode(', ', $result->getCategories())?></td>
+					
+					
 					<?php $currency = "" ?>
 					<td><?php echo (((float) $result->getPrice()) > 0)? $currency. number_format($result->getPrice(), 2) : "" ?>&nbsp;</td>
 					<td><?php echo htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>

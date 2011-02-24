@@ -1,7 +1,7 @@
 <div class="wrap">
 	
 	<div id="icon-catablog" class="icon32"><br /></div>
-	<h2><?php echo ($new_item)? 'Add New CataBlog Entry' : 'Edit CataBlog Entry' ?></h2>
+	<h2>Edit CataBlog Entry</h2>
 		
 	<form id="catablog-edit" class="catablog-form clear_float" method="post" action="admin.php?page=catablog-save" enctype="multipart/form-data">
 		
@@ -35,7 +35,9 @@
 								<?php $checked = (in_array($category->term_id, array_keys($result->getCategories())))? 'checked="checked"' : '' ?>
 								<input id="in-category-<?php echo $category->term_id ?>" type="checkbox" <?php echo $checked ?> name="categories[]"  tabindex="4" value="<?php echo $category->term_id ?>" />
 								<span><?php echo $category->name ?></span>
-								<a href="#delete" class="catablog-category-delete hide"><small>[DELETE]</small></a>
+								<?php if ($category->name != $this->default_category_name): ?>
+									<a href="#delete" class="catablog-category-delete hide"><small>[DELETE]</small></a>
+								<?php endif ?>
 							</label>
 						</li>
 						<?php endforeach ?>
@@ -87,84 +89,63 @@
 		<div id="catablog-edit-main">
 			<fieldset>
 				<h3>
-					<?php if (!$new_item): ?>
-						<?php $next_item = CataBlogItem::getItemByOrder($result->getOrder() + 1) ?>
-						<?php $prev_item = CataBlogItem::getItemByOrder($result->getOrder() - 1) ?>
-						<span class="catablog-edit-navigation" style="float:right">
-							<?php if ($prev_item != false): ?>
-								<a href="admin.php?page=catablog-edit&id=<?php echo $prev_item->getId() ?>">&larr; <?php echo $prev_item->getTitle() ?></a>
-							<?php else: ?>
-								<span class="nonessential">no previous item</span>
-							<?php endif ?>
-							<span> | </span>
-							<?php if ($next_item != false): ?>
-								<a href="admin.php?page=catablog-edit&id=<?php echo $next_item->getId() ?>"><?php echo $next_item->getTitle() ?> &rarr;</a>
-							<?php else: ?>
-								<span class="nonessential">no next item</span>
-							<?php endif?>
-						</span>
-					<?php endif ?>
+					<?php $next_item = CataBlogItem::getAdjacentItem($result->getOrder() + 1) ?>
+					<?php $prev_item = CataBlogItem::getAdjacentItem($result->getOrder() - 1) ?>
+					<span class="catablog-edit-navigation" style="float:right">
+						<?php if ($prev_item != false): ?>
+							<a href="admin.php?page=catablog&amp;id=<?php echo $prev_item->getId() ?>">&larr; <?php echo $prev_item->getTitle() ?></a>
+						<?php else: ?>
+							<span class="nonessential">no previous item</span>
+						<?php endif ?>
+						<span> | </span>
+						<?php if ($next_item != false): ?>
+							<a href="admin.php?page=catablog&amp;id=<?php echo $next_item->getId() ?>"><?php echo $next_item->getTitle() ?> &rarr;</a>
+						<?php else: ?>
+							<span class="nonessential">no next item</span>
+						<?php endif?>
+					</span>
 					<span>Main</span>
 				</h3>
+				
 				<div>
 					<div id="catablog-edit-main-image">
-						<?php if ($new_item): ?>
-							<p id="no-image-icon">No Image!</p>
-							<input type="hidden" name="image" id="image" value="" />
-							<label id="select-image-button">
-								<input type="file" id="new_image" name="new_image" tabindex="1" />
-							</label>
-							<p id="select-image-text"><small>
-								Double click <em>Select Image</em> above to choose the 
-								image you would like to upload as the main image for this item.
-								You	may upload JPEG, GIF and PNG graphic formats only.
-								Every CataBlog item is required to have a main image and title. 
-								
-							</small></p>
-						<?php else: ?>
-							<label>Images</label>
-							<div id="catablog-edit-images-column">
-								
-								<img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" id="catablog-image-preview" />
-								<input type="hidden" name="image" id="image" value="<?php echo $result->getImage() ?>" />
-								
-								<hr />
-								
-								<span class="hide-if-no-js">
-									<a href="#replace-main-image" id="show-image-window"><small style="font-size:10px;">Replace Main Image</small></a>
-									<a href="#add-subimage" id="show-subimage-window"><small style="font-size:10px;">[+] Add Sub Image</small></a>	
-								</span>
-								
-								<noscript><div class="error" style="border-width:1px;">
-									<strong><small>JavaScript is required to add images.</small></strong>
-								</div></noscript>
-								
-								<hr />
-								
-								<?php if (count($result->getSubImages()) > 0): ?>
-									<ul id="catablog-sub-images">
-										<?php foreach ($result->getSubImages() as $sub_image): ?>
-											<li>
-												<img src="<?php echo $this->urls['thumbnails'] . "/$sub_image" ?>" class="catablog-image-preview" />
-												<input type="hidden" name="sub_images[]" class="sub-image" value="<?php echo $sub_image ?>" />
-												<a href="#delete" class="catablog-delete-subimage" title="Delete this sub image permanently.">X</a>
-											</li>
-										<?php endforeach ?>
-										<li class="clear">&nbsp;</li>
-									</ul>
-								<?php else: ?>
-									<p><small class="nonessential">No Sub Images</small></p>
-								<?php endif ?>
-								
-								
-							</div>	
-						<?php endif ?>
-						
-						
-						
-						
-						
-					</div>
+						<label>Images</label>
+						<div id="catablog-edit-images-column">
+							
+							<img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" id="catablog-image-preview" />
+							<input type="hidden" name="image" id="image" value="<?php echo $result->getImage() ?>" />
+							
+							<hr />
+							
+							<span class="hide-if-no-js">
+								<a href="#replace-main-image" id="show-image-window"><small style="font-size:10px;">Replace Main Image</small></a>
+								<a href="#add-subimage" id="show-subimage-window"><small style="font-size:10px;">[+] Add Sub Image</small></a>	
+							</span>
+							
+							<noscript><div class="error" style="border-width:1px;">
+								<strong><small>JavaScript is required to add images.</small></strong>
+							</div></noscript>
+							
+							<hr />
+							
+							<?php if (count($result->getSubImages()) > 0): ?>
+								<ul id="catablog-sub-images">
+									<?php foreach ($result->getSubImages() as $sub_image): ?>
+										<li>
+											<img src="<?php echo $this->urls['thumbnails'] . "/$sub_image" ?>" class="catablog-image-preview" />
+											<input type="hidden" name="sub_images[]" class="sub-image" value="<?php echo $sub_image ?>" />
+											<a href="#delete" class="catablog-delete-subimage" title="Delete this sub image permanently.">X</a>
+										</li>
+									<?php endforeach ?>
+									<li class="clear">&nbsp;</li>
+								</ul>
+							<?php else: ?>
+								<p><small class="nonessential">No Sub Images</small></p>
+							<?php endif ?>
+							
+							
+						</div>
+					</div><!-- END div#catablog-edit-main-image -->
 					
 					
 					<div id="catablog-edit-main-text">
@@ -179,22 +160,18 @@
 						<input type="hidden" id="save" name="save" value="yes" />
 						<?php wp_nonce_field( 'catablog_save', '_catablog_save_nonce', false, true ) ?>
 						
-						<?php if (!$new_item): ?>
-							<input type="hidden" id="saved_image" name="saved_image" value="<?php echo $result->getImage() ?>" />
-						<?php endif ?>
-						
+						<input type="hidden" id="saved_image" name="saved_image" value="<?php echo $result->getImage() ?>" />
 						<input type="hidden" id="id" name="id" value="<?php echo $result->getId() ?>" />
-						<input type="hidden" id="order" name="order" value="<?php echo ($new_item)? wp_count_posts($this->custom_post_name)->publish : $result->getOrder() ?>" />
+						<input type="hidden" id="order" name="order" value="<?php echo $result->getOrder() ?>" />
 						
-						<?php $save_button_label = ($new_item)? 'Create CataBlog Item' : 'Save Changes' ?>
-						<input type="submit" class="button-primary" id="save_changes" tabindex="9" value="<?php echo $save_button_label ?>" />
+						<input type="submit" class="button-primary" id="save_changes" tabindex="9" value="Save Changes" />
 						
 						<?php if ($this->options['public-catalog-items']): ?>
 						<span> or </span>
 						<a href="<?php echo $result->getPermalink() ?>" target="_blank" class="button">View Catalog Item</a>
 						<?php endif ?>
 						
-						<span> or <a href="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog' ?>" tabindex="10">back to list</a></span>						
+						<span> or <a href="<?php echo 'admin.php?page=catablog' ?>" tabindex="10">back to list</a></span>						
 					</div>
 					
 				</div>
@@ -210,7 +187,6 @@
 	
 </div>
 
-<?php if (!$new_item): ?>
 
 <div id='catablog_load_curtain'>&nbsp;</div>
 
@@ -261,23 +237,7 @@
 	</form>
 </div>
 
-<?php /*
-<form id="catablog-remove-subimages" class="catablog-form" method="post" action="admin.php?page=catablog-remove-subimages">
-	<label>Remove Sub Images:</label>
-	
-	<input type="hidden" name="id" value="<?php echo $result->getId() ?>" />
-	<?php wp_nonce_field( 'catablog_remove_subimages', '_catablog_remove_subimages_nonce', false, true ) ?>
-	
-	<input type="submit" class="button" value="Remove All Sub Images Now" />
-	<p><small>
-		Click this button to remove all sub images from this catalog item.<br />
-		All thumbnail, full size and original image files will be <strong>permanently deleted</strong>.<br />
-		This will not remove or replace the main image from this catalog item.
-	</small></p>
-</form>
-*/ ?>
 
-<?php endif ?>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
 		

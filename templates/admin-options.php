@@ -72,7 +72,7 @@
 			<div>
 				<label>Thumbnail Preview</label>
 				<p id="thumbnail_preview">
-					<span id='demo_box' class='demo_box' style='width:<?php echo $thumbnail_size - 1 ?>px; height:<?php echo $thumbnail_size - 1 ?>px;'>&nbsp;</span>
+					<span id='demo_box' class='demo_box' style='width:<?php echo $thumbnail_size ?>px; height:<?php echo $thumbnail_size ?>px;'>&nbsp;</span>
 				</p>
 			</div>
 		</div>
@@ -334,8 +334,7 @@
 			<p><input type="file" name="catablog_data" id="catablog_data" /></p><br />
 			
 			<p style="margin-bottom:5px;">&nbsp;
-				<input type="checkbox" id="catablog_clear_db" value="true" checked="checked" disabled="disabled" />
-				<input type="hidden" name="catablog_clear_db" value="true" />
+				<input type="checkbox" id="catablog_clear_db" name="catablog_clear_db" value="true" />
 				<label for="catablog_clear_db">Replace All Data:</label>
 			</p>
 			
@@ -461,7 +460,7 @@
 	<?php /*  SUBMIT FORM BUTTON  */ ?>
 	<p class="submit" style="margin-left:100px;">
 		<input type="button" id="save_changes" class="button-primary" value="<?php _e('Save Changes') ?>" />
-		<span> or <a href="<?php echo get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-options' ?>">reset options</a></span>
+		<span> or <a href="<?php echo 'admin.php?page=catablog-options' ?>">reset options</a></span>
 	</p>
 	
 </div>
@@ -735,28 +734,37 @@
 	<?php endif ?>
 		
 	<?php if ($recalculate_thumbnails): ?>
-		var thumbs = images;
+		var thumbs = images.slice(0);
 		renderCataBlogItems(thumbs, 'thumbnail', nonce, function() {
 			jQuery('#catablog-progress-thumbnail .catablog-progress-text').html(message);
-			var t = setTimeout(function() {
-				jQuery('#catablog-progress-thumbnail').hide('medium');
-				jQuery('#message').hide('medium');
-			}, 2000);
-			$('#save_changes').attr('disabled', false);
+			
+			<?php if ($recalculate_fullsize): ?>
+				var fullsize = images.slice(0);
+				renderCataBlogItems(fullsize, 'fullsize', nonce, function() {
+					jQuery('#catablog-progress-fullsize .catablog-progress-text').html(message);
+					var t = setTimeout(function() {
+						jQuery('#catablog-progress-thumbnail').hide('medium');
+						jQuery('#catablog-progress-fullsize').hide('medium');
+						jQuery('#message').hide('medium');
+					}, 2000);
+					$('#save_changes').attr('disabled', false);
+				});
+			<?php else: ?>
+				var t = setTimeout(function() {
+					jQuery('#catablog-progress-thumbnail').hide('medium');
+					jQuery('#message').hide('medium');
+				}, 2000);
+				
+				$('#save_changes').attr('disabled', false);
+			<?php endif ?>
+			
+			
+			
+			
 		});
 	<?php endif ?>
 	
-	<?php if ($recalculate_fullsize): ?>
-		var fullsize = images;
-		renderCataBlogItems(fullsize, 'fullsize', nonce, function() {
-			jQuery('#catablog-progress-fullsize .catablog-progress-text').html(message);
-			var t = setTimeout(function() {
-				jQuery('#catablog-progress-fullsize').hide('medium');
-				jQuery('#message').hide('medium');
-			}, 2000);
-			$('#save_changes').attr('disabled', false);
-		});
-	<?php endif ?>
+
 			
 			
 			

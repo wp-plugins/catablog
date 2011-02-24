@@ -16,16 +16,21 @@ jQuery(function($) {
 				// remove selection class from possible previous elements
 				jQuery('.catablog-selected').removeClass('catablog-selected');
 				
-				// set row to the clicked element
+				// set row to the clicked element or its parent with class .catablog-row
 				var row = this;
-				
-				// if row has a src attribtue and is likely an <img /> element
-				if (this.src != undefined) {
+				if (jQuery(this).hasClass('.catablog-row') == false) {
 					row = jQuery(this).closest('.catablog-row').get(0);
 				}
 				
 				// select the current row and open the lightbox
-				jQuery(this).addClass('catablog-selected');
+				
+				if (this.src == undefined) {
+					jQuery(this).find('img').addClass('catablog-selected');
+				}
+				else {
+					jQuery(this).addClass('catablog-selected');
+				}
+				
 				open_lightbox(row);
 				
 				// do not register the click

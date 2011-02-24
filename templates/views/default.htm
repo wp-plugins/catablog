@@ -1,8 +1,13 @@
 <div class='catablog-row' %MIN-HEIGHT%>
-	<img class='catablog-image %LIGHTBOX%' src="%IMAGE%" height="%IMAGE-SIZE%" width="%IMAGE-SIZE%" alt="" />
+	<div class="catablog-images">
+		<a href="%FULLSIZE-IMAGE%" class="catablog-clickable" %LINK-TARGET% %LINK-REL%>
+			%MAIN-IMAGE%
+		</a>
+	</div>
+	
 	<h4 class='catablog-title' style='margin-left:%MARGIN-LEFT%'>%TITLE%</h4>
 	<div class="catablog-description" style="margin-left:%MARGIN-LEFT%">
-		<p>%DESCRIPTION%</p>
+		%DESCRIPTION%
 		%BUY-NOW-BUTTON%
 	</div>
 </div>

@@ -39,11 +39,10 @@
 			<form method="get" action="admin.php?page=catablog" class="alignleft actions">
 				<input type="hidden" name="page" value="catablog" />
 				<select id="cat" name="category" class="postform">
-					<option value="0">View all categories</option>
-					
+					<option value="-1">- All Items [slow]</option>
 					<?php $categories = get_terms($this->custom_tax_name, 'hide_empty=0') ?>
 					<?php foreach ($categories as $category): ?>
-						<?php $selected = ($category->term_id == $selected_category)? 'selected="selected"' : '' ?>
+						<?php $selected = ($category->term_id == $selected_term_id)? 'selected="selected"' : '' ?>
 						<option value="<?php echo $category->term_id ?>" <?php echo $selected ?> ><?php echo $category->name ?></option>
 					<?php endforeach ?>
 				</select>
@@ -59,17 +58,29 @@
 				<?php $grid_class = ($view == 'grid')? 'class="current"' : 'class=""' ?>
 				<?php $meta       = 'width="20" height="20" border="0"'; ?>
 				<?php $current_cat = (isset($_GET['category']))? '&amp;category='.$_GET['category'] : '' ?>
+				<?php $current_page = (isset($_GET['offset']))? '&amp;offset='.$_GET['offset'] : ''?>
 				
-				<a href="admin.php?page=catablog<?php echo $current_cat ?>&amp;view=list">
-					<img src="/wp-includes/images/blank.gif" id="view-switch-list" <?php echo "$list_class $meta" ?> title="List View" alt="List View"/>
+				<a href="admin.php?page=catablog<?php echo $current_page ?><?php echo $current_cat ?>&amp;view=list">
+					<img src="<?php echo $this->urls['images'] ?>/blank.gif" id="view-switch-list" <?php echo "$list_class $meta" ?> title="List View" alt="List View"/>
 				</a>
-				<a href="admin.php?page=catablog<?php echo $current_cat ?>&amp;view=grid">
-					<img src="/wp-includes/images/blank.gif" id="view-switch-excerpt" <?php echo "$grid_class $meta" ?> title="Grid View" alt="Grid View"/>
+				<a href="admin.php?page=catablog<?php echo $current_page ?><?php echo $current_cat ?>&amp;view=grid">
+					<img src="<?php echo $this->urls['images'] ?>/blank.gif" id="view-switch-excerpt" <?php echo "$grid_class $meta" ?> title="Grid View" alt="Grid View"/>
 				</a>
 			</div>
 		</div>
 		
-		
+		<?php /*
+		<div id="catablog-view-nav">
+			<?php echo $this->items_per_page ?> | 
+			<?php echo $catalog_count = wp_count_posts($this->custom_post_name)->publish ?> | 
+			
+			
+			<?php echo $pages = floor($catalog_count / $this->items_per_page) ?>
+			<?php for ($i = 0; $i <= $pages; $i++): ?>
+				<a href="admin.php?page=catablog&amp;offset=<?php echo $i + 1 ?>"><?php echo $i + 1 ?></a>
+			<?php endfor ?>
+		</div>
+		*/ ?>
 		
 		<?php
 		
@@ -86,11 +97,6 @@
 
 <script type="text/javascript">
 	var timer = null;
-	
-	// window.onload = function() {
-		// stop loading all thumbnails
-
-	// }
 	
 	jQuery(document).ready(function($) {
 				
@@ -113,13 +119,14 @@
 		
 		// hide exceptionaly long descriptions
 		// LIST VIEW ONLY!
-		$('#catablog_items div.catablog-list-description').each(function() {
-			var height = $(this).height();
-			if (height > 90) {
-				$(this).height(72);
-				$(this).after("<em>more...</em>");
-			}
-		});
+		// $('#catablog_items div.catablog-list-description').each(function() {
+		// 	var height = $(this).height();
+		// 	if (height > 90) {
+		// 		$(this).height(72);
+		// 		$(this).after("<em>more...</em>");
+		// 	}
+		// });
+				
 		
 		
 		// show the bulk actions form and bind form submission;

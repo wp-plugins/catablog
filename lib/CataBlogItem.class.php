@@ -68,9 +68,11 @@ class CataBlogItem {
 		}
 		
 		$category_ids = array();
-		$terms = wp_get_object_terms($post->ID, array($item->getCustomTaxName()), array());
-		foreach ($terms as $term) {
-			$category_ids[$term->term_id] = $term->name;
+		$terms = get_the_terms($post->ID, $item->_custom_tax_name);
+		if (is_array($terms)) {
+			foreach ($terms as $term) {
+				$category_ids[$term->term_id] = $term->name;
+			}			
 		}
 				
 		$item->id           = $post->ID;
@@ -82,12 +84,13 @@ class CataBlogItem {
 		
 		$meta = get_post_meta($post->ID, $item->_post_meta_name, true);
 		$item->processPostMeta($meta);
-		
+		// print_r($item);
 		return $item;
 	}
 	
-	public static function getItems($category=false, $quick=false, $ids_only=false) {
+	public static function getItemIds() {
 		$items = array();
+		
 		$cata  = new CataBlogItem();
 		
 		$params = array(
@@ -97,52 +100,68 @@ class CataBlogItem {
 			'numberposts' => -1,
 		);
 		
+		$posts = get_posts($params);
+		$ids = array();
+		foreach ($posts as $post) {
+			$ids[] = $post->ID;
+		}
+		
+		return $ids;
+	}
+	
+	public static function getItems($category=false, $offset=1, $limit=50, $load_categories=true) {
+		$items = array();
+		
+		$cata  = new CataBlogItem();
+		$params = array(
+			'post_type'=> $cata->getCustomPostName(), 
+			'orderby'=>'menu_order',
+			'order'=>'ASC',
+			'offset'=>(($offset - 1) * $limit),
+			'numberposts' => $limit,
+		);
+		
 		if ($category !== false) {
 			$params[$cata->getCustomTaxName()] = $category;
 		}
 		
 		$posts = get_posts($params);
-		
-		// only return an ordered array of ids
-		if ($ids_only) {
-			$ids = array();
-			foreach ($posts as $post) {
-				$ids[] = $post->ID;
-			}
-			return $ids;
-		}
+
 		
 		// return an array of CataBlogItems
 		foreach ($posts as $post) {
 			
 			$item = new CataBlogItem();
 			
-			// if quick is set don't bother loading taxonomy
-			$category_ids = array();
-			// if (!$quick) {
-			// 	$terms = wp_get_object_terms($post->ID, array($item->getCustomTaxName()), array());
-			// 	foreach ($terms as $term) {
-			// 		$category_ids[$term->term_id] = $term->name;
-			// 	}				
-			// }
-			
 			$item->id           = $post->ID;
 			$item->title        = $post->post_title;
 			$item->description  = $post->post_content;
-			$item->categories   = $category_ids;
+			$item->categories   = array();
 			$item->order        = $post->menu_order;
 			$item->setPermalink($post->post_name);
 			
+			$item_cats = array();
+			if ($load_categories) {
+				$category_ids = array();
+				$terms = get_the_terms($post->ID, $item->_custom_tax_name);
+				if (is_array($terms)) {
+					foreach ($terms as $term) {
+						$category_ids[$term->term_id] = $term->name;
+					}
+				}
+				$item->categories = $category_ids;
+			}
+			
 			$meta = get_post_meta($post->ID, $item->_post_meta_name, true);
 			$item->processPostMeta($meta);
-						
+			
 			$items[] = $item;
 		}
-		
+		// print_r($items);
 		return $items;
 	}
 	
-	public static function getItemByOrder($order_number, $quick=true) {
+	public static function getAdjacentItem($order_number) {
 		if ($order_number < 0) {
 			return false;
 		}
@@ -159,27 +178,9 @@ class CataBlogItem {
 		
 		$posts = get_posts($params);
 		foreach ($posts as $post) {
-			
 			$item = new CataBlogItem();
-			
 			$item->id           = $post->ID;
 			$item->title        = $post->post_title;
-			$item->description  = $post->post_content;
-
-			$item->order        = $post->menu_order;
-			$item->setPermalink($post->post_name);
-			
-			if (!$quick) {
-				$category_ids = array();
-				// $terms = wp_get_object_terms($post->ID, array($item->getCustomTaxName()), array());
-				// foreach ($terms as $term) {
-				// 		$category_ids[$term->term_id] = $term->name;
-				// }
-				$item->categories   = $category_ids;
-
-				$meta = get_post_meta($post->ID, $item->_post_meta_name, true);
-				$item->processPostMeta($meta);				
-			}
 		}
 		
 		return $item;
@@ -264,10 +265,8 @@ class CataBlogItem {
 		$params['post_title']    = $this->title;
 		$params['post_content']  = $this->description;
 		$params['post_status']   = 'publish';
-		// $params['post_category'] = $this->categories;
 		$params['post_type']     = $this->_custom_post_name;
 		$params['menu_order']    = $this->order;
-		
 		
 		if ($this->id > 0) {
 			$params['ID'] = $this->id;
@@ -282,24 +281,19 @@ class CataBlogItem {
 			}
 		}
 		
-		// update post meta
-		$this->updatePostMeta();
-		
-		// update post terms
-		wp_set_object_terms($this->id, $this->categories, $this->_custom_tax_name, false);
-		
 		// if the image has been set after loading process image
 		if ($this->_main_image_changed) {
+			echo "here";
 			// store the new uploaded file in the originals directory
 			$upload_path     = $this->image;
 			$sanatized_title = $this->getSanitizedTitle();
 			$move_path       = $this->_wp_upload_dir . "/catablog/originals/$sanatized_title";
 			$moved = move_uploaded_file($this->image, $move_path);
 			$this->image = $sanatized_title;
-			
+
 			// save the new image's title to the post meta
 			$this->updatePostMeta();
-			
+
 			// remove the old files associated with this item
 			foreach ($this->_old_images as $old_image) {
 				foreach (array('originals', 'thumbnails', 'fullsize') as $folder) {
@@ -309,22 +303,32 @@ class CataBlogItem {
 					}					
 				}
 			}
-			
+
 			// generate a thumbnail for the new image
 			$this->makeThumbnail();
 			if ($this->_options['lightbox-enabled']) {
 				$this->makeFullsize();
 			}
-			
+
 			delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
 		}
+		
+		// update post meta
+		$this->updatePostMeta();
+		
+		// update post terms
+		$terms_set = wp_set_object_terms($this->id, $this->categories, $this->_custom_tax_name);
+		if ($terms_set instanceof WP_Error) {
+			return "Could not set categories, please try again.";
+		}
+		
 		return true;
 	}
 	
 	public function delete($remove_images=true) {
 		if ($this->id > 0) {
 			
-			$this->deletePostMeta();
+			// $this->deletePostMeta();
 			wp_delete_post($this->id, true);
 			
 			// remove any associated images
@@ -683,10 +687,13 @@ class CataBlogItem {
 	public function setDescription($description) {
 		$this->description = $description;
 	}
-	public function setImage($image) {
-		$this->_old_images[] = $this->image;
+	public function setImage($image, $update=true) {
+		if ($update) {
+			$this->_old_images[] = $this->image;
+			$this->_main_image_changed = true;			
+		}
+		
 		$this->image = $image;
-		$this->_main_image_changed = true;
 	}
 	public function setSubImage($image) {
 		$this->sub_images[] = $image;
@@ -707,6 +714,9 @@ class CataBlogItem {
 	}
 	public function setProductCode($product_code) {
 		$this->product_code = $product_code;
+	}
+	public function setCategory($category) {
+		$this->categories[] = $category;
 	}
 	public function setCategories($categories) {
 		$this->categories = $categories;
@@ -737,12 +747,6 @@ class CataBlogItem {
 				$this->{str_replace('-', '_', $key)} = $value;
 			}
 		}
-		else {
-			$this->image        = get_post_meta($this->id, 'catablog-image', true);
-			$this->link         = get_post_meta($this->id, 'catablog-link', true);
-			$this->price        = get_post_meta($this->id, 'catablog-price', true);
-			$this->product_code = get_post_meta($this->id, 'catablog-product-code', true);
-		}
 	}
 	
 	private function updatePostMeta() {
@@ -754,17 +758,11 @@ class CataBlogItem {
 		$meta['product-code'] = $this->product_code;
 		
 		update_post_meta($this->id, $this->_post_meta_name, $meta);
-		
-		// remove deprecated meta values from database
-		$this->deleteLegacyPostMeta();
 	}
 	
 	private function deletePostMeta() {
-		// remove deprecated meta values from database
-		$this->deleteLegacyPostMeta();
-		
 		// remove the current post meta values from database
-		delete_post_meta($this->id, $this->_post_meta_name);
+		var_dump(delete_post_meta($this->id, $this->_post_meta_name));
 	}
 	
 	private function deleteLegacyPostMeta() {
@@ -810,7 +808,6 @@ class CataBlogItem {
 		
 		return array($r, $g, $b);
 	}
-	
 	
 	
 	

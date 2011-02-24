@@ -1,11 +1,14 @@
 
 		<ul id="catablog_items" class="catablog-grid-view">
 			<?php if (count($results) < 1): ?>
-				<p>No CataBlog Items Found.</p>
+				<p>
+					No catalog items found in <em><?php echo $selected_term_name ?></em>.<br />
+					Use the category drop down above to switch category views.
+				</p>
 			<?php endif ?>
 			<?php foreach ($results as $result): ?>
-				<?php $edit   = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-edit&amp;id='.$result->getId() ?>
-				<?php $remove = get_bloginfo('wpurl').'/wp-admin/admin.php?page=catablog-delete&amp;id='.$result->getId() ?>
+				<?php $edit   = 'admin.php?page=catablog&amp;id='.$result->getId() ?>
+				<?php $remove = 'admin.php?page=catablog-delete&amp;id='.$result->getId() ?>
 				<li>
 					<a href="<?php echo $edit ?>" rel="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" class="catablog-admin-thumbnail lazyload">
 						<noscript><img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" class="catablog-grid-thumbnail" width="100" height="100" alt="" /></noscript>

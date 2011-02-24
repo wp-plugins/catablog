@@ -30,7 +30,7 @@
 	jQuery(document).ready(function($) {
 		var images  = ["<?php echo implode('", "', $image_names) ?>"];
 		var nonce   = '<?php echo wp_create_nonce("catablog-render-images") ?>';
-		var message = "Image rendering is now complete, you may now go to any other admin panel you might want.";
+		var message = "Image rendering is now complete, you may now go to any other admin panel you may want.";
 		
 		renderCataBlogItems(images, 'thumbnail', nonce, function() {
 			<?php if ($this->options['lightbox-enabled']): ?>

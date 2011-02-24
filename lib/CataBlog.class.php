@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "1.1.7";
+	private $version     = "1.1.8";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -33,6 +33,10 @@ class CataBlog {
 	private $directories   = array();
 	private $urls          = array();
 	
+	private $items_per_page = -1;
+	
+	private $default_category_name = "Uncategorized";
+	private $default_category_slug = "catablog-uncategorized";
 	
 	
 	public function __construct() {
@@ -82,7 +86,7 @@ class CataBlog {
 	*****************************************************/
 	public function registerWordPressHooks() {
 		// register custom post type and taxonomy
-		add_action('init', array(&$this, 'register_posttype'));
+		add_action('init', array(&$this, 'initialize_plugin'));
 		
 		// register activation hooks
 		register_activation_hook($this->plugin_file, array(&$this, 'activate'));
@@ -120,7 +124,7 @@ class CataBlog {
 	/*****************************************************
 	**       - REGISTER CUSTOM POST TYPE 
 	*****************************************************/
-	public function register_posttype() {
+	public function initialize_plugin() {
 		$name = "CataBlog Category";
 		$taxonomy_labels = array();
 		$taxonomy_labels['name']          = __($name . 's');
@@ -142,8 +146,6 @@ class CataBlog {
 		// $params['update_count_callback'] = array(&$this, 'count_categories');
 		// $params['capabilities'] = array('manage_categories', 'edit_posts');
 		register_taxonomy($this->custom_tax_name, $this->custom_post_name, $params);
-
-
 
 		$name = "CataBlog Item";
 		$post_type_labels = array();
@@ -203,11 +205,25 @@ class CataBlog {
 		}
 		
 
-		
+		// go straigt to save action, no interface
+		if(strpos($_SERVER['QUERY_STRING'], 'catablog-create') !== false) {
+			$this->admin_create(true);
+		}
+
 		// go straigt to save action, no interface
 		if(strpos($_SERVER['QUERY_STRING'], 'catablog-save') !== false) {
 			$this->admin_save(true);
 		}
+
+		// go straigt to delete action, no interface
+		if(strpos($_SERVER['QUERY_STRING'], 'catablog-delete') !== false) {
+			$this->admin_delete(true);
+		}
+
+
+
+
+
 		
 		// go striagt to remove all subimages action
 		if(strpos($_SERVER['QUERY_STRING'], 'catablog-replace-image') !== false) {
@@ -219,20 +235,21 @@ class CataBlog {
 			$this->admin_add_subimage(true);
 		}
 		
-		// go striagt to remove all subimages action
-		if(strpos($_SERVER['QUERY_STRING'], 'catablog-remove-subimages') !== false) {
-			$this->admin_remove_subimages();
-		}
-		
+
+
+
+
+		// DEPRECATED, PEOPLE SHOULD HAVE UPGRADED BY NOW
+		//
 		// display a warning message if the old database table is preset
-		if(strpos($_SERVER['QUERY_STRING'], 'catablog-clear-old-data') === false) {
-			global $wpdb;
-			$table = $this->db_table;
-			if (($wpdb->get_var("SHOW TABLES LIKE '$table'") == $table)) {
-				$read_this_link = "<a href='http://catablog.illproductions.net/2010/11/old-database-removed/' target='_blank'>Read This</a>";
-				$this->wp_error("OLD CATABLOG TABLE PRESENT! $read_this_link Immediately To Fix.");
-			}
-		}
+		// if(strpos($_SERVER['QUERY_STRING'], 'catablog-clear-old-data') === false) {
+		// 	global $wpdb;
+		// 	$table = $this->db_table;
+		// 	if (($wpdb->get_var("SHOW TABLES LIKE '$table'") == $table)) {
+		// 		$read_this_link = "<a href='http://catablog.illproductions.net/2010/11/old-database-removed/' target='_blank'>Read This</a>";
+		// 		$this->wp_error("OLD CATABLOG TABLE PRESENT! $read_this_link Immediately To Fix.");
+		// 	}
+		// }
 		
 		// display an error message if catablog options are empty or directories are missing
 		if(strpos($_SERVER['QUERY_STRING'], 'catablog-install') === false) {
@@ -252,6 +269,8 @@ class CataBlog {
 				}
 			}
 		}
+		
+		$this->install_default_category();
 		
 		wp_enqueue_script('farbtastic');
 		wp_enqueue_style('farbtastic');
@@ -275,18 +294,15 @@ class CataBlog {
 		add_submenu_page('catablog', "Edit CataBlog", 'CataBlog', $this->user_level, 'catablog', array(&$this, 'admin_list'));
 		add_submenu_page('catablog', "Add New CataBlog", 'Add New', $this->user_level, 'catablog-new', array(&$this, 'admin_new'));
 		add_submenu_page('catablog', "CataBlog Options", 'Options', $this->user_level, 'catablog-options', array(&$this, 'admin_options'));
-		// add_submenu_page('catablog', "CataBlog View Option", 'View', $this->user_level, 'catablog-view', array(&$this, 'admin_view'));
-		// add_submenu_page('catablog', "CataBlog Import/Export", 'Import/Export', $this->user_level, 'catablog-import-export', array(&$this, 'admin_import_export'));
 		add_submenu_page('catablog', 'About CataBlog', 'About', $this->user_level, 'catablog-about', array(&$this, 'admin_about'));
 		
 		// register create/edit/delete catalog item actions
-		add_submenu_page('catablog-hidden', "Edit CataBlog Item", "Edit", $this->user_level, 'catablog-edit', array(&$this, 'admin_edit'));
+		add_submenu_page('catablog-hidden', "Create CataBlog Item", "Create", $this->user_level, 'catablog-create', array(&$this, 'admin_create'));
 		add_submenu_page('catablog-hidden', "Save CataBlog Item", "Save", $this->user_level, 'catablog-save', array(&$this, 'admin_save'));
 		add_submenu_page('catablog-hidden', "Delete CataBlog Item", "Delete", $this->user_level, 'catablog-delete', array(&$this, 'admin_delete'));
 		add_submenu_page('catablog-hidden', "Bulk Edit CataBlog Items", "Bulk", $this->user_level, 'catablog-bulkedit', array(&$this, 'admin_bulk_edit'));
 		add_submenu_page('catablog-hidden', "Replace Main Image", "Replace", $this->user_level, 'catablog-replace-image', array(&$this, 'admin_replace_main_image'));
 		add_submenu_page('catablog-hidden', "Add Sub Image to Item", "SubImage", $this->user_level, 'catablog-add-subimage', array(&$this, 'admin_add_subimage'));
-		add_submenu_page('catablog-hidden', "Delete All Sub Images", "Remove-SubImages", $this->user_level, 'catablog-remove-subimages', array(&$this, 'admin_remove_subimages'));
 		
 		// register import/export page actions to hidden menu
 		add_submenu_page('catablog-hidden', "CataBlog Import", "Import", $this->user_level, 'catablog-import', array(&$this, 'admin_import'));
@@ -322,15 +338,19 @@ class CataBlog {
 	
 	public function admin_list() {
 		
-		$selected_category = (isset($_GET['category']))? $_GET['category'] : 0;
+		if (isset($_GET['id'])) {
+			$this->admin_edit();
+			return false;
+		}
 		
-		if ($selected_category > 0) {
-			$selected_term = get_term_by('id', $selected_category, $this->custom_tax_name);
-			$results = CataBlogItem::getItems($selected_term->name);
-		}
-		else {
-			$results = CataBlogItem::getItems();
-		}
+		$limit = $this->items_per_page;
+		$offset = 1;
+		
+		$default_term       = get_term_by('name', $this->default_category_name, $this->custom_tax_name);
+		$selected_term_id   = (isset($_GET['category']))? $_GET['category'] : $default_term->term_id;
+		$selected_term_name = (isset($_GET['category']))? get_term_by('id', $selected_term_id, $this->custom_tax_name)->name : $default_term->name;
+		
+		$results = CataBlogItem::getItems($selected_term_name, $offset, $limit);
 		
 		$view = 'list';
 		if (isset($_COOKIE['catablog-view-cookie'])) {
@@ -345,6 +365,14 @@ class CataBlog {
 			}
 		}
 		
+		switch ($_GET['message']) {
+			case 2:
+				$this->wp_message("Catalog Item Deleted Successfully.");
+				break;
+			case 3:
+				$this->wp_error("Could Not Delete Item Because ID was non existent.");
+		}
+		
 		include_once($this->directories['template'] . '/admin-items.php');
 	}
 	
@@ -353,18 +381,18 @@ class CataBlog {
 			include_once($this->directories['template'] . '/admin-discfull.php');
 		}
 		else {
-			$result = new CataBlogItem();
-			$new_item = true;
-			include_once($this->directories['template'] . '/admin-edit.php');
+			include_once($this->directories['template'] . '/admin-new.php');
 		}		
 	}
 	
 	public function admin_edit() {
-		$new_item = false;
-		if (isset($_REQUEST['id'])) {
+		if (isset($_GET['id'])) {
 			
-			$result = CataBlogItem::getItem($_REQUEST['id']);
-			
+			$result = CataBlogItem::getItem($_GET['id']);
+			if (!$result) {
+				include_once($this->directories['template'] . '/admin-404.php');
+				return false;
+			}
 			
 			switch ($_GET['message']) {
 				case 1:
@@ -372,17 +400,8 @@ class CataBlog {
 					break;
 			}
 			
-			if (!$result) {
-				$result = new CataBlogItem();
-				$new_item = true;
-			}
+			include_once($this->directories['template'] . '/admin-edit.php');
 		}
-		else {
-			$result = new CataBlogItem();
-			$new_item = true;
-		}
-		
-		include_once($this->directories['template'] . '/admin-edit.php');
 	}
 	
 	public function admin_options() {
@@ -557,17 +576,73 @@ class CataBlog {
 	**       - ADMIN ACTIONS
 	*****************************************************/
 	public function admin_create($init_run=false) {
-		// TODO: make this method
+		$error = false;
+		
+		$new_item = new CataBlogItem();
+		$nonce_verified = true; //wp_verify_nonce( $_REQUEST['_catablog_create_nonce'], 'catablog_create' );
+		if ($nonce_verified) {
+			
+			$tmp_name = $_FILES['new_image']['tmp_name'];
+			
+			if (mb_strlen($tmp_name) > 0) {
+				$validate = $new_item->validateImage($tmp_name);
+				if ($validate === true) {
+					
+					$new_item_title = $_FILES['new_image']['name'];
+					$new_item_title = preg_replace('/\.[^.]+$/','',$new_item_title);
+					$new_item_title = str_replace(array('_','-','.'), ' ', $new_item_title);
+					$new_item_order = wp_count_posts($this->custom_post_name)->publish;
+					
+					$new_item->setOrder($new_item_order);
+					$new_item->setTitle($new_item_title);
+					
+					$new_item->setImage($tmp_name);
+					$new_item->setSubImages(array());
+					
+					$new_item->setCategories(array());
+					$terms = get_terms($this->custom_tax_name, 'hide_empty=0');
+					foreach ($terms as $term) {
+						if ($term->name == $this->default_category_name) {
+							$new_item->setCategories(array($term->term_id=>$term->name));
+						}
+					}
+					
+					$new_item->save();
+
+					header('Location: admin.php?page=catablog&id=' . $new_item->getId()); die;
+				}
+				else {
+					$error = $validate;
+				}
+			}
+			else {
+				$error = "The file you selected was to large or you didn't select anything at all, please try again.";
+			}
+		}
+		else {
+			$error = "Could not validate the WordPress Nonce, reload the form and try again...";
+		}
+			
+		if (!$init_run && $error !== false) {
+			$this->wp_error($error);
+			include_once($this->directories['template'] . '/admin-new.php');
+		}
 	}
 	
 	
 	public function admin_save($init_run=false) {
+		$error = false;
+		
 		if (isset($_POST['save'])) {
 			$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_save_nonce'], 'catablog_save' );
 			if ($nonce_verified) {
 				$post_vars = $_POST;
 				$post_vars = array_map('stripslashes_deep', $post_vars);
-				// $post_vars = array_map('trim', $post_vars);
+				
+				$trim_fields = array('title', 'description', 'link', 'price', 'product_code');
+				foreach ($trim_fields as $field) {
+					$post_vars[$field] = trim($post_vars[$field]);
+				}
 				
 				$post_vars['categories'] = (isset($post_vars['categories']))? $post_vars['categories'] : array();
 				foreach ($post_vars['categories'] as $key => $value) {
@@ -575,40 +650,33 @@ class CataBlog {
 				}
 				
 				$result    = new CataBlogItem($post_vars);
-				$new_item  = (($result->getId()) < 1);
-				
-				// new catalog item, set subimages array empty
-				$img = $_FILES['new_image']['tmp_name'];
-				if (mb_strlen($img) > 0) {
-					$image_validate = $result->validateImage($img);
-					if ($image_validate === true) {
-						$result->setImage($img);
-						$result->setSubImages(array());						
-					}
-					else {
-						if (!$init_run) {
-							$this->wp_error($image_validate);
-							include_once($this->directories['template'] . '/admin-edit.php');
-							return true;
-						}
-					}
-				}
-				
 				$validate  = $result->validate();
 				if ($validate === true) {
-					$result->save();
-					header('Location: admin.php?page=catablog-edit&id=' . $result->getId() . '&message=1'); die;
+					$write = $result->save();
+					if ($write === true) {
+						header('Location: admin.php?page=catablog&id=' . $result->getId() . '&message=1'); die;
+					}
+					else {
+						$error = $write;
+					}
+					
 				}
 				else {
-					if (!$init_run) {
-						$this->wp_error($validate);
-						include_once($this->directories['template'] . '/admin-edit.php');
-						return true;
-					}
+					$error = $validate;
 				}
-				
-				
 			}
+			else {
+				$error = "could not verify wordpress nonce";
+			}
+		}
+		else {
+			$error = "full form was not submitted, please try again.";
+		}
+		
+		if (!$init_run && $error) {
+			$this->wp_error($error);
+			include_once($this->directories['template'] . '/admin-edit.php');
+			return true;
 		}
 	}
 	
@@ -639,7 +707,7 @@ class CataBlog {
 						}
 						
 						$result->save();
-						header('Location: admin.php?page=catablog-edit&id=' . $_POST['id']); die;
+						header('Location: admin.php?page=catablog&id=' . $_POST['id']); die;
 					}
 					else {
 						$error = $validate;
@@ -677,7 +745,7 @@ class CataBlog {
 					$validate = $result->validateImage($tmp_name);
 					if ($validate === true) {
 						$result->addSubImage($tmp_name);
-						header('Location: admin.php?page=catablog-edit&id=' . $_POST['id']); die;
+						header('Location: admin.php?page=catablog&id=' . $_POST['id']); die;
 					}
 					else {
 						$error = $validate;
@@ -701,50 +769,19 @@ class CataBlog {
 		}
 	}
 	
-	public function admin_remove_subimages() {
-		$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_remove_subimages_nonce'], 'catablog_remove_subimages');
-		if ($nonce_verified) {
-			$to_delete = array();
-			$result    = CataBlogItem::getItem($_POST['id']);
-			$sub_images = $result->getSubImages();
-			
-			foreach ($sub_images as $key => $image) {
-				$to_delete["sub$key-original"]  = $this->directories['originals'] . "/$image";
-				$to_delete["sub$key-thumbnail"] = $this->directories['thumbnails'] . "/$image";
-				$to_delete["sub$key-fullsize"]  = $this->directories['fullsize'] . "/$image";
-			}
-			
-			foreach ($to_delete as $file) {
-				if (is_file($file)) {
-					unlink($file);
-				}
-			}
-			
-			$result->setSubImages(array());
-			$result->save();
-			
-			delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
-		}
-		else {
-			echo "the form nonce was not verified, what are you doing?";
-		}
-		
-		header('Location: admin.php?page=catablog-edit&id=' . $_POST['id']);
-	}
 	
-	public function admin_delete() {
+	public function admin_delete($init_run=false) {
+		$error = false;
+		
 		// need to add support for nonce check
 		if (isset($_REQUEST['id'])) {
 			$item = CataBlogItem::getItem($_REQUEST['id']);
 			if ($item) {
 				$item->delete();
-
-				$this->wp_message('Catalog Item Removed Successfully');
-				$this->admin_list();
+				header('Location: admin.php?page=catablog&message=2'); die;
 			}
 			else {
-				$this->wp_error('Could Not Remove Catalog Item, ID was non existant');
-				$this->admin_list();
+				header('Location: admin.php?page=catablog&message=3'); die;
 			}
 		}
 	}
@@ -824,11 +861,13 @@ class CataBlog {
 		// remove all data from database if clear box is checked
 		$database_cleared = false;
 		if (isset($_REQUEST['catablog_clear_db'])) {
-			$items = CataBlogItem::getItems(false, true, true);
-			foreach ($items as $item) {
-				wp_delete_post($item, true);
-			}
 			
+			$items = CataBlogItem::getItems(null, 0, -1, false);
+			foreach ($items as $item) {
+				$item->delete(false);
+			}
+
+			// remove all catablog categories
 			$terms = get_terms($this->custom_tax_name, 'hide_empty=0');
 			foreach ($terms as $term) {
 				wp_delete_term($term->term_id, $this->custom_tax_name);
@@ -947,37 +986,58 @@ class CataBlog {
 	}
 	
 	public function admin_rescan_images() {
-		$items = CataBlogItem::getItems();
+		$items = CataBlogItem::getItems(null, 0, -1, true);
 		$image_names = array();
 		foreach ($items as $item) {
 			$image_names[] = $item->getImage();
+			foreach ($item->getSubImages() as $subimage) {
+				$image_names[] = $subimage;
+			}
 		}
 		
 		$new_rows = array();
+		$new_rows['image'] = array();
 		$originals = new CataBlogDirectory($this->directories['originals']);
+		
 		if ($originals->isDirectory()) {
+			
+			$new_order = wp_count_posts($this->custom_post_name)->publish;
+
+			$terms = get_terms($this->custom_tax_name, 'hide_empty=0');
+			foreach ($terms as $term) {
+				if ($term->name == $this->default_category_name) {
+					$default_category = (array($term->term_id=>$term->name));
+				}
+			}
+			
 			foreach ($originals->getFileArray() as $file) {
 				if (!in_array($file, $image_names)) {
 					
-					$extension = preg_match('/\\.[^.\\s]{3,4}$/', $file, $matches);
-					$extension = $matches[0];
+					$extension = end(explode(".", strtolower($file)));
+					$media_accepted = array('jpg', 'jpeg', 'gif', 'png');
 					
-					$media_accepted = array('.jpg', '.jpeg', '.gif', '.png');
 					if (in_array($extension, $media_accepted)) {
 						$title = str_replace(array('-','_'), ' ', $file);
-						$title = str_replace($extension, '', $title);
+						$title = str_ireplace('.'.$extension, '', $title);
 						
-						$params = array();
-						$params['title']       = $title;
-						$params['image']       = $file;
+						$new_item = new CataBlogItem();
+						$new_item->setOrder($new_order);
+						$new_item->setTitle($title);
 
-						$new_item = new CataBlogItem($params);
+						$new_item->setImage($file, false);
+						$new_item->setSubImages(array());
+
+						$new_item->setCategories($default_category);
 						$new_item->save();
-
+												
 						$new_rows['ids'][]    = $new_item->getId();
 						$new_rows['titles'][] = $new_item->getTitle();				
+						$new_rows['image'][]  = $new_item->getImage();
+						
 					}
 				}
+				
+				$new_order += 1;
 			}
 		}
 		
@@ -985,8 +1045,8 @@ class CataBlog {
 	}
 	
 	public function admin_clear_old_database() {
-		$this->remove_legacy_data();
-		$this->remove_database();
+		// $this->remove_legacy_data();
+		// $this->remove_database();
 		$this->wp_message("The Old CataBlog Database Table has been removed.");
 		$this->admin_options();
 	}
@@ -994,31 +1054,34 @@ class CataBlog {
 	public function admin_install() {
 		$this->install_options();
 		$this->install_directories();
-		
+		$this->install_default_category();
 		$this->wp_message('CataBlog options and directories have been successfully installed.');
 		$this->admin_list();
 	}
 	
 	public function admin_reset_all() {
 		// remove all catablog posts
-		$items = CataBlogItem::getItems(false, true);
+		$items = CataBlogItem::getItems(null, 0, -1, false);
 		foreach ($items as $item) {
-			$item->delete();
+			$item->delete(false);
 		}
-		
+
 		// remove all catablog categories
-		$categories = get_categories(array('hide_empty'=>0, 'hierarchical'=>1, 'taxonomy'=>$this->custom_tax_name));
-		foreach ($categories as $category) {
-			wp_delete_term($category->cat_ID, $this->custom_tax_name);
+		$terms = get_terms($this->custom_tax_name, 'hide_empty=0');
+		foreach ($terms as $term) {
+			wp_delete_term($term->term_id, $this->custom_tax_name);
 		}
-		
-		$this->remove_legacy_data();
+			
+		// $this->remove_legacy_data();
 		$this->remove_options();
-		$this->remove_database();
+		// $this->remove_database();
 		$this->remove_directories();
 		
 		$this->install_options();
 		$this->install_directories();
+		$this->install_default_category();
+		
+		delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
 		
 		$this->wp_message('System has been cleared of all CataBlog data and the default options reset.');
 		$this->admin_options();
@@ -1375,13 +1438,12 @@ class CataBlog {
 		$values['link-rel']        = $rel;
 		$values['description']     = $description;
 		$values['price']           = number_format(((float)($result->getPrice())), 2, '.', '');
-		$values['product-code']    = $result->getProductCode();
+		$values['product-code']    = $result->getProductCode();		
 		
-		$values['main-image']      = "<img class='catablog-image ".$values['lightbox']."' src='".$values['image']."' height='".$values['image-size']."' width='".$values['image-size']."' alt='' />";
+		$values['main-image']      = '<img src="'.$values['image'].'" class="catablog-image catablog-clickable" width="'.$values['image-size'].'" alt="" />';
 		$values['sub-images']      = "";
 		foreach ($result->getSubImages() as $image) {
-			$c = ($this->options['lightbox-enabled'])? "catablog-clickable" : "";
-			$values['sub-images'] .= "<img src='".$this->urls['thumbnails']."/$image' class='catablog-subimage catablog-image  $c' />";
+			$values['sub-images'] .= '<img src="'.$this->urls['thumbnails'].'/'.$image.'" class="catablog-subimage catablog-image catablog-clickable" />';
 		}
 		
 		
@@ -1449,6 +1511,7 @@ class CataBlog {
 	public function activate() {
 		$this->install_directories();
 		$this->install_options();
+		// $this->install_default_category();
 	}
 	
 	private function install_options() {
@@ -1500,6 +1563,28 @@ class CataBlog {
 		}
 	}
 	
+	private function install_default_category() {
+		$default_exists = false;
+		$terms = get_terms($this->custom_tax_name, 'hide_empty=0');
+		foreach ($terms as $term) {
+			if ($term->name == $this->default_category_name) {
+				$default_exists = true;
+				break;
+			}
+		}
+				
+		if (!$default_exists) {
+			$category_slug = $this->string2slug($this->default_category_name);
+			$attr          = array('slug'=>$category_slug);
+			$insert_return = wp_insert_term($this->default_category_name, $this->custom_tax_name, $attr);
+			
+			if ($insert_return instanceof WP_Error) {
+				foreach ($insert_return->get_error_messages() as $error) {
+					$this->wp_error("There was an error creating the default term: $error");
+				}
+			}
+		}
+	}
 	
 	
 	
@@ -1522,27 +1607,13 @@ class CataBlog {
 	}
 	
 	private function remove() {
-		$this->remove_legacy_data();
 		$this->remove_options();
-		$this->remove_database();
 		$this->remove_directories();
 	}
 	
 	private function remove_options() {
 		delete_option($this->options_name);
 		$this->options = array();
-	}
-	
-	private function remove_database() {
-		global $wpdb;
-		
-		$table = $this->db_table;
-		
-		// if table present, remove it
-		if ($wpdb->get_var("SHOW TABLES LIKE '$table'") == $table) {
-			$drop = "DROP TABLE $table";
-			$wpdb->query($drop);	
-		}
 	}
 	
 	private function remove_directories($dirs=null) {
@@ -1569,26 +1640,6 @@ class CataBlog {
 		}
 		
 		delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
-	}
-	
-	private function remove_legacy_data() {
-		global $wpdb;
-		
-		// remove legacy options
-		delete_option('image_size');
-		delete_option('catablog_db_version');
-		delete_option('catablog_dir_version');
-		delete_option('catablog_image_size');
-		
-		// remove legacy database tables
-		$tables = array('disc_history', 'catablog');
-		foreach ($tables as $table) {
-			$table = $wpdb->prefix . $table;
-			if ($wpdb->get_var("show tables like '$table'") == $table) {
-				$drop  = "DROP TABLE $table";
-				$wpdb->query($drop);
-			}			
-		}
 	}
 	
 	
@@ -1685,66 +1736,131 @@ class CataBlog {
 	
 	private function load_array_to_database($data) {
 		
+		// extract a list of every category in the import
+		$import_terms = array($this->default_category_name);
+		foreach ($data as $key => $row) {
+			$row_terms = array();
+			if (mb_strlen($row['categories']) > 0) {
+				$row_terms = explode('|', $row['categories']);
+			}
+			
+			foreach ($row_terms as $row_term) {
+				if (!in_array($row_term, $import_terms)) {
+					$import_terms[] = $row_term;
+				}
+			}
+		}
+		
+		// extract a list of every category that needs is not already created
+		$make_terms = $import_terms;
+		if (isset($_REQUEST['catablog_clear_db']) === false) {
+			$existant_terms = get_terms($this->custom_tax_name, 'hide_empty=0');
+			foreach ($existant_terms as $existant_term) {
+				foreach ($make_terms as $key => $make_term) {				
+					if ($make_term == $existant_term->name) {
+						unset($make_terms[$key]);
+						unset($import_terms[$key]);
+						
+						$import_terms[$existant_term->term_id] = $existant_term->name;
+					}
+				}
+			}
+		}
+		
+		// create the neccessary new categories from the previous export
+		foreach ($make_terms as $key => $make_term) {
+			$category_slug = $this->string2slug($make_term);
+			$attr          = array('slug'=>$category_slug);
+			$insert_return = wp_insert_term($make_term, $this->custom_tax_name, $attr);
+			
+			if ($insert_return instanceof WP_Error) {
+				foreach ($insert_return->get_error_messages() as $error) {
+					echo "<li class='error'>Create Term Error - <strong>".$make_term."</strong>: $error</li>";
+				}
+			}
+			else {
+				if (isset($insert_return['term_id'])) {
+					$new_term_id = $insert_return['term_id'];
+					$new_term_name = $make_term;
+					
+					if ($new_term_id > 0) {
+						unset($import_terms[$key]);
+						unset($make_terms[$key]);
+						
+						$import_terms[$new_term_id] = $new_term_name;
+						echo '<li class="updated">Success: <em>' . $make_term . '</em> inserted into catalog categories.</li>';
+					}
+				}							
+			}
+		}
+		
+		// render complete making new categories message
+		if (count($make_terms) > 0) {
+			echo '<li class="updated"><strong>All Categories Created</strong></li>';
+		}
+		else {
+			echo '<li class="updated"><strong>No New Categories Created</strong></li>';
+		}
+		
+		// import each new catalog item
+		$new_order = wp_count_posts($this->custom_post_name)->publish;
 		foreach ($data as $row) {
+			$error = false;
+			
 			$success_message = '<li class="updated">Success: <em>' . $row['title'] . '</em> inserted into the database.</li>';
 			$error_message   = '<li class="error"><strong>Error:</strong> <em>' . $row['title'] . '</em> was not inserted into the database.</li>';
 			
-			if (mb_strlen($row['title']) < 1 || mb_strlen($row['image']) < 1) {
-				echo $error_message;
+			if (mb_strlen($row['title']) < 1) {
+				$error = '<li class="error"><strong>Error: Could Not Find Title</strong></li>';
+			}
+			if (mb_strlen($row['image']) < 1) {
+				$error = '<li class="error"><strong>Error:</strong> Did Not Make Catalog Item <strong>'.$row['title'].':</strong> could not find image filename</li>';
+			}
+			
+			if ($error) {
+				echo $error;
 			}
 			else {
-				$terms = (mb_strlen($row['categories']))? explode('|', $row['categories']) : array();
-				$row['categories'] = $terms;
-				
-				foreach ($terms as $key => $term) {
-					if (mb_strlen($term) > 0) {
-						$term_object = get_term_by('name', $term, $this->custom_tax_name);
-						if ($term_object !== false) {
-							$terms[$key] = ((integer) $term_object->term_id);
+				$categories = $row['categories'];
+				if (is_array($categories) === false) {
+					$categories = explode('|', $categories);
+					$row['categories'] = array();
+				}
+				foreach ($categories as $cat) {
+					foreach ($import_terms as $term_id => $term_name) {
+						if ($term_name == $cat) {
+							$row['categories'][] = $term_id;
 						}
-						else {
-							$category_slug = $this->string2slug($term);
-							$attr          = array('slug'=>$category_slug);
-							$insert_return = wp_insert_term($term, $this->custom_tax_name, $attr);
-							
-							if ($insert_return instanceof WP_Error) {
-								foreach ($insert_return->get_error_messages() as $error) {
-									echo "<li class='error'>Create Term Error - <strong>".$row['title']."</strong>: $error</li>";
-								}
-							}
-							else {
-								if (isset($insert_return['term_id'])) {
-									$new_term_id = $insert_return['term_id'];
-									if ($new_term_id > 0) {
-										$terms[$key] = (integer) $new_term_id;
-									}
-								}							
-							}
-
-
-						}					
-					} 
+					}					
 				}
 				
 				$item = new CataBlogItem($row);
+				
+				$item->setOrder($new_order);
 				
 				$subimages = $row['subimages'];
 				if (is_array($subimages) === false) {
 					$row['subimages'] = explode('|', $subimages);
 				}
-				
 				foreach ($row['subimages'] as $subimage) {
 					$item->setSubImage($subimage);
 				}
 				
-				if ($item->save() !== false) {
+				$results = $item->save();
+				if ($results === true) {
 					echo $success_message;
 				}
 				else {
-					echo $error_message;
+					echo $results;
 				}
 			}
+			
+			$new_order += 1;
+			
 		}
+		
+		echo '<li class="updated"><strong>All Catalog Items Created</strong></li>';
+		
 	}
 	
 	
@@ -1845,7 +1961,7 @@ class CataBlog {
 	}
 	
 	private function string2slug($string) {
-		return sanitize_title($string);
+		return  wp_unique_term_slug($string, null);
 	}
 	
 	private function wp_message($message) {
