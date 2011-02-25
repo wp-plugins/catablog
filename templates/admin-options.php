@@ -1,8 +1,3 @@
-<?php // variables for database checks below ?>
-<?php $table = $this->db_table ?>
-<?php global $wpdb ?>
-<?php $old_database_present = ($wpdb->get_var("SHOW TABLES LIKE '$table'") == $table) ?>
-
 <div class="wrap">
 	
 	<div id="icon-catablog" class="icon32"><br /></div>
@@ -436,23 +431,6 @@
 			Reset your entire catalog, deleting all photos and custom data permanently. 
 			Sometimes you can use this to fix an improper install.
 		</small></p>
-		
-		
-		<?php if ($old_database_present): ?>
-			<hr />
-			
-				<p><label>Clear Legacy Database Information</label></p>
-				<p><a href="admin.php?page=catablog-clear-old-data" class="button js-warn">Clear Old Database Table</a></p>
-				<p class="error"><small>
-					You have a database table from a version of CataBlog prior to version 0.9.5.
-					The <strong><a href="#export" onclick="jQuery('#catablog-options-menu-export').click();">Export</a></strong> feature 
-					will read from this old database table so you may back it up before clearing it. 
-					Once you no longer need the old table please click the 
-					<a href="admin.php?page=catablog-clear-old-data">Clear Old Data</a> button above.
-				</small></p>
-		<?php endif ?>
-		
-		
 	</div>
 	
 	
@@ -725,45 +703,45 @@
 		/****************************************
 		** RECALCULATE IMAGES IF NECESSARY
 		****************************************/
-			
 	<?php if ($recalculate_thumbnails || $recalculate_fullsize): ?>
 		$('#save_changes').attr('disabled', true);
 		var nonce   = '<?php echo wp_create_nonce("catablog-render-images") ?>';		
 		var images  = ["<?php echo implode('", "', $image_names) ?>"];
 		var message = "Image rendering is now complete";
 	<?php endif ?>
-		
+	
+	
+	
 	<?php if ($recalculate_thumbnails): ?>
 		var thumbs = images.slice(0);
 		renderCataBlogItems(thumbs, 'thumbnail', nonce, function() {
 			jQuery('#catablog-progress-thumbnail .catablog-progress-text').html(message);
 			
-			<?php if ($recalculate_fullsize): ?>
-				var fullsize = images.slice(0);
-				renderCataBlogItems(fullsize, 'fullsize', nonce, function() {
-					jQuery('#catablog-progress-fullsize .catablog-progress-text').html(message);
-					var t = setTimeout(function() {
-						jQuery('#catablog-progress-thumbnail').hide('medium');
-						jQuery('#catablog-progress-fullsize').hide('medium');
-						jQuery('#message').hide('medium');
-					}, 2000);
-					$('#save_changes').attr('disabled', false);
-				});
-			<?php else: ?>
-				var t = setTimeout(function() {
-					jQuery('#catablog-progress-thumbnail').hide('medium');
-					jQuery('#message').hide('medium');
-				}, 2000);
-				
-				$('#save_changes').attr('disabled', false);
-			<?php endif ?>
-			
-			
-			
-			
+			var t = setTimeout(function() {
+				jQuery('#catablog-progress-thumbnail').hide('medium');
+				jQuery('#message').hide('medium');
+			}, 2000);
+
+			$('#save_changes').attr('disabled', false);
 		});
 	<?php endif ?>
 	
+	
+	
+	<?php if ($recalculate_fullsize): ?>
+		var fullsize = images.slice(0);
+		renderCataBlogItems(fullsize, 'fullsize', nonce, function() {
+			jQuery('#catablog-progress-fullsize .catablog-progress-text').html(message);
+			
+			var t = setTimeout(function() {
+				jQuery('#catablog-progress-thumbnail').hide('medium');
+				jQuery('#catablog-progress-fullsize').hide('medium');
+				jQuery('#message').hide('medium');
+			}, 2000);
+			
+			$('#save_changes').attr('disabled', false);
+		});
+	<?php endif ?>
 
 			
 			

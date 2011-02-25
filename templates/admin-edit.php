@@ -23,7 +23,7 @@
 										
 					<ul id="catablog-category-checklist" class="list:category categorychecklist form-no-clear">
 						
-						<?php $categories = $this->terms ?>
+						<?php $categories = $this->get_terms() ?>
 						
 						<?php if (count($categories) < 1): ?>
 							<li><span>You currently have no categories.</span></li>
@@ -35,7 +35,8 @@
 								<?php $checked = (in_array($category->term_id, array_keys($result->getCategories())))? 'checked="checked"' : '' ?>
 								<input id="in-category-<?php echo $category->term_id ?>" type="checkbox" <?php echo $checked ?> name="categories[]"  tabindex="4" value="<?php echo $category->term_id ?>" />
 								<span><?php echo $category->name ?></span>
-								<?php if ($category->name != $this->default_category_name): ?>
+								<?php $default_term = $this->get_default_term() ?>
+								<?php if ($category->name != $default_term->name): ?>
 									<a href="#delete" class="catablog-category-delete hide"><small>[DELETE]</small></a>
 								<?php endif ?>
 							</label>

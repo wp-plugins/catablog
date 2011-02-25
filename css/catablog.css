@@ -18,11 +18,11 @@
 	clear: none !important;
 	float: none !important;
 }
-.catablog-image.catablog-clickable,
-.catablog-subimage.catablog-clickable {
+.catablog-image.catablog-lightbox,
+.catablog-subimage.catablog-lightbox {
 	cursor: pointer;
 }
-.catablog-image.catablog-clickable:hover {
+.catablog-image.catablog-lightbox:hover {
 	border-color: red;
 }
 

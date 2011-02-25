@@ -122,11 +122,18 @@ class CataBlogItem {
 		);
 		
 		if ($category !== false) {
-			$params[$cata->getCustomTaxName()] = $category;
+			$custom_name = $cata->getCustomTaxName();
+			$params[$custom_name] = "catablog-term-" . strtolower($category);
+			
+			// currently does not work :(
+			// $term = "catablog-term-" . strtolower($category);
+			// $params['tax_query']['taxonomy'] = $cata->getCustomTaxName();
+			// $params['tax_query']['field']    = 'slug';
+			// $params['tax_query']['terms']    = array($term);
 		}
 		
 		$posts = get_posts($params);
-
+		
 		
 		// return an array of CataBlogItems
 		foreach ($posts as $post) {
@@ -283,7 +290,6 @@ class CataBlogItem {
 		
 		// if the image has been set after loading process image
 		if ($this->_main_image_changed) {
-			echo "here";
 			// store the new uploaded file in the originals directory
 			$upload_path     = $this->image;
 			$sanatized_title = $this->getSanitizedTitle();
@@ -472,7 +478,7 @@ class CataBlogItem {
 		$orientation = 1;
 		
 		if (function_exists('exif_read_data')) {
-			$exif = exif_read_data($original, 'EXIF', 0);
+			$exif = @exif_read_data($original, 'EXIF', 0);
 			if ($exif) {
 				if (isset($exif['Orientation'])) {
 					$orientation = $exif['Orientation'];
@@ -582,7 +588,7 @@ class CataBlogItem {
 		$orientation = 1;
 		
 		if (function_exists('exif_read_data')) {
-			$exif = exif_read_data($original, 'EXIF', 0);
+			$exif = @exif_read_data($original, 'EXIF', 0);
 			if ($exif) {
 				if (isset($exif['Orientation'])) {
 					$orientation = $exif['Orientation'];
@@ -762,7 +768,7 @@ class CataBlogItem {
 	
 	private function deletePostMeta() {
 		// remove the current post meta values from database
-		var_dump(delete_post_meta($this->id, $this->_post_meta_name));
+		delete_post_meta($this->id, $this->_post_meta_name);
 	}
 	
 	private function deleteLegacyPostMeta() {

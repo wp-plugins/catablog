@@ -8,10 +8,17 @@ jQuery(function($) {
 		var timeout = null;
 		
 		var hold_click = false;
+		var lightbox_images = [];
+		var current_image   = -1;
 		
 		// PlugIn Construction applied across each selected jQuery object
 		this.each(function(i) {
-			jQuery(this).bind('click', function(event) {
+			
+			lightbox_images.push(this);
+			
+			jQuery(this).css('cursor','pointer').bind('click', function(event) {
+				
+				current_image = i;
 				
 				// remove selection class from possible previous elements
 				jQuery('.catablog-selected').removeClass('catablog-selected');
@@ -22,34 +29,26 @@ jQuery(function($) {
 					row = jQuery(this).closest('.catablog-row').get(0);
 				}
 				
-				// select the current row and open the lightbox
+				jQuery(this).addClass('catablog-selected');
 				
-				if (this.src == undefined) {
-					jQuery(this).find('img').addClass('catablog-selected');
-				}
-				else {
-					jQuery(this).addClass('catablog-selected');
-				}
-				
-				open_lightbox(row);
+				open_lightbox(lightbox_images[i]);
 				
 				// do not register the click
 				return false;
 			});
+			
+			if (jQuery(this).parent().get(0).nodeName.toLowerCase() == "a") {
+				jQuery(this).parent().bind('click', function() {
+					jQuery(this).children('img.catablog-image').click();
+					return false;
+				})
+			}
 		});
 		
 		
 		
-		
-		
-		
-		
-		
 		// Private Functions
-		function open_lightbox(row) {
-			// get the image inside the row
-			
-			var img = jQuery(row).find('img.catablog-selected').get(0);
+		function open_lightbox(img) {
 			
 			var support_fixed   = supportPositionFixed();
 			var curtain_density = 0.85;
@@ -100,6 +99,7 @@ jQuery(function($) {
 			// load the full size picture and expand the lightbox to fit the images dimensions
 			var fullsize_pic = new Image();
 			fullsize_pic.onload = function() {
+				var row  = jQuery(img).closest('.catablog-row').get(0);
 				var meta = calculateMeta(row);
 				expand_lightbox(this, meta);
 			}
@@ -188,27 +188,30 @@ jQuery(function($) {
 			hold_click = true;
 			unbindNavigationControls();
 			
-			
 			var selected = jQuery('.catablog-selected');
 			var new_image  = null;
 			
 			if (direction == 'next') {
-				new_image = selected.next('img.catablog-image');
-				if (new_image.size() < 1) {
-					new_image = jQuery('img.catablog-image:first');
+				new_image = lightbox_images[current_image + 1];
+				if (new_image == undefined) {
+					current_image = 0;
+					new_image     = lightbox_images[current_image];
 				}
+				current_image += 1;
 			}
 			else if (direction == 'prev') {
-				new_image = selected.prev('img.catablog-image');
-				if (new_image.size() < 1) {
-					new_image = jQuery('img.catablog-image:last');
+				new_image = lightbox_images[current_image - 1];
+				if (new_image == undefined) {
+					current_image = lightbox_images.length - 1;
+					new_image     = lightbox_images[current_image];
 				}
+				current_image -= 1;
 			}
 			
-			new_thumbnail = new_image.get(0);
+			new_thumbnail = new_image;
 			
 			selected.removeClass('catablog-selected');
-			new_image.addClass('catablog-selected');
+			jQuery(new_image).addClass('catablog-selected');
 			
 			change_lightbox(new_thumbnail);
 		}
@@ -246,13 +249,13 @@ jQuery(function($) {
 			meta.close       = close_button;
 			
 			meta.nav   = "";
-			if (jQuery('.catablog-selected').prev('.catablog-image').size() > 0) {
-				meta.nav += prev_button;
-			}
-			if (jQuery('.catablog-selected').next('.catablog-image').size() > 0) {
+			
+			if (current_image < (lightbox_images.length - 1)) {
 				meta.nav += next_button;
 			}
-			
+			if (current_image > 0) {
+				meta.nav += prev_button;
+			}
 			
 			return meta;
 		}

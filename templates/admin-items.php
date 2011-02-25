@@ -39,8 +39,8 @@
 			<form method="get" action="admin.php?page=catablog" class="alignleft actions">
 				<input type="hidden" name="page" value="catablog" />
 				<select id="cat" name="category" class="postform">
-					<option value="-1">- All Items [slow]</option>
-					<?php $categories = $this->terms ?>
+					<option value="-1">- All Categories</option>
+					<?php $categories = $this->get_terms() ?>
 					<?php foreach ($categories as $category): ?>
 						<?php $selected = ($category->term_id == $selected_term_id)? 'selected="selected"' : '' ?>
 						<option value="<?php echo $category->term_id ?>" <?php echo $selected ?> ><?php echo $category->name ?></option>
@@ -216,6 +216,8 @@
 				// swap button to active state
 				$(this).html('Save Order').addClass('button-primary');
 			}
+			
+			return false;
 		});
 		
 		
