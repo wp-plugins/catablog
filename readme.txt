@@ -97,9 +97,11 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 == Changelog ==
 
 = 1.1.8 =
+* Fix: Lots and lots of testing, hopefully everything is a little more stable.
 * Fix: Database query reduction and optimization across application.
 * Fix: Categories are now consistently set throughout entire plugin.
-* Fix: Code cleaned up and deprecated database methods removed.
+* Fix: Category slugs should now be completely unique, preventing taxonomy conflicts.
+* Fix: Code cleaned up and removed old database upgrade methods.
 * Fix: Various user interface enhancements and bug fixes.
 
 = 1.1.7 =
