@@ -110,6 +110,10 @@ class CataBlogItem {
 	}
 	
 	public static function getItems($category=false, $offset=1, $limit=200, $load_categories=true) {
+		if ($category === NULL) {
+			return array();
+		}
+		
 		$items = array();
 		
 		$cata  = new CataBlogItem();
@@ -123,10 +127,10 @@ class CataBlogItem {
 		
 		if ($category !== false) {
 			$custom_name = $cata->getCustomTaxName();
-			$params[$custom_name] = "catablog-term-" . strtolower($category);
+			$params[$custom_name] = $category;
 			
 			// currently does not work :(
-			// $term = "catablog-term-" . strtolower($category);
+			// $term = $category;
 			// $params['tax_query']['taxonomy'] = $cata->getCustomTaxName();
 			// $params['tax_query']['field']    = 'slug';
 			// $params['tax_query']['terms']    = array($term);

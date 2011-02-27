@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "1.1.8";
+	private $version     = "1.1.9";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -293,19 +293,18 @@ class CataBlog {
 		
 		$limit = $this->items_per_page;
 		$offset = 0;
-		
-		$default_term       = $this->get_default_term();
+		 
 		$selected_term_id   = -1;
-		$selected_term_name = false;
+		$selected_term_slug = false;
 		if (isset($_GET['category']) && is_numeric($_GET['category'])) {
 			$selected_term_id   = $_GET['category'];
-			$selected_term_name = false;
+			$selected_term_slug = false;
 			if ($selected_term_id > 0) {
-				$selected_term_name = get_term_by('id', $_GET['category'], $this->custom_tax_name)->name;	
+				$selected_term_slug = get_term_by('id', $_GET['category'], $this->custom_tax_name)->slug;
 			}
 		}
 		
-		$results = CataBlogItem::getItems($selected_term_name);
+		$results = CataBlogItem::getItems($selected_term_slug);
 		
 		$view = 'list';
 		if (isset($_COOKIE['catablog-view-cookie'])) {
@@ -1208,8 +1207,18 @@ class CataBlog {
 			$category = $tag;
 		}
 		
+		$slug = false;
+		if (mb_strlen($category) > 0) {
+			$slug = NULL;
+			foreach ($this->get_terms() as $term) {
+				if ($category == $term->name) {
+					$slug = $term->slug;
+				}
+			}			
+		}
+		
 		// get items and start the output buffer
-		$results = CataBlogItem::getItems($category, 1, 200, false);
+		$results = CataBlogItem::getItems($slug, 1, -1, false);
 		ob_start();
 		
 		foreach ($results as $result) {
@@ -1691,8 +1700,15 @@ class CataBlog {
 				
 				$subimages = $row['subimages'];
 				if (is_array($subimages) === false) {
-					$row['subimages'] = explode('|', $subimages);
+					if (mb_strlen($subimages) > 0) {
+						$subimages = explode('|', $subimages);
+					}
+					else {
+						$subimages = array();
+					}
 				}
+				$row['subimages'] = $subimages;
+				
 				foreach ($row['subimages'] as $subimage) {
 					$item->setSubImage($subimage);
 				}

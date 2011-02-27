@@ -10,7 +10,7 @@ CataBlog is a comprehensive and effortless tool that allows you to create catalo
 
 == Description ==
 
-- NEW BETA AVAILABLE, CHECK OTHER VERSIONS FOR CATABLOG 1.1.8!
+- VERSION 1.2 PRE RELEASE AVAILABLE NOW, CHECK OUT VERSION 1.1.9
 
 CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use categories to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too with the LightBox effect, perfect for simple galleries. Easy, intuitive and smart design makes it trivial to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
@@ -95,6 +95,12 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 
 == Changelog ==
+
+= 1.1.9 =
+* Fix: Import no longer makes a sub image when the subimages field is empty.
+* Fix: Category filter now finds the category slug for the passed in category name.
+* Fix: New categories made by import or manually will all have a common prefix in their slug.
+* Fix: Clear database when importing should always delete all catalog items now.
 
 = 1.1.8 =
 * Fix: Lots and lots of testing, hopefully everything is a little more stable.

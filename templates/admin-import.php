@@ -20,7 +20,7 @@
 			<?php if (isset($_REQUEST['catablog_clear_db'])): ?>
 				
 				<li class="updated"><em>removing catalog items...</em></li>
-				<?php $items = CataBlogItem::getItems(null, 0, -1, false) ?>
+				<?php $items = CataBlogItem::getItems(false, 0, -1, true) ?>
 				<?php foreach ($items as $item): ?>
 					<?php $item->delete(false) ?>
 				<?php endforeach ?>
