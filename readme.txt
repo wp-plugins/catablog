@@ -4,13 +4,11 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 1.1
+Stable tag: 1.2
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
 == Description ==
-
-- VERSION 1.2 PRE RELEASE AVAILABLE NOW, CHECK OUT VERSION 1.1.9
 
 CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use categories to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too with the LightBox effect, perfect for simple galleries. Easy, intuitive and smart design makes it trivial to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
@@ -20,22 +18,18 @@ If you have a support question, please open a new support ticket here or check o
 
 Highlighted Features:
 
-* Import and Export features now supports CSV format.
-* New script to automatically import image files into the database.
-* New Admin Panel Controls: grid view, bulk actions and a category filter.
-* Compatible with WordPress MultiSite and Network Activation.
+* Add multiple images to a catalog item.
+* Database optimizations throughout the entire plugin.
+* Template controls let you choose exactly how your catalog HTML code is rendered.
 * Use Categories to organize and control your catalog.
+* Import and Export your catalog in XML and CSV formats.
+* Compatible with WordPress MultiSite and Network Activation.
+* Automatically import new image files into the catalog.
 * The Options Page is well organized and supports many configurations.
-* Template controls let you choose exactly how the HTML tags are rendered.
 * Easy management of your catalog with superiorly designed admin controls.
-* Import and Export features for saving and loading catalogs.
-* Database is modified by native WordPress functions only. 
 
 Pre Version 0.9.5 Upgrades:
-
-* Please upgrade to version 1.1 as soon as possible, legacy database code will be stripped soon.
-* Please export your database to xml before upgrading, just incase.
-* Backup the catablog folder in your WordPress site's upload folder.
+This version of CataBlog will not upgrade properly with yours. Please install CataBlog 1.1 and update the database before upgrading to CataBlog 1.2.
 
 Please remember that CataBlog is written, maintained, supported and documented by Zachary Segal. Please feel free to stop by and visit http://catablog.illproductions.com and http://www.illproductions.com for more information about CataBlog and Zachary anytime.
 
@@ -96,6 +90,17 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Changelog ==
 
+= 1.2 =
+* New: Upload multiple images per catalog item now.
+* New: Template HTML code uses a new catablog-images-column class to group images.
+* New: Next and previous catalog item links in the edit panel.
+* Fix: Import and export work better and give more feedback.
+* Fix: When deleting items your catalog order is now re-indexed properly.
+* Fix: CSS classes for front end are more verbose and flexible.
+* Fix: ShortCode Category attribute is not case sensitive.
+* Fix: Change order button is disabled when viewing a specific category because it didn't work.
+* Fix: New 'Uncategorized' default category for all new items.
+ 
 = 1.1.9 =
 * Fix: Import no longer makes a sub image when the subimages field is empty.
 * Fix: Category filter now finds the category slug for the passed in category name.

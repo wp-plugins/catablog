@@ -2,8 +2,10 @@
 		<ul id="catablog_items" class="catablog-grid-view">
 			<?php if (count($results) < 1): ?>
 				<p>
-					No catalog items found in <em><?php echo $selected_term_name ?></em>.<br />
-					Use the category drop down above to switch category views.
+					No catalog items found in <em><?php echo ($selected_term !== false)? $selected_term->name : 'your catalog' ?></em>.<br />
+					<?php if ($selected_term !== false): ?>
+						Use the category drop down above to switch category views.
+					<?php endif ?>
 				</p>
 			<?php endif ?>
 			<?php foreach ($results as $result): ?>

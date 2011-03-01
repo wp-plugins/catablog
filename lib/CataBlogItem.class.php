@@ -109,7 +109,7 @@ class CataBlogItem {
 		return $ids;
 	}
 	
-	public static function getItems($category=false, $offset=1, $limit=200, $load_categories=true) {
+	public static function getItems($category=false, $load_categories=true, $offset=0, $limit=-1) {
 		if ($category === NULL) {
 			return array();
 		}
@@ -121,7 +121,7 @@ class CataBlogItem {
 			'post_type'=> $cata->getCustomPostName(), 
 			'orderby'=>'menu_order',
 			'order'=>'ASC',
-			'offset'=>(($offset - 1) * $limit),
+			'offset'=>$offset,
 			'numberposts' => $limit,
 		);
 		

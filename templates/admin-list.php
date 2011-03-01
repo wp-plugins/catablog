@@ -1,3 +1,4 @@
+
 	<table class="widefat post" cellspacing="0">
 		<thead>
 			<tr>
@@ -25,11 +26,14 @@
 		</tfoot>
 		
 		<tbody id="catablog_items">
+
 			<?php if (count($results) < 1): ?>
 				<tr>
-					<td colspan='5'><p>
-						No catalog items found in <em><?php echo $selected_term_name ?></em>.<br />
-						Use the category drop down above to switch category views.
+					<td colspan='8'><p>
+						No catalog items found in <em><?php echo ($selected_term !== false)? $selected_term->name : 'your catalog' ?></em>.<br />
+						<?php if ($selected_term !== false): ?>
+							Use the category drop down above to switch category views.
+						<?php endif ?>
 					</p></td>
 				</tr>
 			<?php endif ?>
@@ -70,6 +74,6 @@
 					<td><?php echo htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
 				</tr>
 			<?php endforeach; ?>
-		</tbody>
 
+		</tbody>
 	</table>

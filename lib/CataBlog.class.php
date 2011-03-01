@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "1.1.9";
+	private $version     = "1.2";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -96,6 +96,7 @@ class CataBlog {
 			}
 			
 			// register admin ajax actions
+			// add_action('wp_ajax_catablog_fetch', array($this, 'ajax_fetch_items'));
 			add_action('wp_ajax_catablog_reorder', array($this, 'ajax_reorder_items'));
 			add_action('wp_ajax_catablog_new_category', array($this, 'ajax_new_category'));
 			add_action('wp_ajax_catablog_delete_category', array($this, 'ajax_delete_category'));
@@ -293,18 +294,22 @@ class CataBlog {
 		
 		$limit = $this->items_per_page;
 		$offset = 0;
-		 
-		$selected_term_id   = -1;
-		$selected_term_slug = false;
+		
+		$category_filter = false;
+		
+		$selected_term = $this->get_default_term();
 		if (isset($_GET['category']) && is_numeric($_GET['category'])) {
-			$selected_term_id   = $_GET['category'];
-			$selected_term_slug = false;
-			if ($selected_term_id > 0) {
-				$selected_term_slug = get_term_by('id', $_GET['category'], $this->custom_tax_name)->slug;
+			$selected_term = false;
+			if ($_GET['category'] > 0) {
+				$selected_term = get_term_by('id', $_GET['category'], $this->custom_tax_name);
 			}
 		}
 		
-		$results = CataBlogItem::getItems($selected_term_slug);
+		if ($selected_term) {
+			$category_filter = $selected_term->slug;
+		}
+		
+		$results    = CataBlogItem::getItems($category_filter);
 		
 		$view = 'list';
 		if (isset($_COOKIE['catablog-view-cookie'])) {
@@ -420,7 +425,7 @@ class CataBlog {
 					
 					delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
 					
-					$items       = CataBlogItem::getItems(false, 0, -1, false);
+					$items       = CataBlogItem::getItems(false, false);
 					$image_names = array();
 
 					foreach ($items as $item) {
@@ -706,6 +711,7 @@ class CataBlog {
 			$item = CataBlogItem::getItem($_REQUEST['id']);
 			if ($item) {
 				$item->delete();
+				$this->reorder_all_items();
 				header('Location: admin.php?page=catablog&message=2'); die;
 			}
 			else {
@@ -713,6 +719,7 @@ class CataBlog {
 			}
 		}
 	}
+	
 	
 	public function admin_bulk_edit() {
 		$action = $_REQUEST['bulk-action'];
@@ -733,7 +740,9 @@ class CataBlog {
 						}
 					}
 					
+					$this->reorder_all_items();
 					$this->wp_message('Bulk delete performed successfully.');
+					
 				} else {
 					$this->wp_message('Please make your selection by checking the boxes in the list below.');
 					$this->admin_list();	
@@ -805,7 +814,7 @@ class CataBlog {
 		header("Pragma: no-cache");
 		header("Expires: 0");
 
-		$results = CataBlogItem::getItems(false, 0, -1, true);
+		$results = CataBlogItem::getItems();
 				
 		if ($format == 'csv') {
 			ini_set('auto_detect_line_endings', true);
@@ -856,7 +865,7 @@ class CataBlog {
 	}
 	
 	public function admin_regenerate_images() {
-		$items       = CataBlogItem::getItems(false, 0, -1, false);
+		$items       = CataBlogItem::getItems(false, false);
 		$image_names = array();
 		
 		foreach ($items as $item) {
@@ -870,7 +879,7 @@ class CataBlog {
 	}
 	
 	public function admin_rescan_images() {
-		$items = CataBlogItem::getItems(false, 0, -1, false);
+		$items = CataBlogItem::getItems(false, false);
 		$image_names = array();
 		foreach ($items as $item) {
 			$image_names[] = $item->getImage();
@@ -934,7 +943,7 @@ class CataBlog {
 	
 	public function admin_reset_all() {
 		// remove all catablog posts
-		$items = CataBlogItem::getItems(false, 0, -1, false);
+		$items = CataBlogItem::getItems();
 		foreach ($items as $item) {
 			$item->delete(false);
 		}
@@ -969,6 +978,29 @@ class CataBlog {
 	/*****************************************************
 	**       - ADMIN AJAX ACTIONS
 	*****************************************************/
+	// public function ajax_fetch_items() {
+	// 	check_ajax_referer('catablog-fetch-rows', 'security');
+	// 	die();
+	// 	
+	// 	// DOES NOTHING CURRENTLY 
+	// 	$ajax_call = true;
+	// 	
+	// 	$category = (mb_strlen($_REQUEST['category']) > 0)? $_REQUEST['category'] : false;
+	// 	$offset   = $_REQUEST['offset'];
+	// 	$limit    = 100;
+	// 	
+	// 	$results  = CataBlogItem::getItems();
+	// 	
+	// 	if ($view == 'grid') {
+	// 		include_once($this->directories['template'] . '/admin-grid.php');
+	// 	}
+	// 	else {
+	// 		include_once($this->directories['template'] . '/admin-list.php');
+	// 	}
+	// 	
+	// 	die();
+	// }
+	
 	public function ajax_reorder_items() {
 		check_ajax_referer('catablog-reorder', 'security');
 		
@@ -1005,7 +1037,7 @@ class CataBlog {
 		
 		$name_exists = false;
 		foreach ($this->get_terms() as $term) {
-			if ($category_name == $term->name) {
+			if (strtolower($category_name) == strtolower($term->name)) {
 				$name_exists = true;
 				break;
 			}
@@ -1211,14 +1243,14 @@ class CataBlog {
 		if (mb_strlen($category) > 0) {
 			$slug = NULL;
 			foreach ($this->get_terms() as $term) {
-				if ($category == $term->name) {
+				if (strtolower($category) == strtolower($term->name)) {
 					$slug = $term->slug;
 				}
 			}			
 		}
 		
 		// get items and start the output buffer
-		$results = CataBlogItem::getItems($slug, 1, -1, false);
+		$results = CataBlogItem::getItems($slug, false);
 		ob_start();
 		
 		foreach ($results as $result) {
@@ -1294,7 +1326,7 @@ class CataBlog {
 			$values['image-fullsize']  = $this->urls['originals'] . "/". $result->getImage();
 		}
 		
-		$values['link']            = $link;
+		$values['link']            = (mb_strlen($link) > 0)? $link : "#empty-link";
 		$values['link-target']     = $target;
 		$values['link-rel']        = $rel;
 		$values['description']     = $description;
@@ -1370,8 +1402,12 @@ class CataBlog {
 	}
 	
 	public function activate() {
+		$this->initialize_plugin();
 		$this->install_directories();
 		$this->install_options();
+		if ($this->get_default_term() === null) {
+			$this->install_default_term();
+		}
 	}
 	
 	private function install_options() {
@@ -1601,11 +1637,10 @@ class CataBlog {
 			}
 			
 			foreach ($row_terms as $row_term) {
-				if (!in_array($row_term, $import_terms)) {
-					$import_terms[] = $row_term;
-				}
+				$import_terms[] = $row_term;
 			}
 		}
+		$import_terms = array_intersect_key($import_terms,array_unique(array_map(strtolower,$import_terms)));
 		
 		// extract a list of every category that needs is not already created
 		$make_terms = $import_terms;
@@ -1688,7 +1723,7 @@ class CataBlog {
 				}
 				foreach ($categories as $cat) {
 					foreach ($import_terms as $term_id => $term_name) {
-						if ($term_name == $cat) {
+						if (strtolower($term_name) == strtolower($cat)) {
 							$row['categories'][] = $term_id;
 						}
 					}					
@@ -1851,6 +1886,31 @@ class CataBlog {
 			}
 		}
 		return $this->default_term;
+	}
+	
+	private function reorder_all_items($db_optimize=true) {
+		if ($db_optimize) {
+			global $wpdb;
+
+			$query1 = "SET @catablogCounter = -1;";
+			$wpdb->query($query1);
+
+			$query2 = "UPDATE $wpdb->posts SET menu_order = (@catablogCounter := @catablogCounter+1) WHERE post_type='catablog-items' ORDER BY menu_order ASC";
+			$wpdb->query($query2);
+		}
+		else {
+			$items = CataBlogItem::getItems();
+			$length = count($items);
+			for ($i=0; $i < $length; $i++) {
+				$item = $items[$i];
+				if ($item->getOrder() != $i) {
+					$item->setOrder($i);
+					$item->save();				
+				}
+			}
+		}
+		
+		return true;
 	}
 	
 	private function string2slug($string) {

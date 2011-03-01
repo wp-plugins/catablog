@@ -94,13 +94,13 @@
 					<?php $prev_item = CataBlogItem::getAdjacentItem($result->getOrder() - 1) ?>
 					<span class="catablog-edit-navigation" style="float:right">
 						<?php if ($prev_item != false): ?>
-							<a href="admin.php?page=catablog&amp;id=<?php echo $prev_item->getId() ?>">&larr; <?php echo $prev_item->getTitle() ?></a>
+							<a href="admin.php?page=catablog&amp;id=<?php echo $prev_item->getId() ?>" title="<?php echo $prev_item->getTitle() ?>">&larr; Previous Item</a>
 						<?php else: ?>
 							<span class="nonessential">no previous item</span>
 						<?php endif ?>
 						<span> | </span>
 						<?php if ($next_item != false): ?>
-							<a href="admin.php?page=catablog&amp;id=<?php echo $next_item->getId() ?>"><?php echo $next_item->getTitle() ?> &rarr;</a>
+							<a href="admin.php?page=catablog&amp;id=<?php echo $next_item->getId() ?>" title="<?php echo $next_item->getTitle() ?>">Next Item &rarr;</a>
 						<?php else: ?>
 							<span class="nonessential">no next item</span>
 						<?php endif?>

@@ -6,8 +6,6 @@
 			<a href="admin.php?page=catablog-new" class="button add-new-h2">Add New</a>
 			
 		</h2>
-
-
 		<div id="message" class="updated hide">
 			<strong>&nbsp;</strong>
 		</div>
@@ -17,8 +15,6 @@
 				<strong>You must have a JavaScript enabled browser for bulk actions and to change the order of your items. <a href="http://www.google.com/search?q=what+is+javascript">Learn More</a>.</strong>
 			</div>
 		</noscript>
-
-
 
 
 		<div class="tablenav">
@@ -39,10 +35,10 @@
 			<form method="get" action="admin.php?page=catablog" class="alignleft actions">
 				<input type="hidden" name="page" value="catablog" />
 				<select id="cat" name="category" class="postform">
-					<option value="-1">- All Categories</option>
+					<option value="-1">- All Categories [slow]</option>
 					<?php $categories = $this->get_terms() ?>
 					<?php foreach ($categories as $category): ?>
-						<?php $selected = ($category->term_id == $selected_term_id)? 'selected="selected"' : '' ?>
+						<?php $selected = ($category->term_id == $selected_term->term_id)? 'selected="selected"' : '' ?>
 						<option value="<?php echo $category->term_id ?>" <?php echo $selected ?> ><?php echo $category->name ?></option>
 					<?php endforeach ?>
 				</select>
@@ -50,7 +46,8 @@
 				
 				<small>|</small>
 				
-				<a href="#sort" id="enable_sort" class="button">Change Order</a>
+				<?php $disabled = ($_GET['category'] > 0)? 'disabled="disabled"' : '' ?>
+				<a href="#sort" id="enable_sort" <?php echo $disabled ?> class="button">Change Order</a>
 			</form>
 			
 			<div id="catablog-view-switch" class="view-switch">
@@ -69,19 +66,6 @@
 			</div>
 		</div>
 		
-		<?php /*
-		<div id="catablog-view-nav">
-			<?php echo $this->items_per_page ?> | 
-			<?php echo $catalog_count = wp_count_posts($this->custom_post_name)->publish ?> | 
-			
-			
-			<?php echo $pages = floor($catalog_count / $this->items_per_page) ?>
-			<?php for ($i = 0; $i <= $pages; $i++): ?>
-				<a href="admin.php?page=catablog&amp;offset=<?php echo $i + 1 ?>"><?php echo $i + 1 ?></a>
-			<?php endfor ?>
-		</div>
-		*/ ?>
-		
 		<?php
 		
 		if ($view == 'grid') {
@@ -99,36 +83,10 @@
 	var timer = null;
 	
 	jQuery(document).ready(function($) {
-				
-		// disable item links when drag n drop is enabled
-		$('#catablog_items a').bind('click', function(e) {
-			if ($(this).hasClass('cb_disabled_link')) {
-				return false;
-			}
-		});
 		
-		
-		// bind a warning on the delete link
-		// LIST VIEW ONLY!
-		$('#catablog_items a.remove_link').bind('click', function(e) {
-			if (confirm('Are you sure you want to delete this catablog item?')) {
-				return true;
-			}			
-			return false;
-		});
-		
-		// hide exceptionaly long descriptions
-		// LIST VIEW ONLY!
-		// $('#catablog_items div.catablog-list-description').each(function() {
-		// 	var height = $(this).height();
-		// 	if (height > 90) {
-		// 		$(this).height(72);
-		// 		$(this).after("<em>more...</em>");
-		// 	}
-		// });
-				
-		
-		
+		/************************************************************************************
+		** quick form bindings that should happen first
+		*************************************************************************************/
 		// show the bulk actions form and bind form submission;
 		$('#catablog-bulk-action-form').show().bind('submit', function(event) {
 			var self = this;
@@ -150,18 +108,33 @@
 			
 		});
 		
-		
 		// hide the filter button and bind live category switching
 		$('#catablog-submit-filter').hide();
 		$('#cat.postform').bind('change', function(event) {
 			$(this).closest('form').submit();
 		});
 		
+		
+		/************************************************************************************
+		** quick form modifications that should happen first
+		*************************************************************************************/
 		// lazy load the images
 		calculate_lazy_loads();
 		$(window).bind('scroll resize', function(event) {
 			calculate_lazy_loads();
 		});
+		
+		
+		
+		// hide exceptionaly long descriptions
+		// LIST VIEW ONLY!
+		// $('#catablog_items div.catablog-list-description').each(function() {
+		// 	var height = $(this).height();
+		// 	if (height > 90) {
+		// 		$(this).height(72);
+		// 		$(this).after("<em>more...</em>");
+		// 	}
+		// });
 		
 		
 		// initialize the sortables
@@ -175,6 +148,11 @@
 		
 		
 		$('#enable_sort').bind('click', function(event) {
+			if ($(this).attr('disabled')) {
+				alert('This feature only works when viewing \'All Categories\'.');
+				return false;
+			}
+			
 			var items = $(catablog_items_path);
 			if ($(this).hasClass('button-primary')) {
 				
@@ -220,7 +198,6 @@
 			return false;
 		});
 		
-		
 		function ajax_save_order() {
 			var ids = [];
 			$('#catablog_items input.bulk_selection').each(function(i) {
@@ -240,5 +217,6 @@
 			});
 		}
 		
+				
 	});
 </script>
