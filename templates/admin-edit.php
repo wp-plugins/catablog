@@ -76,7 +76,17 @@
 						<label for="product_code">Product Code</label><br />
 						<input type="text" name="product_code" id="product_code" class="text-field" tabindex="8" value="<?php echo htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8') ?>">
 					</p>
-
+					
+					<p>
+						<label for="quantity">Quantity</label><br />
+						<input type="text" name="quantity" id="quantity" class="text-field" tabindex="8" value="<?php echo htmlspecialchars($result->getQuantity(), ENT_QUOTES, 'UTF-8') ?>">
+					</p>
+					
+					<p>
+						<label for="size">Size</label><br />
+						<input type="text" name="size" id="size" class="text-field" tabindex="8" value="<?php echo htmlspecialchars($result->getSize(), ENT_QUOTES, 'UTF-8') ?>">
+					</p>
+					
 					<p><small>
 						If you want to make a shopping cart you should make sure you are 
 						using a <a href="admin.php?page=catablog-options#store">Store Template</a> that uses these values.

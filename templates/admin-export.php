@@ -21,6 +21,8 @@
 		</categories>
 		<price><![CDATA[<?php echo $result->getPrice() ?>]]></price>
 		<product_code><![CDATA[<?php echo $result->getProductCode() ?>]]></product_code>
+		<quantity><![CDATA[<?php echo $result->getQuantity() ?>]]></quantity>
+		<size><![CDATA[<?php echo $result->getSize() ?>]]></size>
 	</item>
 <?php endforeach ?>
 

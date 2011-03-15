@@ -14,6 +14,8 @@ class CataBlogItem {
 	private $link         = "";
 	private $price        = 0;
 	private $product_code = "";
+	private $quantity     = "";
+	private $size         = "";
 	private $categories   = array();
 	private $permalink    = "";
 	
@@ -657,6 +659,12 @@ class CataBlogItem {
 	public function getProductCode() {
 		return $this->product_code;
 	}
+	public function getQuantity() {
+		return $this->quantity;
+	}
+	public function getSize() {
+		return $this->size;
+	}
 	public function getCategories() {
 		return $this->categories;
 	}
@@ -679,7 +687,9 @@ class CataBlogItem {
 		$categories   = implode('|', $this->getCategories());
 		$price        = $this->getPrice();
 		$product_code = $this->getProductCode();
-		return array($order, $image, $subimages, $title, $link, $description, $categories, $price, $product_code);
+		$quantity     = $this->getQuantity();
+		$size         = $this->getSize();
+		return array($order, $image, $subimages, $title, $link, $description, $categories, $price, $product_code, $quantity, $size);
 	}
 	
 	
@@ -725,6 +735,12 @@ class CataBlogItem {
 	public function setProductCode($product_code) {
 		$this->product_code = $product_code;
 	}
+	public function setQuantity($quantity) {
+		$this->quantity = $quantity;
+	}
+	public function setSize($size) {
+		$this->size = $size;
+	}
 	public function setCategory($category) {
 		$this->categories[] = $category;
 	}
@@ -766,6 +782,8 @@ class CataBlogItem {
 		$meta['link']         = $this->link;
 		$meta['price']        = $this->price;
 		$meta['product-code'] = $this->product_code;
+		$meta['quantity']     = $this->quantity;
+		$meta['size']         = $this->size;
 		
 		update_post_meta($this->id, $this->_post_meta_name, $meta);
 	}

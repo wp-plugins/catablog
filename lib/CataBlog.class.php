@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "1.2";
+	private $version     = "1.2.1c";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -820,7 +820,7 @@ class CataBlog {
 			ini_set('auto_detect_line_endings', true);
 			
 			$outstream   = fopen("php://output", 'w');
-			$field_names = array('order','image','subimages','title','link','description','categories','price','product_code');
+			$field_names = array('order','image','subimages','title','link','description','categories','price','product_code', 'quantity', 'size');
 			$header      = NULL;
 			
 			foreach ($results as $result) {
@@ -1332,6 +1332,8 @@ class CataBlog {
 		$values['description']     = $description;
 		$values['price']           = number_format(((float)($result->getPrice())), 2, '.', '');
 		$values['product-code']    = $result->getProductCode();		
+		$values['quantity']        = $result->getQuantity();
+		$values['size']            = $result->getSize();
 		
 		$values['main-image']      = '<img src="'.$values['image'].'" class="catablog-image" width="'.$values['image-size'].'" alt="" />';
 		$values['sub-images']      = "";
@@ -1569,6 +1571,8 @@ class CataBlog {
 			$row['description']  = (string) $item->description;
 			$row['price']        = (float) $item->price;
 			$row['product_code'] = (string) $item->product_code;
+			$row['quantity']     = (string) $item->quantity;
+			$row['size']         = (string) $item->size;
 			
 			$subimages = array();
 			foreach ($item->subimages as $images) {
@@ -1612,11 +1616,11 @@ class CataBlog {
 			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 				if(!$header) {
 					$header = $row;
-					if (count($header) != 9) {
+					if (count($header) != 11) {
 						return $data;
 					}
 				}
-				else if (count($row) == 9) {
+				else if (count($row) == 11) {
 					$data[] = array_combine($header, $row);
 				}
 			}
