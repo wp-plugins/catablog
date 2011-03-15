@@ -46,7 +46,7 @@
 				
 				<small>|</small>
 				
-				<?php $disabled = ($_GET['category'] > 0)? 'disabled="disabled"' : '' ?>
+				<?php $disabled = (isset($_GET['category']) && $_GET['category'] > 0)? 'disabled="disabled"' : '' ?>
 				<a href="#sort" id="enable_sort" <?php echo $disabled ?> class="button">Change Order</a>
 			</form>
 			

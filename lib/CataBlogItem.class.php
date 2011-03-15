@@ -17,7 +17,6 @@ class CataBlogItem {
 	private $quantity     = "";
 	private $size         = "";
 	private $categories   = array();
-	private $permalink    = "";
 	
 	// object values not considered item properties
 	// this will be skipped in getParameterArray() method
@@ -82,7 +81,6 @@ class CataBlogItem {
 		$item->description  = $post->post_content;
 		$item->categories   = $category_ids;
 		$item->order        = $post->menu_order;
-		$item->setPermalink($post->post_name);
 		
 		$meta = get_post_meta($post->ID, $item->_post_meta_name, true);
 		$item->processPostMeta($meta);
@@ -151,7 +149,6 @@ class CataBlogItem {
 			$item->description  = $post->post_content;
 			$item->categories   = array();
 			$item->order        = $post->menu_order;
-			$item->setPermalink($post->post_name);
 			
 			$item_cats = array();
 			if ($load_categories) {
@@ -668,9 +665,6 @@ class CataBlogItem {
 	public function getCategories() {
 		return $this->categories;
 	}
-	public function getPermalink() {
-		return $this->permalink;
-	}
 	public function getCustomPostName() {
 		return $this->_custom_post_name;
 	}
@@ -746,9 +740,6 @@ class CataBlogItem {
 	}
 	public function setCategories($categories) {
 		$this->categories = $categories;
-	}
-	public function setPermalink($post_name) {
-		$this->permalink = get_bloginfo('home') . '/' . $this->_options['public-catalog-slug'] . '/' . $post_name . '/';
 	}
 	
 	

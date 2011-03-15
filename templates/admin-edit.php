@@ -176,12 +176,7 @@
 						<input type="hidden" id="order" name="order" value="<?php echo $result->getOrder() ?>" />
 						
 						<input type="submit" class="button-primary" id="save_changes" tabindex="9" value="Save Changes" />
-						
-						<?php if ($this->options['public-catalog-items']): ?>
-						<span> or </span>
-						<a href="<?php echo $result->getPermalink() ?>" target="_blank" class="button">View Catalog Item</a>
-						<?php endif ?>
-						
+												
 						<span> or <a href="<?php echo 'admin.php?page=catablog' ?>" tabindex="10">back to list</a></span>						
 					</div>
 					

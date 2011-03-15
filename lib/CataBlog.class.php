@@ -291,10 +291,7 @@ class CataBlog {
 			$this->admin_edit();
 			return false;
 		}
-		
-		$limit = $this->items_per_page;
-		$offset = 0;
-		
+				
 		$category_filter = false;
 		
 		$selected_term = $this->get_default_term();
@@ -324,12 +321,14 @@ class CataBlog {
 			}
 		}
 		
-		switch ($_GET['message']) {
-			case 2:
-				$this->wp_message("Catalog Item Deleted Successfully.");
-				break;
-			case 3:
-				$this->wp_error("Could Not Delete Item Because ID was non existent.");
+		if (isset($_GET['message'])) {
+			switch ($_GET['message']) {
+				case 2:
+					$this->wp_message("Catalog Item Deleted Successfully.");
+					break;
+				case 3:
+					$this->wp_error("Could Not Delete Item Because ID was non existent.");
+			}			
 		}
 		
 		include_once($this->directories['template'] . '/admin-items.php');
@@ -344,10 +343,12 @@ class CataBlog {
 				return false;
 			}
 			
-			switch ($_GET['message']) {
-				case 1:
-					$this->wp_message("Changes Saved Successfully");
-					break;
+			if (isset($_GET['message'])) {
+				switch ($_GET['message']) {
+					case 1:
+						$this->wp_message("Changes Saved Successfully");
+						break;
+				}				
 			}
 			
 			include_once($this->directories['template'] . '/admin-edit.php');
@@ -365,6 +366,8 @@ class CataBlog {
 	
 	public function admin_options() {
 		$recalculate = false;
+		$recalculate_thumbnails = false;
+		$recalculate_fullsize   = false;
 		
 		if (isset($_REQUEST['save'])) {
 			$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_options_nonce'], 'catablog_options' );
@@ -1258,6 +1261,8 @@ class CataBlog {
 		}
 		
 		// give the credit where it is due
+		echo "<p>Catalog Content Created by CataBlog, <a href='http://catablog.illproductions.com'>http://catablog.illproductions.com</a></p>";
+		echo "<p>CataBlog Written and Maintained by illProductions, <a href='http://www.illproductions.com'>http://www.illproductions.com</a></p>";
 		echo "<p class='catablog-credits'><!-- Catalog Content by CataBlog $this->version - http://catablog.illproductions.com/ --></p>";
 		
 		return ob_get_clean();
@@ -1331,9 +1336,10 @@ class CataBlog {
 		$values['link-rel']        = $rel;
 		$values['description']     = $description;
 		$values['price']           = number_format(((float)($result->getPrice())), 2, '.', '');
-		$values['product-code']    = $result->getProductCode();		
-		$values['quantity']        = $result->getQuantity();
-		$values['size']            = $result->getSize();
+
+		$values['product-code']    = htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8');
+		$values['quantity']        = htmlspecialchars($result->getQuantity(), ENT_QUOTES, 'UTF-8');
+		$values['size']            = htmlspecialchars($result->getSize(), ENT_QUOTES, 'UTF-8');
 		
 		$values['main-image']      = '<img src="'.$values['image'].'" class="catablog-image" width="'.$values['image-size'].'" alt="" />';
 		$values['sub-images']      = "";
@@ -1644,7 +1650,7 @@ class CataBlog {
 				$import_terms[] = $row_term;
 			}
 		}
-		$import_terms = array_intersect_key($import_terms,array_unique(array_map(strtolower,$import_terms)));
+		$import_terms = array_intersect_key($import_terms,array_unique(array_map('strtolower',$import_terms)));
 		
 		// extract a list of every category that needs is not already created
 		$make_terms = $import_terms;
@@ -1733,10 +1739,6 @@ class CataBlog {
 					}					
 				}
 				
-				$item = new CataBlogItem($row);
-				
-				$item->setOrder($new_order);
-				
 				$subimages = $row['subimages'];
 				if (is_array($subimages) === false) {
 					if (mb_strlen($subimages) > 0) {
@@ -1746,11 +1748,14 @@ class CataBlog {
 						$subimages = array();
 					}
 				}
-				$row['subimages'] = $subimages;
+				$row['sub_images'] = $subimages;
+				unset($row['subimages']);
 				
-				foreach ($row['subimages'] as $subimage) {
-					$item->setSubImage($subimage);
-				}
+				$row['id'] = null;
+				
+				$item = new CataBlogItem($row);
+				
+				$item->setOrder($new_order);
 				
 				$results = $item->save();
 				if ($results === true) {

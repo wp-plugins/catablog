@@ -275,17 +275,7 @@
 			itself and the <strong>images are not included in this backup</strong>. To backup 
 			your images follow the directions at the bottom of the page.
 		</p>
-		
-		<?php if ($old_database_present): ?>
-		<p class="error">
-			<strong>Important Upgrade Tip:</strong><br />
-			Your backups will be made from the old CataBlog database table as long as it is present.<br />
-			You should backup your old database...<br />
-			verify the XML data looks correct...<br />
-			and then delete	the old database in the <a href="#system" onclick="jQuery('#catablog-options-menu-system').click();">Systems Panel</a>.
-		</p>
-		<?php endif ?>
-		
+				
 		<p>&nbsp;</p>
 		
 		<p>
