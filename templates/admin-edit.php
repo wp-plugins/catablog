@@ -68,7 +68,7 @@
 				<h3>Shopping Cart</h3>
 				<div>
 					<p>
-						<label for="price">Item Price</label><br />
+						<label for="price">Item Price (original plugin price)</label><br />
 						<input type="text" name="price" id="price" class="text-field" tabindex="7" value="<?php echo $result->getPrice() ?>">
 					</p>
 					
@@ -85,6 +85,11 @@
 					<p>
 						<label for="size">Size</label><br />
 						<input type="text" name="size" id="size" class="text-field" tabindex="8" value="<?php echo htmlspecialchars($result->getSize(), ENT_QUOTES, 'UTF-8') ?>">
+					</p>
+					
+					<p>
+						<label for="prices">Prices (use for multiple prices)</label><br />
+						<input type="text" name="prices" id="prices" class="text-field" tabindex="8" value="<?php echo htmlspecialchars($result->getPrices(), ENT_QUOTES, 'UTF-8') ?>">
 					</p>
 					
 					<p><small>

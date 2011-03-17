@@ -12,6 +12,7 @@
 				<th class="manage-column">Product Code</th>
 				<th class="manage-column">Quantity</th>
 				<th class="manage-column">Size</th>
+				<th class="manage-column">Prices</th>
 			</tr>
 		</thead>
 		<tfoot>
@@ -26,6 +27,7 @@
 				<th class="manage-column">Product Code</th>
 				<th class="manage-column">Quantity</th>
 				<th class="manage-column">Size</th>
+				<th class="manage-column">Prices</th>
 			</tr>
 		</tfoot>
 		
@@ -76,8 +78,9 @@
 					<?php $currency = "" ?>
 					<td><?php echo (((float) $result->getPrice()) > 0)? $currency. number_format($result->getPrice(), 2) : "" ?>&nbsp;</td>
 					<td><?php echo htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
-					<td><?php echo htmlspecialchars($result->getQuantity(), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
-					<td><?php echo htmlspecialchars($result->getSize(), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
+					<td><?php echo str_replace('|', '<br />', htmlspecialchars($result->getQuantity(), ENT_QUOTES, 'UTF-8')) ?>&nbsp;</td>
+					<td><?php echo str_replace('|', '<br />', htmlspecialchars($result->getSize(), ENT_QUOTES, 'UTF-8')) ?>&nbsp;</td>
+					<td><?php echo str_replace('|', '<br />', htmlspecialchars($result->getPrices(), ENT_QUOTES, 'UTF-8')) ?>&nbsp;</td>
 				</tr>
 			<?php endforeach; ?>
 

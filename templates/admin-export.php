@@ -23,6 +23,7 @@
 		<product_code><![CDATA[<?php echo $result->getProductCode() ?>]]></product_code>
 		<quantity><![CDATA[<?php echo $result->getQuantity() ?>]]></quantity>
 		<size><![CDATA[<?php echo $result->getSize() ?>]]></size>
+		<prices><![CDATA[<?php echo $result->getPrices() ?>]]></prices>
 	</item>
 <?php endforeach ?>
 

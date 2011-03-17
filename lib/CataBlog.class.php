@@ -823,7 +823,7 @@ class CataBlog {
 			ini_set('auto_detect_line_endings', true);
 			
 			$outstream   = fopen("php://output", 'w');
-			$field_names = array('order','image','subimages','title','link','description','categories','price','product_code', 'quantity', 'size');
+			$field_names = array('order','image','subimages','title','link','description','categories','price','product_code', 'quantity', 'size', 'prices');
 			$header      = NULL;
 			
 			foreach ($results as $result) {
@@ -1338,8 +1338,9 @@ class CataBlog {
 		$values['price']           = number_format(((float)($result->getPrice())), 2, '.', '');
 
 		$values['product-code']    = htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8');
-		$values['quantity']        = htmlspecialchars($result->getQuantity(), ENT_QUOTES, 'UTF-8');
-		$values['size']            = htmlspecialchars($result->getSize(), ENT_QUOTES, 'UTF-8');
+		$values['quantity']        = str_replace('|', '<br />', htmlspecialchars($result->getQuantity(), ENT_QUOTES, 'UTF-8'));
+		$values['size']            = str_replace('|', '<br />', htmlspecialchars($result->getSize(), ENT_QUOTES, 'UTF-8'));
+		$values['prices']          = str_replace('|', '<br />', htmlspecialchars($result->getPrices(), ENT_QUOTES, 'UTF-8'));
 		
 		$values['main-image']      = '<img src="'.$values['image'].'" class="catablog-image" width="'.$values['image-size'].'" alt="" />';
 		$values['sub-images']      = "";
@@ -1579,6 +1580,7 @@ class CataBlog {
 			$row['product_code'] = (string) $item->product_code;
 			$row['quantity']     = (string) $item->quantity;
 			$row['size']         = (string) $item->size;
+			$row['prices']       = (string) $item->prices;
 			
 			$subimages = array();
 			foreach ($item->subimages as $images) {
@@ -1622,11 +1624,11 @@ class CataBlog {
 			while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 				if(!$header) {
 					$header = $row;
-					if (count($header) != 11) {
+					if (count($header) != 12) {
 						return $data;
 					}
 				}
-				else if (count($row) == 11) {
+				else if (count($row) == 12) {
 					$data[] = array_combine($header, $row);
 				}
 			}

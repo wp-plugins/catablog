@@ -16,6 +16,7 @@ class CataBlogItem {
 	private $product_code = "";
 	private $quantity     = "";
 	private $size         = "";
+	private $prices       = "";
 	private $categories   = array();
 	
 	// object values not considered item properties
@@ -662,6 +663,9 @@ class CataBlogItem {
 	public function getSize() {
 		return $this->size;
 	}
+	public function getPrices() {
+		return $this->prices;
+	}
 	public function getCategories() {
 		return $this->categories;
 	}
@@ -683,7 +687,8 @@ class CataBlogItem {
 		$product_code = $this->getProductCode();
 		$quantity     = $this->getQuantity();
 		$size         = $this->getSize();
-		return array($order, $image, $subimages, $title, $link, $description, $categories, $price, $product_code, $quantity, $size);
+		$prices       = $this->getPrices();
+		return array($order, $image, $subimages, $title, $link, $description, $categories, $price, $product_code, $quantity, $size, $prices);
 	}
 	
 	
@@ -735,6 +740,9 @@ class CataBlogItem {
 	public function setSize($size) {
 		$this->size = $size;
 	}
+	public function setPrices($prices) {
+		$this->prices = $prices;
+	}
 	public function setCategory($category) {
 		$this->categories[] = $category;
 	}
@@ -775,6 +783,7 @@ class CataBlogItem {
 		$meta['product-code'] = $this->product_code;
 		$meta['quantity']     = $this->quantity;
 		$meta['size']         = $this->size;
+		$meta['prices']       = $this->prices;
 		
 		update_post_meta($this->id, $this->_post_meta_name, $meta);
 	}
