@@ -3,12 +3,16 @@ body {
 }
 
 
+.error {
+	background-color: #FFEBE8;
+	padding: 0 0.6em;
+	border: 1px #C00 solid;
+}
+
 
 #catablog_items tr {
 	background-color: #fff;
 }
-
-
 
 #catablog_items.sort_enabled tr,
 #catablog_items.sort_enabled li {

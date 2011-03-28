@@ -1,71 +1,71 @@
 <div class="wrap">
 	
 	<div id="icon-catablog" class="icon32"><br /></div>
-	<h2>CataBlog Options</h2>
+	<h2><?php _e("CataBlog Options", "catablog"); ?></h2>
 	
 	<noscript>
 		<div class="error">
-			<strong>You must have a JavaScript enabled browser to change the CataBlog options.</strong>
+			<strong><?php _e("You must have a JavaScript enabled browser to change the CataBlog options.", "catablog"); ?></strong>
 		</div>
 	</noscript>
 	
 	<?php if ($recalculate_thumbnails): ?>
 		<div id="catablog-progress-thumbnail" class="catablog-progress">
 			<div class="catablog-progress-bar"></div>
-			<h3 class="catablog-progress-text">Processing Thumbnail Images...</h3>
+			<h3 class="catablog-progress-text"><?php _e("Processing Thumbnail Images...", "catablog"); ?></h3>
 		</div>
 	<?php endif ?>
 	
 	<?php if ($recalculate_fullsize): ?>
 		<div id="catablog-progress-fullsize" class="catablog-progress">
 			<div class="catablog-progress-bar"></div>
-			<h3 class="catablog-progress-text">Waiting For Thumbnail Rendering To Finish...</h3>
+			<h3 class="catablog-progress-text"><?php _e("Waiting For LightBox Rendering To Finish...", "catablog"); ?></h3>
 		</div>
 	<?php endif ?>
 	
 	<form action="admin.php?page=catablog-options" id="catablog-options" class="catablog-form" method="post">
 		
 		<ul id="catablog-options-menu">
-			<li><a href="#thumbnails" title="Set size and how thumbnails will be made">Thumbnails</a></li>
-			<li><a href="#lightbox" title="">LightBox</a></li>
-			<li><a href="#title" title="">Title</a></li>
-			<li><a href="#description" title="">Description</a></li>
-			<?php /*<li><a href="#public" title="">Public</a></li> */ ?>
-			<li><a href="#template" title="Control how your catalog is rendered">Template</a></li>
-			<li><a href="#store" title="">Store</a></li>
-			<li><a id="catablog-options-menu-export" href="#export" title="">Export</a></li>
-			<li><a href="#import" title="">Import</a></li>
-			<li><a id="catablog-options-menu-system" href="#system" title="">Systems</a></li>
+			<li><a href="#thumbnails" title="Set size and how thumbnails will be made"><?php _e("Thumbnails", "catablog"); ?></a></li>
+			<li><a href="#lightbox" title=""><?php _e("LightBox", "catablog"); ?></a></li>
+			<li><a href="#title" title=""><?php _e("Title", "catablog"); ?></a></li>
+			<li><a href="#description" title=""><?php _e("Description", "catablog"); ?></a></li>
+			<?php /*<li><a href="#public" title=""><?php _e("Public", "catablog"); ?></a></li> */ ?>
+			<li><a href="#template" title="Control how your catalog is rendered"><?php _e("Template", "catablog"); ?></a></li>
+			<li><a href="#store" title=""><?php _e("Store", "catablog"); ?></a></li>
+			<li><a id="catablog-options-menu-export" href="#export" title=""><?php _e("Export", "catablog"); ?></a></li>
+			<li><a href="#import" title=""><?php _e("", "catablog"); ?>Import</a></li>
+			<li><a id="catablog-options-menu-system" href="#system" title=""><?php _e("Systems", "catablog"); ?></a></li>
 		</ul>
 		
 		
 		<?php /*  THUMBNAIL SETTINGS PANEL */ ?>
 		<div id="catablog-options-thumbnails" class="catablog-options-panel">
 			<p>
-				<label for='thumbnail_size'>Thumbnail Size:</label>
+				<label for='thumbnail_size'><?php _e("Thumbnail Size:", "catablog"); ?></label>
 				<input type='text' name='thumbnail_size' id='thumbnail_size' class='integer_field' size='5' value='<?php echo $thumbnail_size ?>' />
-				<span>pixels</span><br />
-			
-				<small class="error hidden">your thumbnail size must be a positive integer<br /></small>
-				<small>this will change the thumbnail size of all your catalog items.</small>
+				<span><?php _e("pixels", "catablog"); ?></span><br />
+				
+				<small class="error hidden"><?php _e("Your thumbnail size must be a positive integer.", "catablog"); ?><br /></small>
+				<small><?php _e("this will change the thumbnail size of all your catalog items.", "catablog"); ?></small>
 			</p>
 			<p>
 				<?php $checked = ($keep_aspect_ratio)? "checked='checked'" : "" ?>
-				<label for="keep_aspect_ratio">Keep Aspect Ratio:</label>
+				<label for="keep_aspect_ratio"><?php _e("Keep Aspect Ratio:", "catablog"); ?></label>
 				<input type="checkbox" name="keep_aspect_ratio" id="keep_aspect_ratio" <?php echo $checked ?> />
 				<br />
-				<small>this will keep the aspect ratio of the original image in your thumbnails, using the background color to fill in the empty space.</small>
+				<small><?php _e("this will keep the aspect ratio of the original image in your thumbnails, using the background color to fill in the empty space.", "catablog"); ?></small>
 			</p>
 			<p>
-				<label>Thumbnail Background Color:</label>
+				<label><?php _e("Thumbnail Background Color:", "catablog"); ?></label>
 				<input type="text" name="bg_color" id="bg_color" size="8" maxlength="7" value="<?php echo $background_color ?>" />
 				<span class="color-swatch hide-if-no-js">&nbsp;</span>
-				<small><a class="hide-if-no-js" href="#" id="pickcolor"><?php _e('Select a Color'); ?></a></small>
+				<small><a class="hide-if-no-js" href="#" id="pickcolor"><?php _e('Select a Color', 'catablog'); ?></a></small>
 			</p>
 			<div id="color-picker-div">&nbsp;</div>
 			<hr />
 			<div>
-				<label>Thumbnail Preview</label>
+				<label><?php _e("Thumbnail Preview", "catablog"); ?></label>
 				<p id="thumbnail_preview">
 					<span id='demo_box' class='demo_box' style='width:<?php echo $thumbnail_size ?>px; height:<?php echo $thumbnail_size ?>px;'>&nbsp;</span>
 				</p>
@@ -78,17 +78,17 @@
 		<div id="catablog-options-lightbox" class="catablog-options-panel hide">
 			<p>
 				<?php $checked = ($lightbox_enabled)? "checked='checked'" : "" ?>
-				<label for="lightbox_enabled">Enable LightBox Feature:</label>
+				<label for="lightbox_enabled"><?php _e("Enable LightBox Feature:", "catablog"); ?></label>
 				<input type="checkbox" name="lightbox_enabled" id="lightbox_enabled" <?php echo $checked ?> /><br/>
-				<small>this will allow people to enlarge an image thumbnail with a lightbox style javascript effect.</small>
+				<small><?php _e("this will allow people to enlarge an image thumbnail with a lightbox style javascript effect.", "catablog"); ?></small>
 			</p>
 			
 			<p>
-				<label for='lightbox_image_size'>LightBox Size:</label>
+				<label for='lightbox_image_size'><?php _e("LightBox Size:", "catablog"); ?></label>
 				<input type='text' name='lightbox_image_size' id='lightbox_image_size' class='integer_field' size='5' value='<?php echo $lightbox_size ?>' />
-				<span>pixels</span><br />
-				<small class="error hidden">your lightbox size must be a positive integer<br /></small>
-				<small>This is the maximum length of either the height or width, depending on whichever is longer in the original uploaded image.</small>
+				<span><?php _e("pixels", "catablog"); ?></span><br />
+				<small class="error hidden"><?php _e("Your lightbox size must be a positive integer.", "catablog"); ?><br /></small>
+				<small><?php _e("This is the maximum length of either the height or width, depending on whichever is longer in the original uploaded image.", "catablog"); ?></small>
 			</p>
 		</div>
 		
@@ -96,33 +96,21 @@
 		<?php /*  TITLE SETTINGS PANEL  */ ?>
 		<div id="catablog-options-title" class="catablog-options-panel hide">
 			<p>
-				<label for="link_target">Link Target:</label>
+				<label for="link_target"><?php _e("Link Target:", "catablog"); ?></label>
 				<input type="text" id="link_target" name="link_target" value="<?php echo $link_target ?>" /><br />
 				<small>
-					The link target setting will set the <strong>target</strong> attribute of all the catalog title links.<br />
-					<strong>examples:</strong> _blank, _top, _self.
+					<?php _e("The link target setting will set the <strong>target</strong> attribute of all the catalog title links.", "catablog"); ?><br />
+					<strong><?php _e("examples:", "catablog"); ?></strong> _blank, _top, _self.
 				</small>
 			</p>
 			<p>
-				<label for="link_target">Link Relationship:</label>
+				<label for="link_target"><?php _e("Link Relationship:", "catablog"); ?></label>
 				<input type="text" id="link_relationship" name="link_relationship" value="<?php echo $link_relationship ?>" maxlength="30" /><br />
 				<small>
-					The link relationship will set the <strong>rel</strong> attribute of all the catalog title links.<br />
-					<strong>examples:</strong> index, next, prev, glossary, chapter, bookmark, nofollow.
+					<?php _e("The link relationship will set the <strong>rel</strong> attribute of all the catalog title links.", "catablog"); ?><br />
+					<strong><?php _e("examples:", "catablog"); ?></strong> index, next, prev, glossary, chapter, bookmark, nofollow.
 				</small>
 			</p>
-			<?php /*
-			<p>
-				<label for="permalink-default">Empty Links Go To Public Page:</label>
-				<?php $checked = ($permalink_default)? "checked='checked'" : "" ?>
-				<input type="checkbox" id="permalink-default" name="permalink-default" <?php echo $checked ?> /><br />
-				<small>
-					This feature only works if you are generating individual item pages.<br />
-					When enabled all the catalog titles will link to the item's public page if the link value is empty.<br />
-					
-				</small>
-			</p>
-			*/ ?>
 		</div>
 		
 		
@@ -130,69 +118,40 @@
 		<div id="catablog-options-description" class="catablog-options-panel hide">
 			<p>
 				<?php $checked = ($wp_filters_enabled)? "checked='checked'" : "" ?>
-				<label for="catablog-filters-enabled">Enable WordPress Filters:</label>
+				<label for="catablog-filters-enabled"><?php _e("Enable WordPress Filters:", "catablog"); ?></label>
 				<input type="checkbox" name="wp-filters-enabled" id="catablog-filters-enabled" <?php echo $checked ?> /><br/>
 				<small>
-					Enable the standard WordPress filters for your catalog item's description.<br /> 
-					This allows you to use shortcodes and media embeds inside your catalog item descriptions.<br />
-					Please <strong>do not use the &#91;catablog&#93; shortcode</strong> inside a catalog item's description.
+					<?php _e("Enable the standard WordPress filters for your catalog item's description.", "catablog"); ?><br />
+					<?php _e("This allows you to use ShortCodes and media embeds inside your catalog item descriptions.", "catablog"); ?><br />
+					<?php _e("Please <strong>do not use the CataBlog ShortCode</strong> inside a catalog item's description.", "catablog"); ?>
 				</small>
 			</p>
 			
 			<p>
 				<?php $checked = ($nl2br_enabled)? "checked='checked'" : "" ?>
-				<label for="catablog-nl2br-enabled">Render Line Breaks:</label>
+				<label for="catablog-nl2br-enabled"><?php _e("Render Line Breaks:", "catablog"); ?></label>
 				<input type="checkbox" name="nl2br-enabled" id="catablog-nl2br-enabled" <?php echo $checked ?> /><br/>
 				<small>
-					Filter your catalog item's description through the standard PHP function 
-					<a href="http://php.net/manual/en/function.nl2br.php" target="_blank">nl2br()</a>.<br />
-					This will insert HTML line breaks before all new lines in your catalog descriptions.<br />
-					Turn this off if unwanted line breaks are being rendered on your page.
+					<?php printf(__("Filter your catalog item's description through the standard PHP function %s.", "catablog"), '<a href="http://php.net/manual/en/function.nl2br.php" target="_blank">nl2br()</a>'); ?><br />
+					<?php _e("This will insert HTML line breaks before all new lines in your catalog descriptions.", "catablog"); ?><br />
+					<?php _e("Turn this off if unwanted line breaks are being rendered on your page.", "catablog"); ?>
 				</small>
 			</p>
 		</div>
-		
-		
-		<?php /*  PUBLIC SETTINGS PANEL  */ ?>
-		<?php /*
-		<div id="catablog-options-public" class="catablog-options-panel hide">
-			<p>
-				<?php $checked = ($public_catalog_items_enabled)? "checked='checked'" : "" ?>
-				<label for="public-catalog-items">Generate Public Pages For Catalog Item:</label>
-				<input type="checkbox" name="public-catalog-items" id="public-catalog-items" <?php echo $checked ?> /><br/>
-				<small>
-					Generates a permalink for each individual CataBlog item that will display the singular item like a page.<br />
-					This will put individual catalog items in your blog's search results.<br />
-					Use the permalink structure below to control the permalink path to your catalog items.
-				</small>
-			</p>
-			
-			<p>
-				<label for="public-catalog-items">Public Page's Permalink Path:</label>
-				<input type="text" name="public-catalog-slug" id="public-catalog-slug" readonly="readonly" value="<?php echo $public_catalog_slug ?>" maxlength="200" /><br/>
-				<small>
-					Set the slug to be used in the individual catalog item's public page.<br />
-					<?php if (mb_strlen($public_catalog_slug) > 0): ?>
-						<strong>example:</strong> /<?php echo $public_catalog_slug ?>/item-name/
-					<?php endif ?>
-				</small>
-			</p>
-		</div>
-		*/ ?>
 		
 		<?php /*  TEMPLATE SETTINGS PANEL  */ ?>
 		<div id="catablog-options-template" class="catablog-options-panel hide">
 			<p>
-				<?php $views = new CataBlogDirectory($this->directories['views']); //('- templates', 'default', 'gallery', 'grid') ?>
+				<?php $views = new CataBlogDirectory($this->directories['views']); ?>
 				<?php if ($views->isDirectory()): ?>
 					<select id="catablog-template-view-menu">
 						<?php foreach($views->getFileArray() as $key => $view): ?>
-							<?php echo "<option value='$view'>$view</option>" ?>
+							<?php echo "<option value='$view'>$view</option>"; ?>
 						<?php endforeach ?>
 					</select>
-					<a href="<?php echo $this->urls['views'] ?>" id="catablog-view-set-template" class="catablog-load-code button add-new-h2">Load Template</a>
+					<a href="<?php echo $this->urls['views'] ?>" id="catablog-view-set-template" class="catablog-load-code button add-new-h2"><?php _e("Load Template", "catablog"); ?></a>
 				<?php else: ?>
-					<p class="error">Could not locate the views directory. Please reinstall CataBlog.</p>
+					<p class="error"><?php _e("Could not locate the views directory. Please reinstall CataBlog.", "catablog"); ?></p>
 				<?php endif ?>
 				
 				
@@ -201,18 +160,21 @@
 				<textarea name="view-code-template" id="catablog-view-set-template-code" class="catablog-code" rows="10" cols="30"><?php echo $this->options['view-theme'] ?></textarea>
 				
 				<small>
-					You may change the html code rendered by <strong>CataBlog</strong> here, this
+					<?php _e("You may change the html code rendered by <strong>CataBlog</strong> here, this
 					allows you to make fundamental changes to how catalogs will appear
-					in your posts. You may choose a template from the drop down menu to
-					the left and then click <em>Load Template</em> to load it into the
-					template code below. If you want to setup a photo gallery I would 
-					recommend that you use the <em>Gallery template</em> and then modify 
-					your css accordingly. To setup a shopping cart you should load the 
-					<em>Default Template</em> code and then load a buy now template. 
-					Don't forget to click <strong>Save Changes</strong>
-					at the bottom of the page to set your new view and finalize any changes.
+					in your posts. You may choose a template from the drop down menu at
+					top and then click <em>Load Template</em> to load it into the
+					template code. If you want to setup a photo gallery I would 
+					recommend that you load the <em>Gallery template</em> and then click 
+					save below. To setup a shopping cart you should load the 
+					<em>Default Template</em> code and then load a Store Template.", "catablog"); ?>
 				</small>
 			</p>
+			
+			<p><small>
+				<?php _e("Don't forget to click <strong>Save Changes</strong> at the bottom of the page to finalize
+				your changes and use the new code for your blog.", "catablog"); ?>
+			</small></p>
 		</div>
 		
 		
@@ -220,14 +182,14 @@
 		<?php /* BUY NOW TEMPLATE SETTINGS PANEL */ ?>
 		<div id="catablog-options-store" class="catablog-options-panel hide">
 			<p>
-				<label for="paypal_email">PayPal Account Email Address:</label>
+				<label for="paypal_email"><?php _e("PayPal Account Email Address:", "catablog"); ?></label>
 				<input type="text" name="paypal_email" id="paypal_email" size="50" value="<?php echo $paypal_email ?>" />
 			</p>
 			
 			<p><small>
-				Enter in an email address here that has been registered with <a href="http://www.paypal.com" target="_blank">PayPal</a> and
+				<?php printf(__("Enter in an email address here that has been registered with %sPayPal%s and
 				choose a <em>Buy Now Template</em> below to setup a store. You may then give items a price and product code.
-				When an item has a price above zero a "Buy Now" button will appear under the description of that CataBlog item.
+				When an item has a price above zero a 'Buy Now' button will appear under the description of that CataBlog item.", "catablog"), '<a href="http://www.paypal.com" target="_blank">', '</a>'); ?>
 			</small></p>
 			
 			<hr />
@@ -240,17 +202,17 @@
 							<?php echo "<option value='$view'>$view</option>" ?>
 						<?php endforeach ?>
 					</select>
-					<a href="<?php echo $this->urls['buttons'] ?>" id="catablog-view-set-buynow" class="catablog-load-code button add-new-h2">Load Template</a>
+					<a href="<?php echo $this->urls['buttons'] ?>" id="catablog-view-set-buynow" class="catablog-load-code button add-new-h2"><?php _e("Load Template", "catablog"); ?></a>
 				<?php else: ?>
-					<p class="error">Could not locate the views directory. Please reinstall CataBlog.</p>
+					<p class="error"><?php _e("", "catablog"); ?><?php _e("Could not locate the views directory. Please reinstall CataBlog.", "catablog"); ?></p>
 				<?php endif ?>
 			</p>
 			<p>
 				<textarea name="view-code-buynow" id="catablog-view-set-buynow-code" class="catablog-code" rows="10" cols="30"><?php echo $this->options['view-buynow'] ?></textarea>
 				<small>
-					You may change the html code rendered for the <strong>Buy Now</strong> button here.
+					<?php _e("You may change the html code rendered for the <strong>Buy Now</strong> button here.
 					All value tokens are available here too, so place the title, description or any other
-					values you may want to use from the current catalog item in this code as well.					
+					values you may want to use from the current catalog item in this code as well.", "catablog"); ?>
 				</small>
 			</p>
 			<p style="clear:both;">&nbsp;</p>
@@ -269,49 +231,36 @@
 	<div id="catablog-options-export" class="catablog-options-panel hide">
 		<?php $function_exists = function_exists('fputcsv') ?>
 		
-		<p>
-			You may export your CataBlog data to a XML or CSV file which may be used to backup 
-			and protect your work. The XML or CSV file is a simple transfer of the database information
-			itself and the <strong>images are not included in this backup</strong>. To backup 
-			your images follow the directions at the bottom of the page.
-		</p>
-		
-		<?php if ($old_database_present): ?>
-		<p class="error">
-			<strong>Important Upgrade Tip:</strong><br />
-			Your backups will be made from the old CataBlog database table as long as it is present.<br />
-			You should backup your old database...<br />
-			verify the XML data looks correct...<br />
-			and then delete	the old database in the <a href="#system" onclick="jQuery('#catablog-options-menu-system').click();">Systems Panel</a>.
-		</p>
-		<?php endif ?>
+		<p><?php _e("You may export your CataBlog data to a XML or CSV file which may be used to backup 
+		and protect your work. The XML or CSV file is a simple transfer of the database information
+		itself and the <strong>images are not included in this backup</strong>. To backup 
+		your images follow the directions at the bottom of the page.", "catablog"); ?></p>
 		
 		<p>&nbsp;</p>
 		
 		<p>
-			<a href="admin.php?page=catablog-export&amp;format=xml" class="button">Save XML BackUp File</a>
+			<a href="admin.php?page=catablog-export&amp;format=xml" class="button"><?php _e("Save XML BackUp File", "catablog"); ?></a>
 			<?php if ($function_exists): ?>
 				<span> | </span>
-				<a href="admin.php?page=catablog-export&amp;format=csv" class="button">Save CSV BackUp File</a>
+				<a href="admin.php?page=catablog-export&amp;format=csv" class="button"><?php _e("Save CSV BackUp File", "catablog"); ?></a>
 			<?php endif ?>
 		</p>
-		
-		<p>&nbsp;</p>
 		
 			
 		<?php if (!$function_exists): ?>
 			<p class="error"><small>
-				You must have the function 
-				<strong><a href="http://php.net/manual/en/function.fputcsv.php" target="_blank">fputcsv()</a></strong> 
-				available on your web server's version of PHP for CSV export to work.
-				Please contact your server administrator for more information regarding this error.
+				<?php printf(__("You must have the function %sfputcsv()%s available on your web server's version of PHP for CSV export to work.", "catablog"), '<strong><a href="http://php.net/manual/en/function.fputcsv.php" target="_blank">', '</a></strong>'); ?>
+				<br />
+				<?php _e("Please contact your server administrator for more information regarding this error.", "catablog"); ?>
 			</small></p>
+		<?php else: ?>
+			<p>&nbsp;</p>
 		<?php endif ?>
 		
 		<p>
-			<strong>Backing Up Images:</strong><br />
-			Please copy the <em>catablog</em> directory to a secure location.<br />
-			The directory for this WordPress blog can be located on your web server at:<br />
+			<strong><?php _e("Backing Up Images:", "catablog"); ?></strong><br />
+			<?php _e("Please copy the <em>catablog</em> directory to a secure location.", "catablog"); ?><br />
+			<?php _e("The directory for this WordPress blog can be located on your web server at:", "catablog"); ?><br />
 			<small><em><?php echo $this->directories['uploads'] ?></em></small>
 		</p>
 	</div>
@@ -322,7 +271,7 @@
 
 	<?php /*  IMPORT SETTINGS PANEL  */ ?>
 	<div id="catablog-options-import" class="catablog-options-panel hide">
-		<label>Import XML/CSV Data</label>
+		<label><?php _e("Import XML/CSV Data", "catablog"); ?></label>
 		<form action="admin.php?page=catablog-import" method="post" enctype="multipart/form-data">
 			<?php $function_exists = function_exists('simplexml_load_file') ?>
 			
@@ -330,36 +279,34 @@
 			
 			<p style="margin-bottom:5px;">&nbsp;
 				<input type="checkbox" id="catablog_clear_db" name="catablog_clear_db" value="true" />
-				<label for="catablog_clear_db">Replace All Data:</label>
+				<label for="catablog_clear_db"><?php _e("Replace All Data:", "catablog"); ?></label>
 			</p>
 			
 			<p><input type="submit" class="button" value="<?php _e('Import CataBlog Data') ?>" /></p>
 			
 			<?php if (!$function_exists): ?>
 				<p class="error"><small>
-					You must have the <strong>Simple XML Library</strong> installed on your web server's version of PHP
+					<?php _e("You must have the <strong>Simple XML Library</strong> installed on your web server's version of PHP
 					for XML imports to work. Please contact your server administrator for more information 
-					regarding this error.
+					regarding this error.", "catablog"); ?>
 				</small></p>
 			<?php endif ?>
 			
 			<p><small>
-				To import data into your catalog you simply select a XML or CVS file 
+				<?php _e("To import data into your catalog you simply select a XML or CVS file 
 				on your hard drive and click the <em>Import CataBlog Data</em> button.
 				You may choose to completely erase all your data before importing
-				by checking the <em>Replace All Data</em> checkbox. Keep in mind, this 
-				<strong>does not import or delete images</strong>. You should replace all images
-				inside the <em>originals</em> directory in
-				<em><?php echo $this->directories['uploads'] ?></em>. Once you load the
-				XML or CVS file and replace the <em>originals</em> directory content everything 
-				should be set after you 
-				<a href="admin.php?page=catablog-regenerate-images" class="js-warn">Regenerate All Images</a> 
-				in the systems tab.
+				by checking the <em>Replace All Data</em> checkbox.<br />Keep in mind, this 
+				<strong>does not import or delete images</strong>.", "catablog"); ?>
+			</small></p>
+			<p><small>
+				<?php printf(__("To import images you should upload them to the <em>originals</em> directory, located at: <em>%s</em>.
+				Once you load the XML or CVS file and the images into the <em>originals</em> directory everything 
+				should be set after you %sRegenerate All Images%s in the systems tab.", "catablog"), $this->directories['originals'], '<a href="admin.php?page=catablog-regenerate-images" class="js-warn">', '</a>'); ?>
 			</small></p>
 			
 			<p><small>
-				You may view XML and CSV examples in the 
-				<a href="http://catablog.illproductions.com/documentation/importing-and-exporting-catalogs/" target="_blank">import/export documentation</a>.
+				<?php printf(__("You may view XML and CSV examples in the %simport/export documentation%s.", "catablog"), '<a href="http://catablog.illproductions.com/documentation/importing-and-exporting-catalogs/" target="_blank">', '</a>'); ?>
 			</small></p>
 			
 
@@ -373,63 +320,63 @@
 		<p>
 		<?php $permissions = substr(sprintf('%o', fileperms($this->directories['uploads'])), -4) ?>
 		<?php if ($permissions == '0777'): ?>
-			<span>CataBlog Upload Folders are <strong>Unlocked</strong></span>
+			<span><?php _e("CataBlog Upload Folders are <strong>Unlocked</strong>", "catablog"); ?></span>
 		<?php elseif ($permissions == '0755'): ?>
-			<span>CataBlog Upload Folders are <strong>Locked</strong></span>
+			<span><?php _e("CataBlog Upload Folders are <strong>Locked</strong>", "catablog"); ?></span>
 		<?php else: ?>
-			<span>Error: You may be on a windows server...</span>
+			<span><?php _e("Error: You may be on a windows server...", "catablog"); ?></span>
 		<?php endif ?>
 		</p>
 		
 		<p>
-		<a href="admin.php?page=catablog-lock-folders#system" class="button">Lock Folders</a>
-		<a href="admin.php?page=catablog-unlock-folders#system" class="button">Unlock Folders</a>				
+		<a href="admin.php?page=catablog-lock-folders#system" class="button"><?php _e("Lock Folders", "catablog"); ?></a>
+		<a href="admin.php?page=catablog-unlock-folders#system" class="button"><?php _e("Unlock Folders", "catablog"); ?></a>				
 		</p>
 		
 		<p><small>
-				You may lock and unlock your <em>catablog</em> folders with 
+				<?php printf(__("You may lock and unlock your <em>catablog</em> folders with 
 				these controls. The idea is to unlock the folders, use your FTP client to 
 				upload your original files and then lock the folders to protect them from hackers.
 				After unlocking your directories please upload the original files directly
-				into the <strong><?php echo $this->directories['originals'] ?></strong> folder without replacing it.
+				into the <strong>%s</strong> folder without replacing it.
 				<strong>Do not replace any of the CataBlog created folders</strong>.
 				You should then regenerate all your thumbnail and lightbox pictures below.
 				These controls may not work on a Windows server, it depends on your
-				servers PHP settings and if the chmod command is supported. 
+				servers PHP settings and if the chmod command is supported.", "catablog"), $this->directories['originals']); ?>
 		</small></p>
 		
 		<hr />
 		
-		<p><label>Rescan Original Image Folder</label></p>
-		<p><a href="admin.php?page=catablog-rescan-images" class="button js-warn">Rescan Original Images Folder Now</a></p>
+		<p><label><?php _e("Rescan Original Image Folder", "catablog"); ?></label></p>
+		<p><a href="admin.php?page=catablog-rescan-images" class="button js-warn"><?php _e("Rescan Original Images Folder Now", "catablog"); ?></a></p>
 		<p><small>
-			Click the <em>Rescan Now</em> button to rescan the original catablog images
+			<?php _e("Click the <em>Rescan Now</em> button to rescan the original catablog images
 			folder and automatically import any new jpeg, gif or png images. It works simply
 			by making a list of all the image names in the database and then compares each file's
 			name in the originals folder against the list of image names in the database. Any newly
 			discovered images will automatically be made into a new catalog item. You should Regenerate Images
-			after running this command.
+			after running this command.", "catablog"); ?>
 		</small></p>
 		
 		<hr />
 		
-		<p><label>Regenerate Images</label></p>
-		<p><a href="admin.php?page=catablog-regenerate-images" class="button js-warn">Regenerate All Images Now</a></p>
+		<p><label><?php _e("Regenerate Images", "catablog"); ?></label></p>
+		<p><a href="admin.php?page=catablog-regenerate-images" class="button js-warn"><?php _e("Regenerate All Images Now", "catablog"); ?></a></p>
 		<p><small>
-				Click the <em>Regenerate Now</em> button to recreate all the
+				<?php _e("Click the <em>Regenerate Now</em> button to recreate all the
 				thumbnail and lightbox images that CataBlog has generated over
 				the time you have used it. This is also useful when restoring exported
 				data from another version of CataBlog. after you have uploaded your
-				original images you must regenerate your images so they display properly.
+				original images you must regenerate your images so they display properly.", "catablog"); ?>
 		</small></p>
 		
 		<hr />
 		
-		<p><label>Reset CataBlog</label></p>
-		<p><a href="admin.php?page=catablog-reset" class="button js-warn" id="button-reset">Reset All CataBlog Data</a></p>
+		<p><label><?php _e("Reset CataBlog", "catablog"); ?></label></p>
+		<p><a href="admin.php?page=catablog-reset" class="button js-warn" id="button-reset"><?php _e("Reset All CataBlog Data", "catablog"); ?></a></p>
 		<p><small>
-			Reset your entire catalog, deleting all photos and custom data permanently. 
-			Sometimes you can use this to fix an improper install.
+			<?php _e("Reset your entire catalog, deleting all photos and custom data permanently.
+			Sometimes you can use this to fix an improper install.", "catablog"); ?>
 		</small></p>
 	</div>
 	
@@ -438,7 +385,7 @@
 	<?php /*  SUBMIT FORM BUTTON  */ ?>
 	<p class="submit" style="margin-left:100px;">
 		<input type="button" id="save_changes" class="button-primary" value="<?php _e('Save Changes') ?>" />
-		<span> or <a href="<?php echo 'admin.php?page=catablog-options' ?>">reset options</a></span>
+		<span><?php printf(__('or %sundo current changes%s', 'catablog'), '<a href="admin.php?page=catablog-options">', '</a>'); ?></span>
 	</p>
 	
 </div>
@@ -707,7 +654,7 @@
 		$('#save_changes').attr('disabled', true);
 		var nonce   = '<?php echo wp_create_nonce("catablog-render-images") ?>';		
 		var images  = ["<?php echo implode('", "', $image_names) ?>"];
-		var message = "Image rendering is now complete";
+		var message = '<?php _e("Image rendering is now complete", "catablog"); ?>';
 	<?php endif ?>
 	
 	

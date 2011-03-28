@@ -1,12 +1,12 @@
 <div class="wrap">
 	
 	<div id="icon-catablog" class="icon32"><br /></div>
-	<h2>CataBlog Item Not Found</h2>
+	<h2><?php _e('CataBlog Item Not Found', 'catablog'); ?></h2>
 	
-	<p>You attempted to edit an item that doesn&#8217;t exist. Perhaps it was deleted?</p>
+	<p><?php _e("You attempted to edit an item that doesn't exist. Perhaps it was deleted?", 'catablog'); ?></p>
 	<ul>
-		<li><strong>Go To:</strong></li>
-		<li><a href="index.php">Dashboard</a></li>
-		<li><a href="admin.php?page=catablog">CataBlog</a></li>
+		<li><strong><?php _e("Go To:", 'catablog'); ?></strong></li>
+		<li><a href="index.php"><?php _e("Dashboard", 'catablog'); ?></a></li>
+		<li><a href="admin.php?page=catablog"><?php _e("CataBlog", 'catablog'); ?></a></li>
 	</ul>
 </div>

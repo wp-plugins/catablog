@@ -1,32 +1,32 @@
 <div class="wrap">
 	
 	<div id="icon-catablog" class="icon32"><br /></div>
-	<h2>Edit CataBlog Entry</h2>
+	<h2><?php _e("Edit CataBlog Entry", 'catablog'); ?></h2>
 		
 	<form id="catablog-edit" class="catablog-form clear_float" method="post" action="admin.php?page=catablog-save" enctype="multipart/form-data">
 		
 		
 		<div id="catablog-edit-params">
 			<fieldset>
-				<h3><label for="link">Link</label></h3>
+				<h3><label for="link"><?php _e("Link", 'catablog'); ?></label></h3>
 				<div>
 					<input type="text" name="link" id="link" class="text-field" tabindex="3" value="<?php echo htmlspecialchars($result->getLink(), ENT_QUOTES, 'UTF-8') ?>" />
 					<p><small>
-						Enter a web address to turn this item's title into a hyperlink.
+						<?php _e("Enter a relative or absolute web address to turn this item's title into a hyperlink. External links should start with http://.", 'catablog'); ?>
 					</small></p>
 				</div>
 			</fieldset>
 			
 			<fieldset>
-				<h3>Categories</h3>
+				<h3><?php _e("Categories", 'catablog'); ?></h3>
 				<div id="catablog-category" class="tabs-panel">
-										
+					
 					<ul id="catablog-category-checklist" class="list:category categorychecklist form-no-clear">
 						
 						<?php $categories = $this->get_terms() ?>
 						
 						<?php if (count($categories) < 1): ?>
-							<li><span>You currently have no categories.</span></li>
+							<li><span><?php _e("You currently have no categories.", 'catablog'); ?></span></li>
 						<?php endif ?>
 						
 						<?php foreach ($categories as $category): ?>
@@ -34,11 +34,12 @@
 							<label class="catablog-category-row">
 								<?php $checked = (in_array($category->term_id, array_keys($result->getCategories())))? 'checked="checked"' : '' ?>
 								<input id="in-category-<?php echo $category->term_id ?>" type="checkbox" <?php echo $checked ?> name="categories[]"  tabindex="4" value="<?php echo $category->term_id ?>" />
-								<span><?php echo $category->name ?></span>
 								<?php $default_term = $this->get_default_term() ?>
 								<?php if ($category->name != $default_term->name): ?>
-									<a href="#delete" class="catablog-category-delete hide"><small>[DELETE]</small></a>
+									<a href="#delete" class="catablog-category-delete hide"><small><?php _e("[DELETE]", 'catablog'); ?></small></a>
 								<?php endif ?>
+								<span><?php echo $category->name ?></span>
+
 							</label>
 						</li>
 						<?php endforeach ?>
@@ -47,39 +48,38 @@
 					<div id="catablog-new-category">
 						<noscript>
 							<div class="error">
-								<strong><small>You must have a JavaScript enabled browser to create new categories.</small></strong>
+								<strong><small><?php _e("You must have a JavaScript enabled browser to create new categories.", 'catablog'); ?></small></strong>
 							</div>
 						</noscript>
 						
 						<span class="hide">
 							<input id="catablog-new-category-input" type="text" tabindex="5" value="" />
-							<a href="#new-category" id="catablog-new-category-submit" class="button" tabindex="6">New</a>
+							<a href="#new-category" id="catablog-new-category-submit" class="button" tabindex="6"><?php _e('New', 'catablog'); ?></a>
 							<img src="<?php echo $this->urls['images'] ?>/ajax-loader-small.gif" id="catablog-new-category-load" class="hide" />
 						</span>
 					</div>
 					<p><small>
-						Put your items into categories to easily display subsets of your catalog on different pages.<br />
-						<strong>ex:</strong> <em>[catablog category="dogs and cats"]</em>
+						<?php _e("Put your items into categories to easily display subsets of your catalog on different pages.", 'catablog'); ?><br />
+						<strong><?php _e('ex:', 'catablog'); ?></strong> [catablog category="dogs and cats"]
 					</small></p>
 				</div>
 			</fieldset>
 			
 			<fieldset>
-				<h3>Shopping Cart</h3>
+				<h3><?php _e('Shopping Cart', 'catablog'); ?></h3>
 				<div>
 					<p>
-						<label for="price">Item Price</label><br />
+						<label for="price"><?php _e("Item Price", 'catablog'); ?></label><br />
 						<input type="text" name="price" id="price" class="text-field" tabindex="7" value="<?php echo $result->getPrice() ?>">
 					</p>
 					
 					<p>
-						<label for="product_code">Product Code</label><br />
+						<label for="product_code"><?php _e("Product Code", 'catablog'); ?></label><br />
 						<input type="text" name="product_code" id="product_code" class="text-field" tabindex="8" value="<?php echo htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8') ?>">
 					</p>
 
 					<p><small>
-						If you want to make a shopping cart you should make sure you are 
-						using a <a href="admin.php?page=catablog-options#store">Store Template</a> that uses these values.
+						<?php printf(__("If you want to make a shopping cart you should make sure you are using a %sStore Template%s that uses these values.", 'catablog'), '<a href="admin.php?page=catablog-options#store">', '</a>'); ?>
 					</small></p>
 				</div>
 			</fieldset>
@@ -94,15 +94,15 @@
 					<?php $prev_item = CataBlogItem::getAdjacentItem($result->getOrder() - 1) ?>
 					<span class="catablog-edit-navigation" style="float:right">
 						<?php if ($prev_item != false): ?>
-							<a href="admin.php?page=catablog&amp;id=<?php echo $prev_item->getId() ?>" title="<?php echo $prev_item->getTitle() ?>">&larr; Previous Item</a>
+							<a href="admin.php?page=catablog&amp;id=<?php echo $prev_item->getId() ?>" title="<?php echo $prev_item->getTitle() ?>">&larr; <?php _e("Previous Item", 'catablog'); ?></a>
 						<?php else: ?>
-							<span class="nonessential">no previous item</span>
+							<span class="nonessential"><?php _e("no previous item", 'catablog'); ?></span>
 						<?php endif ?>
 						<span> | </span>
 						<?php if ($next_item != false): ?>
-							<a href="admin.php?page=catablog&amp;id=<?php echo $next_item->getId() ?>" title="<?php echo $next_item->getTitle() ?>">Next Item &rarr;</a>
+							<a href="admin.php?page=catablog&amp;id=<?php echo $next_item->getId() ?>" title="<?php echo $next_item->getTitle() ?>"><?php _e("Next Item", 'catablog'); ?> &rarr;</a>
 						<?php else: ?>
-							<span class="nonessential">no next item</span>
+							<span class="nonessential"><?php _e("no next item", 'catablog'); ?></span>
 						<?php endif?>
 					</span>
 					<span>Main</span>
@@ -110,7 +110,7 @@
 				
 				<div>
 					<div id="catablog-edit-main-image">
-						<label>Images</label>
+						<label><?php _e("Images", 'catablog'); ?></label>
 						<div id="catablog-edit-images-column">
 							
 							<img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" id="catablog-image-preview" />
@@ -119,12 +119,12 @@
 							<hr />
 							
 							<span class="hide-if-no-js">
-								<a href="#replace-main-image" id="show-image-window"><small style="font-size:10px;">Replace Main Image</small></a>
-								<a href="#add-subimage" id="show-subimage-window"><small style="font-size:10px;">[+] Add Sub Image</small></a>	
+								<a href="#replace-main-image" id="show-image-window"><small style="font-size:10px;"><?php _e("Replace Main Image", 'catablog'); ?></small></a>
+								<a href="#add-subimage" id="show-subimage-window"><small style="font-size:10px;">[+] <?php _e("Add Sub Image", 'catablog'); ?></small></a>	
 							</span>
 							
 							<noscript><div class="error" style="border-width:1px;">
-								<strong><small>JavaScript is required to add images.</small></strong>
+								<strong><small><?php _e("JavaScript is required to add images.", 'catablog'); ?></small></strong>
 							</div></noscript>
 							
 							<hr />
@@ -135,13 +135,13 @@
 										<li>
 											<img src="<?php echo $this->urls['thumbnails'] . "/$sub_image" ?>" class="catablog-image-preview" />
 											<input type="hidden" name="sub_images[]" class="sub-image" value="<?php echo $sub_image ?>" />
-											<a href="#delete" class="catablog-delete-subimage" title="Delete this sub image permanently.">X</a>
+											<a href="#delete" class="catablog-delete-subimage" title="<?php _e('Delete this sub image permanently.', 'catablog'); ?>">X</a>
 										</li>
 									<?php endforeach ?>
 									<li class="clear">&nbsp;</li>
 								</ul>
 							<?php else: ?>
-								<p><small class="nonessential">No Sub Images</small></p>
+								<p><small class="nonessential"><?php _e("No Sub Images", 'catablog'); ?></small></p>
 							<?php endif ?>
 							
 							
@@ -150,10 +150,10 @@
 					
 					
 					<div id="catablog-edit-main-text">
-						<label for="catablog-title">Title</label>
+						<label for="catablog-title"><?php _e("Title", 'catablog'); ?></label>
 						<input type="text" name="title" id="catablog-title" maxlength="200" tabindex="2" value="<?php echo htmlspecialchars($result->getTitle(), ENT_QUOTES, 'UTF-8') ?>" />
 						<br /><br />
-						<label for="catablog-description">Description [<small>accepts html formatting</small>]</label>
+						<label for="catablog-description"><?php _e("Description", 'catablog'); ?> [<small><?php _e("accepts html formatting", 'catablog'); ?></small>]</label>
 						<textarea name="description" id="catablog-description" tabindex="2"><?php echo htmlspecialchars($result->getDescription(), ENT_QUOTES, 'UTF-8') ?></textarea>
 					</div>
 					
@@ -165,14 +165,8 @@
 						<input type="hidden" id="id" name="id" value="<?php echo $result->getId() ?>" />
 						<input type="hidden" id="order" name="order" value="<?php echo $result->getOrder() ?>" />
 						
-						<input type="submit" class="button-primary" id="save_changes" tabindex="9" value="Save Changes" />
-						
-						<?php if ($this->options['public-catalog-items']): ?>
-						<span> or </span>
-						<a href="<?php echo $result->getPermalink() ?>" target="_blank" class="button">View Catalog Item</a>
-						<?php endif ?>
-						
-						<span> or <a href="<?php echo 'admin.php?page=catablog' ?>" tabindex="10">back to list</a></span>						
+						<input type="submit" class="button-primary" id="save_changes" tabindex="9" value="<?php _e("Save Changes", 'catablog'); ?>" />
+						<span><?php printf(__("or %sback to list%s", 'catablog'), '<a href="admin.php?page=catablog" tabindex="10">', '</a>'); ?></span>
 					</div>
 					
 				</div>
@@ -194,22 +188,22 @@
 <div id="add-subimage-window" class="catablog-modal">
 	<form id="catablog-add-subimage" class="catablog-form" method="post" action="admin.php?page=catablog-add-subimage" enctype="multipart/form-data">
 		<h3>
-			<span style="float:right;"><a href="#" class="hide-modal-window">[close]</a></span>
-			<strong>Upload A New Sub Image</strong>
+			<span style="float:right;"><a href="#" class="hide-modal-window"><?php _e("[close]", 'catablog'); ?></a></span>
+			<strong><?php _e("Upload A New Sub Image", 'catablog'); ?></strong>
 		</h3>
 		<div>
-			<p><strong>Save Other Changes Before Uploading A New Image.</strong></p>
+			<p><strong><?php _e("Save Other Changes Before Uploading A New Image.", 'catablog'); ?></strong></p>
 			
 			<input type="file" id="new_sub_image" name="new_sub_image"  />
 			<span class="nonessential"> | </span>
 			<input type="hidden" name="id" value="<?php echo $result->getId() ?>" >
 
 			<?php wp_nonce_field( 'catablog_add_subimage', '_catablog_add_subimage_nonce', false, true ) ?>
-			<input type="submit" name="save" value="Submit" class="button-primary" />
+			<input type="submit" name="save" value="<?php _e("Upload", 'catablog'); ?>" class="button-primary" />
 			<p><small>
-				Select an image on your computer to upload and then add to this item as a sub image.
+				<?php _e("Select an image on your computer to upload and then add to this item as a sub image.
 				You	may upload JPEG, GIF and PNG graphic formats only.
-				You will be adding a sub image, this upload will not replace this item's main image.
+				You will be adding a sub image, this upload will not replace this item's main image.", 'catablog'); ?>
 			</small></p>			
 		</div>
 	</form>
@@ -218,21 +212,21 @@
 <div id="replace-image-window" class="catablog-modal">
 	<form id="catablog-replace-image" class="catablog-form" method="post" action="admin.php?page=catablog-replace-image" enctype="multipart/form-data">
 		<h3>
-			<span style="float:right;"><a href="#" class="hide-modal-window">[close]</a></span>
-			<strong>Replace The Main Image</strong>
+			<span style="float:right;"><a href="#" class="hide-modal-window"><?php _e("[close]", 'catablog'); ?></a></span>
+			<strong><?php _e("Replace The Main Image", 'catablog'); ?></strong>
 		</h3>
 		<div>
-			<p><strong>Save Other Changes Before Uploading A New Image.</strong></p>
+			<p><strong><?php _e("Save Other Changes Before Uploading A New Image.", 'catablog'); ?></strong></p>
 			<input type="file" id="new_image" name="new_image"  />
 			<span class="nonessential"> | </span>
 			<input type="hidden" name="id" value="<?php echo $result->getId() ?>" >
 
 			<?php wp_nonce_field( 'catablog_replace_image', '_catablog_replace_image_nonce', false, true ) ?>
-			<input type="submit" name="save" value="Submit" class="button-primary" />
+			<input type="submit" name="save" value="<?php _e("Upload", 'catablog'); ?>" class="button-primary" />
 			<p><small>
-				Select an image on your computer to upload and then replace this item's main image with.
+				<?php _e("Select an image on your computer to upload and then replace this item's main image with.
 				You	may upload JPEG, GIF and PNG graphic formats only.
-				You will be replacing the main image for this item, this upload will not add a new sub image.
+				You will be replacing the main image for this item, this upload will not add a new sub image.", 'catablog'); ?>
 			</small></p>			
 		</div>
 	</form>
@@ -399,8 +393,8 @@
 					else {
 						var html = '<li><label class="catablog-category-row">';
 						html    += ' <input id="in-category-'+json.id+'" type="checkbox" checked="checked" name="categories[]" value="'+json.id+'" /> ';
-						html    += ' <span>'+json.name+'</span> ';
 						html    += ' <a href="#delete" class="catablog-category-delete hide"><small>[DELETE]</small></a>';
+						html    += ' <span>'+json.name+'</span> ';
 						html    += '</label></li>';
 						
 						$('#catablog-category-checklist').append(html);

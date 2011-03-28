@@ -1,13 +1,14 @@
 
 		<ul id="catablog_items" class="catablog-grid-view">
+			
 			<?php if (count($results) < 1): ?>
-				<p>
-					No catalog items found in <em><?php echo ($selected_term !== false)? $selected_term->name : 'your catalog' ?></em>.<br />
-					<?php if ($selected_term !== false): ?>
-						Use the category drop down above to switch category views.
-					<?php endif ?>
-				</p>
+				<p><?php _e("No catalog items found", 'catablog'); ?></p>
+				
+				<?php if ($selected_term !== false): ?>
+					<p><?php _e("Use the category drop down above to switch category views.", 'catablog'); ?></p>
+				<?php endif ?>
 			<?php endif ?>
+			
 			<?php foreach ($results as $result): ?>
 				<?php $edit   = 'admin.php?page=catablog&amp;id='.$result->getId() ?>
 				<?php $remove = 'admin.php?page=catablog-delete&amp;id='.$result->getId() ?>

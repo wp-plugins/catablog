@@ -15,7 +15,6 @@ class CataBlogItem {
 	private $price        = 0;
 	private $product_code = "";
 	private $categories   = array();
-	private $permalink    = "";
 	
 	// object values not considered item properties
 	// this will be skipped in getParameterArray() method
@@ -80,7 +79,6 @@ class CataBlogItem {
 		$item->description  = $post->post_content;
 		$item->categories   = $category_ids;
 		$item->order        = $post->menu_order;
-		$item->setPermalink($post->post_name);
 		
 		$meta = get_post_meta($post->ID, $item->_post_meta_name, true);
 		$item->processPostMeta($meta);
@@ -117,9 +115,10 @@ class CataBlogItem {
 		$items = array();
 		
 		$cata  = new CataBlogItem();
+		
 		$params = array(
 			'post_type'=> $cata->getCustomPostName(), 
-			'orderby'=>'menu_order',
+			'orderby'=> 'menu_order',
 			'order'=>'ASC',
 			'offset'=>$offset,
 			'numberposts' => $limit,
@@ -149,7 +148,6 @@ class CataBlogItem {
 			$item->description  = $post->post_content;
 			$item->categories   = array();
 			$item->order        = $post->menu_order;
-			$item->setPermalink($post->post_name);
 			
 			$item_cats = array();
 			if ($load_categories) {
@@ -211,29 +209,29 @@ class CataBlogItem {
 		
 		// catablog item must have an image associated with it
 		if (mb_strlen($this->image) < 1) {
-			return 'An item must have an image associated with it.';
+			return __('An item must have an image associated with it.', 'catablog');
 		}
 		
 		// check that the originals directory exists and is writable
 		$originals_directory = $this->_wp_upload_dir . "/catablog/originals";
 		if (!is_writable($originals_directory)) {
-			return 'Can\'t write uploaded image to server, please make sure CataBlog is properly installed.';
+			return __("Can't write uploaded image to server, please make sure the catablog directory in you WordPress uploads folder is writable.", 'catablog');
 		}
 		
 		// check that the title is at least one character long
 		if (mb_strlen($this->title) < 1) {
-			return 'An item must have a title of at least one alphanumeric character.';
+			return __('An item must have a title of at least one alphanumeric character.', 'catablog');
 		}
 		
 		// check that the title is less then 200 characters long
 		if (mb_strlen($this->title) > 200) {
-			return 'An item\'s title can not be more then 200 characters long.';
+			return __("An item's title can not be more then 200 characters long.", 'catablog');
 		}
 		
 		// check that the price is a positive integer
 		if (mb_strlen($this->price) > 0) {
 			if (is_numeric($this->price) == false || $this->price < 0) {
-				return 'An item\'s price must be a positive integer.';
+				return __("An item's price must be a positive integer.", 'catablog');
 			}
 		}
 		
@@ -246,7 +244,7 @@ class CataBlogItem {
 			case IMAGETYPE_GIF: break;
 			case IMAGETYPE_JPEG: break;
 			case IMAGETYPE_PNG:	break;
-			default: return "The image could not be used because it is an unsupported format. JPEG, GIF and PNG formats only, please.";
+			default: return __("The image could not be used because it is an unsupported format. JPEG, GIF and PNG formats only, please.", 'catablog');
 		}
 		
 		// check if catablog is going over the storage space limit on multisite blogs
@@ -259,9 +257,9 @@ class CataBlogItem {
 					$space_available = round(($space_available / 1024 / 1024), 2);
 					$image_size      = round(($image_size / 1024 / 1024), 2);
 
-					$error  = 'Can\'t write uploaded image to server, your storage space is exhausted.<br />';
-					$error .= 'Please delete some media files to free up space and try again.<br />';
-					$error .= 'You have '.$space_available.'MB of available space on your server and your image is '.$image_size.'MB.';
+					$error  = __('Can not write uploaded image to server, your storage space is exhausted.', 'catablog') . '<br />';
+					$error .= __('Please delete some media files to free up space and try again.', 'catablog') . '<br />';
+					$error .= sprintf(__('You have %sMB of available space on your server and your image is %sMB.', 'catablog'), $space_available, $image_size);
 					return $error;
 				}				
 			}
@@ -329,7 +327,7 @@ class CataBlogItem {
 		// update post terms
 		$terms_set = wp_set_object_terms($this->id, $this->categories, $this->_custom_tax_name);
 		if ($terms_set instanceof WP_Error) {
-			return "Could not set categories, please try again.";
+			return __("Could not set categories, please try again.", 'catablog');
 		}
 		
 		return true;
@@ -379,9 +377,9 @@ class CataBlogItem {
 				$space_available = round(($space_available / 1024 / 1024), 2);
 				$image_size      = round(($image_size / 1024 / 1024), 2);
 
-				$error  = 'Can\'t write uploaded image to server, your storage space is exhausted.<br />';
-				$error .= 'Please delete some media files to free up space and try again.<br />';
-				$error .= 'You have '.$space_available.'MB of available space on your server and your image is '.$image_size.'MB.';
+				$error  = __('Can not write uploaded image to server, your storage space is exhausted.', 'catablog') . '<br />';
+				$error .= __('Please delete some media files to free up space and try again.', 'catablog') . '<br />';
+				$error .= sprintf(__('You have %sMB of available space on your server and your image is %sMB.', 'catablog'), $space_available, $image_size);
 				return $error;
 			}
 		}
@@ -392,7 +390,7 @@ class CataBlogItem {
 			case IMAGETYPE_GIF: break;
 			case IMAGETYPE_JPEG: break;
 			case IMAGETYPE_PNG:	break;
-			default: return "The image could not be used because it is an unsupported format. JPEG, GIF and PNG formats only, please.";
+			default: return __("The image could not be used because it is an unsupported format. JPEG, GIF and PNG formats only, please.", 'catablog');
 		}
 		
 		$sanatized_title = $this->getSanitizedTitle();
@@ -400,7 +398,7 @@ class CataBlogItem {
 		$moved           = move_uploaded_file($tmp_path, $move_path);
 		
 		if ($moved !== true) {
-			$error = 'Could not move the uploaded file on your server';
+			$error = __('Could not move the uploaded file on your server', 'catablog');
 			return $error;
 		}
 		
@@ -437,14 +435,14 @@ class CataBlogItem {
 		$quality  = 80;
 		
 		if (is_file($original) === false) {
-			return "Original image file could not be located at $original";
+			return sprintf(__("Original image file could not be located at %s", 'catablog'), $original);
 		}
 		
 		list($width, $height, $format) = getimagesize($original);
 		$canvas_size = $this->_options['image-size'];
 		
 		if ($width < 1 || $height < 1) {
-			return "Original image dimensions are less then 1px.";
+			return __("Original image dimensions are less then 1px.", 'catablog');
 		}
 		
 		if ($width < $canvas_size && $height < $canvas_size) {
@@ -473,7 +471,7 @@ class CataBlogItem {
 				$upload = imagecreatefrompng($original);
 				break;
 			default:
-				return "Original image could not be loaded because it is an unsupported format.";
+				return __("Original image could not be loaded because it is an unsupported format.", 'catablog');
 		}
 		
 		imagecopyresampled($canvas, $upload, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
@@ -522,14 +520,14 @@ class CataBlogItem {
 		$quality  = 90;
 		
 		if (is_file($original) === false) {
-			return "Original image file missing, could not be located at $original";
+			return sprintf(__("Original image file missing, could not be located at %s", 'catablog'), $original);
 		}
 		
 		list($width, $height, $format) = @getimagesize($original);
 		$canvas_size = $this->_options['thumbnail-size'];			
 		
 		if ($width < 1 || $height < 1) {
-			return "<strong>$this->title</strong>: Original image dimensions are less then 1px. Most likely PHP does not have permission to read the original file.";
+			return "<strong>$this->title</strong>: " . __("Original image dimensions are less then 1px. Most likely PHP does not have permission to read the original file.", 'catablog');
 		}
 		
 		
@@ -551,7 +549,7 @@ class CataBlogItem {
 				$upload = imagecreatefrompng($original);
 				break;
 			default:
-				return "Original image could not be loaded because it is an unsupported format.";
+				return __("Original image could not be loaded because it is an unsupported format.", 'catablog');
 		}
 		
 		
@@ -660,9 +658,6 @@ class CataBlogItem {
 	public function getCategories() {
 		return $this->categories;
 	}
-	public function getPermalink() {
-		return $this->permalink;
-	}
 	public function getCustomPostName() {
 		return $this->_custom_post_name;
 	}
@@ -730,9 +725,6 @@ class CataBlogItem {
 	}
 	public function setCategories($categories) {
 		$this->categories = $categories;
-	}
-	public function setPermalink($post_name) {
-		$this->permalink = get_bloginfo('home') . '/' . $this->_options['public-catalog-slug'] . '/' . $post_name . '/';
 	}
 	
 	

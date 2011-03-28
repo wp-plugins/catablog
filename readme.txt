@@ -16,10 +16,10 @@ If you have a support question, please open a new support ticket here or check o
 
 Highlighted Features:
 
-* Add multiple images to a catalog item. 
+* Add multiple images to a catalog item.
 * Database optimizations throughout the entire plugin.
-* Template controls let you choose exactly how your catalog HTML code is rendered.
-* Use Categories to organize and control your catalog.
+* Control exactly how your catalog HTML code is rendered.
+* Use Categories to organize your catalog display.
 * Import and Export your catalog in XML and CSV formats.
 * Compatible with WordPress MultiSite and Network Activation.
 * Automatically import new image files into the catalog.

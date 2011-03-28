@@ -9,7 +9,7 @@ class CataBlogDirectory {
 		$this->directory = $directory;
 		$d = "";
 		if (is_dir($directory)) {
-			$d = opendir($directory) or die("Could not open directory.");
+			$d = opendir($directory) or die(__("Could not open directory.", 'catablog'));
 			while (false !== ($f=readdir($d))) {
 				if (is_file("$directory/$f")) {
 					if (substr($f, 0, 1) != '.') {
@@ -106,7 +106,7 @@ class CataBlogDirectory {
 	public function removeFilter() {
 		unset($this->filearray);
 		$d = "";
-		$d = opendir($this->directory) or die("could not open directory.");
+		$d = opendir($this->directory) or die(__("could not open directory.", 'catablog'));
 		while (false !== ($f = readdir($d))) {
 			if (is_file("$this->directory/$f")) {
 				$this->filearray[] = $f;

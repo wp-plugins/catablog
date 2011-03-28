@@ -2,8 +2,8 @@
 
 		<div id="icon-catablog" class="icon32"><br /></div>
 		<h2>
-			<span>Manage CataBlog</span>
-			<a href="admin.php?page=catablog-new" class="button add-new-h2">Add New</a>
+			<span><?php _e("Manage CataBlog", 'catablog'); ?></span>
+			<a href="admin.php?page=catablog-new" class="button add-new-h2"><?php _e("Add New", 'catablog'); ?></a>
 			
 		</h2>
 		<div id="message" class="updated hide">
@@ -12,7 +12,8 @@
 
 		<noscript>
 			<div class="error">
-				<strong>You must have a JavaScript enabled browser for bulk actions and to change the order of your items. <a href="http://www.google.com/search?q=what+is+javascript">Learn More</a>.</strong>
+				<strong><?php _e("You must have a JavaScript enabled browser for bulk actions and to change the order of your items.", 'catablog'); ?>
+				<a href="http://www.google.com/search?q=what+is+javascript"><?php _e("Learn More", 'catablog'); ?></a></strong>
 			</div>
 		</noscript>
 
@@ -24,18 +25,18 @@
 				<?php wp_nonce_field( 'catablog_bulkedit', '_catablog_bulkedit_nonce', false, true ) ?>
 				
 				<select id="bulk-action" name="bulk-action">
-					<option value="">Bulk Actions</option>
-					<option value="delete">Delete</option>
+					<option value=""><?php _e("Bulk Actions", 'catablog'); ?></option>
+					<option value="delete"><?php _e("Delete", 'catablog'); ?></option>
 				</select>
 				
-				<input type="submit" value="Apply" class="button-secondary" />
+				<input type="submit" value="<?php _e("Apply", 'catablog'); ?>" class="button-secondary" />
 				<small>|</small>
 			</form>
 			
 			<form method="get" action="admin.php?page=catablog" class="alignleft actions">
 				<input type="hidden" name="page" value="catablog" />
 				<select id="cat" name="category" class="postform">
-					<option value="-1">- All Categories [slow]</option>
+					<option value="-1">- <?php _e("All Categories", 'catablog'); ?></option>
 					<?php $categories = $this->get_terms() ?>
 					<?php foreach ($categories as $category): ?>
 						<?php $selected = ($category->term_id == $selected_term->term_id)? 'selected="selected"' : '' ?>
@@ -46,8 +47,8 @@
 				
 				<small>|</small>
 				
-				<?php $disabled = ($_GET['category'] > 0)? 'disabled="disabled"' : '' ?>
-				<a href="#sort" id="enable_sort" <?php echo $disabled ?> class="button">Change Order</a>
+				<?php $disabled = (!isset($_GET['category']) || $_GET['category'] > 0)? '' : 'disabled="disabled"' ?>
+				<a href="#sort" id="enable_sort" <?php echo $disabled ?> class="button"><?php _e("Change Order", 'catablog'); ?></a>
 			</form>
 			
 			<div id="catablog-view-switch" class="view-switch">
@@ -58,10 +59,10 @@
 				<?php $current_page = (isset($_GET['offset']))? '&amp;offset='.$_GET['offset'] : ''?>
 				
 				<a href="admin.php?page=catablog<?php echo $current_page ?><?php echo $current_cat ?>&amp;view=list">
-					<img src="<?php echo $this->urls['images'] ?>/blank.gif" id="view-switch-list" <?php echo "$list_class $meta" ?> title="List View" alt="List View"/>
+					<img src="<?php echo $this->urls['images'] ?>/blank.gif" id="view-switch-list" <?php echo "$list_class $meta" ?> title="<?php _e("List View", 'catablog'); ?>" alt="<?php _e("List View", 'catablog'); ?>"/>
 				</a>
 				<a href="admin.php?page=catablog<?php echo $current_page ?><?php echo $current_cat ?>&amp;view=grid">
-					<img src="<?php echo $this->urls['images'] ?>/blank.gif" id="view-switch-excerpt" <?php echo "$grid_class $meta" ?> title="Grid View" alt="Grid View"/>
+					<img src="<?php echo $this->urls['images'] ?>/blank.gif" id="view-switch-excerpt" <?php echo "$grid_class $meta" ?> title="<?php _e("Grid View", 'catablog'); ?>" alt="<?php _e("Grid View", 'catablog'); ?>"/>
 				</a>
 			</div>
 		</div>
@@ -92,12 +93,12 @@
 			var self = this;
 			
 			if ($('#bulk-action').val().length < 1) {
-				alert('Please select a bulk action to apply.');
+				alert('<?php _e("Please select a bulk action to apply.", "catablog"); ?>');
 				return false;
 			}
 			
 			if ($('#bulk-action').val() == 'delete') {
-				if (!confirm('Are you sure you want to delete multiple items?')) {
+				if (!confirm('<?php _e("Are you sure you want to delete multiple items?", "catablog"); ?>')) {
 					return false;
 				}
 			}
@@ -149,7 +150,7 @@
 		
 		$('#enable_sort').bind('click', function(event) {
 			if ($(this).attr('disabled')) {
-				alert('This feature only works when viewing \'All Categories\'.');
+				alert('<?php _e("This feature only works when viewing a single category.", "catablog"); ?>');
 				return false;
 			}
 			
@@ -177,7 +178,8 @@
 				// disable links, hide bulk selection and discourage leaving page
 				items.find('a').addClass('cb_disabled_link');
 				items.find('input.bulk_selection').hide();
-				discourage_leaving_page("You have not saved your order.\nIf you leave now you will loose your changes.\n Are you sure you want to continue leaving this page?");
+				
+				discourage_leaving_page('<?php _e("You have not saved your order. If you leave now you will loose your changes. Are you sure you want to continue leaving this page?", "catablog"); ?>');
 				
 				// disable selection of text and add sort enabled class
 				items.disableSelection();
@@ -187,7 +189,7 @@
 				items.sortable('option', 'disabled', false);
 				
 				// display helpful message to user
-				var help_message = 'Drag the items below to rearrange their order.';
+				var help_message = '<?php _e("Drag the items below to rearrange their order.", "catablog"); ?>';
 				$('#message strong').html(help_message);
 				$('#message').show();
 				
@@ -211,9 +213,9 @@
 				'ids[]':    ids
 			}
 			
-			$('#message strong').html('Saving new catalog order...');			
+			$('#message strong').html('<?php _e("Saving new catalog order...", "catablog"); ?>');			
 			$.post(ajaxurl, params, function(data) {
-				$('#message strong').html('Your catalog items have been rearranged successfully');
+				$('#message strong').html('<?php _e("Your catalog items have been rearranged successfully.", "catablog"); ?>');
 			});
 		}
 		
