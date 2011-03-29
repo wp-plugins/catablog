@@ -125,7 +125,7 @@ class CataBlog {
 	*****************************************************/
 	public function initialize_plugin() {
 		// load in i18n file
-		load_plugin_textdomain('catablog', null, $this->directories['languages']);
+		load_plugin_textdomain('catablog', false, '/catablog/localization');
 		
 		$params['label']              = __("CataBlog Item", 'catablog');
 		$params['public']              = false;
@@ -1211,7 +1211,7 @@ class CataBlog {
 	
 	public function frontend_footer() {
 		if (!is_admin() && $this->options['lightbox-enabled']) {
-			if ($this->load_support_files) {
+			if (isset($this->load_support_files) && $this->load_support_files) {
 				echo "<script type='text/javascript'>jQuery(document).ready(function(){ jQuery('.catablog-image').catablogLightbox(); });</script>\n";
 			}
 		}

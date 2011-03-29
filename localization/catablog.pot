@@ -1,0 +1,1297 @@
+# Copyright (C) 2010 CataBlog
+# This file is distributed under the same license as the CataBlog package.
+msgid ""
+msgstr ""
+"Project-Id-Version: CataBlog 1.2.1\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/catablog\n"
+"POT-Creation-Date: 2011-03-29 21:52:36+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: lib/CataBlogDirectory.class.php:12
+msgid "Could not open directory."
+msgstr ""
+
+#: lib/CataBlogDirectory.class.php:109
+msgid "could not open directory."
+msgstr ""
+
+#: lib/CataBlogItem.class.php:212
+msgid "An item must have an image associated with it."
+msgstr ""
+
+#: lib/CataBlogItem.class.php:218
+msgid ""
+"Can't write uploaded image to server, please make sure the catablog "
+"directory in you WordPress uploads folder is writable."
+msgstr ""
+
+#: lib/CataBlogItem.class.php:223
+msgid "An item must have a title of at least one alphanumeric character."
+msgstr ""
+
+#: lib/CataBlogItem.class.php:228
+msgid "An item's title can not be more then 200 characters long."
+msgstr ""
+
+#: lib/CataBlogItem.class.php:234
+msgid "An item's price must be a positive integer."
+msgstr ""
+
+#: lib/CataBlogItem.class.php:247 lib/CataBlogItem.class.php:393
+msgid ""
+"The image could not be used because it is an unsupported format. JPEG, GIF "
+"and PNG formats only, please."
+msgstr ""
+
+#: lib/CataBlogItem.class.php:260 lib/CataBlogItem.class.php:380
+msgid ""
+"Can not write uploaded image to server, your storage space is exhausted."
+msgstr ""
+
+#: lib/CataBlogItem.class.php:261 lib/CataBlogItem.class.php:381
+msgid "Please delete some media files to free up space and try again."
+msgstr ""
+
+#: lib/CataBlogItem.class.php:262 lib/CataBlogItem.class.php:382
+msgid "You have %sMB of available space on your server and your image is %sMB."
+msgstr ""
+
+#: lib/CataBlogItem.class.php:330
+msgid "Could not set categories, please try again."
+msgstr ""
+
+#: lib/CataBlogItem.class.php:401
+msgid "Could not move the uploaded file on your server"
+msgstr ""
+
+#: lib/CataBlogItem.class.php:438
+msgid "Original image file could not be located at %s"
+msgstr ""
+
+#: lib/CataBlogItem.class.php:445
+msgid "Original image dimensions are less then 1px."
+msgstr ""
+
+#: lib/CataBlogItem.class.php:474 lib/CataBlogItem.class.php:552
+msgid "Original image could not be loaded because it is an unsupported format."
+msgstr ""
+
+#: lib/CataBlogItem.class.php:523
+msgid "Original image file missing, could not be located at %s"
+msgstr ""
+
+#: lib/CataBlogItem.class.php:530
+msgid ""
+"Original image dimensions are less then 1px. Most likely PHP does not have "
+"permission to read the original file."
+msgstr ""
+
+#: lib/CataBlog.class.php:130
+msgid "CataBlog Item"
+msgstr ""
+
+#: lib/CataBlog.class.php:134
+msgid "A CataBlog Plugin Catalog Item"
+msgstr ""
+
+#: lib/CataBlog.class.php:145
+msgid "CataBlog Category"
+msgstr ""
+
+#: lib/CataBlog.class.php:207
+msgid ""
+"CataBlog must be setup for this site before you may use it! %s Setup "
+"CataBlog Now %s"
+msgstr ""
+
+#: lib/CataBlog.class.php:245
+msgid "Edit CataBlog"
+msgstr ""
+
+#. #-#-#-#-#  plugin.pot (CataBlog 1.2.1)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: lib/CataBlog.class.php:245 templates/admin-404.php:10
+#: templates/admin-discfull.php:23
+msgid "CataBlog"
+msgstr ""
+
+#: lib/CataBlog.class.php:246
+msgid "Add New CataBlog"
+msgstr ""
+
+#: lib/CataBlog.class.php:246 templates/admin-items.php:6
+msgid "Add New"
+msgstr ""
+
+#: lib/CataBlog.class.php:247 templates/admin-options.php:4
+msgid "CataBlog Options"
+msgstr ""
+
+#: lib/CataBlog.class.php:247
+msgid "Options"
+msgstr ""
+
+#: lib/CataBlog.class.php:248 templates/admin-about.php:4
+msgid "About CataBlog"
+msgstr ""
+
+#: lib/CataBlog.class.php:248
+msgid "About"
+msgstr ""
+
+#: lib/CataBlog.class.php:330
+msgid "Catalog Item Deleted Successfully."
+msgstr ""
+
+#: lib/CataBlog.class.php:333
+msgid "Could Not Delete Item Because ID was non existent."
+msgstr ""
+
+#: lib/CataBlog.class.php:352
+msgid "Changes Saved Successfully"
+msgstr ""
+
+#: lib/CataBlog.class.php:388
+msgid "CataBlog Options Saved"
+msgstr ""
+
+#: lib/CataBlog.class.php:427
+msgid ""
+" - Please Let The Rendering Below Complete Before Navigating Away From This "
+"Page"
+msgstr ""
+
+#: lib/CataBlog.class.php:445
+msgid "Form Validation Error. Please reload the page and try again."
+msgstr ""
+
+#: lib/CataBlog.class.php:466 lib/CataBlog.class.php:467
+#: lib/CataBlog.class.php:468
+msgid "not present"
+msgstr ""
+
+#: lib/CataBlog.class.php:555
+msgid ""
+"The file you selected was to large or you didn't select anything at all, "
+"please try again."
+msgstr ""
+
+#: lib/CataBlog.class.php:559
+msgid ""
+"Could not validate the WordPress Nonce, reload the form and try again..."
+msgstr ""
+
+#: lib/CataBlog.class.php:605
+msgid "could not verify wordpress nonce"
+msgstr ""
+
+#: lib/CataBlog.class.php:609
+msgid "full form was not submitted, please try again."
+msgstr ""
+
+#: lib/CataBlog.class.php:653 lib/CataBlog.class.php:691
+msgid "You didn't select anything to upload, please try again."
+msgstr ""
+
+#: lib/CataBlog.class.php:657 lib/CataBlog.class.php:695
+msgid "WordPress Nonce Error, reload the form and try again..."
+msgstr ""
+
+#: lib/CataBlog.class.php:661 lib/CataBlog.class.php:699
+msgid "No item ID posted, press back arrow and try again."
+msgstr ""
+
+#: lib/CataBlog.class.php:742
+msgid "Error during bulk delete, could not locate item by id."
+msgstr ""
+
+#: lib/CataBlog.class.php:747
+msgid "Bulk delete performed successfully."
+msgstr ""
+
+#: lib/CataBlog.class.php:750
+msgid "Please make your selection by checking the boxes in the list below."
+msgstr ""
+
+#: lib/CataBlog.class.php:755
+msgid ""
+"Could not verify bulk edit action nonce, please refresh page and try again."
+msgstr ""
+
+#: lib/CataBlog.class.php:772
+msgid "No file was selected for upload, please try again."
+msgstr ""
+
+#: lib/CataBlog.class.php:781
+msgid ""
+"Uploaded XML File Could Not Be Parsed, Check That The File's Content Is "
+"Valid XML."
+msgstr ""
+
+#: lib/CataBlog.class.php:787
+msgid ""
+"Uploaded CSV File Could Not Be Parsed, Check That The File's Format Is Valid."
+msgstr ""
+
+#: lib/CataBlog.class.php:791
+msgid ""
+"Uploaded file was not of proper format, please make sure the filename has an "
+"xml or csv extension."
+msgstr ""
+
+#: lib/CataBlog.class.php:853
+msgid "The CataBlog upload directories have been unlocked."
+msgstr ""
+
+#: lib/CataBlog.class.php:856
+msgid "Are you using a unix based server?"
+msgstr ""
+
+#: lib/CataBlog.class.php:864
+msgid "The CataBlog upload directories have been locked."
+msgstr ""
+
+#: lib/CataBlog.class.php:867
+msgid "Why are you using a Windows based server?"
+msgstr ""
+
+#: lib/CataBlog.class.php:946
+msgid "CataBlog options and directories have been successfully installed."
+msgstr ""
+
+#: lib/CataBlog.class.php:967
+msgid ""
+"System has been cleared of all CataBlog data and the default options reset."
+msgstr ""
+
+#: lib/CataBlog.class.php:1012
+msgid ""
+"Please only use these characters in your category name: letters, numbers, "
+"space, dash and underscore."
+msgstr ""
+
+#: lib/CataBlog.class.php:1018
+msgid "Please be a little more specific with your category name."
+msgstr ""
+
+#: lib/CataBlog.class.php:1030
+msgid "There already is a category with that name."
+msgstr ""
+
+#: lib/CataBlog.class.php:1060
+msgid "Term Removed Successfully."
+msgstr ""
+
+#: lib/CataBlog.class.php:1063
+msgid "Term did not exist, please refresh page and try again."
+msgstr ""
+
+#: lib/CataBlog.class.php:1103
+msgid "unsupported image size type"
+msgstr ""
+
+#: lib/CataBlog.class.php:1150
+msgid "error"
+msgstr ""
+
+#: lib/CataBlog.class.php:1153
+msgid "sub image deleted successfully"
+msgstr ""
+
+#: lib/CataBlog.class.php:1398
+msgid ""
+"<strong>CataBlog</strong> requires <strong>PHP 5</strong> or better running "
+"on your web server. \n"
+"\t\t\t\tYou're version of PHP is to old, please contact your hosting company "
+"or IT department for an upgrade.\n"
+"\t\t\t\tThanks."
+msgstr ""
+
+#: lib/CataBlog.class.php:1404
+msgid ""
+"<strong>CataBlog</strong> requires that the <strong>GD Library</strong> be "
+"installed on your\n"
+"\t\t\t\tweb server's version of PHP. Please contact your hosting company or "
+"IT department for\n"
+"\t\t\t\tmore information. Thanks."
+msgstr ""
+
+#: lib/CataBlog.class.php:1410
+msgid ""
+"<strong>CataBlog</strong> requires that the <strong>MultiByte String "
+"Library</strong> be installed on your\n"
+"\t\t\t\tweb server's version of PHP. Please contact your hosting company or "
+"IT department for\n"
+"\t\t\t\tmore information. Thanks."
+msgstr ""
+
+#: lib/CataBlog.class.php:1420
+msgid ""
+"<strong>CataBlog</strong> requires <strong>WordPress 3.0</strong> or above. "
+"Please\n"
+"\t\t\tupgrade WordPress or contact your system administrator about upgrading."
+msgstr ""
+
+#: lib/CataBlog.class.php:1426
+msgid ""
+"<strong>CataBlog</strong> could not detect your upload directory or it is "
+"not writable by PHP. \n"
+"\t\t\tPlease contact your hosting company or IT department for more "
+"information. Thanks."
+msgstr ""
+
+#: lib/CataBlog.class.php:1486
+msgid "There was an error creating the default term: "
+msgstr ""
+
+#: lib/CataBlog.class.php:1689 lib/CataBlog.class.php:1725
+#: lib/CataBlog.class.php:1728 lib/CataBlog.class.php:1731
+msgid "Error:"
+msgstr ""
+
+#: lib/CataBlog.class.php:1703 lib/CataBlog.class.php:1724
+msgid "Success:"
+msgstr ""
+
+#: lib/CataBlog.class.php:1703
+msgid " %s inserted into catalog categories."
+msgstr ""
+
+#: lib/CataBlog.class.php:1711
+msgid "All Categories Created"
+msgstr ""
+
+#: lib/CataBlog.class.php:1715
+msgid "No New Categories Created"
+msgstr ""
+
+#: lib/CataBlog.class.php:1724
+msgid " %s inserted into the database."
+msgstr ""
+
+#: lib/CataBlog.class.php:1725
+msgid " %s was not inserted into the database."
+msgstr ""
+
+#: lib/CataBlog.class.php:1728
+msgid "Item had no title and could not be made."
+msgstr ""
+
+#: lib/CataBlog.class.php:1731
+msgid "Item had no primary image name and could not be made."
+msgstr ""
+
+#: lib/CataBlog.class.php:1780
+msgid "All Catalog Items Created"
+msgstr ""
+
+#: lib/CataBlog.class.php:1845
+msgid "Uploaded File Exceeded The PHP Configurations Max File Size."
+msgstr ""
+
+#: lib/CataBlog.class.php:1848
+msgid "Upload File Exceeded The HTML Form\\'s Max File Size."
+msgstr ""
+
+#: lib/CataBlog.class.php:1851
+msgid "File Only Partially Uploaded, Please Try Again."
+msgstr ""
+
+#: lib/CataBlog.class.php:1854
+msgid "No File Selected For Upload. Please Resubmit The Form."
+msgstr ""
+
+#: lib/CataBlog.class.php:1857
+msgid ""
+"Your Server\\'s PHP Configuration Does Not Have A Temporary Folder For "
+"Uploads, Please Contact The System Admin."
+msgstr ""
+
+#: lib/CataBlog.class.php:1860
+msgid ""
+"Your Server\\'s PHP Configuration Can Not Write To Disc, Please Contact The "
+"System Admin."
+msgstr ""
+
+#: lib/CataBlog.class.php:1863
+msgid ""
+"A PHP Extension Is Blocking PHP From Excepting Uploads, Please Contact The "
+"System Admin."
+msgstr ""
+
+#: lib/CataBlog.class.php:1866
+msgid "An Unknown Upload Error Has Occurred"
+msgstr ""
+
+#: templates/admin-edit.php:4
+msgid "Edit CataBlog Entry"
+msgstr ""
+
+#: templates/admin-edit.php:11 templates/admin-list.php:8
+#: templates/admin-list.php:20
+msgid "Link"
+msgstr ""
+
+#: templates/admin-edit.php:15
+msgid ""
+"Enter a relative or absolute web address to turn this item's title into a "
+"hyperlink. External links should start with http://."
+msgstr ""
+
+#: templates/admin-edit.php:21 templates/admin-list.php:10
+#: templates/admin-list.php:22
+msgid "Categories"
+msgstr ""
+
+#: templates/admin-edit.php:29
+msgid "You currently have no categories."
+msgstr ""
+
+#: templates/admin-edit.php:39
+msgid "[DELETE]"
+msgstr ""
+
+#: templates/admin-edit.php:51
+msgid "You must have a JavaScript enabled browser to create new categories."
+msgstr ""
+
+#: templates/admin-edit.php:57
+msgid "New"
+msgstr ""
+
+#: templates/admin-edit.php:62
+msgid ""
+"Put your items into categories to easily display subsets of your catalog on "
+"different pages."
+msgstr ""
+
+#: templates/admin-edit.php:63
+msgid "ex:"
+msgstr ""
+
+#: templates/admin-edit.php:69
+msgid "Shopping Cart"
+msgstr ""
+
+#: templates/admin-edit.php:72
+msgid "Item Price"
+msgstr ""
+
+#: templates/admin-edit.php:77 templates/admin-list.php:12
+#: templates/admin-list.php:24
+msgid "Product Code"
+msgstr ""
+
+#: templates/admin-edit.php:82
+msgid ""
+"If you want to make a shopping cart you should make sure you are using a %"
+"sStore Template%s that uses these values."
+msgstr ""
+
+#: templates/admin-edit.php:97
+msgid "Previous Item"
+msgstr ""
+
+#: templates/admin-edit.php:99
+msgid "no previous item"
+msgstr ""
+
+#: templates/admin-edit.php:103
+msgid "Next Item"
+msgstr ""
+
+#: templates/admin-edit.php:105
+msgid "no next item"
+msgstr ""
+
+#: templates/admin-edit.php:113
+msgid "Images"
+msgstr ""
+
+#: templates/admin-edit.php:122
+msgid "Replace Main Image"
+msgstr ""
+
+#: templates/admin-edit.php:123
+msgid "Add Sub Image"
+msgstr ""
+
+#: templates/admin-edit.php:127
+msgid "JavaScript is required to add images."
+msgstr ""
+
+#: templates/admin-edit.php:138
+msgid "Delete this sub image permanently."
+msgstr ""
+
+#: templates/admin-edit.php:144
+msgid "No Sub Images"
+msgstr ""
+
+#: templates/admin-edit.php:153 templates/admin-options.php:31
+#: templates/admin-list.php:7 templates/admin-list.php:19
+msgid "Title"
+msgstr ""
+
+#: templates/admin-edit.php:156 templates/admin-options.php:32
+#: templates/admin-list.php:9 templates/admin-list.php:21
+msgid "Description"
+msgstr ""
+
+#: templates/admin-edit.php:156
+msgid "accepts html formatting"
+msgstr ""
+
+#: templates/admin-edit.php:168 templates/admin-options.php:222
+#: templates/admin-options.php:387
+msgid "Save Changes"
+msgstr ""
+
+#: templates/admin-edit.php:169
+msgid "or %sback to list%s"
+msgstr ""
+
+#: templates/admin-edit.php:191 templates/admin-edit.php:215
+msgid "[close]"
+msgstr ""
+
+#: templates/admin-edit.php:192
+msgid "Upload A New Sub Image"
+msgstr ""
+
+#: templates/admin-edit.php:195 templates/admin-edit.php:219
+msgid "Save Other Changes Before Uploading A New Image."
+msgstr ""
+
+#: templates/admin-edit.php:202 templates/admin-edit.php:225
+msgid "Upload"
+msgstr ""
+
+#: templates/admin-edit.php:204
+msgid ""
+"Select an image on your computer to upload and then add to this item as a "
+"sub image.\n"
+"\t\t\t\tYou\tmay upload JPEG, GIF and PNG graphic formats only.\n"
+"\t\t\t\tYou will be adding a sub image, this upload will not replace this "
+"item's main image."
+msgstr ""
+
+#: templates/admin-edit.php:216
+msgid "Replace The Main Image"
+msgstr ""
+
+#: templates/admin-edit.php:227
+msgid ""
+"Select an image on your computer to upload and then replace this item's main "
+"image with.\n"
+"\t\t\t\tYou\tmay upload JPEG, GIF and PNG graphic formats only.\n"
+"\t\t\t\tYou will be replacing the main image for this item, this upload will "
+"not add a new sub image."
+msgstr ""
+
+#: templates/admin-options.php:8
+msgid ""
+"You must have a JavaScript enabled browser to change the CataBlog options."
+msgstr ""
+
+#: templates/admin-options.php:15 templates/admin-rescan.php:25
+#: templates/admin-regenerate.php:14
+msgid "Processing Thumbnail Images..."
+msgstr ""
+
+#: templates/admin-options.php:22
+msgid "Waiting For LightBox Rendering To Finish..."
+msgstr ""
+
+#: templates/admin-options.php:29
+msgid "Thumbnails"
+msgstr ""
+
+#: templates/admin-options.php:30
+msgid "LightBox"
+msgstr ""
+
+#: templates/admin-options.php:34
+msgid "Template"
+msgstr ""
+
+#: templates/admin-options.php:35
+msgid "Store"
+msgstr ""
+
+#: templates/admin-options.php:36
+msgid "Export"
+msgstr ""
+
+#: templates/admin-options.php:38
+msgid "Systems"
+msgstr ""
+
+#: templates/admin-options.php:45
+msgid "Thumbnail Size:"
+msgstr ""
+
+#: templates/admin-options.php:47 templates/admin-options.php:89
+msgid "pixels"
+msgstr ""
+
+#: templates/admin-options.php:49
+msgid "Your thumbnail size must be a positive integer."
+msgstr ""
+
+#: templates/admin-options.php:50
+msgid "this will change the thumbnail size of all your catalog items."
+msgstr ""
+
+#: templates/admin-options.php:54
+msgid "Keep Aspect Ratio:"
+msgstr ""
+
+#: templates/admin-options.php:57
+msgid ""
+"this will keep the aspect ratio of the original image in your thumbnails, "
+"using the background color to fill in the empty space."
+msgstr ""
+
+#: templates/admin-options.php:60
+msgid "Thumbnail Background Color:"
+msgstr ""
+
+#: templates/admin-options.php:63
+msgid "Select a Color"
+msgstr ""
+
+#: templates/admin-options.php:68
+msgid "Thumbnail Preview"
+msgstr ""
+
+#: templates/admin-options.php:81
+msgid "Enable LightBox Feature:"
+msgstr ""
+
+#: templates/admin-options.php:83
+msgid ""
+"this will allow people to enlarge an image thumbnail with a lightbox style "
+"javascript effect."
+msgstr ""
+
+#: templates/admin-options.php:87
+msgid "LightBox Size:"
+msgstr ""
+
+#: templates/admin-options.php:90
+msgid "Your lightbox size must be a positive integer."
+msgstr ""
+
+#: templates/admin-options.php:91
+msgid ""
+"This is the maximum length of either the height or width, depending on "
+"whichever is longer in the original uploaded image."
+msgstr ""
+
+#: templates/admin-options.php:99
+msgid "Link Target:"
+msgstr ""
+
+#: templates/admin-options.php:102
+msgid ""
+"The link target setting will set the <strong>target</strong> attribute of "
+"all the catalog title links."
+msgstr ""
+
+#: templates/admin-options.php:103 templates/admin-options.php:111
+msgid "examples:"
+msgstr ""
+
+#: templates/admin-options.php:107
+msgid "Link Relationship:"
+msgstr ""
+
+#: templates/admin-options.php:110
+msgid ""
+"The link relationship will set the <strong>rel</strong> attribute of all the "
+"catalog title links."
+msgstr ""
+
+#: templates/admin-options.php:121
+msgid "Enable WordPress Filters:"
+msgstr ""
+
+#: templates/admin-options.php:124
+msgid ""
+"Enable the standard WordPress filters for your catalog item's description."
+msgstr ""
+
+#: templates/admin-options.php:125
+msgid ""
+"This allows you to use ShortCodes and media embeds inside your catalog item "
+"descriptions."
+msgstr ""
+
+#: templates/admin-options.php:126
+msgid ""
+"Please <strong>do not use the CataBlog ShortCode</strong> inside a catalog "
+"item's description."
+msgstr ""
+
+#: templates/admin-options.php:132
+msgid "Render Line Breaks:"
+msgstr ""
+
+#: templates/admin-options.php:135
+msgid ""
+"Filter your catalog item's description through the standard PHP function %s."
+msgstr ""
+
+#: templates/admin-options.php:136
+msgid ""
+"This will insert HTML line breaks before all new lines in your catalog "
+"descriptions."
+msgstr ""
+
+#: templates/admin-options.php:137
+msgid "Turn this off if unwanted line breaks are being rendered on your page."
+msgstr ""
+
+#: templates/admin-options.php:152 templates/admin-options.php:205
+msgid "Load Template"
+msgstr ""
+
+#: templates/admin-options.php:154 templates/admin-options.php:207
+msgid "Could not locate the views directory. Please reinstall CataBlog."
+msgstr ""
+
+#: templates/admin-options.php:163
+msgid ""
+"You may change the html code rendered by <strong>CataBlog</strong> here, "
+"this\n"
+"\t\t\t\t\tallows you to make fundamental changes to how catalogs will "
+"appear\n"
+"\t\t\t\t\tin your posts. You may choose a template from the drop down menu "
+"at\n"
+"\t\t\t\t\ttop and then click <em>Load Template</em> to load it into the\n"
+"\t\t\t\t\ttemplate code. If you want to setup a photo gallery I would \n"
+"\t\t\t\t\trecommend that you load the <em>Gallery template</em> and then "
+"click \n"
+"\t\t\t\t\tsave below. To setup a shopping cart you should load the \n"
+"\t\t\t\t\t<em>Default Template</em> code and then load a Store Template."
+msgstr ""
+
+#: templates/admin-options.php:175
+msgid ""
+"Don't forget to click <strong>Save Changes</strong> at the bottom of the "
+"page to finalize\n"
+"\t\t\t\tyour changes and use the new code for your blog."
+msgstr ""
+
+#: templates/admin-options.php:185
+msgid "PayPal Account Email Address:"
+msgstr ""
+
+#: templates/admin-options.php:190
+msgid ""
+"Enter in an email address here that has been registered with %sPayPal%s and\n"
+"\t\t\t\tchoose a <em>Buy Now Template</em> below to setup a store. You may "
+"then give items a price and product code.\n"
+"\t\t\t\tWhen an item has a price above zero a 'Buy Now' button will appear "
+"under the description of that CataBlog item."
+msgstr ""
+
+#: templates/admin-options.php:213
+msgid ""
+"You may change the html code rendered for the <strong>Buy Now</strong> "
+"button here.\n"
+"\t\t\t\t\tAll value tokens are available here too, so place the title, "
+"description or any other\n"
+"\t\t\t\t\tvalues you may want to use from the current catalog item in this "
+"code as well."
+msgstr ""
+
+#: templates/admin-options.php:234
+msgid ""
+"You may export your CataBlog data to a XML or CSV file which may be used to "
+"backup \n"
+"\t\tand protect your work. The XML or CSV file is a simple transfer of the "
+"database information\n"
+"\t\titself and the <strong>images are not included in this backup</strong>. "
+"To backup \n"
+"\t\tyour images follow the directions at the bottom of the page."
+msgstr ""
+
+#: templates/admin-options.php:242
+msgid "Save XML BackUp File"
+msgstr ""
+
+#: templates/admin-options.php:245
+msgid "Save CSV BackUp File"
+msgstr ""
+
+#: templates/admin-options.php:252
+msgid ""
+"You must have the function %sfputcsv()%s available on your web server's "
+"version of PHP for CSV export to work."
+msgstr ""
+
+#: templates/admin-options.php:254
+msgid ""
+"Please contact your server administrator for more information regarding this "
+"error."
+msgstr ""
+
+#: templates/admin-options.php:261
+msgid "Backing Up Images:"
+msgstr ""
+
+#: templates/admin-options.php:262
+msgid "Please copy the <em>catablog</em> directory to a secure location."
+msgstr ""
+
+#: templates/admin-options.php:263
+msgid ""
+"The directory for this WordPress blog can be located on your web server at:"
+msgstr ""
+
+#: templates/admin-options.php:274
+msgid "Import XML/CSV Data"
+msgstr ""
+
+#: templates/admin-options.php:282
+msgid "Replace All Data:"
+msgstr ""
+
+#: templates/admin-options.php:285
+msgid "Import CataBlog Data"
+msgstr ""
+
+#: templates/admin-options.php:289
+msgid ""
+"You must have the <strong>Simple XML Library</strong> installed on your web "
+"server's version of PHP\n"
+"\t\t\t\t\tfor XML imports to work. Please contact your server administrator "
+"for more information \n"
+"\t\t\t\t\tregarding this error."
+msgstr ""
+
+#: templates/admin-options.php:296
+msgid ""
+"To import data into your catalog you simply select a XML or CVS file \n"
+"\t\t\t\ton your hard drive and click the <em>Import CataBlog Data</em> "
+"button.\n"
+"\t\t\t\tYou may choose to completely erase all your data before importing\n"
+"\t\t\t\tby checking the <em>Replace All Data</em> checkbox.<br />Keep in "
+"mind, this \n"
+"\t\t\t\t<strong>does not import or delete images</strong>."
+msgstr ""
+
+#: templates/admin-options.php:303
+msgid ""
+"To import images you should upload them to the <em>originals</em> directory, "
+"located at: <em>%s</em>.\n"
+"\t\t\t\tOnce you load the XML or CVS file and the images into the "
+"<em>originals</em> directory everything \n"
+"\t\t\t\tshould be set after you %sRegenerate All Images%s in the systems tab."
+msgstr ""
+
+#: templates/admin-options.php:309
+msgid ""
+"You may view XML and CSV examples in the %simport/export documentation%s."
+msgstr ""
+
+#: templates/admin-options.php:323
+msgid "CataBlog Upload Folders are <strong>Unlocked</strong>"
+msgstr ""
+
+#: templates/admin-options.php:325
+msgid "CataBlog Upload Folders are <strong>Locked</strong>"
+msgstr ""
+
+#: templates/admin-options.php:327
+msgid "Error: You may be on a windows server..."
+msgstr ""
+
+#: templates/admin-options.php:332
+msgid "Lock Folders"
+msgstr ""
+
+#: templates/admin-options.php:333
+msgid "Unlock Folders"
+msgstr ""
+
+#: templates/admin-options.php:337
+msgid ""
+"You may lock and unlock your <em>catablog</em> folders with \n"
+"\t\t\t\tthese controls. The idea is to unlock the folders, use your FTP "
+"client to \n"
+"\t\t\t\tupload your original files and then lock the folders to protect them "
+"from hackers.\n"
+"\t\t\t\tAfter unlocking your directories please upload the original files "
+"directly\n"
+"\t\t\t\tinto the <strong>%s</strong> folder without replacing it.\n"
+"\t\t\t\t<strong>Do not replace any of the CataBlog created folders</"
+"strong>.\n"
+"\t\t\t\tYou should then regenerate all your thumbnail and lightbox pictures "
+"below.\n"
+"\t\t\t\tThese controls may not work on a Windows server, it depends on your\n"
+"\t\t\t\tservers PHP settings and if the chmod command is supported."
+msgstr ""
+
+#: templates/admin-options.php:350
+msgid "Rescan Original Image Folder"
+msgstr ""
+
+#: templates/admin-options.php:351
+msgid "Rescan Original Images Folder Now"
+msgstr ""
+
+#: templates/admin-options.php:353
+msgid ""
+"Click the <em>Rescan Now</em> button to rescan the original catablog images\n"
+"\t\t\tfolder and automatically import any new jpeg, gif or png images. It "
+"works simply\n"
+"\t\t\tby making a list of all the image names in the database and then "
+"compares each file's\n"
+"\t\t\tname in the originals folder against the list of image names in the "
+"database. Any newly\n"
+"\t\t\tdiscovered images will automatically be made into a new catalog item. "
+"You should Regenerate Images\n"
+"\t\t\tafter running this command."
+msgstr ""
+
+#: templates/admin-options.php:363
+msgid "Regenerate Images"
+msgstr ""
+
+#: templates/admin-options.php:364
+msgid "Regenerate All Images Now"
+msgstr ""
+
+#: templates/admin-options.php:366
+msgid ""
+"Click the <em>Regenerate Now</em> button to recreate all the\n"
+"\t\t\t\tthumbnail and lightbox images that CataBlog has generated over\n"
+"\t\t\t\tthe time you have used it. This is also useful when restoring "
+"exported\n"
+"\t\t\t\tdata from another version of CataBlog. after you have uploaded your\n"
+"\t\t\t\toriginal images you must regenerate your images so they display "
+"properly."
+msgstr ""
+
+#: templates/admin-options.php:375
+msgid "Reset CataBlog"
+msgstr ""
+
+#: templates/admin-options.php:376
+msgid "Reset All CataBlog Data"
+msgstr ""
+
+#: templates/admin-options.php:378
+msgid ""
+"Reset your entire catalog, deleting all photos and custom data permanently.\n"
+"\t\t\tSometimes you can use this to fix an improper install."
+msgstr ""
+
+#: templates/admin-options.php:388
+msgid "or %sundo current changes%s"
+msgstr ""
+
+#: templates/admin-options.php:657 templates/admin-rescan.php:53
+msgid "Image rendering is now complete"
+msgstr ""
+
+#: templates/admin-grid.php:5 templates/admin-list.php:33
+msgid "No catalog items found"
+msgstr ""
+
+#: templates/admin-grid.php:8 templates/admin-list.php:36
+msgid "Use the category drop down above to switch category views."
+msgstr ""
+
+#: templates/admin-404.php:4
+msgid "CataBlog Item Not Found"
+msgstr ""
+
+#: templates/admin-404.php:6
+msgid ""
+"You attempted to edit an item that doesn't exist. Perhaps it was deleted?"
+msgstr ""
+
+#: templates/admin-404.php:8 templates/admin-discfull.php:20
+msgid "Go To:"
+msgstr ""
+
+#: templates/admin-404.php:9 templates/admin-discfull.php:21
+msgid "Dashboard"
+msgstr ""
+
+#: templates/admin-rescan.php:4
+msgid "CataBlog Rescan Original Images Results"
+msgstr ""
+
+#: templates/admin-rescan.php:6
+msgid "Rescan Console"
+msgstr ""
+
+#: templates/admin-rescan.php:10
+msgid "No new images where found in your originals folders."
+msgstr ""
+
+#: templates/admin-rescan.php:11
+msgid ""
+"Please make sure that you have successfully uploaded new images via\tFTP "
+"before running this command."
+msgstr ""
+
+#: templates/admin-rescan.php:12
+msgid "New images should be uploaded into the following folder:"
+msgstr ""
+
+#: templates/admin-rescan.php:19 templates/admin-regenerate.php:8
+msgid "You must have a JavaScript enabled browser to regenerate your images."
+msgstr ""
+
+#: templates/admin-rescan.php:31 templates/admin-regenerate.php:20
+msgid "Waiting For Thumbnail Rendering To Finish..."
+msgstr ""
+
+#: templates/admin-rescan.php:37
+msgid "New Image Found, creating catalog item "
+msgstr ""
+
+#: templates/admin-rescan.php:46
+msgid ""
+"Please allow the rendering to complete before leaving this page. Click "
+"cancel to go back and let the rendering complete."
+msgstr ""
+
+#: templates/admin-new.php:4
+msgid "Add New CataBlog Entry"
+msgstr ""
+
+#: templates/admin-new.php:9
+msgid "Upload An Image To Create A New Catalog Item"
+msgstr ""
+
+#: templates/admin-new.php:18
+msgid "Maximum upload file size: %sB"
+msgstr ""
+
+#: templates/admin-new.php:21
+msgid ""
+"Select an image on your computer to upload and then use to create a new "
+"catalog item."
+msgstr ""
+
+#: templates/admin-new.php:22
+msgid "You\tmay upload JPEG, GIF and PNG graphic formats only."
+msgstr ""
+
+#: templates/admin-new.php:23
+msgid "No animated GIFs please."
+msgstr ""
+
+#: templates/admin-about.php:16
+msgid "CSS Modification:"
+msgstr ""
+
+#: templates/admin-about.php:16
+msgid ""
+"You can always override CataBlog's CSS settings to create custom looks.\n"
+"\t\tIf you make a catablog.css file in your active theme's directory it will "
+"be automatically loaded and applied.\n"
+" \t\tThis makes it easy to prepare your custom theme for CataBlog "
+"integration and will also protect your customization\n"
+"\t\tfor future version to come."
+msgstr ""
+
+#: templates/admin-about.php:24
+msgid "Server Statistics"
+msgstr ""
+
+#: templates/admin-items.php:5
+msgid "Manage CataBlog"
+msgstr ""
+
+#: templates/admin-items.php:15
+msgid ""
+"You must have a JavaScript enabled browser for bulk actions and to change "
+"the order of your items."
+msgstr ""
+
+#: templates/admin-items.php:16
+msgid "Learn More"
+msgstr ""
+
+#: templates/admin-items.php:28
+msgid "Bulk Actions"
+msgstr ""
+
+#: templates/admin-items.php:29
+msgid "Delete"
+msgstr ""
+
+#: templates/admin-items.php:32
+msgid "Apply"
+msgstr ""
+
+#: templates/admin-items.php:39
+msgid "All Categories"
+msgstr ""
+
+#: templates/admin-items.php:51
+msgid "Change Order"
+msgstr ""
+
+#: templates/admin-items.php:62
+msgid "List View"
+msgstr ""
+
+#: templates/admin-items.php:65
+msgid "Grid View"
+msgstr ""
+
+#: templates/admin-items.php:96
+msgid "Please select a bulk action to apply."
+msgstr ""
+
+#: templates/admin-items.php:101
+msgid "Are you sure you want to delete multiple items?"
+msgstr ""
+
+#: templates/admin-items.php:153
+msgid "This feature only works when viewing a single category."
+msgstr ""
+
+#: templates/admin-items.php:182
+msgid ""
+"You have not saved your order. If you leave now you will loose your changes. "
+"Are you sure you want to continue leaving this page?"
+msgstr ""
+
+#: templates/admin-items.php:192
+msgid "Drag the items below to rearrange their order."
+msgstr ""
+
+#: templates/admin-items.php:216
+msgid "Saving new catalog order..."
+msgstr ""
+
+#: templates/admin-items.php:218
+msgid "Your catalog items have been rearranged successfully."
+msgstr ""
+
+#: templates/admin-regenerate.php:4
+msgid "CataBlog Images Rendering"
+msgstr ""
+
+#: templates/admin-regenerate.php:33
+msgid ""
+"Image rendering is now complete, you may now go to any other admin panel you "
+"may want."
+msgstr ""
+
+#: templates/admin-discfull.php:4
+msgid "Storage Space Full!"
+msgstr ""
+
+#: templates/admin-discfull.php:7
+msgid ""
+"CataBlog can't make a new entry because your site has run out of storage "
+"space."
+msgstr ""
+
+#: templates/admin-discfull.php:11
+msgid "You are currently using %sMB of %sMB of storage space."
+msgstr ""
+
+#: templates/admin-discfull.php:14
+msgid ""
+"Please talk to your WordPress Administrator to\n"
+"\t\thave more space allocated to your site or delete some previous uploaded\n"
+"\t\tcontent.\n"
+"\t\t"
+msgstr ""
+
+#: templates/admin-discfull.php:22
+msgid "Media"
+msgstr ""
+
+#: templates/admin-list.php:6 templates/admin-list.php:18
+msgid "Image"
+msgstr ""
+
+#: templates/admin-list.php:11 templates/admin-list.php:23
+msgid "Price"
+msgstr ""
+
+#: templates/admin-list.php:59
+msgid "Edit"
+msgstr ""
+
+#: templates/admin-list.php:61
+msgid "Trash"
+msgstr ""
+
+#: templates/admin-import.php:4
+msgid "CataBlog Import Results"
+msgstr ""
+
+#: templates/admin-import.php:6
+msgid "Import Console"
+msgstr ""
+
+#: templates/admin-import.php:10
+msgid "You must select a valid XML or CSV file to be used for import."
+msgstr ""
+
+#: templates/admin-import.php:13
+msgid ""
+"You may choose to read more about %simporting and exporting data from "
+"CataBlog%s."
+msgstr ""
+
+#: templates/admin-import.php:15
+msgid "Once you have fixed your file and its format please %stry again%s."
+msgstr ""
+
+#: templates/admin-import.php:21
+msgid "removing catalog items..."
+msgstr ""
+
+#: templates/admin-import.php:26
+msgid "Success: <em>All</em> catalog items removed successfully"
+msgstr ""
+
+#: templates/admin-import.php:28
+msgid "removing catalog categories..."
+msgstr ""
+
+#: templates/admin-import.php:30
+msgid "Success: <em>All</em> catalog categories removed successfully"
+msgstr ""
+
+#: templates/admin-import.php:32
+msgid "DataBase Cleared Successfully"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://catablog.illproductions.com"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"CataBlog is a comprehensive and effortless tool that helps you create, "
+"organize and share catalogs, stores, galleries and portfolios on your blog."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Zachary Segal"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://catablog.illproductions.com/about/"
+msgstr ""
