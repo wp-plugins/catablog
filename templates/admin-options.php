@@ -174,20 +174,12 @@
 				<textarea name="view-code-template" id="catablog-view-set-template-code" class="catablog-code" rows="10" cols="30"><?php echo $this->options['view-theme'] ?></textarea>
 				
 				<small>
-					<?php _e("You may change the html code rendered by <strong>CataBlog</strong> here, this
-					allows you to make fundamental changes to how catalogs will appear
-					in your posts. You may choose a template from the drop down menu at
-					top and then click <em>Load Template</em> to load it into the
-					template code. If you want to setup a photo gallery I would 
-					recommend that you load the <em>Gallery template</em> and then click 
-					save below. To setup a shopping cart you should load the 
-					<em>Default Template</em> code and then load a Store Template.", "catablog"); ?>
+					<?php _e("You may change the html code rendered by <strong>CataBlog</strong> here, this allows you to make fundamental changes to how catalogs will appear in your posts. You may choose a template from the drop down menu at top and then click <em>Load Template</em> to load it into the template code. If you want to setup a photo gallery I would recommend that you load the <em>Gallery template</em> and then click save below. To setup a shopping cart you should load the <em>Default Template</em> code and then load a Store Template.", "catablog"); ?>
 				</small>
 			</p>
 			
 			<p><small>
-				<?php _e("Don't forget to click <strong>Save Changes</strong> at the bottom of the page to finalize
-				your changes and use the new code for your blog.", "catablog"); ?>
+				<?php _e("Don't forget to click <strong>Save Changes</strong> at the bottom of the page to finalize your changes and use the new code for your blog.", "catablog"); ?>
 			</small></p>
 		</div>
 		
@@ -201,9 +193,7 @@
 			</p>
 			
 			<p><small>
-				<?php printf(__("Enter in an email address here that has been registered with %sPayPal%s and
-				choose a <em>Buy Now Template</em> below to setup a store. You may then give items a price and product code.
-				When an item has a price above zero a 'Buy Now' button will appear under the description of that CataBlog item.", "catablog"), '<a href="http://www.paypal.com" target="_blank">', '</a>'); ?>
+				<?php printf(__("Enter in an email address here that has been registered with %sPayPal%s and choose a <em>Buy Now Template</em> below to setup a store. You may then give items a price and product code. When an item has a price above zero a 'Buy Now' button will appear under the description of that CataBlog item.", "catablog"), '<a href="http://www.paypal.com" target="_blank">', '</a>'); ?>
 			</small></p>
 			
 			<hr />
@@ -245,10 +235,7 @@
 	<div id="catablog-options-export" class="catablog-options-panel hide">
 		<?php $function_exists = function_exists('fputcsv') ?>
 		
-		<p><?php _e("You may export your CataBlog data to a XML or CSV file which may be used to backup 
-		and protect your work. The XML or CSV file is a simple transfer of the database information
-		itself and the <strong>images are not included in this backup</strong>. To backup 
-		your images follow the directions at the bottom of the page.", "catablog"); ?></p>
+		<p><?php _e("You may export your CataBlog data to a XML or CSV file which may be used to backup and protect your work. The XML or CSV file is a simple transfer of the database information itself and the <strong>images are not included in this backup</strong>. To backup your images follow the directions at the bottom of the page.", "catablog"); ?></p>
 		
 		<p>&nbsp;</p>
 		
@@ -300,23 +287,15 @@
 			
 			<?php if (!$function_exists): ?>
 				<p class="error"><small>
-					<?php _e("You must have the <strong>Simple XML Library</strong> installed on your web server's version of PHP
-					for XML imports to work. Please contact your server administrator for more information 
-					regarding this error.", "catablog"); ?>
+					<?php _e("You must have the <strong>Simple XML Library</strong> installed on your web server's version of PHP for XML imports to work. Please contact your server administrator for more information regarding this error.", "catablog"); ?>
 				</small></p>
 			<?php endif ?>
 			
 			<p><small>
-				<?php _e("To import data into your catalog you simply select a XML or CVS file 
-				on your hard drive and click the <em>Import CataBlog Data</em> button.
-				You may choose to completely erase all your data before importing
-				by checking the <em>Replace All Data</em> checkbox.<br />Keep in mind, this 
-				<strong>does not import or delete images</strong>.", "catablog"); ?>
+				<?php _e("To import data into your catalog you simply select a XML or CVS file on your hard drive and click the <em>Import CataBlog Data</em> button. You may choose to completely erase all your data before importing by checking the <em>Replace All Data</em> checkbox.<br />Keep in mind, this <strong>does not import or delete images</strong>.", "catablog"); ?>
 			</small></p>
 			<p><small>
-				<?php printf(__("To import images you should upload them to the <em>originals</em> directory, located at: <em>%s</em>.
-				Once you load the XML or CVS file and the images into the <em>originals</em> directory everything 
-				should be set after you %sRegenerate All Images%s in the systems tab.", "catablog"), $this->directories['originals'], '<a href="admin.php?page=catablog-regenerate-images" class="js-warn">', '</a>'); ?>
+				<?php printf(__("To import images you should upload them to the <em>originals</em> directory, located at: <em>%s</em>. Once you load the XML or CVS file and the images into the <em>originals</em> directory everything should be set after you %sRegenerate All Images%s in the systems tab.", "catablog"), $this->directories['originals'], '<a href="admin.php?page=catablog-regenerate-images" class="js-warn">', '</a>'); ?>
 			</small></p>
 			
 			<p><small>
@@ -348,15 +327,7 @@
 		</p>
 		
 		<p><small>
-				<?php printf(__("You may lock and unlock your <em>catablog</em> folders with 
-				these controls. The idea is to unlock the folders, use your FTP client to 
-				upload your original files and then lock the folders to protect them from hackers.
-				After unlocking your directories please upload the original files directly
-				into the <strong>%s</strong> folder without replacing it.
-				<strong>Do not replace any of the CataBlog created folders</strong>.
-				You should then regenerate all your thumbnail and lightbox pictures below.
-				These controls may not work on a Windows server, it depends on your
-				servers PHP settings and if the chmod command is supported.", "catablog"), $this->directories['originals']); ?>
+				<?php printf(__("You may lock and unlock your <em>catablog</em> folders with these controls. The idea is to unlock the folders, use your FTP client to upload your original files and then lock the folders to protect them from hackers. After unlocking your directories please upload the original files directly into the <strong>%s</strong> folder without replacing it. <strong>Do not replace any of the CataBlog created folders</strong>. You should then regenerate all your thumbnail and lightbox pictures below. These controls may not work on a Windows server, it depends on your servers PHP settings and if the chmod command is supported.", "catablog"), $this->directories['originals']); ?>
 		</small></p>
 		
 		<hr />
@@ -364,12 +335,7 @@
 		<p><label><?php _e("Rescan Original Image Folder", "catablog"); ?></label></p>
 		<p><a href="admin.php?page=catablog-rescan-images" class="button js-warn"><?php _e("Rescan Original Images Folder Now", "catablog"); ?></a></p>
 		<p><small>
-			<?php _e("Click the <em>Rescan Now</em> button to rescan the original catablog images
-			folder and automatically import any new jpeg, gif or png images. It works simply
-			by making a list of all the image names in the database and then compares each file's
-			name in the originals folder against the list of image names in the database. Any newly
-			discovered images will automatically be made into a new catalog item. You should Regenerate Images
-			after running this command.", "catablog"); ?>
+			<?php _e("Click the <em>Rescan Now</em> button to rescan the original catablog images folder and automatically import any new jpeg, gif or png images. It works simply by making a list of all the image names in the database and then compares each file's name in the originals folder against the list of image names in the database. Any newly discovered images will automatically be made into a new catalog item. You should Regenerate Images after running this command.", "catablog"); ?>
 		</small></p>
 		
 		<hr />
@@ -377,11 +343,7 @@
 		<p><label><?php _e("Regenerate Images", "catablog"); ?></label></p>
 		<p><a href="admin.php?page=catablog-regenerate-images" class="button js-warn"><?php _e("Regenerate All Images Now", "catablog"); ?></a></p>
 		<p><small>
-				<?php _e("Click the <em>Regenerate Now</em> button to recreate all the
-				thumbnail and lightbox images that CataBlog has generated over
-				the time you have used it. This is also useful when restoring exported
-				data from another version of CataBlog. after you have uploaded your
-				original images you must regenerate your images so they display properly.", "catablog"); ?>
+				<?php _e("Click the <em>Regenerate Now</em> button to recreate all the thumbnail and lightbox images that CataBlog has generated over the time you have used it. This is also useful when restoring exported data from another version of CataBlog. after you have uploaded your original images you must regenerate your images so they display properly.", "catablog"); ?>
 		</small></p>
 		
 		<hr />
@@ -389,8 +351,7 @@
 		<p><label><?php _e("Reset CataBlog", "catablog"); ?></label></p>
 		<p><a href="admin.php?page=catablog-reset" class="button js-warn" id="button-reset"><?php _e("Reset All CataBlog Data", "catablog"); ?></a></p>
 		<p><small>
-			<?php _e("Reset your entire catalog, deleting all photos and custom data permanently.
-			Sometimes you can use this to fix an improper install.", "catablog"); ?>
+			<?php _e("Reset your entire catalog, deleting all photos and custom data permanently. Sometimes you can use this to fix an improper install.", "catablog"); ?>
 		</small></p>
 	</div>
 	

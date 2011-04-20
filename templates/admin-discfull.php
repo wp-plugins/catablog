@@ -11,10 +11,7 @@
 		<?php sprintf(_e('You are currently using %sMB of %sMB of storage space.', 'catablog'), $current_usage, get_space_allowed()); ?>
 	</p>
 	<p>
-		<?php _e('Please talk to your WordPress Administrator to
-		have more space allocated to your site or delete some previous uploaded
-		content.
-		', 'catablog'); ?>
+		<?php _e('Please talk to your WordPress Administrator to have more space allocated to your site or delete some previous uploaded content.', 'catablog'); ?>
 	</p>
 	<ul>
 		<li><strong><?php _e('Go To:', 'catablog'); ?></strong></li>

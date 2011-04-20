@@ -19,8 +19,8 @@
 			
 			<p><small>
 				<?php _e("Select an image on your computer to upload and then use to create a new catalog item.", "catablog"); ?><br />
-				<?php _e("You	may upload JPEG, GIF and PNG graphic formats only.", "catablog"); ?><br />
-				<strong><?php _e("No animated GIFs please.", "catablog"); ?></strong><br />
+				<?php _e("You may upload JPEG, GIF and PNG graphic formats only.", "catablog"); ?><br />
+				<strong><?php _e("No animated GIFs please.", "catablog"); ?></strong>
 			</small></p>
 		</div>
 	</form>

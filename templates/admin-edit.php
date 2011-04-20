@@ -238,9 +238,9 @@
 			<?php wp_nonce_field( 'catablog_add_subimage', '_catablog_add_subimage_nonce', false, true ) ?>
 			<input type="submit" name="save" value="<?php _e("Upload", 'catablog'); ?>" class="button-primary" />
 			<p><small>
-				<?php _e("Select an image on your computer to upload and then add to this item as a sub image.
-				You	may upload JPEG, GIF and PNG graphic formats only.
-				You will be adding a sub image, this upload will not replace this item's main image.", 'catablog'); ?>
+				<?php _e("Select an image to add as a sub image, this upload will not replace this item's main image.", 'catablog'); ?><br />
+				<?php _e("You may upload JPEG, GIF and PNG graphic formats only.", "catablog"); ?><br />
+				<strong><?php _e("No animated GIFs please.", "catablog"); ?></strong>
 			</small></p>			
 		</div>
 	</form>
@@ -261,9 +261,11 @@
 			<?php wp_nonce_field( 'catablog_replace_image', '_catablog_replace_image_nonce', false, true ) ?>
 			<input type="submit" name="save" value="<?php _e("Upload", 'catablog'); ?>" class="button-primary" />
 			<p><small>
-				<?php _e("Select an image on your computer to upload and then replace this item's main image with.
-				You	may upload JPEG, GIF and PNG graphic formats only.
-				You will be replacing the main image for this item, this upload will not add a new sub image.", 'catablog'); ?>
+				<?php _e("Select an image on your computer to upload and replace this item's main image with.", 'catablog'); ?><br />
+				<?php _e("You may upload JPEG, GIF and PNG graphic formats only.", "catablog"); ?><br />
+				<strong><?php _e("No animated GIFs please.", "catablog"); ?></strong><br /><br >
+				<strong><?php _e("This will replace the main image, forever deleting the current main image.", 'catablog'); ?></strong>
+				
 			</small></p>			
 		</div>
 	</form>

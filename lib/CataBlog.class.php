@@ -1584,21 +1584,15 @@ class CataBlog {
 		/** CHECK PHP **/
 		// check if PHP is version 5
 		if (version_compare(phpversion(), '5.0.0', '<')) {
-		  die(__("<strong>CataBlog</strong> requires <strong>PHP 5</strong> or better running on your web server. 
-				You're version of PHP is to old, please contact your hosting company or IT department for an upgrade.
-				Thanks.", 'catablog'));
+		  die(__("<strong>CataBlog</strong> requires <strong>PHP 5</strong> or better running on your web server. You're version of PHP is to old, please contact your hosting company or IT department for an upgrade. Thanks.", 'catablog'));
 		}
 		// check if GD Library is loaded in PHP
 		if (!extension_loaded('gd') || !function_exists('gd_info')) {
-		    die(__("<strong>CataBlog</strong> requires that the <strong>GD Library</strong> be installed on your
-				web server's version of PHP. Please contact your hosting company or IT department for
-				more information. Thanks.", 'catablog'));
+		    die(__("<strong>CataBlog</strong> requires that the <strong>GD Library</strong> be installed on your web server's version of PHP. Please contact your hosting company or IT department for more information. Thanks.", 'catablog'));
 		}
 		// check if mbstring Library is loaded in PHP
 		if (!extension_loaded('mbstring') || !function_exists('mb_strlen')) {
-		    die(__("<strong>CataBlog</strong> requires that the <strong>MultiByte String Library</strong> be installed on your
-				web server's version of PHP. Please contact your hosting company or IT department for
-				more information. Thanks.", 'catablog'));	
+		    die(__("<strong>CataBlog</strong> requires that the <strong>MultiByte String Library</strong> be installed on your web server's version of PHP. Please contact your hosting company or IT department for more information. Thanks.", 'catablog'));
 		}
 
 
@@ -1606,14 +1600,12 @@ class CataBlog {
 		/** CHECK WORDPRESS **/
 		// check WordPress version
 		if (version_compare(get_bloginfo('version'), '3.1', '<')) {
-			die(__("<strong>CataBlog</strong> requires <strong>WordPress 3.0</strong> or above. Please
-			upgrade WordPress or contact your system administrator about upgrading.", 'catablog'));
+			die(__("<strong>CataBlog</strong> requires <strong>WordPress 3.1</strong> or above. Please upgrade WordPress or contact your system administrator about upgrading.", 'catablog'));
 		}
 		// check if uploads directory is set and writable
 		$upload_directory = wp_upload_dir();
 		if ($upload_directory['error']) {
-			die(__("<strong>CataBlog</strong> could not detect your upload directory or it is not writable by PHP. 
-			Please contact your hosting company or IT department for more information. Thanks.", 'catablog'));
+			die(__("<strong>CataBlog</strong> could not detect your upload directory or it is not writable by PHP. Please contact your hosting company or IT department for more information. Thanks.", 'catablog'));
 		}
 		
 	}
