@@ -4,7 +4,6 @@
 
 <?php foreach ($results as $result): ?>
 	<item>
-		<order><?php echo $result->getOrder() ?></order>
 		<image><![CDATA[<?php echo $result->getImage() ?>]]></image>
 		<subimages>
 <?php foreach ($result->getSubImages() as $image): ?>
@@ -12,15 +11,17 @@
 <?php endforeach ?>
 		</subimages>
 		<title><![CDATA[<?php echo $result->getTitle() ?>]]></title>
-		<link><![CDATA[<?php echo $result->getLink() ?>]]></link>
 		<description><![CDATA[<?php echo $result->getDescription() ?>]]></description>
+		<date><?php echo $result->getDate() ?></date>
+		<order><?php echo $result->getOrder() ?></order>
+		<link><![CDATA[<?php echo $result->getLink() ?>]]></link>
+		<price><![CDATA[<?php echo $result->getPrice() ?>]]></price>
+		<product_code><![CDATA[<?php echo $result->getProductCode() ?>]]></product_code>
 		<categories>
 <?php foreach ($result->getCategories() as $cat_id => $cat_name): ?>
 			<category><![CDATA[<?php echo $cat_name ?>]]></category>
 <?php endforeach ?>
 		</categories>
-		<price><![CDATA[<?php echo $result->getPrice() ?>]]></price>
-		<product_code><![CDATA[<?php echo $result->getProductCode() ?>]]></product_code>
 	</item>
 <?php endforeach ?>
 

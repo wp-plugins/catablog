@@ -14,7 +14,7 @@
 		<h3 class="catablog-progress-text"><?php _e("Processing Thumbnail Images...", "catablog"); ?></h3>
 	</div>
 	
-	<?php if ($this->options['lightbox-enabled']): ?>
+	<?php if ($this->options['lightbox-render']): ?>
 	<div id="catablog-progress-fullsize" class="catablog-progress">
 		<div class="catablog-progress-bar"></div>
 		<h3 class="catablog-progress-text"><?php _e("Waiting For Thumbnail Rendering To Finish...", "catablog"); ?></h3>
@@ -30,16 +30,21 @@
 	jQuery(document).ready(function($) {
 		var images  = ["<?php echo implode('", "', $image_names) ?>"];
 		var nonce   = '<?php echo wp_create_nonce("catablog-render-images") ?>';
-		var message = '<?php _e("Image rendering is now complete, you may now go to any other admin panel you may want.", "catablog"); ?>';
+		var message = '<?php _e("Image rendering is now complete, you may now go to any other admin panel you may want."); ?>';
+		
+		discourage_leaving_page('<?php _e("Please allow the rendering to complete before leaving this page. Click cancel to go back and let the rendering complete.", "catablog"); ?>');
 		
 		renderCataBlogItems(images, 'thumbnail', nonce, function() {
-			<?php if ($this->options['lightbox-enabled']): ?>
+			
+			<?php if ($this->options['lightbox-render']): ?>
 				var images = ["<?php echo implode('", "', $image_names) ?>"];
 				renderCataBlogItems(images, 'fullsize', nonce, function() {
 					jQuery('#catablog-console').append('<li class="updated">'+message+'</li>');
+					unbind_discourage_leaving_page();
 				});
 			<?php else: ?>	
 				jQuery('#catablog-console').append('<li class="updated">'+message+'</li>');
+				unbind_discourage_leaving_page();
 			<?php endif ?>
 		});
 		

@@ -1,5 +1,5 @@
 /*
- * CataBlog StyleSheet, version 1.2
+ * CataBlog StyleSheet, version 1.2.5
  */
 
 
@@ -7,35 +7,41 @@
 .catablog-row {
 	position: relative;
 	display: block;
-	clear: none;
 	float: none;
 	margin: 0;
 	padding: 5px 5px 15px 5px;
 }
-.catablog-row .catablog-image {
-	display: block !important;
-	height: auto !important;
-	clear: none !important;
-	float: left !important;
-}
 .catablog-row .catablog-images-column {
 	float: left;
+	position: relative;
 }
-.catablog-row .catablog-images-column .catablog-image {
-	float: none !important;
+.catablog-row .catablog-image img {
+	display: block;
+	height: auto;
+	float: left;
+}
+.catablog-row .catablog-images-column .catablog-image img {
+	float: none;
 }
 .catablog-row .catablog-image.catablog-subimage {
-	margin: 2px 0 0 0;
+	float: left;
+	width: 49%;
+	margin: 1% 1% 0 0;
+}
+.catablog-row .catablog-image.catablog-subimage img {
+	width: 100%;
 }
 .catablog-row .catablog-title {
-	display: block !important;
-	clear: none !important;
-	float: none !important;
+	display: block;
+	font-size: 1.4em;
+	font-weight: bold;
+	clear: none;
+	float: none;
 }
 .catablog-row .catablog-description {
-	display: block !important;
-	clear: none !important;
-	float: none !important;
+	display: block;
+	clear: none;
+	float: none;
 }
 .catablog-row .catablog-description:after {
 	content: ".";
@@ -48,43 +54,51 @@
 
 /* Grid and Gallery Template CSS Classes */
 .catablog-gallery.catablog-row {
-	display: block !important;
-	position: relative !important;
-	float: left !important;
-	padding: 0 !important;
+	display: block;
+	position: relative;
+	float: left;
+	padding: 0;
 	margin: 5px;
 }
-.catablog-gallery.catablog-row a {
-	display: block;
-}
 .catablog-gallery.catablog-row .catablog-image {
-	position: static !important;
+	display: block;
+	position: static;
+}
+.catablog-gallery.catablog-row .catablog-image img {
+	float: none;
 }
 .catablog-gallery.catablog-row:hover .catablog-title {
-	display: block !important;
+	display: block;
 }
 .catablog-gallery.catablog-row .catablog-title {
-	display: none !important;
-	position: absolute !important;
+	display: none;
+	position: absolute;
 	bottom: 0px;
 	left: 0px;
 	color: #fff;
 	background: #222;
 	opacity: 0.8;
-	margin: 0 !important;
-	padding: 5px !important;
-	font-weight: normal !important;
-	font-size: 18px !important;
+	margin: 0;
+	padding: 5px;
+	font-weight: normal;
+	font-size: 1em;
 }
 .catablog-gallery.catablog-row .catablog-description {
-	display: none !important;
+	display: none;
 }
 
 
 
 
 
-
+.catablog-credits {
+	display: block;
+	clear: both;
+	overflow: hidden;
+	height: 1px;
+	padding: 0px;
+	margin: 0 0 1em 0;
+}
 
 
 
@@ -108,8 +122,8 @@
 /* LightBox CSS Classes */
 #catablog-curtain {
 	display: block;
-	position: fixed !important;
 	position: absolute;
+	position: fixed;
 	top: 0px;
 	left: 0px;
 	width: 100%;
@@ -138,31 +152,33 @@
 	margin: 0 auto;
 	padding: 10px;
 	background-color: #fff;
-	background-image: url('./../images/ajax-loader.gif');
+	background-image: none;
 	background-repeat: no-repeat;
 	background-position: center center;
 	border: 1px #000 solid;
 	border-width: 0 1px 2px 0;
 }
+#catablog-lightbox #catablog-whiteboard.loading {
+	background-image: url('./../images/ajax-loader.gif');
+}
 #catablog-lightbox-meta {
 	position: relative;
 	display: none;
 	padding: 0.5em 0;
-	background: #fff;
 }
 #catablog-lightbox-meta .catablog-lightbox-title {
-	font-size: 14px !important;
-	font-weight: bold !important;
-	-moz-user-select: normal !important;
-	-khtml-user-select: normal !important;
-	user-select: normal !important;
+	font-size: 14px;
+	font-weight: bold;
+	-moz-user-select: normal;
+	-khtml-user-select: normal;
+	user-select: normal;
 }
 #catablog-lightbox-meta .catablog-lightbox-desc {
 	position: relative;
 	line-height: 1.5;
-	-moz-user-select: normal !important;
-	-khtml-user-select: normal !important;
-	user-select: normal !important;
+	-moz-user-select: normal;
+	-khtml-user-select: normal;
+	user-select: normal;
 	
 }
 #catablog-lightbox-image {
@@ -175,11 +191,11 @@
 	top: 0px;
 	width: 50%;
 	text-decoration: none;
-	background: transparent !important;
-	background-image: url("data:image/gif;base64,AAAA") !important;
+	background: transparent;
+	background-image: url("data:image/gif;base64,AAAA");
 }
 #catablog-lightbox-image a span {
-	display: block;
+	display: none;
 }
 #catablog-lightbox-image a span:first-letter {
 	border-bottom: 1px #caa solid;
@@ -188,17 +204,17 @@
 #catablog-lightbox-prev:hover span,
 #catablog-lightbox-next:focus span,
 #catablog-lightbox-prev:focus span {
-	display: block !important;
+	display: block;
 }
 #catablog-lightbox-next {
 	right: 0px;
-	outline: 0 none !important;
-	border: 0 none !important;
+	outline: 0 none;
+	border: 0 none;
 }
 #catablog-lightbox-prev {
 	left: 0px;
-	outline: 0 none !important;
-	border: 0 none !important;
+	outline: 0 none;
+	border: 0 none;
 }
 #catablog-lightbox-close {
 	display: block;
@@ -213,27 +229,27 @@
 	background-repeat: no-repeat;
 	overflow: hidden;
 	text-indent: -9999px;
-	outline: 0 none !important;
-	border: 0 none !important;
+	outline: 0 none;
+	border: 0 none;
 }
 #catablog-lightbox-next .catablog-lightbox-nav-label {
 	right: 0px;
 	bottom: 20px;
 	padding-left: 30px;
-	border-radius: 30px 0 0 30px;
 	-moz-border-radius: 30px 0 0 30px;
 	-webkit-border-radius: 30px 0 0 30px;
+	border-radius: 30px 0 0 30px;
 }
 #catablog-lightbox-prev .catablog-lightbox-nav-label {
 	left: 0px;
 	top: 20px;
 	padding-right: 30px;
-	border-radius: 0 30px 30px 0;
 	-moz-border-radius: 0 30px 30px 0;
 	-webkit-border-radius: 0 30px 30px 0;
+	border-radius: 0 30px 30px 0;
 }
 .catablog-lightbox-nav-label {
-	display: none !important;
+	display: none;
 	display: block;
 	position: absolute;
 	background: #fff;
@@ -247,12 +263,4 @@
 }
 .catablog-lightbox-nav-label:hover {
 	
-}
-.catablog-credits {
-	display: block;
-	height: 0px;
-	clear: both;
-	overflow: hidden;
-	padding: 0px;
-	margin: 0 0 1em 0;
 }

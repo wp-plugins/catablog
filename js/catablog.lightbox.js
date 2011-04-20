@@ -7,6 +7,7 @@ jQuery(function($) {
 		
 		var timeout = null;
 		
+		var image_extensions = ['jpg', 'jpeg', 'gif', 'png'];
 		var hold_click = false;
 		var lightbox_images = [];
 		var current_image   = -1;
@@ -14,41 +15,59 @@ jQuery(function($) {
 		// PlugIn Construction applied across each selected jQuery object
 		this.each(function(i) {
 			
-			lightbox_images.push(this);
+			lightbox_images[i] = this;
 			
-			jQuery(this).css('cursor','pointer').bind('click', function(event) {
+			if (jQuery(this).get(0).nodeName.toLowerCase() == "a") {
+				// selected element is an achor tag
 				
-				current_image = i;
+				var href             = jQuery(this).attr('href');
+				var extension        = href.split('.').pop();
 				
-				// remove selection class from possible previous elements
-				jQuery('.catablog-selected').removeClass('catablog-selected');
-				
-				// set row to the clicked element or its parent with class .catablog-row
-				var row = this;
-				if (jQuery(this).hasClass('.catablog-row') == false) {
-					row = jQuery(this).closest('.catablog-row').get(0);
+				if (in_array(extension, image_extensions)) {
+					
+					jQuery(this).bind('click', function(event) {
+						current_image = i;
+						open_lightbox(lightbox_images[i]);
+						
+						jQuery('.catablog-selected').removeClass('catablog-selected');
+						jQuery(this).addClass('catablog-selected');
+						
+						event.stopPropagation();
+						return false;
+					});
 				}
 				
-				jQuery(this).addClass('catablog-selected');
-				
-				open_lightbox(lightbox_images[i]);
-				
-				// do not register the click
-				return false;
-			});
-			
-			if (jQuery(this).parent().get(0).nodeName.toLowerCase() == "a") {
-				jQuery(this).parent().bind('click', function() {
-					jQuery(this).children('img.catablog-image').click();
-					return false;
-				})
 			}
+			else if (jQuery(this).get(0).nodeName.toLowerCase() == "img") {
+				// selected element is an image tag
+				if (console) {
+					console.log('You are using the CataBlog LightBox in an out of date fashion, please reload the Catablog template in the admin options panel.');
+				}
+				
+				jQuery(this).css('cursor','pointer').bind('click', function(event) {
+					current_image = i;
+					open_lightbox(lightbox_images[i]);
+					
+					jQuery('.catablog-selected').removeClass('catablog-selected');
+					jQuery(this).addClass('catablog-selected');
+					
+					event.stopPropagation();
+					return false;
+				});
+				
+			}
+			else {
+				// selected element is of an unsupported tag type
+				if (console) {
+					console.log('You are using the CataBlog LightBox in an incorrect way, please set the lightbox selector to point at anchor tags surrounding your thumbnail images.');
+				}
+			}
+
+
 		});
 		
-		
-		
 		// Private Functions
-		function open_lightbox(img) {
+		function open_lightbox(element) {
 			
 			var support_fixed   = supportPositionFixed();
 			var curtain_density = 0.85;
@@ -78,7 +97,7 @@ jQuery(function($) {
 
 
 			// add the lightbox div into the DOM
-			jQuery('body').append("<div id='catablog-lightbox'><div id='catablog-whiteboard'></div></div>");
+			jQuery('body').append("<div id='catablog-lightbox'><div id='catablog-whiteboard' class='loading'></div></div>");
 			var lightbox = jQuery('#catablog-lightbox');
 			lightbox.css('top', page_top);	
 
@@ -99,12 +118,18 @@ jQuery(function($) {
 			// load the full size picture and expand the lightbox to fit the images dimensions
 			var fullsize_pic = new Image();
 			fullsize_pic.onload = function() {
-				var row  = jQuery(img).closest('.catablog-row').get(0);
+				var row  = jQuery(element).closest('.catablog-row').get(0);
 				var meta = calculateMeta(row);
 				expand_lightbox(this, meta);
 			}
 			
-			fullsize_pic.src = img.src.replace("/catablog/thumbnails", "/catablog/fullsize");
+			if (element.href != undefined) {
+				fullsize_pic.src = element.href;
+			}
+			else {
+				fullsize_pic.src = element.src.replace("/catablog/thumbnails", "/catablog/fullsize");;;
+			}
+			
 			
 		}
 		
@@ -117,6 +142,22 @@ jQuery(function($) {
 			var h = img.height;
 			var s = img.src;
 			
+			var window_width  = jQuery(window).width();
+			var window_height = jQuery(window).height();
+						
+			if (w > window_width || h > window_height) {
+				w_ratio = window_width / w - 0.1;
+				h_ratio = window_height / h - 0.1;
+				
+				if (w_ratio < h_ratio) {
+					w = w * w_ratio;
+					h = h * w_ratio;
+				}
+				else {
+					w = w * h_ratio;
+					h = h * h_ratio;					
+				}
+			}
 			
 			var title       = "<h4 class='catablog-lightbox-title'>" + meta.title + "</h4>";
 			var description = "<p class='catablog-lightbox-desc'>" + meta.description + "</p>";
@@ -128,8 +169,13 @@ jQuery(function($) {
 			jQuery('#catablog-lightbox-image').height(h);
 			
 			if (!jQuery('#catablog-lightbox-image').append("<img src='"+s+"' />")) {
-				alert('failed appending image to html dom');
+				if (console) {
+					console.log('failed appending image to html dom');
+				}
 			};
+			
+			jQuery('#catablog-lightbox-image img').css({width:w, height:h});
+			
 			jQuery('#catablog-lightbox-image').append(nav);
 			jQuery('#catablog-lightbox-image a').height(h);
 			
@@ -142,6 +188,9 @@ jQuery(function($) {
 			
 			
 			lightbox.animate({width:w, height:h}, 400, function() {
+				
+				jQuery('#catablog-whiteboard').removeClass('loading');
+				
 				var full_height = h + jQuery('#catablog-lightbox-meta').outerHeight();
 				
 				jQuery(this).children('#catablog-lightbox-meta').show();
@@ -157,8 +206,11 @@ jQuery(function($) {
 		}
 		
 		
-		function change_lightbox(img) {
-			var row   = jQuery(img).closest('.catablog-row').get(0);
+		function change_lightbox(element) {
+			
+			jQuery('#catablog-whiteboard').addClass('loading');
+			
+			var row   = jQuery(element).closest('.catablog-row').get(0);
 			var speed = 150;
 			
 			jQuery('#catablog-lightbox-meta').fadeOut(speed, function() {
@@ -173,7 +225,12 @@ jQuery(function($) {
 					expand_lightbox(this, meta);
 				};
 				
-				fullsize_pic.src = img.src.replace("/catablog/thumbnails", "/catablog/fullsize");
+				if (element.href != undefined) {
+					fullsize_pic.src = element.href;
+				}
+				else {
+					fullsize_pic.src = element.src.replace("/catablog/thumbnails", "/catablog/fullsize");;
+				}
 				
 				
 			});			
@@ -208,7 +265,28 @@ jQuery(function($) {
 				current_image -= 1;
 			}
 			
+			var new_href      = new_image.href;
+			var new_extension = new_href.split('.').pop();
+			if (in_array(new_extension, image_extensions) == false) {
+				if (current_image == 0) {
+					hold_click = false;
+					navigate_lightbox('next');
+				}
+				else if (current_image == (lightbox_images.length - 1)) {
+					hold_click = false;
+					navigate_lightbox('prev');
+				}
+				else {
+					hold_click = false;
+					navigate_lightbox(direction);
+				}
+				return false;
+			}
+
+			
 			new_thumbnail = new_image;
+			
+			
 			
 			selected.removeClass('catablog-selected');
 			jQuery(new_image).addClass('catablog-selected');
@@ -235,16 +313,37 @@ jQuery(function($) {
 		
 		function calculateMeta(row) {
 			var row          = jQuery(row);
-			var prev_tip     = "You may also press P or the left arrow on your keyboard";
-			var next_tip     = "You may also press N or the right arrow on your keyboard";
-			var prev_button  = "<a href='#prev' id='catablog-lightbox-prev' class='catablog-nav' title='"+prev_tip+"'><span class='catablog-lightbox-nav-label'>PREV</span></a>";
-			var next_button  = "<a href='#next' id='catablog-lightbox-next' class='catablog-nav' title='"+next_tip+"'><span class='catablog-lightbox-nav-label'>NEXT</span></a>";
-			var close_button = "<a href='#close' id='catablog-lightbox-close' class='catablog-nav' title='Close LightBox Now'>CLOSE</a>";
+			
+			if ((typeof js_i18n) == 'undefined') {
+				var prev_tip     = 'You may also press "P" or the left arrow on your keyboard';
+				var next_tip     = 'You may also press "N" or the right arrow on your keyboard';
+				var close_tip    = "Close LightBox Now";
+				// 
+				var prev_label   = "PREV";
+				var next_label   = "NEXT";
+				var close_label  = "CLOSE";	
+			}
+			else {
+				var prev_tip    = ((typeof js_i18n.prev_tip) == 'undefined')? 'You may also press "P" or the left arrow on your keyboard' : js_i18n.prev_tip;
+				var next_tip    = ((typeof js_i18n.prev_tip) == 'undefined')? 'You may also press "N" or the right arrow on your keyboard' : js_i18n.next_tip;
+				var close_tip   = ((typeof js_i18n.prev_tip) == 'undefined')? 'Close LightBox Now' : js_i18n.close_tip;
+				// 
+				var prev_label  = ((typeof js_i18n.prev_tip) == 'undefined')? "PREV" : js_i18n.prev_label;
+				var next_label  = ((typeof js_i18n.prev_tip) == 'undefined')? "NEXT" : js_i18n.next_label;
+				var close_label = ((typeof js_i18n.prev_tip) == 'undefined')? "CLOSE" : js_i18n.close_label;
+			}
+			
+			var prev_button  = "<a href='#prev' id='catablog-lightbox-prev' class='catablog-nav' title='"+prev_tip+"'><span class='catablog-lightbox-nav-label'>"+prev_label+"</span></a>";
+			var next_button  = "<a href='#next' id='catablog-lightbox-next' class='catablog-nav' title='"+next_tip+"'><span class='catablog-lightbox-nav-label'>"+next_label+"</span></a>";
+			var close_button = "<a href='#close' id='catablog-lightbox-close' class='catablog-nav' title='"+close_tip+"'>"+close_label+"</a>";
 			
 			var meta = {};
 			
-			meta.title       = row.find('.catablog-title').html();
-			meta.description = row.find('.catablog-description').html();
+			var title        = row.find('.catablog-title').html()
+			var description  = row.find('.catablog-description').html();
+			
+			meta.title       = (title == null)? "" : title;
+			meta.description = (description == null)? "" : description;
 			meta.buynow      = "";
 			meta.close       = close_button;
 			

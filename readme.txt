@@ -27,7 +27,7 @@ Highlighted Features:
 * Easy management of your catalog with superiorly designed admin controls.
 
 Pre Version 0.9.5 Upgrades:
-This version of CataBlog will not upgrade properly with yours. Please install CataBlog 1.1 and update the database before upgrading to CataBlog 1.2.
+This version of CataBlog will not upgrade properly with yours. Please install CataBlog 1.1 and update the database before upgrading to CataBlog 1.2 or above.
 
 Please remember that CataBlog is written, maintained, supported and documented by Zachary Segal. Please feel free to stop by and visit http://catablog.illproductions.com and http://www.illproductions.com for more information about CataBlog and Zachary anytime.
 
@@ -53,9 +53,9 @@ Please remember that CataBlog is written, maintained, supported and documented b
 The CataBlog Admin section is made and tested to work best with these browsers:
 
 1. Internet Explorer 8
-1. FireFox 3
+1. FireFox 4
 1. Safari 5
-1. Chrome 8
+1. Chrome 10
 1. JavaScript Should Be Enabled
 
 = I installed CataBlog, now where is it? =
@@ -87,6 +87,29 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 
 == Changelog ==
+
+= 1.2.5 =
+* Important: Requires WordPress 3.1 or better.
+* Important: Removed drag and drop reordering and exposed the order value for each catalog item.
+* New: CataBlog ShortCode now supports multiple categories separated by commas.
+* New: CataBlog ShortCode has a new operator parameter for querying categories.
+* New: Sort your catalog by order, date, title or randomly.
+* New: CataBlog ShortCode has sorting parameters.
+* New: CataBlog ShortCode has a template parameter for overriding the system template.
+* New: All messages and language may now be localized with included POT file.
+* New: Added Date field to the edit catalog item form.
+* Fix: If image_rotate() is not an available function then CataBlog will not use it.
+* Fix: Thumbnail backgrounds are now filled with a rectangle for better system compatibility.
+* Fix: The Admin menu position of CataBlog no longer will conflict with certain setups.
+* Fix: Removed all !important declarations from the catablog.css file.
+* Fix: Optimized the templates for better theme compatibility.
+* Fix: Optimized the edit catalog item form.
+* Fix: When the link field is empty the %LINK% token will be the full size image instead of #empty-link.
+* Fix: LightBox is now designed to work best with anchor tags instead of image tags.
+* Fix: You may now enable the LightBox library and the full size image rendering separately.
+* Fix: You may change the jQuery selector used to find the LightBox images.
+* Fix: Optimized front end CSS, instead of inline styles a stylesheet is generated in your pages head tag.
+
 
 = 1.2 =
 * New: Upload multiple images per catalog item now.

@@ -8,6 +8,7 @@ class CataBlogItem {
 	private $id           = null;
 	private $title        = "";
 	private $description  = "";
+	private $date         = null;
 	private $image        = "";
 	private $sub_images   = array(); 
 	private $order        = 0;
@@ -23,12 +24,16 @@ class CataBlogItem {
 	private $_sub_images_changed = false;
 	private $_old_images         = array();
 	private $_wp_upload_dir      = "";
-	private $_custom_post_name   = "catablog-items";
-	private $_custom_tax_name    = "catablog-terms";
+	private $_custom_post_name   = "";
+	private $_custom_tax_name    = "";
 	private $_post_meta_name     = "catablog-post-meta";
 	
 	// construction method
 	public function __construct($post_parameters=null) {
+		global $wp_plugin_catablog_class;
+		$this->_custom_post_name = $wp_plugin_catablog_class->getCustomPostName();
+		$this->_custom_tax_name  = $wp_plugin_catablog_class->getCustomTaxName();
+		
 		$this->_options = get_option('catablog-options');
 		
 		$wp_directories = wp_upload_dir();
@@ -77,6 +82,7 @@ class CataBlogItem {
 		$item->id           = $post->ID;
 		$item->title        = $post->post_title;
 		$item->description  = $post->post_content;
+		$item->date         = $post->post_date;
 		$item->categories   = $category_ids;
 		$item->order        = $post->menu_order;
 		
@@ -89,7 +95,7 @@ class CataBlogItem {
 	public static function getItemIds() {
 		$items = array();
 		
-		$cata  = new CataBlogItem();
+		$cata = new CataBlogItem();
 		
 		$params = array(
 			'post_type'=> $cata->getCustomPostName(), 
@@ -107,33 +113,33 @@ class CataBlogItem {
 		return $ids;
 	}
 	
-	public static function getItems($category=false, $load_categories=true, $offset=0, $limit=-1) {
-		if ($category === NULL) {
-			return array();
-		}
+	public static function getItems($categories=false, $operator='IN', $sort='menu_order', $order='asc', $load_categories=true, $offset=0, $limit=-1) {
 		
 		$items = array();
 		
-		$cata  = new CataBlogItem();
+		$cata = new CataBlogItem();
 		
 		$params = array(
 			'post_type'=> $cata->getCustomPostName(), 
-			'orderby'=> 'menu_order',
-			'order'=>'ASC',
+			'orderby'=> $sort,
+			'order'=>$order,
 			'offset'=>$offset,
 			'numberposts' => $limit,
 		);
 		
-		if ($category !== false) {
-			$custom_name = $cata->getCustomTaxName();
-			$params[$custom_name] = $category;
+		if ($categories !== false) {
 			
-			// currently does not work :(
-			// $term = $category;
-			// $params['tax_query']['taxonomy'] = $cata->getCustomTaxName();
-			// $params['tax_query']['field']    = 'slug';
-			// $params['tax_query']['terms']    = array($term);
+			$tax_query_array = array(
+				array(
+					'taxonomy' => $cata->getCustomTaxName(),
+					'field'    => 'slug',
+					'terms'    => $categories,
+					'operator' => $operator  // 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN'
+				)
+			);
+			$params['tax_query'] = $tax_query_array;
 		}
+		// echo "<pre>"; print_r($params); echo "</pre>";
 		
 		$posts = get_posts($params);
 		
@@ -146,6 +152,7 @@ class CataBlogItem {
 			$item->id           = $post->ID;
 			$item->title        = $post->post_title;
 			$item->description  = $post->post_content;
+			$item->date         = $post->post_date;
 			$item->categories   = array();
 			$item->order        = $post->menu_order;
 			
@@ -228,10 +235,34 @@ class CataBlogItem {
 			return __("An item's title can not be more then 200 characters long.", 'catablog');
 		}
 		
-		// check that the price is a positive integer
+		// check that date value is a valid format
+		if (!preg_match("/^\d{4}-\d{2}-\d{2} [0-2][0-9]:[0-5][0-9]:[0-5][0-9]$/", $this->date)) { 
+			return __("An item's date must exactly match the MySQL date format, YYYY-MM-DD HH:MM:SS");
+		}
+		
+		// check that the set date value is an actual day of the gregorian calendar
+		$year  = substr($this->date,0,4);
+		$month = substr($this->date,5,2);
+		$day   = substr($this->date,8,2);
+		if (!checkdate($month, $day, $year)) {
+			return __("An item's date must be an actual day on the gregorian calendar.");
+		}
+		
+		$hour  = (int) substr($this->date,11,2);
+		if ($hour > 23) {
+			return __("An item's date hour must be below twenty-four.");
+		}
+		
+		// check that the item's order is a positive integer
+		if (intval($this->order) < 1) {
+			return __("An item's order value must be a positive integer.", 'catablog');
+		}
+		
+		
+		// check that the price is a positive number
 		if (mb_strlen($this->price) > 0) {
 			if (is_numeric($this->price) == false || $this->price < 0) {
-				return __("An item's price must be a positive integer.", 'catablog');
+				return __("An item's price must be a positive number.", 'catablog');
 			}
 		}
 		
@@ -276,10 +307,12 @@ class CataBlogItem {
 		$params['post_status']   = 'publish';
 		$params['post_type']     = $this->_custom_post_name;
 		$params['menu_order']    = $this->order;
+		$params['post_date']     = $this->date;
 		
 		if ($this->id > 0) {
 			$params['ID'] = $this->id;
-			if (wp_update_post($params) === false) {
+			$update = wp_update_post($params);
+			if ($update == 0) {
 				return false;
 			}
 		}
@@ -314,7 +347,7 @@ class CataBlogItem {
 
 			// generate a thumbnail for the new image
 			$this->makeThumbnail();
-			if ($this->_options['lightbox-enabled']) {
+			if ($this->_options['lightbox-render']) {
 				$this->makeFullsize();
 			}
 
@@ -407,7 +440,7 @@ class CataBlogItem {
 		
 		// generate a thumbnail for the new image
 		$this->makeThumbnail($sanatized_title);
-		if ($this->_options['lightbox-enabled']) {
+		if ($this->_options['lightbox-render']) {
 			$this->makeFullsize($sanatized_title);
 		}
 		
@@ -477,35 +510,11 @@ class CataBlogItem {
 		imagecopyresampled($canvas, $upload, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
 		
 		// rotate the final canvas to match the original files orientation
-		$orientation = 1;
-		
-		if (function_exists('exif_read_data')) {
-			$exif = @exif_read_data($original, 'EXIF', 0);
-			if ($exif) {
-				if (isset($exif['Orientation'])) {
-					$orientation = $exif['Orientation'];
-				}
-			}
-		}
-		
-		switch ($orientation) {
-			case 1:
-				$orientation = 0;
-				break;
-			case 3:
-				$orientation = 180;
-				break;
-			case 6:
-				$orientation = -90;
-				break;
-			case 8:
-				$orientation = 90;
-				break;
-		}
-		$canvas = imagerotate($canvas, $orientation, 0);
-		
+		$canvas = $this->rotateImage($canvas, $original);
 		
 		imagejpeg($canvas, $fullsize, $quality);
+		
+		imagedestroy($canvas);
 		
 		return true;
 	}
@@ -535,7 +544,7 @@ class CataBlogItem {
 		$bg_color = $this->html2rgb($this->_options['background-color']);
 		$canvas   = imagecreatetruecolor($canvas_size, $canvas_size);
 		$bg_color = imagecolorallocate($canvas, $bg_color[0], $bg_color[1], $bg_color[2]);
-		imagefill($canvas, 0, 0, $bg_color);
+		imagefilledrectangle($canvas, 0, 0, $width, $height, $bg_color);
 		
 		
 		switch($format) {
@@ -587,40 +596,15 @@ class CataBlogItem {
 		imagecopyresampled($canvas, $upload, $x_offset, $y_offset, 0, 0, $new_width, $new_height, $width, $height);
 		
 		// rotate the final canvas to match the original files orientation
-		$orientation = 1;
-		
-		if (function_exists('exif_read_data')) {
-			$exif = @exif_read_data($original, 'EXIF', 0);
-			if ($exif) {
-				if (isset($exif['Orientation'])) {
-					$orientation = $exif['Orientation'];
-				}
-			}
-		}
-		
-		switch ($orientation) {
-			case 1:
-				$orientation = 0;
-				break;
-			case 3:
-				$orientation = 180;
-				break;
-			case 6:
-				$orientation = -90;
-				break;
-			case 8:
-				$orientation = 90;
-				break;
-		}
-		$canvas = imagerotate($canvas, $orientation, $bg_color, false);
+		$canvas = $this->rotateImage($canvas, $original);
 		
 		imagejpeg($canvas, $thumb, $quality);
+		
+		imagedestroy($canvas);
 		
 		return true;
 	}
 	
-	
-
 	
 	
 	
@@ -636,6 +620,9 @@ class CataBlogItem {
 	}
 	public function getDescription() {
 		return $this->description;
+	}
+	public function getDate() {
+		return $this->date;
 	}
 	public function getImage() {
 		return $this->image;
@@ -664,17 +651,18 @@ class CataBlogItem {
 	public function getCustomTaxName() {
 		return $this->_custom_tax_name;
 	}
-	public function getValuesArray() {
-		$order        = $this->getOrder();
+	public function getCSVArray() {
 		$image        = $this->getImage();
 		$subimages    = implode('|', $this->getSubImages());
 		$title        = $this->getTitle();
-		$link         = $this->getLink();
 		$description  = $this->getDescription();
-		$categories   = implode('|', $this->getCategories());
+		$date         = $this->getDate();
+		$order        = $this->getOrder();
+		$link         = $this->getLink();
 		$price        = $this->getPrice();
 		$product_code = $this->getProductCode();
-		return array($order, $image, $subimages, $title, $link, $description, $categories, $price, $product_code);
+		$categories   = implode('|', $this->getCategories());
+		return array($image, $subimages, $title, $description, $date, $order, $link, $price, $product_code, $categories);
 	}
 	
 	
@@ -691,6 +679,9 @@ class CataBlogItem {
 	}
 	public function setDescription($description) {
 		$this->description = $description;
+	}
+	public function setDate($date) {
+		$this->date = $date;
 	}
 	public function setImage($image, $update=true) {
 		if ($update) {
@@ -729,8 +720,19 @@ class CataBlogItem {
 	
 	
 	
-	
-	
+	/*****************************************************
+	**       - CONDITIONAL METHODS
+	*****************************************************/
+	public function inCategory($test_category) {
+		$bool = false;
+		foreach ($this->getCategories() as $category) {
+			if (strtolower($category) == strtolower($test_category)) {
+				$bool = true;
+			}
+		}
+		
+		return $bool;
+	}
 	
 	
 	/*****************************************************
@@ -811,7 +813,39 @@ class CataBlogItem {
 		return array($r, $g, $b);
 	}
 	
-	
+	private function rotateImage($canvas, $original) {
+		if (function_exists('exif_read_data') && function_exists('imagerotate')) {
+			$orientation = 1;
+			$exif = @exif_read_data($original, 'EXIF', 0);
+			if ($exif) {
+				if (isset($exif['Orientation'])) {
+					$orientation = $exif['Orientation'];
+				}
+			}
+			
+			switch ($orientation) {
+				case 1:
+					$orientation = 0;
+					break;
+				case 3:
+					$orientation = 180;
+					break;
+				case 6:
+					$orientation = -90;
+					break;
+				case 8:
+					$orientation = 90;
+					break;
+			}
+			
+			if ($orientation != 0) {
+				$canvas = imagerotate($canvas, $orientation, 0);
+			}
+			
+		}
+		// die;
+		return $canvas;
+	}
 	
 	
 	

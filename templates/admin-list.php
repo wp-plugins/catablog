@@ -1,15 +1,42 @@
-
 	<table class="widefat post" cellspacing="0">
 		<thead>
 			<tr>
 				<th class="manage-column column-cb check-column"><input type="checkbox" /></th>
 				<th class="manage-column cb_icon_column"><?php _e("Image", "catablog"); ?></th>
-				<th class="manage-column"><?php _e("Title", "catablog"); ?></th>
-				<th class="manage-column"><?php _e("Link", "catablog"); ?></th>
+				<?php $css_sort = ($sort=='title')? "sorted" : "sortable" ?>
+				<?php $sort_url = ($order=='asc')? "&amp;order=desc" : "&amp;order=asc" ?>
+				<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".$_GET['category'] : "" ?>
+				<th class="manage-column <?php echo "$css_sort $order" ?>" style="width:120px;">
+					<a href="admin.php?page=catablog&amp;sort=title<?php echo $sort_url . $cat_url ?>">
+						<span><?php _e("Title", "catablog"); ?></span>
+						<span class="sorting-indicator">&nbsp;</span>
+					</a>
+				</th>
+				<?php /*<th class="manage-column"><?php _e("Link", "catablog"); ?></th>*/ ?>
 				<th class="manage-column"><?php _e("Description", "catablog"); ?></th>
 				<th class="manage-column"><?php _e("Categories", "catablog"); ?></th>
-				<th class="manage-column"><?php _e("Price", "catablog"); ?></th>
-				<th class="manage-column"><?php _e("Product Code", "catablog"); ?></th>
+				<?php /*<th class="manage-column"><?php _e("Price", "catablog"); ?></th>*/ ?>
+				<?php /*<th class="manage-column"><?php _e("Product Code", "catablog"); ?></th>*/ ?>
+				
+				<?php $css_sort = ($sort=='menu_order')? "sorted" : "sortable" ?>
+				<?php $sort_url = ($order=='asc')? "&amp;order=desc" : "&amp;order=asc" ?>
+				<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".$_GET['category'] : "" ?>
+				<th class="manage-column <?php echo "$css_sort $order" ?>" style="width:80px;">
+					<a href="admin.php?page=catablog&amp;sort=menu_order<?php echo $sort_url . $cat_url ?>">
+						<span><?php _e("Order", "catablog"); ?></span>
+						<span class="sorting-indicator">&nbsp;</span>
+					</a>
+				</th>
+				
+				<?php $css_sort = ($sort=='date')? "sorted" : "sortable" ?>
+				<?php $sort_url = ($order=='asc')? "&amp;order=desc" : "&amp;order=asc" ?>
+				<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".$_GET['category'] : "" ?>
+				<th class="manage-column <?php echo "$css_sort $order" ?>" style="width:100px;">
+					<a href="admin.php?page=catablog&amp;sort=date<?php echo $sort_url . $cat_url ?>">
+						<span><?php _e("Date", "catablog"); ?></span>
+						<span class="sorting-indicator">&nbsp;</span>
+					</a>
+				</th>
 			</tr>
 		</thead>
 		<tfoot>
@@ -17,11 +44,13 @@
 				<th class="manage-column column-cb check-column"><input type="checkbox" /></th>
 				<th class="manage-column cb_icon_column"><?php _e("Image", "catablog"); ?></th>
 				<th class="manage-column"><?php _e("Title", "catablog"); ?></th>
-				<th class="manage-column"><?php _e("Link", "catablog"); ?></th>
+				<?php /*<th class="manage-column"><?php _e("Link", "catablog"); ?></th>*/ ?>
 				<th class="manage-column"><?php _e("Description", "catablog"); ?></th>
 				<th class="manage-column"><?php _e("Categories", "catablog"); ?></th>
-				<th class="manage-column"><?php _e("Price", "catablog"); ?></th>
-				<th class="manage-column"><?php _e("Product Code", "catablog"); ?></th>
+				<?php /*<th class="manage-column"><?php _e("Price", "catablog"); ?></th> */?>
+				<?php /*<th class="manage-column"><?php _e("Product Code", "catablog"); ?></th> */?>
+				<th class="manage-column"><?php _e("Order", "catablog"); ?></th>
+				<th class="manage-column"><?php _e("Date", "catablog"); ?></th>
 			</tr>
 		</tfoot>
 		
@@ -61,19 +90,30 @@
 							<span class="trash"><a href="<?php echo $remove ?>" class="remove_link"><?php _e("Trash", "catablog"); ?></a></span>
 						</div>
 					</td>
-					<td><?php echo htmlspecialchars($result->getLink(), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
 					
-					<?php $descriptions = explode("\n", $result->getDescription())?>
+					<?php /*<td><?php echo htmlspecialchars($result->getLink(), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>*/ ?>
 					
-					<td><div class="catablog-list-description"><?php echo ($this->options['nl2br-description'])? nl2br($result->getDescription()) : $result->getDescription() ?></div></td>
+					<?php $remove_returns = str_replace(array("\r", "\n", "\r\n"), ' ', ($result->getDescription())) ?>
+					<?php $description = substr($remove_returns, 0, 120) ?>
+					<?php $description .= (mb_strlen($remove_returns) > 120)? '...' : ''; ?>
 					
+					<td><div class="catablog-list-description"><?php echo $description ?></div></td>
 					
 					<td><?php echo implode(', ', $result->getCategories())?></td>
 					
-					
+					<?php /*
 					<?php $currency = "" ?>
 					<td><?php echo (((float) $result->getPrice()) > 0)? $currency. number_format($result->getPrice(), 2) : "" ?>&nbsp;</td>
 					<td><?php echo htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
+					*/ ?>
+					
+					<td>&nbsp;&nbsp;<?php echo htmlspecialchars($result->getOrder(), ENT_QUOTES, 'UTF-8') ?></td>
+					
+					<td>
+						<span><?php echo str_replace('-', '/', substr($result->getDate(), 0, 10)) ?></span>
+						<br />
+						<span><?php echo substr($result->getDate(), 11) ?></span>
+					</td>
 				</tr>
 			<?php endforeach; ?>
 

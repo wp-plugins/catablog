@@ -5,91 +5,11 @@
 		
 	<form id="catablog-edit" class="catablog-form clear_float" method="post" action="admin.php?page=catablog-save" enctype="multipart/form-data">
 		
-		
-		<div id="catablog-edit-params">
-			<fieldset>
-				<h3><label for="link"><?php _e("Link", 'catablog'); ?></label></h3>
-				<div>
-					<input type="text" name="link" id="link" class="text-field" tabindex="3" value="<?php echo htmlspecialchars($result->getLink(), ENT_QUOTES, 'UTF-8') ?>" />
-					<p><small>
-						<?php _e("Enter a relative or absolute web address to turn this item's title into a hyperlink. External links should start with http://.", 'catablog'); ?>
-					</small></p>
-				</div>
-			</fieldset>
-			
-			<fieldset>
-				<h3><?php _e("Categories", 'catablog'); ?></h3>
-				<div id="catablog-category" class="tabs-panel">
-					
-					<ul id="catablog-category-checklist" class="list:category categorychecklist form-no-clear">
-						
-						<?php $categories = $this->get_terms() ?>
-						
-						<?php if (count($categories) < 1): ?>
-							<li><span><?php _e("You currently have no categories.", 'catablog'); ?></span></li>
-						<?php endif ?>
-						
-						<?php foreach ($categories as $category): ?>
-						<li>
-							<label class="catablog-category-row">
-								<?php $checked = (in_array($category->term_id, array_keys($result->getCategories())))? 'checked="checked"' : '' ?>
-								<input id="in-category-<?php echo $category->term_id ?>" type="checkbox" <?php echo $checked ?> name="categories[]"  tabindex="4" value="<?php echo $category->term_id ?>" />
-								<?php $default_term = $this->get_default_term() ?>
-								<?php if ($category->name != $default_term->name): ?>
-									<a href="#delete" class="catablog-category-delete hide"><small><?php _e("[DELETE]", 'catablog'); ?></small></a>
-								<?php endif ?>
-								<span><?php echo $category->name ?></span>
-
-							</label>
-						</li>
-						<?php endforeach ?>
-					</ul>
-					
-					<div id="catablog-new-category">
-						<noscript>
-							<div class="error">
-								<strong><small><?php _e("You must have a JavaScript enabled browser to create new categories.", 'catablog'); ?></small></strong>
-							</div>
-						</noscript>
-						
-						<span class="hide">
-							<input id="catablog-new-category-input" type="text" tabindex="5" value="" />
-							<a href="#new-category" id="catablog-new-category-submit" class="button" tabindex="6"><?php _e('New', 'catablog'); ?></a>
-							<img src="<?php echo $this->urls['images'] ?>/ajax-loader-small.gif" id="catablog-new-category-load" class="hide" />
-						</span>
-					</div>
-					<p><small>
-						<?php _e("Put your items into categories to easily display subsets of your catalog on different pages.", 'catablog'); ?><br />
-						<strong><?php _e('ex:', 'catablog'); ?></strong> [catablog category="dogs and cats"]
-					</small></p>
-				</div>
-			</fieldset>
-			
-			<fieldset>
-				<h3><?php _e('Shopping Cart', 'catablog'); ?></h3>
-				<div>
-					<p>
-						<label for="price"><?php _e("Item Price", 'catablog'); ?></label><br />
-						<input type="text" name="price" id="price" class="text-field" tabindex="7" value="<?php echo $result->getPrice() ?>">
-					</p>
-					
-					<p>
-						<label for="product_code"><?php _e("Product Code", 'catablog'); ?></label><br />
-						<input type="text" name="product_code" id="product_code" class="text-field" tabindex="8" value="<?php echo htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8') ?>">
-					</p>
-
-					<p><small>
-						<?php printf(__("If you want to make a shopping cart you should make sure you are using a %sStore Template%s that uses these values.", 'catablog'), '<a href="admin.php?page=catablog-options#store">', '</a>'); ?>
-					</small></p>
-				</div>
-			</fieldset>
-		</div>
-		
-		
-
 		<div id="catablog-edit-main">
+			<div id="catablog-edit-main-content">
 			<fieldset>
 				<h3>
+					<?php /*
 					<?php $next_item = CataBlogItem::getAdjacentItem($result->getOrder() + 1) ?>
 					<?php $prev_item = CataBlogItem::getAdjacentItem($result->getOrder() - 1) ?>
 					<span class="catablog-edit-navigation" style="float:right">
@@ -105,6 +25,7 @@
 							<span class="nonessential"><?php _e("no next item", 'catablog'); ?></span>
 						<?php endif?>
 					</span>
+					*/ ?>
 					<span>Main</span>
 				</h3>
 				
@@ -138,7 +59,6 @@
 											<a href="#delete" class="catablog-delete-subimage" title="<?php _e('Delete this sub image permanently.', 'catablog'); ?>">X</a>
 										</li>
 									<?php endforeach ?>
-									<li class="clear">&nbsp;</li>
 								</ul>
 							<?php else: ?>
 								<p><small class="nonessential"><?php _e("No Sub Images", 'catablog'); ?></small></p>
@@ -151,10 +71,10 @@
 					
 					<div id="catablog-edit-main-text">
 						<label for="catablog-title"><?php _e("Title", 'catablog'); ?></label>
-						<input type="text" name="title" id="catablog-title" maxlength="200" tabindex="2" value="<?php echo htmlspecialchars($result->getTitle(), ENT_QUOTES, 'UTF-8') ?>" />
+						<input type="text" name="title" id="catablog-title" maxlength="200" value="<?php echo htmlspecialchars($result->getTitle(), ENT_QUOTES, 'UTF-8') ?>" />
 						<br /><br />
 						<label for="catablog-description"><?php _e("Description", 'catablog'); ?> [<small><?php _e("accepts html formatting", 'catablog'); ?></small>]</label>
-						<textarea name="description" id="catablog-description" tabindex="2"><?php echo htmlspecialchars($result->getDescription(), ENT_QUOTES, 'UTF-8') ?></textarea>
+						<textarea name="description" id="catablog-description"><?php echo htmlspecialchars($result->getDescription(), ENT_QUOTES, 'UTF-8') ?></textarea>
 					</div>
 					
 					<div id="catablog-edit-main-save" class="clear_float">
@@ -165,22 +85,139 @@
 						<input type="hidden" id="id" name="id" value="<?php echo $result->getId() ?>" />
 						<input type="hidden" id="order" name="order" value="<?php echo $result->getOrder() ?>" />
 						
-						<input type="submit" class="button-primary" id="save_changes" tabindex="9" value="<?php _e("Save Changes", 'catablog'); ?>" />
-						<span><?php printf(__("or %sback to list%s", 'catablog'), '<a href="admin.php?page=catablog" tabindex="10">', '</a>'); ?></span>
+						<input type="submit" class="button-primary" id="save_changes" value="<?php _e("Save Changes", 'catablog'); ?>" />
+						<span><?php printf(__("or %sback to list%s", 'catablog'), '<a href="admin.php?page=catablog">', '</a>'); ?></span>
 					</div>
 					
 				</div>
 		
 			</fieldset>
+			</div>
 		</div>
 		
 		
 		
 		
+		<div id="catablog-edit-params">
+			<fieldset>
+				<h3><label for="date"><?php _e("Attributes", 'catablog'); ?></label></h3>
+				<div>
+					<p>
+						<span><?php printf(__("Date: %s", 'catablog'), date('M. jS, Y - H:i', strtotime($result->getDate()))) ?></span>
+						<a href="#edit-date" id="activate-date-editor" class="alignright">edit</a>
+					</p>
+					<p id="date-editor" class="hide">
+						<input type="text" name="date" id="date" class="text-field" value="<?php echo htmlspecialchars($result->getDate(), ENT_QUOTES, 'UTF-8') ?>" />
+						<small>
+							<?php _e("Format: YYYY-MM-DD HH:MM:SS", 'catablog'); ?>
+						</small>
+					</p>
+					
+					<p>
+						<label for="order"><?php printf(__("Order: %s", 'catablog'), $result->getOrder()); ?></label>
+						<a href="#edit-order" id="activate-order-editor" class="alignright">edit</a>
+					</p>
+					<p id="order-editor" class="hide">
+						<input type="text" name="order" id="order" class="text-field" value="<?php echo htmlspecialchars($result->getOrder(), ENT_QUOTES, 'UTF-8') ?>" />
+						<small>
+							<?php _e("Enter a integer value to be assigned as this catalog item's order. There is only one order value per catalog item.") ?>
+						</small>
+					</p>
+				</div>
+			</fieldset>
+			
+			<fieldset>
+				<h3><?php _e('Fields', 'catablog'); ?></h3>
+				<div id="catablog-fields">
+					<p>
+						<label for="link"><?php _e("Link", 'catablog'); ?></label>
+						<a href="#help" class="show-help alignright"><?php _e("help"); ?></a>
+						<br />
+						<input type="text" name="link" id="link" class="text-field" value="<?php echo htmlspecialchars($result->getLink(), ENT_QUOTES, 'UTF-8') ?>" />
+						<small>
+							<?php _e("Enter a relative or absolute web address to make this item a hyperlink. External links should start with http://.", 'catablog'); ?>
+						</small>
+					</p>
+					<p>
+						<label for="price"><?php _e("Item Price", 'catablog'); ?></label>
+						<a href="#help" class="show-help alignright"><?php _e("help"); ?></a>
+						<br />
+						<input type="text" name="price" id="price" class="text-field" value="<?php echo $result->getPrice() ?>">
+						<small>
+							<?php _e("If your catalog item has a price above zero, it will generate a buy now button you may display, read more here.", 'catablog'); ?>
+						</small>
+					</p>
+					
+					<p>
+						<label for="product_code"><?php _e("Product Code", 'catablog'); ?></label>
+						<a href="#help" class="show-help alignright"><?php _e("help"); ?></a>
+						<br />
+						<input type="text" name="product_code" id="product_code" class="text-field" value="<?php echo htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8') ?>">
+						<small>
+							<?php _e("This field is intended for usage as a product code for the PayPal buy now buttons.", 'catablog'); ?>
+						</small>
+					</p>
+
+					<p><small class="hide">
+						<?php printf(__("If you want to make a shopping cart you should make sure you are using a %sStore Template%s that uses these values.", 'catablog'), '<a href="admin.php?page=catablog-options#store">', '</a>'); ?>
+					</small></p>
+				</div>
+			</fieldset>
+			
+			<fieldset>
+				<h3><?php _e("Categories", 'catablog'); ?></h3>
+				<div id="catablog-category" class="tabs-panel">
+					
+					<ul id="catablog-category-checklist" class="list:category categorychecklist form-no-clear">
+						
+						<?php $categories = $this->get_terms() ?>
+						
+						<?php if (count($categories) < 1): ?>
+							<li><span><?php _e("You currently have no categories.", 'catablog'); ?></span></li>
+						<?php endif ?>
+						
+						<?php foreach ($categories as $category): ?>
+						<li>
+							<label class="catablog-category-row">
+								<?php $checked = (in_array($category->term_id, array_keys($result->getCategories())))? 'checked="checked"' : '' ?>
+								<input id="in-category-<?php echo $category->term_id ?>" type="checkbox" <?php echo $checked ?> name="categories[]"  value="<?php echo $category->term_id ?>" />
+								<?php $default_term = $this->get_default_term() ?>
+								<?php if ($category->name != $default_term->name): ?>
+									<a href="#delete" class="catablog-category-delete hide"><small><?php _e("[DELETE]", 'catablog'); ?></small></a>
+								<?php endif ?>
+								<span><?php echo $category->name ?></span>
+
+							</label>
+						</li>
+						<?php endforeach ?>
+					</ul>
+					
+					<div id="catablog-new-category">
+						<noscript>
+							<div class="error">
+								<strong><small><?php _e("You must have a JavaScript enabled browser to create new categories.", 'catablog'); ?></small></strong>
+							</div>
+						</noscript>
+						
+						<span class="hide">
+							<input id="catablog-new-category-input" type="text" value="" />
+							<a href="#new-category" id="catablog-new-category-submit" class="button"><?php _e('New', 'catablog'); ?></a>
+							<img src="<?php echo $this->urls['images'] ?>/ajax-loader-small.gif" id="catablog-new-category-load" class="hide" />
+						</span>
+					</div>
+					<p><small>
+						<?php _e("Put your items into categories to easily display subsets of your catalog on different pages.", 'catablog'); ?><br />
+						<strong><?php _e('ex:', 'catablog'); ?></strong> [catablog category="dogs and cats"]
+					</small></p>
+				</div>
+			</fieldset>
+			
+		</div>
+		
 		
 	</form>
 	
-</div>
+</div><!-- END #wrap -->
 
 
 <div id='catablog_load_curtain'>&nbsp;</div>
@@ -242,34 +279,6 @@
 		// SHOW THE NEW CATEGORY FORM IF JAVASCRIPT IS ENABLED
 		$('#catablog-new-category span').show();
 		
-		
-		
-		// BIND SELECT NEW IMAGE HOVERS
-		$('#new_image').bind('mouseover focus', function(event) {
-			$('#select-image-button').css('background-position', '0px -31px');
-		});
-		$('#new_image').bind('mouseout blur', function(event) {
-			$('#select-image-button').css('background-position', '0px 0px');
-		});
-		
-		
-		
-		// UPDATE IMAGE DESCRIPTION AFTER SELECTING A NEW IMAGE
-		$('#new_image').change(function(event) {
-			var filename = $(this).val();
-			if ($.browser.msie) {
-				var start    = $(this).val().lastIndexOf('\\');
-				var filename = $(this).val().slice((start + 1))
-			}
-			
-			var s = "You have selected:<br /><strong>" + filename + "</strong> as your upload image.";
-			$('#select-image-text small').html(s);
-			
-			$('#catablog-title').focus();
-		});
-		
-		
-		
 		// BIND SORTABLE IMAGES
 		$('#catablog-sub-images').sortable({
 			cursor: 'crosshair',
@@ -278,8 +287,24 @@
 			revert: 200
 		})
 		
+		// BIND DATE EDITOR
+		$('#activate-date-editor').click(function() {
+			$('#date-editor').slideDown();
+			$(this).fadeOut();
+		});
 		
+		// BIND ORDER EDITOR
+		$('#activate-order-editor').click(function() {
+			$('#order-editor').slideDown();
+			$(this).fadeOut();
+		});
 		
+		// 
+		$('#catablog-fields small').css('display','block').hide();
+		$('#catablog-fields .show-help').click(function() {
+			$(this).siblings('small').slideDown();
+			$(this).fadeOut();
+		});
 		
 		// BIND CATEGORY LIST HOVERS
 		$('#catablog-category-checklist li label').live('mouseover', function(event) {
@@ -293,8 +318,6 @@
 			$('a.catablog-category-delete', this).hide();
 		});
 		
-		
-		
 		// BIND DELETE CATEGORY LINKS
 		$('#catablog-category-checklist li label a.catablog-category-delete').live('click', function(event) {
 			// stop javascript event propagation and set this variable
@@ -307,7 +330,7 @@
 			}
 			
 			// confirm the deletion of the category
-			if (!confirm('Are you sure you want to delete this category? You can not undo this.')) {
+			if (!confirm('<?php _e("Are you sure you want to delete this category? You can not undo this.", "catablog") ?>')) {
 				return false;
 			}
 			
@@ -348,7 +371,6 @@
 		});
 		
 		
-		
 		// BIND NEW CATEGORY TEXT INPUT BOX
 		$('#catablog-new-category-input').bind('keypress', function(event) {
 			var key_code = (event.keyCode ? event.keyCode : event.which);
@@ -369,7 +391,7 @@
 			// check if category name is set
 			var category_name = $('#catablog-new-category-input').val();
 			if (category_name == '') {
-				alert('Please make sure to enter a category name');
+				alert('<?php _e("Please make sure to enter a category name", "catablog") ?>');
 				return false;
 			}
 			
@@ -393,7 +415,7 @@
 					else {
 						var html = '<li><label class="catablog-category-row">';
 						html    += ' <input id="in-category-'+json.id+'" type="checkbox" checked="checked" name="categories[]" value="'+json.id+'" /> ';
-						html    += ' <a href="#delete" class="catablog-category-delete hide"><small>[DELETE]</small></a>';
+						html    += ' <a href="#delete" class="catablog-category-delete hide"><small><?php echo _e("[DELETE]", "catablog") ?></small></a>';
 						html    += ' <span>'+json.name+'</span> ';
 						html    += '</label></li>';
 						
@@ -412,7 +434,7 @@
 			return false;
 		});
 		
-		// BIND
+		// BIND REPLACE MAIN IMAGE MODAL WINDOW
 		$('#show-image-window').bind('click', function(event) {
 			jQuery('#replace-image-window').show();
 			jQuery('#catablog_load_curtain').fadeTo(200, 0.8);
@@ -426,7 +448,7 @@
 			return false;
 		});
 		
-		
+		// BIND HIDE MODAL WINDOW
 		$('.hide-modal-window').bind('click', function(event) {
 			jQuery('.catablog-modal:visible').hide();
 			jQuery('#catablog_load_curtain').fadeOut(200);
@@ -435,7 +457,7 @@
 		
 		// BIND DELETE SUB IMAGE
 		$('#catablog-sub-images .catablog-delete-subimage').bind('click', function(event) {
-			if (!confirm('Are you sure you want to permanently delete this image?')) {
+			if (!confirm('<?php _e("Are you sure you want to permanently delete this image?", "catablog") ?>')) {
 				return false;
 			}
 			

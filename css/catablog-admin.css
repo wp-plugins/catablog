@@ -9,6 +9,12 @@ body {
 	border: 1px #C00 solid;
 }
 
+th.catablog-sortable {
+	cursor: pointer;
+	background-image: url('./../images/sort.gif');
+	background-position: right center;
+	background-repeat: no-repeat;
+}
 
 #catablog_items tr {
 	background-color: #fff;
@@ -89,11 +95,17 @@ body {
 	position: relative;
 }
 #catablog-edit-main {
+	float: left;
 	position: relative;
-	margin: 0 266px 0 0;
+	width: 100%;
+	margin: 0 -265px 0 0;
+}
+#catablog-edit-main-content {
+	margin: 0 265px 0 0;
 }
 #catablog-edit-params {
 	float: right;
+	clear: right;
 	position: relative;
 	width: 250px;
 	margin: 0 0 0 auto;
@@ -409,6 +421,7 @@ form#catablog-edit fieldset div {
 	border: 1px #ddd solid;
 	border-width: 0 1px 1px 1px;
 	padding: 9px;
+	background: #fff;
 }
 
 

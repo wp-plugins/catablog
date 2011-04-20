@@ -34,6 +34,7 @@
 			</form>
 			
 			<form method="get" action="admin.php?page=catablog" class="alignleft actions">
+				<label for="cat">View:</label>
 				<input type="hidden" name="page" value="catablog" />
 				<select id="cat" name="category" class="postform">
 					<option value="-1">- <?php _e("All Categories", 'catablog'); ?></option>
@@ -45,10 +46,12 @@
 				</select>
 				<input type="submit" value="Filter" id="catablog-submit-filter" class="button-secondary" />
 				
+				<?php /*
 				<small>|</small>
 				
 				<?php $disabled = (!isset($_GET['category']) || $_GET['category'] > 0)? '' : 'disabled="disabled"' ?>
 				<a href="#sort" id="enable_sort" <?php echo $disabled ?> class="button"><?php _e("Change Order", 'catablog'); ?></a>
+				*/ ?>
 			</form>
 			
 			<div id="catablog-view-switch" class="view-switch">
@@ -126,18 +129,7 @@
 		});
 		
 		
-		
-		// hide exceptionaly long descriptions
-		// LIST VIEW ONLY!
-		// $('#catablog_items div.catablog-list-description').each(function() {
-		// 	var height = $(this).height();
-		// 	if (height > 90) {
-		// 		$(this).height(72);
-		// 		$(this).after("<em>more...</em>");
-		// 	}
-		// });
-		
-		
+		/*
 		// initialize the sortables
 		var catablog_items_path = "#catablog_items";
 		$(catablog_items_path).sortable({
@@ -218,7 +210,7 @@
 				$('#message strong').html('<?php _e("Your catalog items have been rearranged successfully.", "catablog"); ?>');
 			});
 		}
+		*/
 		
-				
 	});
 </script>

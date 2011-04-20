@@ -78,9 +78,16 @@
 		<div id="catablog-options-lightbox" class="catablog-options-panel hide">
 			<p>
 				<?php $checked = ($lightbox_enabled)? "checked='checked'" : "" ?>
-				<label for="lightbox_enabled"><?php _e("Enable LightBox Feature:", "catablog"); ?></label>
+				<label for="lightbox_enabled"><?php _e("Enable LightBox:", "catablog"); ?></label>
 				<input type="checkbox" name="lightbox_enabled" id="lightbox_enabled" <?php echo $checked ?> /><br/>
-				<small><?php _e("this will allow people to enlarge an image thumbnail with a lightbox style javascript effect.", "catablog"); ?></small>
+				<small><?php _e("Load the necessary javascript libraries to enlarge an image thumbnail with the LightBox effect.", "catablog"); ?></small>
+			</p>
+			
+			<p>
+				<?php $checked = ($lightbox_render)? "checked='checked'" : "" ?>
+				<label for="lightbox_render"><?php _e("Render a new image to be used for the lightbox:", "catablog"); ?></label>
+				<input type="checkbox" name="lightbox_render" id="lightbox_render" <?php echo $checked ?> /><br />
+				<small><?php _e("check this box to render a similarly sized image for each catalog item to be used with the LightBox.")?></small>
 			</p>
 			
 			<p>
@@ -89,6 +96,13 @@
 				<span><?php _e("pixels", "catablog"); ?></span><br />
 				<small class="error hidden"><?php _e("Your lightbox size must be a positive integer.", "catablog"); ?><br /></small>
 				<small><?php _e("This is the maximum length of either the height or width, depending on whichever is longer in the original uploaded image.", "catablog"); ?></small>
+			</p>
+			
+			<p>
+				<label for='lightbox_selector'><?php _e("LightBox jQuery Selector:", "catablog"); ?></label>
+				<input type='text' name='lightbox_selector' id='lightbox_selector' class='integer_field' size='50' value='<?php echo $lightbox_selector ?>' />
+				<br />
+				<small><?php _e("This lets you modify the selector used by jQuery to attach the LightBox to image thumbnails. The default value is: .catablog-image")?></small>
 			</p>
 		</div>
 		
@@ -470,8 +484,8 @@
 		** LIGHTBOX PANEL
 		****************************************/
 		// disable lightbox size field if the lightbox is off
-		$('#lightbox_image_size').attr('readonly', !$('#lightbox_enabled').attr('checked'));
-		$('#lightbox_enabled').bind('click', function(event) {
+		$('#lightbox_image_size').attr('readonly', !$('#lightbox_render').attr('checked'));
+		$('#lightbox_render').bind('click', function(event) {
 			if (this.checked) {
 				$('#lightbox_image_size').attr('readonly', false);
 			}
@@ -651,10 +665,13 @@
 		** RECALCULATE IMAGES IF NECESSARY
 		****************************************/
 	<?php if ($recalculate_thumbnails || $recalculate_fullsize): ?>
+		discourage_leaving_page('<?php _e("Please allow the rendering to complete before leaving this page. Click cancel to go back and let the rendering complete.", "catablog"); ?>');
+		
 		$('#save_changes').attr('disabled', true);
 		var nonce   = '<?php echo wp_create_nonce("catablog-render-images") ?>';		
 		var images  = ["<?php echo implode('", "', $image_names) ?>"];
-		var message = '<?php _e("Image rendering is now complete", "catablog"); ?>';
+		var warning = '<?php _e("Image rendering is not complete, you should let image rendering complete before leaving this page.", "catablog"); ?>';
+		
 	<?php endif ?>
 	
 	
@@ -662,7 +679,7 @@
 	<?php if ($recalculate_thumbnails): ?>
 		var thumbs = images.slice(0);
 		renderCataBlogItems(thumbs, 'thumbnail', nonce, function() {
-			jQuery('#catablog-progress-thumbnail .catablog-progress-text').html(message);
+			// jQuery('#catablog-progress-thumbnail .catablog-progress-text').html(message);
 			
 			var t = setTimeout(function() {
 				jQuery('#catablog-progress-thumbnail').hide('medium');
@@ -670,6 +687,10 @@
 			}, 2000);
 
 			$('#save_changes').attr('disabled', false);
+			
+			<?php if ($recalculate_fullsize == false): ?>
+				unbind_discourage_leaving_page();
+			<?php endif ?>
 		});
 	<?php endif ?>
 	
@@ -678,7 +699,7 @@
 	<?php if ($recalculate_fullsize): ?>
 		var fullsize = images.slice(0);
 		renderCataBlogItems(fullsize, 'fullsize', nonce, function() {
-			jQuery('#catablog-progress-fullsize .catablog-progress-text').html(message);
+			// jQuery('#catablog-progress-fullsize .catablog-progress-text').html(message);
 			
 			var t = setTimeout(function() {
 				jQuery('#catablog-progress-thumbnail').hide('medium');
@@ -687,6 +708,8 @@
 			}, 2000);
 			
 			$('#save_changes').attr('disabled', false);
+			
+			unbind_discourage_leaving_page();
 		});
 	<?php endif ?>
 

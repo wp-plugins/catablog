@@ -25,7 +25,7 @@
 			<h3 class="catablog-progress-text"><?php _e("Processing Thumbnail Images...", "catablog"); ?></h3>
 		</div>
 
-		<?php if ($this->options['lightbox-enabled']): ?>
+		<?php if ($this->options['lightbox-render']): ?>
 			<div id="catablog-progress-fullsize" class="catablog-progress">
 				<div class="catablog-progress-bar"></div>
 				<h3 class="catablog-progress-text"><?php _e("Waiting For Thumbnail Rendering To Finish...", "catablog"); ?></h3>
@@ -50,29 +50,34 @@
 		****************************************/
 		var nonce   = '<?php echo wp_create_nonce("catablog-render-images") ?>';		
 		var images  = ["<?php echo implode('", "', $new_rows['images']) ?>"];
-		var message = '<?php _e("Image rendering is now complete", "catablog"); ?>';
-
+		
 		var thumbs = images.slice(0);
 		renderCataBlogItems(thumbs, 'thumbnail', nonce, function() {
-			jQuery('#catablog-progress-thumbnail .catablog-progress-text').html(message);
 			
-			<?php if ($this->options['lightbox-enabled']): ?>
+			<?php if ($this->options['lightbox-render']): ?>
+				
 				var fullsize = images.slice(0);
 				renderCataBlogItems(fullsize, 'fullsize', nonce, function() {
-					jQuery('#catablog-progress-fullsize .catablog-progress-text').html(message);
+
+					unbind_discourage_leaving_page();
 					var t = setTimeout(function() {
 						jQuery('#catablog-progress-thumbnail').hide('medium');
 						jQuery('#catablog-progress-fullsize').hide('medium');
 						jQuery('#message').hide('medium');
 					}, 2000);
 					$('#save_changes').attr('disabled', false);
+					
 				});
+				
 			<?php else: ?>
+				
+				unbind_discourage_leaving_page();
 				var t = setTimeout(function() {
 					jQuery('#catablog-progress-thumbnail').hide('medium');
 					jQuery('#message').hide('medium');
 				}, 2000);
-				$('#save_changes').attr('disabled', false);				
+				$('#save_changes').attr('disabled', false);
+				
 			<?php endif ?>
 		});
 	});
