@@ -106,7 +106,7 @@ class CataBlogDirectory {
 	public function removeFilter() {
 		unset($this->filearray);
 		$d = "";
-		$d = opendir($this->directory) or die(__("could not open directory.", 'catablog'));
+		$d = opendir($this->directory) or die(__("Could not open directory.", 'catablog'));
 		while (false !== ($f = readdir($d))) {
 			if (is_file("$this->directory/$f")) {
 				$this->filearray[] = $f;

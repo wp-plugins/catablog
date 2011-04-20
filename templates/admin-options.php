@@ -315,7 +315,7 @@
 		<?php elseif ($permissions == '0755'): ?>
 			<span><?php _e("CataBlog Upload Folders are <strong>Locked</strong>", "catablog"); ?></span>
 		<?php else: ?>
-			<span><?php _e("Error: You may be on a windows server...", "catablog"); ?></span>
+			<span><?php _e("Could not lock/unlock the directory. Are you using a unix based server?", "catablog"); ?></span>
 		<?php endif ?>
 		</p>
 		
