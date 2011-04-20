@@ -8,7 +8,7 @@
 	<?php if (count($new_rows['images']) < 1): ?>
 		<p>
 			<?php _e("No new images where found in your originals folders.", 'catablog'); ?> <br />
-			<?php _e("Please make sure that you have successfully uploaded new images via	FTP before running this command.", "catablog"); ?><br />
+			<?php _e("Please make sure that you have successfully uploaded new images via FTP before running this command.", "catablog"); ?><br />
 			<?php _e("New images should be uploaded into the following folder:", "catablog"); ?><br />
 			<code><?php echo $this->directories['originals'] ?></code>
 			

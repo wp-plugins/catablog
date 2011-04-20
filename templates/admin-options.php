@@ -214,9 +214,7 @@
 			<p>
 				<textarea name="view-code-buynow" id="catablog-view-set-buynow-code" class="catablog-code" rows="10" cols="30"><?php echo $this->options['view-buynow'] ?></textarea>
 				<small>
-					<?php _e("You may change the html code rendered for the <strong>Buy Now</strong> button here.
-					All value tokens are available here too, so place the title, description or any other
-					values you may want to use from the current catalog item in this code as well.", "catablog"); ?>
+					<?php _e("You may change the html code rendered for the <strong>Buy Now</strong> button here. All value tokens are available here too, so place the title, description or any other values you may want to use from the current catalog item in this code as well.", "catablog"); ?>
 				</small>
 			</p>
 			<p style="clear:both;">&nbsp;</p>
