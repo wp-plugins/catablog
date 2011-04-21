@@ -468,14 +468,14 @@ class CataBlogItem {
 		$quality  = 80;
 		
 		if (is_file($original) === false) {
-			return sprintf(__("Original image file could not be located at %s", 'catablog'), $original);
+			return "<strong>$filepath</strong>: " . sprintf(__("Original image file missing, could not be located at %s", 'catablog'), $original);
 		}
 		
 		list($width, $height, $format) = getimagesize($original);
 		$canvas_size = $this->_options['image-size'];
 		
 		if ($width < 1 || $height < 1) {
-			return __("Original image dimensions are less then 1px.", 'catablog');
+			return "<strong>$filepath</strong>: " . __("Original image dimensions are less then 1px. Most likely PHP does not have permission to read the original file.", 'catablog');
 		}
 		
 		if ($width < $canvas_size && $height < $canvas_size) {
@@ -504,7 +504,7 @@ class CataBlogItem {
 				$upload = imagecreatefrompng($original);
 				break;
 			default:
-				return __("Original image could not be loaded because it is an unsupported format.", 'catablog');
+				return "<strong>$filepath</strong>: " . __("Original image could not be loaded because it is an unsupported format.", 'catablog');
 		}
 		
 		imagecopyresampled($canvas, $upload, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
@@ -529,14 +529,14 @@ class CataBlogItem {
 		$quality  = 90;
 		
 		if (is_file($original) === false) {
-			return sprintf(__("Original image file missing, could not be located at %s", 'catablog'), $original);
+			return "<strong>$filepath</strong>: " . sprintf(__("Original image file missing, could not be located at %s", 'catablog'), $original);
 		}
 		
 		list($width, $height, $format) = @getimagesize($original);
 		$canvas_size = $this->_options['thumbnail-size'];			
 		
 		if ($width < 1 || $height < 1) {
-			return "<strong>$this->title</strong>: " . __("Original image dimensions are less then 1px. Most likely PHP does not have permission to read the original file.", 'catablog');
+			return "<strong>$filepath</strong>: " . __("Original image dimensions are less then 1px. Most likely PHP does not have permission to read the original file.", 'catablog');
 		}
 		
 		
@@ -558,7 +558,7 @@ class CataBlogItem {
 				$upload = imagecreatefrompng($original);
 				break;
 			default:
-				return __("Original image could not be loaded because it is an unsupported format.", 'catablog');
+				return "<strong>$filepath</strong>: " . __("Original image could not be loaded because it is an unsupported format.", 'catablog');
 		}
 		
 		

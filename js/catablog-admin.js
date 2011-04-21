@@ -5,8 +5,6 @@ function show_load() {
 	jQuery('#catablog_load_curtain').fadeTo(200, 0.8);
 }
 function hide_load() {
-	// $('#catablog_load_display').html('finishing');
-	
 	setTimeout(function() {
 		jQuery('#catablog_load_curtain').fadeOut(400, function() {
 			jQuery(this).remove();
@@ -112,7 +110,7 @@ function renderCataBlogItem(image, type, a, nonce, total_count, callback) {
 			progress_text.html(percent_complete.toFixed(1)+'% <small>'+progress_message+'</small>');
 			
 			if (data.success == false) {
-				$('#catablog-console').append('<li class="error">' + data.error + '</li>')
+				jQuery('#catablog-console').append('<li class="error">' + data.error + '</li>')
 			}
 			
 		}

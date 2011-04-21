@@ -936,7 +936,7 @@ class CataBlog {
 		
 		if ($originals->isDirectory()) {
 			
-			$new_order = wp_count_posts($this->custom_post_name)->publish;
+			$new_order = wp_count_posts($this->custom_post_name)->publish + 1;
 			
 			$default_term = $this->get_default_term();
 			$default_category = (array($default_term->term_id=>$default_term->name));
@@ -1143,7 +1143,7 @@ class CataBlog {
 		
 		if ($success !== true) {
 			$message = $success;
-			echo "({'success':false, 'message':'$message'})";
+			echo "({'success':false, 'error':'$message'})";
 		}
 		else {
 			$message = sprintf(__('Rendering... %s of %s', 'catablog'), $total - $count, $total);
@@ -1379,6 +1379,8 @@ class CataBlog {
 					}
 				}
 			}
+			
+			$slugs = array_unique($slugs);
 			
 			$results = CataBlogItem::getItems($slugs, $operator, $sort, $order);
 		}
@@ -1909,7 +1911,7 @@ class CataBlog {
 		$existant_ids = CataBlogItem::getItemIds();
 		
 		// import each new catalog item
-		$new_order = wp_count_posts($this->custom_post_name)->publish;
+		$new_order = wp_count_posts($this->custom_post_name)->publish + 1;
 		foreach ($data as $row) {
 			$error = false;
 			

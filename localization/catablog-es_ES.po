@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: CataBlog 1.2.5\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/catablog\n"
 "POT-Creation-Date: 2011-04-21 17:06:51+00:00\n"
-"PO-Revision-Date: 2011-04-21 10:24-0800\n"
+"PO-Revision-Date: 2011-04-21 10:38-0800\n"
 "Last-Translator: Zachary Segal <zac@illproductions.com>\n"
 "Language-Team: illProductions <zac@illproductions.com>\n"
 "MIME-Version: 1.0\n"
@@ -325,11 +325,11 @@ msgstr " Fin CataBlog LightBox Inline Stylesheet"
 
 #: lib/CataBlog.class.php:1338
 msgid "You may also press &quot;P&quot; or the left arrow on your keyboard"
-msgstr "También puede pulsar &quot;P&quot; o la flecha izquierda del teclado"
+msgstr "También puede pulsar &quot;A&quot; o la flecha izquierda del teclado"
 
 #: lib/CataBlog.class.php:1339
 msgid "You may also press &quot;N&quot; or the right arrow on your keyboard"
-msgstr "También puede presionar &quot;N&quot; o la flecha derecha del teclado"
+msgstr "También puede presionar &quot;S&quot; o la flecha derecha del teclado"
 
 #: lib/CataBlog.class.php:1340
 msgid "Close LightBox Now"
@@ -1119,7 +1119,7 @@ msgstr "Subir"
 
 #: templates/admin-edit.php:242
 msgid "Select an image to add as a sub image, this upload will not replace this item's main image."
-msgstr "Seleccione una imagen para agregar una imagen de África, esta subida no sustituirá a la imagen principal de este aparato."
+msgstr "Seleccione una imagen para agregar una imagen secundaria, esta subida no sustituirá a la imagen principal."
 
 #: templates/admin-edit.php:243
 #: templates/admin-edit.php:266

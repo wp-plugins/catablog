@@ -31,7 +31,7 @@
 				
 				<div>
 					<div id="catablog-edit-main-image">
-						<label><?php _e("Images", 'catablog'); ?></label>
+						<label id="catablog-edit-images-label"><?php _e("Images", 'catablog'); ?></label>
 						<div id="catablog-edit-images-column">
 							
 							<img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" id="catablog-image-preview" />
@@ -39,7 +39,7 @@
 							
 							<hr />
 							
-							<span class="hide-if-no-js">
+							<span id="catablog-edit-image-controls" class="hide-if-no-js">
 								<a href="#replace-main-image" id="show-image-window"><small style="font-size:10px;"><?php _e("Replace Main Image", 'catablog'); ?></small></a>
 								<br />
 								<a href="#add-subimage" id="show-subimage-window"><small style="font-size:10px;">[+] <?php _e("Add Sub Image", 'catablog'); ?></small></a>	

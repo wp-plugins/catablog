@@ -125,7 +125,7 @@ th.catablog-sortable {
 
 
 #catablog-edit-main-text {
-	margin: 0 0 0 120px;
+	margin: 0 0 0 135px;
 	border-width: 0 !important;
 	padding: 0 0 9px 9px !important;
 }
@@ -151,24 +151,28 @@ th.catablog-sortable {
 	position: relative;
 	float: left;
 	margin: 0;
-	width: 120px;
+	width: 135px;
 	border: 0 none !important;
 	padding: 0 !important;
 }
-#catablog-edit-main-image img#catablog-image-preview {
+#catablog-edit-main-image img.catablog-image-preview {
 	width: 100px;
 	height: 100px;
 }
 #catablog-edit-main-image input {
 	display: block;
 }
-
+#catablog-edit-image-controls {
+	text-align: left;
+	display: block;
+}
 
 
 #catablog-edit-images-column {
 	background-color: #fff; 
 	border: 1px #dfdfdf solid !important;
 	border-radius: 3px;
+	text-align: center;
 }
 
 #catablog-edit-images-column hr {
@@ -179,10 +183,11 @@ th.catablog-sortable {
 
 #catablog-sub-images {
 	position: relative;
-	padding:0;
-	border:0 none;
-	list-style:none;
 	width: 100px;
+	margin: 0 auto;
+	padding: 0;
+	border: 0 none;
+	list-style:none;
 }
 #catablog-sub-images li {
 	display: block;
@@ -241,7 +246,7 @@ th.catablog-sortable {
 	z-index: 1001;
 }
 .catablog-modal form {
-	width: 500px;
+	width: 550px;
 	margin: 0 auto;
 }
 .catablog-modal form h3 {
@@ -384,7 +389,7 @@ th.catablog-sortable {
 
 #catablog-edit-main-save {
 	border-width: 0 0 0 0 !important;
-	margin: 0 0 0 130px;
+	margin: 0 0 0 145px;
 }
 
 

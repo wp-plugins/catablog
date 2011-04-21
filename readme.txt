@@ -83,7 +83,7 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 3. Easy and familiar forms for making and editing catalog items.
 4. Turn your catalog into a photo gallery using custom templates.
 5. Display your catalog photos in high resolution with the LightBox.
-
+6. CataBlog is now localized in Español.
 
 
 == Changelog ==
@@ -97,14 +97,16 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * New: CataBlog ShortCode has sorting parameters.
 * New: CataBlog ShortCode has a template parameter for overriding the system template.
 * New: All messages and language may now be localized with included POT file.
+* New: Preliminary Spanish localization included.
 * New: Added Date field to the edit catalog item form.
+* Fix: Removed restrictions on foreign characters for the category name.
 * Fix: If image_rotate() is not an available function then CataBlog will not use it.
 * Fix: Thumbnail backgrounds are now filled with a rectangle for better system compatibility.
 * Fix: The Admin menu position of CataBlog no longer will conflict with certain setups.
 * Fix: Removed all !important declarations from the catablog.css file.
 * Fix: Optimized the templates for better theme compatibility.
-* Fix: Optimized the edit catalog item form.
-* Fix: When the link field is empty the %LINK% token will be the full size image instead of #empty-link.
+* Fix: Optimized the edit catalog item form for multiple languages.
+* Fix: When the link field is empty the %LINK% token will now return the full size image instead of #empty-link.
 * Fix: LightBox is now designed to work best with anchor tags instead of image tags.
 * Fix: You may now enable the LightBox library and the full size image rendering separately.
 * Fix: You may change the jQuery selector used to find the LightBox images.

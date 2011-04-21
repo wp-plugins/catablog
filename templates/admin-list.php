@@ -83,7 +83,7 @@
 						</a>
 					</td>
 					<td>
-						<strong><a href="<?php echo $edit ?>" title="Edit CataBlog Item"><?php echo htmlentities($result->getTitle(), ENT_QUOTES, 'UTF-8') ?></a></strong>
+						<strong><a href="<?php echo $edit ?>" title="Edit CataBlog Item"><?php echo ($result->getTitle()) ?></a></strong>
 						<div class="row-actions">
 							<span><a href="<?php echo $edit ?>"><?php _e("Edit", "catablog"); ?></a></span>
 							<span> | </span>

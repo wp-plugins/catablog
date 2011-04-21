@@ -430,8 +430,8 @@ jQuery(function($) {
 			jQuery(document).bind('keyup', function(event) {
 				var key_code = (event.keyCode ? event.keyCode : event.which);
 				
-				var forward_keycodes = [39, 78];
-				var back_keycodes    = [37, 80];
+				var forward_keycodes = [39, 78, 83];
+				var back_keycodes    = [37, 80, 65];
 				var escape_keycodes  = [27];
 				
 				if (in_array(key_code, forward_keycodes)) {
