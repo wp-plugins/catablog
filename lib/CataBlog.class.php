@@ -131,6 +131,7 @@ class CataBlog {
 	public function initialize_plugin() {
 		// load in i18n file
 		load_plugin_textdomain('catablog', false, '/catablog/localization');
+		$this->default_term_name = __("Uncategorized", "catablog");
 		
 		$params['label']              = __("CataBlog Item", 'catablog');
 		$params['public']              = false;
@@ -888,7 +889,7 @@ class CataBlog {
 			$this->wp_message(__("The CataBlog upload directories have been unlocked.", 'catablog'));
 		}
 		else {
-			$this->wp_error(__("Could not lock/unlock the directory. Are you using a unix based server?", 'catablog');
+			$this->wp_error(__("Could not lock/unlock the directory. Are you using a unix based server?", 'catablog'));
 		}
 		
 		$this->admin_options();
@@ -1334,8 +1335,8 @@ class CataBlog {
 				$javascript = array();
 				
 				$javascript[] = "var js_i18n=new Object;";
-				$javascript[] = "js_i18n.prev_tip='".__("You may also press 'P' or the left arrow on your keyboard", 'catablog')."';";
-				$javascript[] = "js_i18n.next_tip='".__("You may also press 'N' or the right arrow on your keyboard", 'catablog')."';";
+				$javascript[] = 'js_i18n.prev_tip="'.__("You may also press &quot;P&quot; or the left arrow on your keyboard", 'catablog').'";';
+				$javascript[] = 'js_i18n.next_tip="'.__("You may also press &quot;N&quot; or the right arrow on your keyboard", 'catablog').'";';
 				$javascript[] = "js_i18n.close_tip='".__('Close LightBox Now', 'catablog')."';";
 				$javascript[] = "js_i18n.prev_label='".__('PREV', 'catablog')."';";
 				$javascript[] = "js_i18n.next_label='".__('NEXT', 'catablog')."';";

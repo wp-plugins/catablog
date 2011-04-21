@@ -364,6 +364,9 @@ th.catablog-sortable {
 .catablog-category-row span {
 	vertical-align: middle;
 }
+#catablog-new-category-submit {
+	float: right;
+}
 #catablog-new-category-submit:active {
 	background-color: #555;
 }

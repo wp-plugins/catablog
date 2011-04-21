@@ -26,7 +26,7 @@
 						<?php endif?>
 					</span>
 					*/ ?>
-					<span>Main</span>
+					<span><?php _e("Main", "catablog"); ?></span>
 				</h3>
 				
 				<div>
@@ -41,6 +41,7 @@
 							
 							<span class="hide-if-no-js">
 								<a href="#replace-main-image" id="show-image-window"><small style="font-size:10px;"><?php _e("Replace Main Image", 'catablog'); ?></small></a>
+								<br />
 								<a href="#add-subimage" id="show-subimage-window"><small style="font-size:10px;">[+] <?php _e("Add Sub Image", 'catablog'); ?></small></a>	
 							</span>
 							
@@ -104,7 +105,7 @@
 				<div>
 					<p>
 						<span><?php printf(__("Date: %s", 'catablog'), date('M. jS, Y - H:i', strtotime($result->getDate()))) ?></span>
-						<a href="#edit-date" id="activate-date-editor" class="alignright">edit</a>
+						<a href="#edit-date" id="activate-date-editor" class="alignright"><?php _e("edit", "catablog") ?></a>
 					</p>
 					<p id="date-editor" class="hide">
 						<input type="text" name="date" id="date" class="text-field" value="<?php echo htmlspecialchars($result->getDate(), ENT_QUOTES, 'UTF-8') ?>" />
@@ -115,12 +116,12 @@
 					
 					<p>
 						<label for="order"><?php printf(__("Order: %s", 'catablog'), $result->getOrder()); ?></label>
-						<a href="#edit-order" id="activate-order-editor" class="alignright">edit</a>
+						<a href="#edit-order" id="activate-order-editor" class="alignright"><?php _e("edit", "catablog") ?></a>
 					</p>
 					<p id="order-editor" class="hide">
 						<input type="text" name="order" id="order" class="text-field" value="<?php echo htmlspecialchars($result->getOrder(), ENT_QUOTES, 'UTF-8') ?>" />
 						<small>
-							<?php _e("Enter a integer value to be assigned as this catalog item's order. There is only one order value per catalog item.") ?>
+							<?php _e("Enter a integer value to be assigned as this catalog item's order. There is only one order value per catalog item.", "catablog") ?>
 						</small>
 					</p>
 				</div>
@@ -131,7 +132,7 @@
 				<div id="catablog-fields">
 					<p>
 						<label for="link"><?php _e("Link", 'catablog'); ?></label>
-						<a href="#help" class="show-help alignright"><?php _e("help"); ?></a>
+						<a href="#help" class="show-help alignright"><?php _e("help", "catablog"); ?></a>
 						<br />
 						<input type="text" name="link" id="link" class="text-field" value="<?php echo htmlspecialchars($result->getLink(), ENT_QUOTES, 'UTF-8') ?>" />
 						<small>
@@ -140,7 +141,7 @@
 					</p>
 					<p>
 						<label for="price"><?php _e("Item Price", 'catablog'); ?></label>
-						<a href="#help" class="show-help alignright"><?php _e("help"); ?></a>
+						<a href="#help" class="show-help alignright"><?php _e("help", "catablog"); ?></a>
 						<br />
 						<input type="text" name="price" id="price" class="text-field" value="<?php echo $result->getPrice() ?>">
 						<small>
@@ -150,7 +151,7 @@
 					
 					<p>
 						<label for="product_code"><?php _e("Product Code", 'catablog'); ?></label>
-						<a href="#help" class="show-help alignright"><?php _e("help"); ?></a>
+						<a href="#help" class="show-help alignright"><?php _e("help", "catablog"); ?></a>
 						<br />
 						<input type="text" name="product_code" id="product_code" class="text-field" value="<?php echo htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8') ?>">
 						<small>

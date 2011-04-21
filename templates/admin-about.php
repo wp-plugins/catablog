@@ -4,7 +4,7 @@
 	<h2><?php _e("About CataBlog", 'catablog'); ?></h2>
 	
 	<p>
-		<?php printf(__("%sCataBlog%s is written by %sZachary Segal%s in his spare time.", "catablog"),"<a href='http://catablog.illproductions.com/' target='_blank'>", "</a>", "<a href='#'>", "</a>"); ?>
+		<?php printf(__("%sCataBlog%s is written by %sZachary Segal%s in his spare time.", "catablog"),"<a href='http://catablog.illproductions.com/' target='_blank'>", "</a>", "<a href='http://catablog.illproductions.com/about-author/' target='_blank'>", "</a>"); ?>
 		<?php printf(__('It is a cataloging tool for %sWordPress%s that allows you to easily manage a list of items with automatically generated thumbnail images.', "catablog"), "<a href='http://wordpress.org' target='_blank'>", "</a>"); ?>
 		<?php printf(__('Use of CataBlog is completely free, even commercial sites for now, all that I ask is that you rate the plugin at the %sWordPress Plugin Repository%s.', "catablog"), "<a href='http://wordpress.org/extend/plugins/catablog/' target='_blank'>", "</a>"); ?>
 	</p>
@@ -28,3 +28,20 @@
 	</table>
 
 </div><?php _e("", 'catablog'); ?>
+
+<?php
+
+// CataBlog About Panel System Versions and Info Labels
+__('CataBlog Version:');
+__('MySQL Version:');
+__('PHP Version:');
+__('PHP Memory Usage:');
+__('PHP Memory Limit:');
+__('Max Uploaded File Size:');
+__('Max Post size:');
+__('Thumbnail Disc Usage:');
+__('Full Size Disc Usage:');
+__('Original Upload Disc Usage:');
+__('Total Disc Usage:');
+
+?>

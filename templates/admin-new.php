@@ -13,7 +13,7 @@
 			<span class="nonessential"> | </span>
 
 			<?php wp_nonce_field( 'catablog_create', '_catablog_create_nonce', false, true ) ?>
-			<input type="submit" name="save" value="Submit" class="button-primary" />
+			<input type="submit" name="save" value="<?php _e("Upload", "catablog") ?>" class="button-primary" />
 			
 			<p><?php printf(__("Maximum upload file size: %sB", "catablog"), ini_get('upload_max_filesize')); ?></p>
 			

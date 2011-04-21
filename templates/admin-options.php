@@ -34,7 +34,7 @@
 			<li><a href="#template" title="Control how your catalog is rendered"><?php _e("Template", "catablog"); ?></a></li>
 			<li><a href="#store" title=""><?php _e("Store", "catablog"); ?></a></li>
 			<li><a id="catablog-options-menu-export" href="#export" title=""><?php _e("Export", "catablog"); ?></a></li>
-			<li><a href="#import" title=""><?php _e("", "catablog"); ?>Import</a></li>
+			<li><a href="#import" title=""><?php _e("Import", "catablog"); ?></a></li>
 			<li><a id="catablog-options-menu-system" href="#system" title=""><?php _e("Systems", "catablog"); ?></a></li>
 		</ul>
 		
