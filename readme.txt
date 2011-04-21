@@ -16,7 +16,7 @@ If you have a support question, please open a new support ticket here or check o
 
 Highlighted Features:
 
-* Filter by multiple categories with one shortcode.
+* Filter by multiple categories with one ShortCode.
 * Sort your catalog by order, title, date or randomly.
 * Add multiple images to a catalog item.
 * Control exactly how your catalog HTML code is rendered.
@@ -26,9 +26,6 @@ Highlighted Features:
 * Automatically import new image files into the catalog.
 * The Options Page is well organized and supports many configurations.
 * Easy management of your catalog with superiorly designed admin controls.
-
-Pre Version 0.9.5 Upgrades:
-This version of CataBlog will not upgrade properly with yours. Please install CataBlog 1.1 and update the database before upgrading to CataBlog 1.2 or above.
 
 Please remember that CataBlog is written, maintained, supported and documented by Zachary Segal. Please feel free to stop by and visit http://catablog.illproductions.com and http://www.illproductions.com for more information about CataBlog and Zachary anytime.
 
@@ -84,7 +81,7 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 == Changelog ==
 
 = 1.2.5 =
-* Important: Requires WordPress 3.1 or better required.
+* Important: Requires WordPress 3.1 or better.
 * Important: Removed drag and drop reordering and exposed the order value for each catalog item.
 * New: CataBlog ShortCode now supports multiple categories separated by commas.
 * New: CataBlog ShortCode has a new operator parameter for querying categories.
@@ -183,18 +180,10 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 LightBox JavaScript Library was upgraded, please upgrade your template code accordingly.
 http://catablog.illproductions.com for more information and specifics.
 
-= 1.0 =
+= 1.2 =
 
-Nothing Urgent for CataBlog 0.9.5 and Above.
+Category name and slug bug was fixed in this version, you may want to export and reimport after upgrading.
 http://catablog.illproductions.com for more information and specifics.
-
-= 0.9.8 =
-
-No Upgrade Notices for CataBlog 0.9.5 and Above.
-
-= 0.9.7 =
-
-Note: This version should be used over 0.9.6 or 0.9.6.1, thanks!
 
 = 0.9.5 =
 
