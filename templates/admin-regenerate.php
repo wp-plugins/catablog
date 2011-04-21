@@ -30,7 +30,7 @@
 	jQuery(document).ready(function($) {
 		var images  = ["<?php echo implode('", "', $image_names) ?>"];
 		var nonce   = '<?php echo wp_create_nonce("catablog-render-images") ?>';
-		var message = '<?php _e("Image rendering is now complete, you may now go to any other admin panel you may want."); ?>';
+		var message = '<?php _e("Image rendering is now complete, you may now go to any other admin panel you may want.", "catablog"); ?>';
 		
 		discourage_leaving_page('<?php _e("Please allow the rendering to complete before leaving this page. Click cancel to go back and let the rendering complete.", "catablog"); ?>');
 		

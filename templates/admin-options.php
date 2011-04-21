@@ -281,7 +281,7 @@
 				<label for="catablog_clear_db"><?php _e("Replace All Data:", "catablog"); ?></label>
 			</p>
 			
-			<p><input type="submit" class="button" value="<?php _e('Import CataBlog Data') ?>" /></p>
+			<p><input type="submit" class="button" value="<?php _e('Import CataBlog Data', "catablog") ?>" /></p>
 			
 			<?php if (!$function_exists): ?>
 				<p class="error"><small>

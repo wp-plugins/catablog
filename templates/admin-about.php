@@ -20,7 +20,8 @@
 		<tbody>
 		<?php foreach ($stats as $label => $value): ?>
 			<tr>
-				<td><strong><?php echo str_replace("_", " ", $label) . ":" ?></strong></td>
+				<?php $transformed_label = str_replace("_", " ", $label) . ":" ?>
+				<td><strong><?php _e($transformed_label, 'catablog'); ?></strong></td>
 				<td><?php echo $value ?></td>
 			</tr>
 		<?php endforeach ?>
