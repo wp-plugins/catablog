@@ -84,7 +84,7 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 == Changelog ==
 
 = 1.2.5 =
-* Important: Requires WordPress 3.1 or better.
+* Important: Requires WordPress 3.1 or better required.
 * Important: Removed drag and drop reordering and exposed the order value for each catalog item.
 * New: CataBlog ShortCode now supports multiple categories separated by commas.
 * New: CataBlog ShortCode has a new operator parameter for querying categories.
