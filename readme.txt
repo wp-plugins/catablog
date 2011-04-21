@@ -2,9 +2,9 @@
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
 Tags: admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list
-Requires at least: 3.0
+Requires at least: 3.1
 Tested up to: 3.1
-Stable tag: 1.2
+Stable tag: 1.2.5
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
