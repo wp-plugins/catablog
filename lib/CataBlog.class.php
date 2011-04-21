@@ -1042,9 +1042,9 @@ class CataBlog {
 		
 		$category_name = trim($_REQUEST['name']);
 		
-		$char_check = preg_match('/[^a-zA-Z0-9_ -]/', $category_name);
+		$char_check = preg_match('/[\,\<\>\&\'\"]/', $category_name);
 		if ($char_check > 0) {
-			echo "({'success':false, 'error':'".__('Please only use these characters in your category name: letters, numbers, space, dash and underscore.', 'catablog')."'})";
+			echo "({'success':false, 'error':'".__('Commas and reserved HTML characters are not allowed in category names.', 'catablog')."'})";
 			die;
 		};
 		

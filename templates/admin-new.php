@@ -1,7 +1,7 @@
 <div class="wrap">
 	
 	<div id="icon-catablog" class="icon32"><br /></div>
-	<h2><?php _e('Add New CataBlog Entry') ?></h2>
+	<h2><?php _e("Add New CataBlog Entry", "catablog") ?></h2>
 		
 	<form id="catablog-create" class="catablog-form clear_float" method="post" action="admin.php?page=catablog-create" enctype="multipart/form-data">
 		
