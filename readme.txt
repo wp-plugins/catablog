@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list
 Requires at least: 3.1
 Tested up to: 3.1
-Stable tag: 1.2.5
+Stable tag: 1.2.5.1
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -79,6 +79,15 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.2.5.1 =
+* Fix: Thumbnail in the edit catalog item form is now resized properly.
+* Fix: Added a missing CSS class for img.catablog-image
+* Fix: Fixed the CSS classes for sub images in the default template.
+* Fix: The inline Stylesheet classes now have #content to help CSS overrides in certain themes.
+* Fix: The LightBox check if the file extension is an image is no longer case sensitive.
+* Fix: Secondary images now link to the proper full size images.
+* Fix: The function for theme developers now has the new shortcode parameters.
 
 = 1.2.5 =
 * Important: Requires WordPress 3.1 or better.

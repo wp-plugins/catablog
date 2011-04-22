@@ -15,22 +15,29 @@
 	float: left;
 	position: relative;
 }
+#content .catablog-row img.catablog-image,
+.catablog-row img.catablog-image,
+#content .catablog-row .catablog-image img,
 .catablog-row .catablog-image img {
 	display: block;
 	height: auto;
 	float: left;
 }
+#content .catablog-row .catablog-images-column .catablog-image img,
 .catablog-row .catablog-images-column .catablog-image img {
 	float: none;
 }
+#content .catablog-row .catablog-image.catablog-subimage,
 .catablog-row .catablog-image.catablog-subimage {
 	float: left;
-	width: 49%;
-	margin: 1% 1% 0 0;
+	width: 50%;
+	margin: 0;
 }
+#content .catablog-row .catablog-image.catablog-subimage img,
 .catablog-row .catablog-image.catablog-subimage img {
 	width: 100%;
 }
+#content .catablog-row .catablog-title,
 .catablog-row .catablog-title {
 	display: block;
 	font-size: 1.4em;
@@ -38,6 +45,7 @@
 	clear: none;
 	float: none;
 }
+#content .catablog-row .catablog-description,
 .catablog-row .catablog-description {
 	display: block;
 	clear: none;
@@ -70,6 +78,7 @@
 .catablog-gallery.catablog-row:hover .catablog-title {
 	display: block;
 }
+#content .catablog-gallery.catablog-row .catablog-title,
 .catablog-gallery.catablog-row .catablog-title {
 	display: none;
 	position: absolute;

@@ -34,7 +34,7 @@
 						<label id="catablog-edit-images-label"><?php _e("Images", 'catablog'); ?></label>
 						<div id="catablog-edit-images-column">
 							
-							<img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" id="catablog-image-preview" />
+							<img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" class="catablog-image-preview" />
 							<input type="hidden" name="image" id="image" value="<?php echo $result->getImage() ?>" />
 							
 							<hr />

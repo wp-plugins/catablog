@@ -21,7 +21,7 @@ jQuery(function($) {
 				// selected element is an achor tag
 				
 				var href             = jQuery(this).attr('href');
-				var extension        = href.split('.').pop();
+				var extension        = href.split('.').pop().toLowerCase();
 				
 				if (in_array(extension, image_extensions)) {
 					
@@ -266,7 +266,7 @@ jQuery(function($) {
 			}
 			
 			var new_href      = new_image.href;
-			var new_extension = new_href.split('.').pop();
+			var new_extension = new_href.split('.').pop().toLowerCase();
 			if (in_array(new_extension, image_extensions) == false) {
 				if (current_image == 0) {
 					hold_click = false;
