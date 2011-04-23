@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "1.2.5.1";
+	private $version     = "1.2.5.2";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -1306,14 +1306,16 @@ class CataBlog {
 			
 			$inline_styles = array();
 			
-			$inline_styles[] = "#content .catablog-row, .catablog-row {min-height:{$size}px; height:auto !important; height:{$size}px;}";
-			$inline_styles[] = "#content .catablog-image, .catablog-image {width:{$size}px;}";
-			$inline_styles[] = "#content .catablog-title, .catablog-title {margin-left:{$size1}px;}";
-			$inline_styles[] = "#content .catablog-description, .catablog-description {margin-left:{$size1}px;}";
-			$inline_styles[] = "#content .catablog-images-column, .catablog-images-column {width:{$size}px;} ";
+			$inline_styles[] = ".catablog-row {min-height:{$size}px; height:auto !important; height:{$size}px;}";
+			$inline_styles[] = ".catablog-image {width:{$size}px;}";
+			$inline_styles[] = ".catablog-title {margin:0 0 0 {$size1}px !important;}";
+			$inline_styles[] = ".catablog-description {margin:0 0 0 {$size1}px; !important}";
+			$inline_styles[] = ".catablog-images-column {width:{$size}px;} ";
 			
-			$inline_styles[] = "#content .catablog-gallery.catablog-row .catablog-image, #content .catablog-gallery.catablog-row .catablog-image img, .catablog-gallery.catablog-row .catablog-image, .catablog-gallery.catablog-row .catablog-image img {float:none; width:{$size}px; height:{$size}px;}";
-			$inline_styles[] = "#content .catablog-gallery.catablog-row .catablog-title, .catablog-gallery.catablog-row .catablog-title {width:{$size2}px;}";
+			$inline_styles[] = ".catablog-gallery.catablog-row {width:{$size}px; height:{$size}px;}";
+			$inline_styles[] = ".catablog-gallery.catablog-row .catablog-image {width:{$size}px; height:{$size}px;}";
+			$inline_styles[] = ".catablog-gallery.catablog-row .catablog-image img {width:{$size}px; height:{$size}px;}";
+			$inline_styles[] = ".catablog-gallery.catablog-row .catablog-title {width:{$size2}px;}";
 			
 			echo "\n<!-- ".__('CataBlog LightBox Inline Stylesheet')." -->\n";
 			echo "<style>".implode("", $inline_styles)."</style>\n";

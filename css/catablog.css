@@ -15,29 +15,26 @@
 	float: left;
 	position: relative;
 }
-#content .catablog-row img.catablog-image,
 .catablog-row img.catablog-image,
-#content .catablog-row .catablog-image img,
 .catablog-row .catablog-image img {
 	display: block;
 	height: auto;
 	float: left;
 }
-#content .catablog-row .catablog-images-column .catablog-image img,
 .catablog-row .catablog-images-column .catablog-image img {
 	float: none;
 }
-#content .catablog-row .catablog-image.catablog-subimage,
 .catablog-row .catablog-image.catablog-subimage {
 	float: left;
 	width: 50%;
 	margin: 0;
+	padding: 0;
+	border: 0 none;
+	
 }
-#content .catablog-row .catablog-image.catablog-subimage img,
 .catablog-row .catablog-image.catablog-subimage img {
-	width: 100%;
+	width: 100% !important;
 }
-#content .catablog-row .catablog-title,
 .catablog-row .catablog-title {
 	display: block;
 	font-size: 1.4em;
@@ -45,7 +42,6 @@
 	clear: none;
 	float: none;
 }
-#content .catablog-row .catablog-description,
 .catablog-row .catablog-description {
 	display: block;
 	clear: none;
@@ -70,6 +66,7 @@
 }
 .catablog-gallery.catablog-row .catablog-image {
 	display: block;
+	float: none;
 	position: static;
 }
 .catablog-gallery.catablog-row .catablog-image img {
@@ -78,7 +75,6 @@
 .catablog-gallery.catablog-row:hover .catablog-title {
 	display: block;
 }
-#content .catablog-gallery.catablog-row .catablog-title,
 .catablog-gallery.catablog-row .catablog-title {
 	display: none;
 	position: absolute;
@@ -87,13 +83,14 @@
 	color: #fff;
 	background: #222;
 	opacity: 0.8;
-	margin: 0;
+	margin: 0 !important;
 	padding: 5px;
 	font-weight: normal;
 	font-size: 1em;
 }
 .catablog-gallery.catablog-row .catablog-description {
 	display: none;
+	margin: 0 !important;
 }
 
 
