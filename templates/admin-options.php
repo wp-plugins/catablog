@@ -208,7 +208,7 @@
 					</select>
 					<a href="<?php echo $this->urls['buttons'] ?>" id="catablog-view-set-buynow" class="catablog-load-code button add-new-h2"><?php _e("Load Template", "catablog"); ?></a>
 				<?php else: ?>
-					<p class="error"><?php _e("", "catablog"); ?><?php _e("Could not locate the views directory. Please reinstall CataBlog.", "catablog"); ?></p>
+					<p class="error"><?php _e("Could not locate the views directory. Please reinstall CataBlog.", "catablog"); ?></p>
 				<?php endif ?>
 			</p>
 			<p>

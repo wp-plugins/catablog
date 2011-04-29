@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "1.2.5.2";
+	private $version     = "1.2.5.3";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -248,7 +248,7 @@ class CataBlog {
 		add_menu_page("Edit CataBlog", "CataBlog", $this->user_level, 'catablog', array($this, 'admin_list'), $this->urls['plugin']."/images/catablog-icon-16.png");
 		
 		// register main plugin pages
-		add_submenu_page('catablog', __("Manage CataBlog", 'catablog'), __('CataBlog', 'catablog'), $this->user_level, 'catablog', array(&$this, 'admin_list'));
+		add_submenu_page('catablog', __("CataBlog Library", 'catablog'), __('Library', 'catablog'), $this->user_level, 'catablog', array(&$this, 'admin_list'));
 		add_submenu_page('catablog', __("Add New CataBlog Entry", 'catablog'), __('Add New', 'catablog'), $this->user_level, 'catablog-new', array(&$this, 'admin_new'));
 		add_submenu_page('catablog', __("CataBlog Options", 'catablog'), __('Options', 'catablog'), $this->user_level, 'catablog-options', array(&$this, 'admin_options'));
 		add_submenu_page('catablog', __("About CataBlog", 'catablog'), __('About', 'catablog'), $this->user_level, 'catablog-about', array(&$this, 'admin_about'));
@@ -1586,11 +1586,6 @@ class CataBlog {
 	
 	private function check_system_reqs() {
 		
-		/** CHECK PHP **/
-		// check if PHP is version 5
-		if (version_compare(phpversion(), '5.0.0', '<')) {
-		  die(__("<strong>CataBlog</strong> requires <strong>PHP 5</strong> or better running on your web server. You're version of PHP is to old, please contact your hosting company or IT department for an upgrade. Thanks.", 'catablog'));
-		}
 		// check if GD Library is loaded in PHP
 		if (!extension_loaded('gd') || !function_exists('gd_info')) {
 		    die(__("<strong>CataBlog</strong> requires that the <strong>GD Library</strong> be installed on your web server's version of PHP. Please contact your hosting company or IT department for more information. Thanks.", 'catablog'));

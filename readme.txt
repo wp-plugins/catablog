@@ -1,10 +1,10 @@
 === CataBlog ===
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
-Tags: admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list
+Tags: admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress
 Requires at least: 3.1
 Tested up to: 3.1
-Stable tag: 1.2.5.2
+Stable tag: 1.2.5.3
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -31,11 +31,13 @@ Please remember that CataBlog is written, maintained, supported and documented b
 
 == Installation ==
 
-1. Upload `catablog` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the `Plugins` menu in WordPress
+1. Make sure your server is running `PHP 5` or better and has the `GD` and `MultiByte String` libraries.
+1. Upload `catablog` to the `/wp-content/plugins/` directory.
+1. Activate the plugin through the `Plugins` menu in WordPress.
 1. If you want you may also network activate CataBlog. Note that each new site you make will require an installation step, simply do so when reminded and all will be good.
-1. Create catalog items by uploading image files
-1. Sprinkle the `[catablog]` and `[catablog category='dog']` ShortCodes throughout your blog to show your catalog
+1. Create catalog items by uploading image files.
+1. Sprinkle the `[catablog]` and `[catablog category='dog']` ShortCodes throughout your blog to show your catalog.
+1. You may also use the template tag, which operates just like the ShortCode, `<?php catablog_show_items($category, $template, $sort, $order, $operator); ?>`.
 
 == Frequently Asked Questions ==
 
@@ -79,6 +81,13 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.2.5.3 =
+* Fix: Moved the PHP 5 requirement check out of the CataBlog class, allowing proper checking.
+* Fix: Removed a deprecated token from the built in gallery template.
+* Fix: Removed the catablog.pot file and instead will include a catablog.po file to be duplicated and translated.
+* New: The entire CataBlog collection is now labeled 'Library' in the admin menu.
+* New: Modified the installation instructions to include the server requirements.
 
 = 1.2.5.2 =
 * Fix: Fixed display of gallery template, especially in themes that have a #content element.

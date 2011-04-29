@@ -2,7 +2,7 @@
 
 		<div id="icon-catablog" class="icon32"><br /></div>
 		<h2>
-			<span><?php _e("Manage CataBlog", 'catablog'); ?></span>
+			<span><?php _e("CataBlog Library", 'catablog'); ?></span>
 			<a href="admin.php?page=catablog-new" class="button add-new-h2"><?php _e("Add New", 'catablog'); ?></a>
 			
 		</h2>

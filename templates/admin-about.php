@@ -28,7 +28,7 @@
 		</tbody>
 	</table>
 
-</div><?php _e("", 'catablog'); ?>
+</div>
 
 <?php
 

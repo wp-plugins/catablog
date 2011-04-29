@@ -3,13 +3,11 @@ This file contains instructions and information for people who want to translate
 Please read this page to learn how to translate a file
 http://codex.wordpress.org/Translating_WordPress
 
-The included POT file should be used to generate your locals PO and MO libraries.
+The included catablog.po file should be duplicated and renamed with the appropriate localization suffix.
 
-The file is labeled catablog.pot and should be copied and edited.
+When you are done, please email me the translated PO and MO files.
 
-When you are done please generate a PO and MO file for your local and send it my way.
-
-Please feel free to contact me with questions or send me your translation files, so I may integrate it into the repository.
+Please feel free to contact me with questions or send me your translation files, so I may integrate it into the next version of CataBlog.
 http://www.illproductions.com/contact/
 
 
