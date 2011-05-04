@@ -90,6 +90,12 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Changelog ==
 
+= 1.2.6 =
+* Fix: All plugin URLs will now be secure connections if the page is loaded will SSL.
+* Fix: Removed die() function from plugin completely, so changing your server configurations won't break your entire site in some fringe cases.
+* Fix: Refactored the plugin activation function so it is more reliable.
+* New: Plugin version number is now saved in your database to help the plugin update itself.
+
 = 1.2.5.3 =
 * Fix: Moved the PHP 5 requirement check out of the CataBlog class, allowing proper checking.
 * Fix: Removed a deprecated token from the built in gallery template.
