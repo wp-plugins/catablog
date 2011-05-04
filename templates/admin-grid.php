@@ -18,7 +18,7 @@
 					</a>
 					
 					<a href="<?php echo $edit ?>" class="catablog-title"><small>
-							<?php $title = (mb_strlen($result->getTitle()) > 30)? trim(mb_substr($result->getTitle(), 0, 30)).'...' : $result->getTitle() ?>
+							<?php $title = ($result->string_length($result->getTitle()) > 30)? trim(mb_substr($result->getTitle(), 0, 30)).'...' : $result->getTitle() ?>
 							<?php echo htmlentities($title, ENT_QUOTES, 'UTF-8') ?>
 					</small></a>
 					

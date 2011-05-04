@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress
 Requires at least: 3.1
 Tested up to: 3.1
-Stable tag: 1.2.5.3
+Stable tag: 1.2.6
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -12,7 +12,9 @@ CataBlog is a comprehensive and effortless tool that allows you to create catalo
 
 CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use categories to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too with the LightBox effect, perfect for simple galleries. Easy, intuitive and smart design makes it trivial to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
-If you have a support question, please open a new support ticket here or check out the documentation before contacting me, thanks.
+PLEASE DO NOT EMAIL ME DIRECTLY
+
+Instead post your questions and comments on the appropriate forums. If you have a technical support question, please [write a new topic](http://wordpress.org/tags/catablog?forum_id=10#postform "Create new support thread for CataBlog") on the wordpress.org forums. If you want to join the discussion and suggest new features or development paths, feel free to comment on relevant posts at the [blog](http://catablog.illproductions.com/ "catablog.illproductions.com"). You may also contribute to the community on the [facebook page](http://www.facebook.com/pages/CataBlog/183454038341567 "CataBlog Facebook Page").
 
 Highlighted Features:
 
@@ -27,7 +29,7 @@ Highlighted Features:
 * The Options Page is well organized and supports many configurations.
 * Easy management of your catalog with superiorly designed admin controls.
 
-Please remember that CataBlog is written, maintained, supported and documented by Zachary Segal. Please feel free to stop by and visit http://catablog.illproductions.com and http://www.illproductions.com for more information about CataBlog and Zachary anytime.
+Please remember that CataBlog is written, maintained, supported and documented by Zachary Segal. CataBlog is free software, and as such comes with absolutely no warranty or guarantee of service. Please feel free to visit http://catablog.illproductions.com and http://www.illproductions.com for more information about CataBlog and Zachary anytime.
 
 == Installation ==
 
@@ -44,6 +46,12 @@ Please remember that CataBlog is written, maintained, supported and documented b
 = Where is the documentation =
 
 [Click Here](http://catablog.illproductions.com/documentation/introduction-and-installation/ "CataBlog Documentation") for the official documentation.
+
+= Something is broken, how can I get help =
+
+1. Read all the documentation at the [official blog](http://catablog.illproductions.com/ "catablog.illproductions.com"), this does get updated so check back frequently.
+1. [Create a new thread](http://wordpress.org/tags/catablog?forum_id=10#postform "Create new support thread for CataBlog") on the wordpress.org forums and make sure to tag it with catablog.
+1. Search the [official blog](http://catablog.illproductions.com/ "catablog.illproductions.com") for a post that is relevant to your question and write a comment with your question.
 
 = What browsers do you support =
 

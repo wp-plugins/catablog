@@ -7,7 +7,7 @@
 class CataBlog {
 	
 	// plugin component version numbers
-	private $version     = "1.2.5.3";
+	private $version     = "1.2.6";
 	private $dir_version = 10;
 	private $db_version  = 10;
 	private $debug       = false;
@@ -41,7 +41,12 @@ class CataBlog {
 		// get plugin options from wp database
 		$this->options = $this->get_options();
 		
+		
 		$wp_upload_dir = wp_upload_dir();
+		$upload_directory = $wp_upload_dir['baseurl'];
+		if (is_ssl()) {
+			$upload_directory = str_replace('http://', 'https://', $wp_upload_dir['baseurl']);
+		}
 		
 		// define common directories and files for the plugin
 		$this->plugin_file               = WP_CONTENT_DIR . "/plugins/catablog/catablog.php";
@@ -57,18 +62,19 @@ class CataBlog {
 		$this->directories['originals']  = $wp_upload_dir['basedir'] . "/catablog/originals";
 		$this->directories['thumbnails'] = $wp_upload_dir['basedir'] . "/catablog/thumbnails";
 		$this->directories['fullsize']   = $wp_upload_dir['basedir'] . "/catablog/fullsize";
-
-		$this->urls['plugin']     = WP_CONTENT_URL . "/plugins/catablog";
-		$this->urls['css']        = WP_CONTENT_URL . "/plugins/catablog/css";
-		$this->urls['javascript'] = WP_CONTENT_URL . "/plugins/catablog/js";
-		$this->urls['images']     = WP_CONTENT_URL . "/plugins/catablog/images";
-		$this->urls['template']   = WP_CONTENT_URL . "/plugins/catablog/templates";
-		$this->urls['views']      = WP_CONTENT_URL . "/plugins/catablog/templates/views";
-		$this->urls['buttons']    = WP_CONTENT_URL . "/plugins/catablog/templates/buttons";
 		
-		$this->urls['originals']  = $wp_upload_dir['baseurl'] . "/catablog/originals";
-		$this->urls['thumbnails'] = $wp_upload_dir['baseurl'] . "/catablog/thumbnails";
-		$this->urls['fullsize']   = $wp_upload_dir['baseurl'] . "/catablog/fullsize";
+		// define commen urls for the plugin
+		$this->urls['plugin']     = content_url() . "/plugins/catablog";
+		$this->urls['css']        = content_url() . "/plugins/catablog/css";
+		$this->urls['javascript'] = content_url() . "/plugins/catablog/js";
+		$this->urls['images']     = content_url() . "/plugins/catablog/images";
+		$this->urls['template']   = content_url() . "/plugins/catablog/templates";
+		$this->urls['views']      = content_url() . "/plugins/catablog/templates/views";
+		$this->urls['buttons']    = content_url() . "/plugins/catablog/templates/buttons";
+		
+		$this->urls['originals']  = $upload_directory . "/catablog/originals";
+		$this->urls['thumbnails'] = $upload_directory . "/catablog/thumbnails";
+		$this->urls['fullsize']   = $upload_directory . "/catablog/fullsize";
 	}
 	
 	public function getCustomPostName() {
@@ -89,9 +95,10 @@ class CataBlog {
 		// register custom post type and taxonomy
 		add_action('init', array(&$this, 'initialize_plugin'), 0);
 		
+		// TO BE REMOVED !!!!
 		// register activation hooks
-		register_activation_hook($this->plugin_file, array(&$this, 'activate'));
-		register_deactivation_hook($this->plugin_file, array(&$this, 'deactivate'));
+		// register_activation_hook($this->plugin_file, array(&$this, 'activate'));
+		// register_deactivation_hook($this->plugin_file, array(&$this, 'deactivate'));
 		
 		// register admin hooks
 		if (is_admin()) {
@@ -556,7 +563,7 @@ class CataBlog {
 			
 			$tmp_name = $_FILES['new_image']['tmp_name'];
 			
-			if (mb_strlen($tmp_name) > 0) {
+			if ($this->string_length($tmp_name) > 0) {
 				$validate = $new_item->validateImage($tmp_name);
 				if ($validate === true) {
 					
@@ -662,7 +669,7 @@ class CataBlog {
 				
 				$tmp_name = $_FILES['new_image']['tmp_name'];
 				
-				if (mb_strlen($tmp_name) > 0) {
+				if ($this->string_length($tmp_name) > 0) {
 					$validate = $result->validateImage($tmp_name);
 					if ($validate === true) {
 						$to_delete = array();
@@ -713,7 +720,7 @@ class CataBlog {
 				
 				$tmp_name = $_FILES['new_sub_image']['tmp_name'];
 				
-				if (mb_strlen($tmp_name) > 0) {
+				if ($this->string_length($tmp_name) > 0) {
 					$validate = $result->validateImage($tmp_name);
 					if ($validate === true) {
 						$result->addSubImage($tmp_name);
@@ -762,7 +769,7 @@ class CataBlog {
 	
 	public function admin_bulk_edit() {
 		$action = $_REQUEST['bulk-action'];
-		if (mb_strlen($action) > 0) {
+		if ($this->string_length($action) > 0) {
 			
 			$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_bulkedit_nonce'], 'catablog_bulkedit' );
 			if ($nonce_verified) {
@@ -1032,7 +1039,7 @@ class CataBlog {
 			$item->save();
 		}
 		
-		die();
+		exit;
 	}
 	
 	public function ajax_new_category() {
@@ -1048,7 +1055,7 @@ class CataBlog {
 			die;
 		};
 		
-		$string_length = mb_strlen($category_name);
+		$string_length = $this->string_length($category_name);
 		if ($string_length < 1) {
 			echo "({'success':false, 'error':'".__('Please be a little more specific with your category name.', 'catablog')."'})";
 			die;
@@ -1080,9 +1087,8 @@ class CataBlog {
 			}
 			echo "({'success':false, 'error':'".$error_string."'})";			
 		}
-
 		
-		die();
+		exit;
 	}
 	
 	public function ajax_delete_category() {
@@ -1098,7 +1104,7 @@ class CataBlog {
 			echo "({'success':false, 'error':'".__('Term did not exist, please refresh page and try again.', 'catablog')."'})";
 		}
 		
-		die();
+		exit;
 	}
 	
 	public function ajax_flush_fullsize() {
@@ -1116,7 +1122,7 @@ class CataBlog {
 		$this->options['lightbox-render'] = false;
 		$this->update_options();
 		
-		die();
+		exit;
 	}
 	
 	public function ajax_render_images() {
@@ -1154,7 +1160,7 @@ class CataBlog {
 		}
 		
 		
-		die();
+		exit;
 	}
 	
 	public function ajax_delete_subimage() {
@@ -1195,7 +1201,7 @@ class CataBlog {
 			echo "({'success':true, 'message':'".__('sub image deleted successfully', 'catablog')."'})";
 		}
 		
-		die();
+		exit;
 	}
 
 
@@ -1433,9 +1439,9 @@ class CataBlog {
 		}
 		
 		$target = htmlspecialchars($this->options['link-target'], ENT_QUOTES, 'UTF-8');
-		$target = (mb_strlen($target) > 0)? "target='$target'" : "";
+		$target = ($this->string_length($target) > 0)? "target='$target'" : "";
 		$rel    = htmlspecialchars($this->options['link-relationship'], ENT_QUOTES, 'UTF-8');
-		$rel    = (mb_strlen($rel) > 0)? "rel='$rel'" : "";
+		$rel    = ($this->string_length($rel) > 0)? "rel='$rel'" : "";
 		$link   = $result->getLink();
 		
 		
@@ -1459,7 +1465,7 @@ class CataBlog {
 		$values['order']           = $result->getOrder();
 		
 		// catalog item field values
-		$values['link']            = (mb_strlen($link) > 0)? $link : $values['image-lightbox'];
+		$values['link']            = ($this->string_length($link) > 0)? $link : $values['image-lightbox'];
 		$values['price']           = number_format(((float)($result->getPrice())), 2, '.', '');
 		$values['product-code']    = $result->getProductCode();
 		
@@ -1511,13 +1517,13 @@ class CataBlog {
 				$template .= "</p>";
 			}
 			
-			if (mb_strlen($template) == 0) {
+			if ($this->string_length($template) == 0) {
 				$template = file_get_contents($this->directories['template'] . '/views/default.htm');
 			}
 		}
 		else {
 			$template = $this->options['view-theme'];
-			if (mb_strlen($template) == 0) {
+			if ($this->string_length($template) == 0) {
 				$template = file_get_contents($this->directories['template'] . '/views/default.htm');
 			}
 		}
@@ -1562,7 +1568,16 @@ class CataBlog {
 		
 		if ($this->options == false) {
 			return false;
-		}		
+		}
+		
+		// $wp_upload_dir = wp_upload_dir();
+		// $wp_upload_dir = array('error'=>'sdfh jsdhf kjs hfjsd');
+		// if ($upload_directory['error']) {
+		// 	if (is_admin()) {
+		// 		_e("<strong>CataBlog</strong> could not detect your upload directory or it is not writable by PHP. Please contact your hosting company or IT department for more information. Thanks.", 'catablog');
+		// 	}
+		// }
+		
 		$dirs = array(0=>'wp_uploads', 1=>'uploads', 2=>'thumbnails', 3=>'originals', 4=>'fullsize');
 		foreach ($dirs as $dir) {
 			$is_dir = is_dir($this->directories[$dir]);
@@ -1574,8 +1589,8 @@ class CataBlog {
 		return true;
 	}
 	
-	public function activate() {
-		$this->check_system_reqs();
+	public function install() {
+		// $this->check_system_reqs();
 		$this->initialize_plugin();
 		$this->install_directories();
 		$this->install_options();
@@ -1588,32 +1603,21 @@ class CataBlog {
 		
 		// check if GD Library is loaded in PHP
 		if (!extension_loaded('gd') || !function_exists('gd_info')) {
-		    die(__("<strong>CataBlog</strong> requires that the <strong>GD Library</strong> be installed on your web server's version of PHP. Please contact your hosting company or IT department for more information. Thanks.", 'catablog'));
+		    return __("<strong>CataBlog</strong> requires that the <strong>GD Library</strong> be installed on your web server's version of PHP. Please contact your hosting company or IT department for more information. Thanks.", 'catablog');
 		}
-		// check if mbstring Library is loaded in PHP
-		if (!extension_loaded('mbstring') || !function_exists('mb_strlen')) {
-		    die(__("<strong>CataBlog</strong> requires that the <strong>MultiByte String Library</strong> be installed on your web server's version of PHP. Please contact your hosting company or IT department for more information. Thanks.", 'catablog'));
-		}
-
-
-
-		/** CHECK WORDPRESS **/
+		
 		// check WordPress version
 		if (version_compare(get_bloginfo('version'), '3.1', '<')) {
-			die(__("<strong>CataBlog</strong> requires <strong>WordPress 3.1</strong> or above. Please upgrade WordPress or contact your system administrator about upgrading.", 'catablog'));
-		}
-		// check if uploads directory is set and writable
-		$upload_directory = wp_upload_dir();
-		if ($upload_directory['error']) {
-			die(__("<strong>CataBlog</strong> could not detect your upload directory or it is not writable by PHP. Please contact your hosting company or IT department for more information. Thanks.", 'catablog'));
+			return __("<strong>CataBlog</strong> requires <strong>WordPress 3.1</strong> or above. Please upgrade WordPress or contact your system administrator about upgrading.", 'catablog');
 		}
 		
 	}
 	
 	private function install_options() {
 		$default_options = array();
-		$default_options['db-version']         = $this->db_version;
-		$default_options['dir-version']        = $this->dir_version;
+		$default_options['version']            = $this->db_version;
+		// $default_options['db-version']         = $this->db_version;
+		// $default_options['dir-version']        = $this->dir_version;
 		$default_options['thumbnail-size']     = $this->default_thumbnail_size;
 		$default_options['image-size']         = $this->default_image_size;
 		$default_options['background-color']   = $this->default_bg_color;
@@ -1651,7 +1655,7 @@ class CataBlog {
 			$is_file = is_file($this->directories[$dir]);
 			if (!$is_dir && !$is_file) {
 				if (mkdir($this->directories[$dir]) == false) {
-					// couldn't write the file to disc
+					// can not write directory to disc
 				}
 			}
 		}
@@ -1838,7 +1842,7 @@ class CataBlog {
 		$import_terms = array($this->default_term_name);
 		foreach ($data as $key => $row) {
 			$row_terms = array();
-			if (mb_strlen($row['categories']) > 0) {
+			if ($this->string_length($row['categories']) > 0) {
 				$row_terms = explode('|', $row['categories']);
 			}
 			
@@ -1914,10 +1918,10 @@ class CataBlog {
 			$success_message = '<li class="updated">' . __('Update:', 'catablog') . sprintf(__(' %s updated in database.', 'catablog'), '<em>'.$row['title'].'</em>') . '</li>';
 			$error_message   = '<li class="error">' . __('Error:', 'catablog') . sprintf(__(' %s was not inserted into the database.', 'catablog'), '<strong>'.$row['title'].'</strong>') . '</li>';
 			
-			if (mb_strlen($row['title']) < 1) {
+			if ($this->string_length($row['title']) < 1) {
 				$error = '<li class="error"><strong>' . __('Error:', 'catablog') . "</strong> " . __('Item had no title and could not be made.', 'catablog') . '</li>';
 			}
-			if (mb_strlen($row['image']) < 1) {
+			if ($this->string_length($row['image']) < 1) {
 				$error = '<li class="error"><strong>' . __('Error:', 'catablog') . "</strong> " . __('Item had no primary image name and could not be made.', 'catablog') . '</li>';
 			}
 			
@@ -1943,7 +1947,7 @@ class CataBlog {
 				// transform subimages array
 				$subimages = $row['subimages'];
 				if (is_array($subimages) === false) {
-					if (mb_strlen($subimages) > 0) {
+					if ($this->string_length($subimages) > 0) {
 						$subimages = explode('|', $subimages);
 					}
 					else {
@@ -2134,6 +2138,15 @@ class CataBlog {
 	private function string2slug($string) {
 		$slug = "catablog-term-" . strtolower($string);
 		return  wp_unique_term_slug($slug, null);
+	}
+	
+	private function string_length($string) {
+		if (function_exists('mb_strlen')) {
+			return mb_strlen($string);
+		}
+		else {
+			return strlen($string);
+		}
 	}
 	
 	private function wp_message($message) {

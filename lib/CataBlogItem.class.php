@@ -215,7 +215,7 @@ class CataBlogItem {
 	public function validate() {
 		
 		// catablog item must have an image associated with it
-		if (mb_strlen($this->image) < 1) {
+		if ($this->string_length($this->image) < 1) {
 			return __('An item must have an image associated with it.', 'catablog');
 		}
 		
@@ -226,12 +226,12 @@ class CataBlogItem {
 		}
 		
 		// check that the title is at least one character long
-		if (mb_strlen($this->title) < 1) {
+		if ($this->string_length($this->title) < 1) {
 			return __('An item must have a title of at least one alphanumeric character.', 'catablog');
 		}
 		
 		// check that the title is less then 200 characters long
-		if (mb_strlen($this->title) > 200) {
+		if ($this->string_length($this->title) > 200) {
 			return __("An item's title can not be more then 200 characters long.", 'catablog');
 		}
 		
@@ -260,7 +260,7 @@ class CataBlogItem {
 		
 		
 		// check that the price is a positive number
-		if (mb_strlen($this->price) > 0) {
+		if ($this->string_length($this->price) > 0) {
 			if (is_numeric($this->price) == false || $this->price < 0) {
 				return __("An item's price must be a positive number.", 'catablog');
 			}
@@ -621,6 +621,12 @@ class CataBlogItem {
 	public function getDescription() {
 		return $this->description;
 	}
+	public function getDescriptionSummary() {
+		$no_line_breaks       = str_replace(array("\r", "\n", "\r\n"), ' ', ($this->getDescription()));
+		$description_summary  = substr($no_line_breaks, 0, 120);
+		$description_summary .= ($this->string_length($no_line_breaks) > 120)? '...' : '';
+		return $description_summary;
+	}
 	public function getDate() {
 		return $this->date;
 	}
@@ -847,6 +853,14 @@ class CataBlogItem {
 		return $canvas;
 	}
 	
+	public function string_length($string) {
+		if (function_exists('mb_strlen')) {
+			return mb_strlen($string);
+		}
+		else {
+			return strlen($string);
+		}
+	}
 	
 	
 }

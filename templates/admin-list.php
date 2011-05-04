@@ -91,21 +91,9 @@
 						</div>
 					</td>
 					
-					<?php /*<td><?php echo htmlspecialchars($result->getLink(), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>*/ ?>
-					
-					<?php $remove_returns = str_replace(array("\r", "\n", "\r\n"), ' ', ($result->getDescription())) ?>
-					<?php $description = substr($remove_returns, 0, 120) ?>
-					<?php $description .= (mb_strlen($remove_returns) > 120)? '...' : ''; ?>
-					
-					<td><div class="catablog-list-description"><?php echo $description ?></div></td>
+					<td><?php echo $result->getDescriptionSummary() ?></td>
 					
 					<td><?php echo implode(', ', $result->getCategories())?></td>
-					
-					<?php /*
-					<?php $currency = "" ?>
-					<td><?php echo (((float) $result->getPrice()) > 0)? $currency. number_format($result->getPrice(), 2) : "" ?>&nbsp;</td>
-					<td><?php echo htmlspecialchars($result->getProductCode(), ENT_QUOTES, 'UTF-8') ?>&nbsp;</td>
-					*/ ?>
 					
 					<td>&nbsp;&nbsp;<?php echo htmlspecialchars($result->getOrder(), ENT_QUOTES, 'UTF-8') ?></td>
 					
