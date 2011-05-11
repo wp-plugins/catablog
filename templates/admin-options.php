@@ -9,6 +9,8 @@
 		</div>
 	</noscript>
 	
+	<?php $this->render_catablog_admin_message() ?>
+	
 	<?php if ($recalculate_thumbnails): ?>
 		<div id="catablog-progress-thumbnail" class="catablog-progress">
 			<div class="catablog-progress-bar"></div>

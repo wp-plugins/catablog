@@ -16,8 +16,9 @@
 				<a href="http://www.google.com/search?q=what+is+javascript"><?php _e("Learn More", 'catablog'); ?></a></strong>
 			</div>
 		</noscript>
-
-
+		
+		<?php $this->render_catablog_admin_message() ?>
+		
 		<div class="tablenav">
 			
 			<form id="catablog-bulk-action-form" method="post" action="admin.php?page=catablog-bulkedit" class="alignleft actions hide">

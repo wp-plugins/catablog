@@ -49,6 +49,8 @@ class CataBlog {
 	
 	// wether to load frontend css and js files
 	private $load_support_files = true;
+	private $wp_messages        = array();
+	private $wp_error_messages  = array();
 	
 	public function __construct() {
 		// get plugin options from wp database
@@ -104,6 +106,9 @@ class CataBlog {
 	**       - WORDPRESS HOOKS
 	*****************************************************/
 	public function registerWordPressHooks() {
+		
+		// print_r($this->options);
+		
 		// register custom post type and taxonomy
 		add_action('init', array(&$this, 'initialize_plugin'), 0);
 		
@@ -112,16 +117,19 @@ class CataBlog {
 			add_action('admin_menu', array(&$this, 'admin_menu'));
 			
 			$catablog_page       = strpos($_SERVER['QUERY_STRING'], 'page=catablog') !== false;
-			$catablog_reset_page = strpos($_SERVER['QUERY_STRING'], 'page=catablog-reset') !== false;
+			$catablog_remove_page = strpos($_SERVER['QUERY_STRING'], 'page=catablog-remove') !== false;
 			
 			if ($catablog_page) {
 				add_action('admin_init', array(&$this, 'admin_init'));
 			}
 			
-			if ($catablog_page && !$catablog_reset_page) {
+			if ($catablog_page && !$catablog_remove_page) {
 			 	add_action('init', array(&$this, 'setup'), 1);
 			}
 			
+			if (!$catablog_remove_page) {
+				add_action('init', array(&$this, 'upgrade'), 2);
+			}
 			
 			// register admin ajax actions
 			// add_action('wp_ajax_catablog_reorder', array($this, 'ajax_reorder_items'));
@@ -136,11 +144,13 @@ class CataBlog {
 			
 		}
 		
-		// register frontend actions
-		add_action('wp_enqueue_scripts', array(&$this, 'frontend_init'));
-		add_action('wp_head', array(&$this, 'frontend_header'));
-		add_action('wp_footer', array(&$this, 'frontend_footer'));
-		add_shortcode('catablog', array(&$this, 'frontend_content'));
+		// register frontend hooks
+		else {
+			add_action('wp_enqueue_scripts', array(&$this, 'frontend_init'));
+			add_action('wp_head', array(&$this, 'frontend_header'));
+			add_action('wp_footer', array(&$this, 'frontend_footer'));
+			add_shortcode('catablog', array(&$this, 'frontend_content'));
+		}
 	}
 	
 	
@@ -618,7 +628,8 @@ class CataBlog {
 					$new_item->setCategories(array($default_term->term_id=>$default_term->name));
 					
 					$new_item->save();
-
+					
+					// wp_redirect( self_admin_url("admin.php?page=catablog&id=".$new_item->getId()) );
 					header('Location: admin.php?page=catablog&id=' . $new_item->getId()); die;
 				}
 				else {
@@ -668,6 +679,7 @@ class CataBlog {
 				if ($validate === true) {
 					$write = $result->save();
 					if ($write === true) {
+						// wp_redirect( self_admin_url("admin.php?page=catablog&message=1") );
 						header('Location: admin.php?page=catablog&message=1'); die;
 						// header('Location: admin.php?page=catablog&id=' . $result->getId() . '&message=1'); die;
 					}
@@ -1707,10 +1719,6 @@ class CataBlog {
 		if (!$this->is_installed()) {
 			$this->install();
 		}
-		
-		if (!$this->is_latest_version()) {
-			$this->upgrade();
-		}
 	}
 	
 	
@@ -1761,6 +1769,10 @@ class CataBlog {
 		if ($directories_missing) {
 			$this->install_directories();
 		}
+		
+		
+		$body_array = array('action'=>'install', 'site-url'=>site_url(), 'version'=>$this->version);
+		$post_action = wp_remote_post('http://catablog.illproductions.com/tracker.php', array('body'=>$body_array));
 		
 		
 		$this->wp_message(sprintf(__('CataBlog options and directories have been successfully installed. Please, %srefresh now%s', 'catablog'), '<a href="">', '</a>'));
@@ -1839,12 +1851,23 @@ class CataBlog {
 	}
 	
 	public function upgrade() {
+		// do not upgrade if latest version or options are not installed
+		if ($this->is_latest_version() || $this->options == false) {
+			return false;
+		}
+		
 		$this->upgrade_options();
 		$this->upgrade_directories();
+		
+		$body_array = array('action'=>'upgrade', 'site-url'=>site_url(), 'version'=>$this->version);
+		$post_action = wp_remote_post('http://catablog.illproductions.com/tracker.php', array('body'=>$body_array));
+		
 		$this->wp_message(__('CataBlog options and directories have been successfully upgraded.', 'catablog'));
 	}
 	
 	private function upgrade_options() {
+		
+		// update the version number
 		$this->options['version']  = $this->version;
 		$this->save_wp_options();
 	}
@@ -2310,16 +2333,28 @@ class CataBlog {
 	}
 	
 	private function wp_message($message) {
-		echo "<div id='message' class='updated'><p>";
-		echo "	<strong>$message</strong>";
-		echo "</p></div>";
+		$this->wp_messages[] = $message;
 	}
 	
 	private function wp_error($message) {
-		echo "<div id='message' class='error'><p>";
-		echo "	<strong>$message</strong>";
-		echo "</p></div>";
+		$this->wp_error_messages[] = $message;
 	}
+	
+	public function render_catablog_admin_message() {
+		foreach ($this->wp_messages as $message) {
+			echo "<div id='message' class='updated'><p>";
+			echo "	<strong>$message</strong>";
+			echo "</p></div>";
+		}
+		
+		foreach ($this->wp_error_messages as $message) {
+			echo "<div id='message' class='error'><p>";
+			echo "	<strong>$message</strong>";
+			echo "</p></div>";
+		}
+	}
+	
+
 
 	
 	

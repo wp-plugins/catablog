@@ -2,7 +2,9 @@
 	
 	<div id="icon-catablog" class="icon32"><br /></div>
 	<h2><?php _e("Edit CataBlog Entry", 'catablog'); ?></h2>
-		
+	
+	<?php $this->render_catablog_admin_message() ?>
+	
 	<form id="catablog-edit" class="catablog-form clear_float" method="post" action="admin.php?page=catablog-save" enctype="multipart/form-data">
 		
 		<div id="catablog-edit-main">

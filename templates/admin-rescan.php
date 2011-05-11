@@ -3,6 +3,8 @@
 	<div id="icon-catablog" class="icon32"><br /></div>
 	<h2><?php _e("CataBlog Rescan Original Images Results", "catablog"); ?></h2>
 	
+	<?php $this->render_catablog_admin_message() ?>
+	
 	<?php if (count($new_rows['images']) < 1): ?>
 		<ul id="catablog-console">
 			<li><?php _e("No new images where found in your originals folders.", 'catablog'); ?></li>

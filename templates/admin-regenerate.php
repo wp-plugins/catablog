@@ -9,6 +9,8 @@
 		</div>
 	</noscript>
 	
+	<?php $this->render_catablog_admin_message() ?>
+	
 	<?php if (count($image_names) < 1): ?>
 		<p><?php _e("Your CataBlog library is empty, there are no images to render.", "catablog") ?></p>
 		</div><!-- END div.wrap -->

@@ -3,6 +3,8 @@
 	<div id="icon-catablog" class="icon32"><br /></div>
 	<h2><?php _e("About CataBlog", 'catablog'); ?></h2>
 	
+	<?php $this->render_catablog_admin_message() ?>
+	
 	<p>
 		<?php printf(__("%sCataBlog%s is written by %sZachary Segal%s in his spare time.", "catablog"),"<a href='http://catablog.illproductions.com/' target='_blank'>", "</a>", "<a href='http://catablog.illproductions.com/about-author/' target='_blank'>", "</a>"); ?>
 		<?php printf(__('It is a cataloging tool for %sWordPress%s that allows you to easily manage a list of items with automatically generated thumbnail images.', "catablog"), "<a href='http://wordpress.org' target='_blank'>", "</a>"); ?>

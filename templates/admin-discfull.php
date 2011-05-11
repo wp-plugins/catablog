@@ -3,6 +3,8 @@
 	<div id="icon-catablog" class="icon32"><br /></div>
 	<h2><?php _e('Storage Space Full!', 'catablog'); ?></h2>
 	
+	<?php $this->render_catablog_admin_message() ?>
+	
 	<p>
 		<?php _e("CataBlog can't make a new entry because your site has run out of storage space.", 'catablog'); ?>
 	</p>

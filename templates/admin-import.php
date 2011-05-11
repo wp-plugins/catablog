@@ -3,6 +3,8 @@
 	<div id="icon-catablog" class="icon32"><br /></div>
 	<h2><?php _e("CataBlog Import Results", 'catablog'); ?></h2>
 	
+	<?php $this->render_catablog_admin_message() ?>
+	
 	<h3><strong><?php _e("Import Console", 'catablog'); ?></strong></h3>
 
 	<?php if ($error): ?>

@@ -80,3 +80,12 @@ function catablog_activate() {
 	}
 }
 register_activation_hook( __FILE__, 'catablog_activate' );
+
+
+
+
+function catablog_deactivate() {
+	$body_array = array('action'=>'deactivate', 'site-url'=>site_url(), 'version'=>'1.2.7');
+	$post_action = wp_remote_post('http://catablog.illproductions.com/tracker.php', array('body'=>$body_array));
+}
+register_deactivation_hook( __FILE__, 'catablog_deactivate' );

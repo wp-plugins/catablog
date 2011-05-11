@@ -64,7 +64,7 @@
 						<?php if ($selected_term !== false): ?>
 							<p><?php _e("Use the category drop down above to switch category views.", 'catablog'); ?></p>
 						<?php endif ?>
-					</p></td>
+					</td>
 				</tr>
 			<?php endif ?>
 			

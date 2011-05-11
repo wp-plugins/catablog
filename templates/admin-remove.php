@@ -9,6 +9,8 @@
 		</div>
 	</noscript>
 	
+	<?php $this->render_catablog_admin_message() ?>
+	
 	<div id="catablog-progress" class="catablog-progress">
 		<div class="catablog-progress-bar">&nbsp;</div>
 		<h3 class="catablog-progress-text"><?php _e("Removing CataBlog...", "catablog"); ?></h3>
