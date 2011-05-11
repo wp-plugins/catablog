@@ -8,26 +8,7 @@
 		<div id="catablog-edit-main">
 			<div id="catablog-edit-main-content">
 			<fieldset>
-				<h3>
-					<?php /*
-					<?php $next_item = CataBlogItem::getAdjacentItem($result->getOrder() + 1) ?>
-					<?php $prev_item = CataBlogItem::getAdjacentItem($result->getOrder() - 1) ?>
-					<span class="catablog-edit-navigation" style="float:right">
-						<?php if ($prev_item != false): ?>
-							<a href="admin.php?page=catablog&amp;id=<?php echo $prev_item->getId() ?>" title="<?php echo $prev_item->getTitle() ?>">&larr; <?php _e("Previous Item", 'catablog'); ?></a>
-						<?php else: ?>
-							<span class="nonessential"><?php _e("no previous item", 'catablog'); ?></span>
-						<?php endif ?>
-						<span> | </span>
-						<?php if ($next_item != false): ?>
-							<a href="admin.php?page=catablog&amp;id=<?php echo $next_item->getId() ?>" title="<?php echo $next_item->getTitle() ?>"><?php _e("Next Item", 'catablog'); ?> &rarr;</a>
-						<?php else: ?>
-							<span class="nonessential"><?php _e("no next item", 'catablog'); ?></span>
-						<?php endif?>
-					</span>
-					*/ ?>
-					<span><?php _e("Main", "catablog"); ?></span>
-				</h3>
+				<h3><span><?php _e("Main", "catablog"); ?></span></h3>
 				
 				<div>
 					<div id="catablog-edit-main-image">
@@ -225,11 +206,11 @@
 
 <div id="add-subimage-window" class="catablog-modal">
 	<form id="catablog-add-subimage" class="catablog-form" method="post" action="admin.php?page=catablog-add-subimage" enctype="multipart/form-data">
-		<h3>
+		<h3 class="catablog-modal-title">
 			<span style="float:right;"><a href="#" class="hide-modal-window"><?php _e("[close]", 'catablog'); ?></a></span>
 			<strong><?php _e("Upload A New Sub Image", 'catablog'); ?></strong>
 		</h3>
-		<div>
+		<div class="catablog-modal-body">
 			<p><strong><?php _e("Save Other Changes Before Uploading A New Image.", 'catablog'); ?></strong></p>
 			
 			<input type="file" id="new_sub_image" name="new_sub_image"  />
@@ -249,11 +230,11 @@
 
 <div id="replace-image-window" class="catablog-modal">
 	<form id="catablog-replace-image" class="catablog-form" method="post" action="admin.php?page=catablog-replace-image" enctype="multipart/form-data">
-		<h3>
+		<h3 class="catablog-modal-title">
 			<span style="float:right;"><a href="#" class="hide-modal-window"><?php _e("[close]", 'catablog'); ?></a></span>
 			<strong><?php _e("Replace The Main Image", 'catablog'); ?></strong>
 		</h3>
-		<div>
+		<div class="catablog-modal-body">
 			<p><strong><?php _e("Save Other Changes Before Uploading A New Image.", 'catablog'); ?></strong></p>
 			<input type="file" id="new_image" name="new_image"  />
 			<span class="nonessential"> | </span>

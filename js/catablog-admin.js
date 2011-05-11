@@ -157,9 +157,12 @@ function calculate_lazy_loads() {
 		if (scroll_bottom > top_offset) {
 			jQuery(this).removeClass('lazyload');
 			jQuery(this).append('<img class="cb_item_icon" />');
-			jQuery(this).children('img').hide().attr('src', jQuery(this).attr('rel')).fadeIn(300);
+			jQuery(this).children('img').hide().attr('src', jQuery(this).attr('rel')).show();
 			
 			catablog_global_lazyload_elements = catablog_global_lazyload_elements.not(this);
+		}
+		else {
+			return false;
 		}
 	});
 }

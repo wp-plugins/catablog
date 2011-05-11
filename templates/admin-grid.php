@@ -18,8 +18,9 @@
 					</a>
 					
 					<a href="<?php echo $edit ?>" class="catablog-title"><small>
-							<?php $title = ($result->string_length($result->getTitle()) > 30)? trim(mb_substr($result->getTitle(), 0, 30)).'...' : $result->getTitle() ?>
-							<?php echo htmlentities($title, ENT_QUOTES, 'UTF-8') ?>
+						<?php $truncated_title = (function_exists('mb_substr'))? mb_substr($result->getTitle(), 0, 30) : substr($result->getTitle(), 0, 30) ?>
+						<?php $title = ($result->string_length($result->getTitle()) > 30)? trim($truncated_title).'...' : $result->getTitle() ?>
+						<?php echo htmlentities($title, ENT_QUOTES, 'UTF-8') ?>
 					</small></a>
 					
 					<input type="checkbox" class="bulk_selection" name="bulk_action_id" value="<?php echo $result->getId() ?>" />

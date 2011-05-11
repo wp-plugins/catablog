@@ -9,6 +9,12 @@
 		</div>
 	</noscript>
 	
+	<?php if (count($image_names) < 1): ?>
+		<p><?php _e("Your CataBlog library is empty, there are no images to render.", "catablog") ?></p>
+		</div><!-- END div.wrap -->
+		<?php return false; ?>
+	<?php endif ?>
+	
 	<div id="catablog-progress-thumbnail" class="catablog-progress">
 		<div class="catablog-progress-bar"></div>
 		<h3 class="catablog-progress-text"><?php _e("Processing Thumbnail Images...", "catablog"); ?></h3>
@@ -22,7 +28,7 @@
 	<?php endif ?>
 	
 	<ul id="catablog-console">
-		
+		<li><?php _e('Rendering all images from their original files, this may take awhile so please be patient.', 'catablog') ?></li>
 	</ul>
 	
 </div>

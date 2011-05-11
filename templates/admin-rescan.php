@@ -3,16 +3,13 @@
 	<div id="icon-catablog" class="icon32"><br /></div>
 	<h2><?php _e("CataBlog Rescan Original Images Results", "catablog"); ?></h2>
 	
-	<h3><strong><?php _e("Rescan Console", "catablog"); ?></strong></h3>
-
 	<?php if (count($new_rows['images']) < 1): ?>
-		<p>
-			<?php _e("No new images where found in your originals folders.", 'catablog'); ?> <br />
-			<?php _e("Please make sure that you have successfully uploaded new images via FTP before running this command.", "catablog"); ?><br />
-			<?php _e("New images should be uploaded into the following folder:", "catablog"); ?><br />
-			<code><?php echo $this->directories['originals'] ?></code>
-			
-		</p>
+		<ul id="catablog-console">
+			<li><?php _e("No new images where found in your originals folders.", 'catablog'); ?></li>
+			<li><?php _e("Please make sure that you have successfully uploaded new images via FTP before running this command.", "catablog"); ?></li>
+			<li><?php _e("New images should be uploaded into the following folder:", "catablog"); ?></li>
+			<li><code><?php echo $this->directories['originals'] ?></code></li>
+		</ul>
 	<?php else: ?>
 		<noscript>
 			<div class="error">
@@ -34,7 +31,7 @@
 		
 		<ul id="catablog-console">
 			<?php foreach ($new_rows['titles'] as $title): ?>
-				<li class="message"><?php printf(__("New Image Found, creating catalog item ", "catablog"), "<strong>$title</strong>"); ?></li>
+				<li class="message"><?php printf(__("New Image Found, creating catalog item %s", "catablog"), "<strong>$title</strong>"); ?></li>
 			<?php endforeach ?>
 		</ul>
 	<?php endif ?>
@@ -42,6 +39,10 @@
 </div>
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
+		
+		<?php if (count($new_rows['images']) < 1): ?>
+			return false;
+		<?php endif ?>
 		
 		discourage_leaving_page('<?php _e("Please allow the rendering to complete before leaving this page. Click cancel to go back and let the rendering complete.", "catablog"); ?>');
 		

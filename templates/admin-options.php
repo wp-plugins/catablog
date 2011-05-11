@@ -100,7 +100,7 @@
 			
 			<p>
 				<label for='lightbox_selector'><?php _e("LightBox jQuery Selector:", "catablog"); ?></label>
-				<input type='text' name='lightbox_selector' id='lightbox_selector' class='integer_field' size='50' value='<?php echo $lightbox_selector ?>' />
+				<input type='text' name='lightbox_selector' id='lightbox_selector' class='' size='50' value='<?php echo $lightbox_selector ?>' />
 				<br />
 				<small><?php _e("This lets you modify the selector used by jQuery to attach the LightBox to image thumbnails. The default value is: .catablog-image")?></small>
 			</p>
@@ -238,10 +238,12 @@
 		<p>&nbsp;</p>
 		
 		<p>
-			<a href="admin.php?page=catablog-export&amp;format=xml" class="button"><?php _e("Save XML BackUp File", "catablog"); ?></a>
+			<?php $link = wp_nonce_url('admin.php?page=catablog-export&amp;format=xml', 'catablog-export') ?>
+			<a href="<?php echo $link ?>" class="button"><?php _e("Save XML BackUp File", "catablog"); ?></a>
 			<?php if ($function_exists): ?>
 				<span> | </span>
-				<a href="admin.php?page=catablog-export&amp;format=csv" class="button"><?php _e("Save CSV BackUp File", "catablog"); ?></a>
+				<?php $link = wp_nonce_url('admin.php?page=catablog-export&amp;format=csv', 'catablog-export') ?>
+				<a href="<?php echo $link ?>" class="button"><?php _e("Save CSV BackUp File", "catablog"); ?></a>
 			<?php endif ?>
 		</p>
 		
@@ -300,7 +302,7 @@
 				<?php printf(__("You may view XML and CSV examples in the %simport/export documentation%s.", "catablog"), '<a href="http://catablog.illproductions.com/documentation/importing-and-exporting-catalogs/" target="_blank">', '</a>'); ?>
 			</small></p>
 			
-
+			<?php wp_nonce_field( 'catablog_import', '_catablog_import_nonce', false, true ) ?>
 		</form>
 	</div>
 	
@@ -320,8 +322,10 @@
 		</p>
 		
 		<p>
-		<a href="admin.php?page=catablog-lock-folders#system" class="button"><?php _e("Lock Folders", "catablog"); ?></a>
-		<a href="admin.php?page=catablog-unlock-folders#system" class="button"><?php _e("Unlock Folders", "catablog"); ?></a>				
+		<?php $link = wp_nonce_url('admin.php?page=catablog-lock-folders#system', 'catablog-lock-folders') ?>
+		<a href="<?php echo $link ?>" class="button"><?php _e("Lock Folders", "catablog"); ?></a>
+		<?php $link = wp_nonce_url('admin.php?page=catablog-unlock-folders#system', 'catablog-unlock-folders') ?>
+		<a href="<?php echo $link ?>" class="button"><?php _e("Unlock Folders", "catablog"); ?></a>				
 		</p>
 		
 		<p><small>
@@ -331,7 +335,8 @@
 		<hr />
 		
 		<p><label><?php _e("Rescan Original Image Folder", "catablog"); ?></label></p>
-		<p><a href="admin.php?page=catablog-rescan-images" class="button js-warn"><?php _e("Rescan Original Images Folder Now", "catablog"); ?></a></p>
+		<?php $link = wp_nonce_url('admin.php?page=catablog-rescan-images', 'catablog-rescan-originals') ?>
+		<p><a href="<?php echo $link ?>" class="button js-warn"><?php _e("Rescan Original Images Folder Now", "catablog"); ?></a></p>
 		<p><small>
 			<?php _e("Click the <em>Rescan Now</em> button to rescan the original catablog images folder and automatically import any new jpeg, gif or png images. It works simply by making a list of all the image names in the database and then compares each file's name in the originals folder against the list of image names in the database. Any newly discovered images will automatically be made into a new catalog item. You should Regenerate Images after running this command.", "catablog"); ?>
 		</small></p>
@@ -339,17 +344,19 @@
 		<hr />
 		
 		<p><label><?php _e("Regenerate Images", "catablog"); ?></label></p>
-		<p><a href="admin.php?page=catablog-regenerate-images" class="button js-warn"><?php _e("Regenerate All Images Now", "catablog"); ?></a></p>
+		<?php $link = wp_nonce_url('admin.php?page=catablog-regenerate-images', 'catablog-regenerate-images') ?>
+		<p><a href="<?php echo $link ?>" class="button js-warn"><?php _e("Regenerate All Images Now", "catablog"); ?></a></p>
 		<p><small>
 				<?php _e("Click the <em>Regenerate Now</em> button to recreate all the thumbnail and lightbox images that CataBlog has generated over the time you have used it. This is also useful when restoring exported data from another version of CataBlog. after you have uploaded your original images you must regenerate your images so they display properly.", "catablog"); ?>
 		</small></p>
 		
 		<hr />
 		
-		<p><label><?php _e("Reset CataBlog", "catablog"); ?></label></p>
-		<p><a href="admin.php?page=catablog-reset" class="button js-warn" id="button-reset"><?php _e("Reset All CataBlog Data", "catablog"); ?></a></p>
+		<p><label><?php _e("Remove CataBlog", "catablog"); ?></label></p>
+		<?php $link = wp_nonce_url('admin.php?page=catablog-remove', 'catablog-remove') ?>
+		<p><a href="<?php echo $link ?>" class="button js-warn" id="button-reset"><?php _e("Remove All CataBlog Data", "catablog"); ?></a></p>
 		<p><small>
-			<?php _e("Reset your entire catalog, deleting all photos and custom data permanently. Sometimes you can use this to fix an improper install.", "catablog"); ?>
+			<?php _e("Delete your entire catalog, deleting all photos and custom data permanently. Sometimes you can use this to fix an improper installation.", "catablog"); ?>
 		</small></p>
 	</div>
 	

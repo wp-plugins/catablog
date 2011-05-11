@@ -25,7 +25,8 @@
 				<?php wp_nonce_field( 'catablog_bulkedit', '_catablog_bulkedit_nonce', false, true ) ?>
 				
 				<select id="bulk-action" name="bulk-action">
-					<option value=""><?php _e("Bulk Actions", 'catablog'); ?></option>
+					<option value="">- <?php _e("Bulk Actions", 'catablog'); ?></option>
+					<option value="edit-category"><?php _e("Edit Categories", 'catablog'); ?></option>
 					<option value="delete"><?php _e("Delete", 'catablog'); ?></option>
 				</select>
 				
@@ -80,7 +81,73 @@
 		}
 				
 		?>
-	
+		
+		
+		<div id='catablog_load_curtain'>&nbsp;</div>
+
+		<div id="edit-category-window" class="catablog-modal">
+			<form id="catablog-edit-category" class="catablog-form" method="post" action="admin.php?page=catablog-bulkedit">
+				<h3 class="catablog-modal-title">
+					<span style="float:right;"><a href="#" class="hide-modal-window"><?php _e("[close]", 'catablog'); ?></a></span>
+					<strong><?php _e("Edit Multiple Catalog Item's Categories", 'catablog'); ?></strong>
+				</h3>
+				
+				<div class="catablog-modal-body">
+					<div id="catablog-category-add-checklist">
+						<strong class="list-title"><?php _e("Add to categories", "catablog") ?></strong>
+						<ul class="list:category categorychecklist form-no-clear">
+						
+							<?php $categories = $this->get_terms() ?>
+							<?php if (count($categories) < 1): ?>
+								<li><span><?php _e("You have no categories.", 'catablog'); ?></span></li>
+							<?php endif ?>
+						
+							<?php foreach ($categories as $category): ?>
+							<li>
+								<label class="catablog-category-row">
+									<input id="in-category-<?php echo $category->term_id ?>" type="checkbox" name="categories-add[]"  value="<?php echo $category->term_id ?>" />
+									<span><?php echo $category->name ?></span>
+								</label>
+							</li>
+							<?php endforeach ?>
+						</ul>
+					</div>
+					
+					<div id="catablog-category-remove-checklist">
+						<strong class="list-title"><?php _e("Remove from categories", "catablog") ?></strong>
+						<ul class="list:category categorychecklist form-no-clear">
+						
+							<?php $categories = $this->get_terms() ?>
+							<?php if (count($categories) < 1): ?>
+								<li><span><?php _e("You have no categories.", 'catablog'); ?></span></li>
+							<?php endif ?>
+						
+							<?php foreach ($categories as $category): ?>
+							<li>
+								<label class="catablog-category-row">
+									<input id="in-category-<?php echo $category->term_id ?>" type="checkbox" name="categories-remove[]"  value="<?php echo $category->term_id ?>" />
+									<span><?php echo $category->name ?></span>
+								</label>
+							</li>
+							<?php endforeach ?>
+						</ul>
+					</div>
+					
+					
+					<?php wp_nonce_field( 'catablog_bulkedit', '_catablog_bulkedit_nonce', false, true ) ?>
+					<input type="hidden" name="page" value="catablog-bulkedit" />
+					<input type="hidden" name="bulk-action" value="edit-category" />
+					
+					<input type="submit" name="save" value="<?php _e("Change Multiple Categories", 'catablog'); ?>" class="button-primary" />
+					<p><small>
+						<?php _e("Select the categories you would like each selected item to be part of by checking their boxes.", 'catablog'); ?><br />
+						<?php _e("After the bulk edit, the selected items will be in only the categories selected above.", "catablog"); ?><br />
+					</small></p>			
+				</div>
+				
+			</form>
+		</div>
+		
 </div>
 
 <script type="text/javascript">
@@ -89,7 +156,7 @@
 	jQuery(document).ready(function($) {
 		
 		/************************************************************************************
-		** quick form bindings that should happen first
+		** form bindings that should happen first
 		*************************************************************************************/
 		// show the bulk actions form and bind form submission;
 		$('#catablog-bulk-action-form').show().bind('submit', function(event) {
@@ -100,15 +167,37 @@
 				return false;
 			}
 			
+			// get selected (checked) catalog items
+			var checked_catalog_items = $('#catablog_items input.bulk_selection:checked');
+			if (checked_catalog_items.size() < 1) {
+				alert('<?php _e("Please select at least one catalog item first.", "catablog"); ?>');
+				return false;
+			}
+			
+			// change the category of multiple catalog items
+			if ($('#bulk-action').val() == 'edit-category') {
+				
+				jQuery('#edit-category-window').show();
+				jQuery('#catablog_load_curtain').fadeTo(200, 0.8);
+				
+				checked_catalog_items.each(function() {
+					$('#catablog-edit-category').append("<input type='hidden' name='bulk_selection[]' value='"+this.value+"' />");
+				});
+				
+				return false;
+			}
+			
+			// delete multiple catalog items
 			if ($('#bulk-action').val() == 'delete') {
 				if (!confirm('<?php _e("Are you sure you want to delete multiple items?", "catablog"); ?>')) {
 					return false;
 				}
+				
+				checked_catalog_items.each(function() {
+					$(self).append("<input type='hidden' name='bulk_selection[]' value='"+this.value+"' />");
+				});
 			}
 			
-			$('#catablog_items input.bulk_selection:checked').each(function() {
-				$(self).append("<input type='hidden' name='bulk_selection[]' value='"+this.value+"' />");
-			});
 			
 		});
 		
@@ -118,16 +207,19 @@
 			$(this).closest('form').submit();
 		});
 		
+		// BIND HIDE MODAL WINDOW
+		$('.hide-modal-window').bind('click', function(event) {
+			jQuery('.catablog-modal:visible').hide();
+			jQuery('#catablog_load_curtain').fadeOut(200);
+			return false;
+		});
 		
-		/************************************************************************************
-		** quick form modifications that should happen first
-		*************************************************************************************/
+		
 		// lazy load the images
 		calculate_lazy_loads();
 		$(window).bind('scroll resize', function(event) {
 			calculate_lazy_loads();
 		});
-		
 		
 		/*
 		// initialize the sortables

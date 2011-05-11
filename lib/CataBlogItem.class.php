@@ -1,6 +1,20 @@
 <?php
+/**
+ * CataBlog Item Class
+ *
+ * This file contains the class for each CataBlog Item that is fetched from the database.
+ * @author Zachary Segal <zac@illproductions.com>
+ * @version 1.2.6.1
+ * @package catablog
+ */
 
-
+/**
+ * CataBlogItem, a container class for each catalog items with all the important 
+ * properties, such as title, image, secondary images, etc. Variable names without
+ * an underscore prefix are the post_parameters or values set by the user.
+ *
+ * @package catablog
+ */
 class CataBlogItem {
 	
 	// item properties that directly relate to 
@@ -45,19 +59,23 @@ class CataBlogItem {
 			}
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
 	/*****************************************************
 	**       - FACTORY METHODS
 	*****************************************************/
+
+
+
+
+	/**
+	 * Get a single catalog item by database id
+	 *
+	 * @param integer $id The id of the catalog item you wish to get.
+	 * @return null|CataBlogItem
+	 */
 	public static function getItem($id) {
 		$post = get_post($id);
 		
@@ -91,7 +109,16 @@ class CataBlogItem {
 		
 		return $item;
 	}
-	
+
+
+
+
+	/**
+	 * Get just the id for every catalog item in the database. Returns
+	 * an  array of integers, or possibly an empty array.
+	 *
+	 * @return array
+	 */
 	public static function getItemIds() {
 		$items = array();
 		
@@ -112,8 +139,24 @@ class CataBlogItem {
 		
 		return $ids;
 	}
-	
-	public static function getItems($categories=false, $operator='IN', $sort='menu_order', $order='asc', $load_categories=true, $offset=0, $limit=-1) {
+
+
+
+
+	/**
+	 * Get a collection of catalog items from the database. May
+	 * possibly return an empty array.
+	 *
+	 * @param array $categories The array of category slugs to filter with. Will be ignored if false.
+	 * @param string $operator  Operator used to test the categories filter. Possible values are 'IN', 'NOT IN' or 'AND'.
+	 * @param string $sort The database field used to sort the collection. Possible values are 'title', 'order', 'date' or 'random'.
+	 * @param string $order The order the collection should be returned in. Possible values are 'asc' or 'desc'.
+	 * @param integer $offset The start ordinal of the collection, or number of catalog items to skip over.
+	 * @param integer $limit The maximum amount of catalog items allowed in the collection.
+	 * @param boolean $load_categories Wether to load the category ids for each item of the collection. Possible large database hit.
+	 * @return array An array of CataBlogItem objects
+	 */
+	public static function getItems($categories=false, $operator='IN', $sort='menu_order', $order='asc', $offset=0, $limit=-1, $load_categories=true) {
 		
 		$items = array();
 		
@@ -139,7 +182,6 @@ class CataBlogItem {
 			);
 			$params['tax_query'] = $tax_query_array;
 		}
-		// echo "<pre>"; print_r($params); echo "</pre>";
 		
 		$posts = get_posts($params);
 		
@@ -176,42 +218,23 @@ class CataBlogItem {
 		
 		return $items;
 	}
-	
-	public static function getAdjacentItem($order_number) {
-		if ($order_number < 0) {
-			return false;
-		}
-		
-		$item = false;		
-		$cata = new CataBlogItem();
-		$params = array(
-			'post_type'=> $cata->getCustomPostName(),
-			'orderby'=>'menu_order',
-			'order'=>'ASC',
-			'numberposts' => 1,
-			'offset' => $order_number,
-		);
-		
-		$posts = get_posts($params);
-		foreach ($posts as $post) {
-			$item = new CataBlogItem();
-			$item->id           = $post->ID;
-			$item->title        = $post->post_title;
-		}
-		
-		return $item;
-	}
-	
-	
-	
-	
-	
-	
 
-	
+
+
+
 	/*****************************************************
 	**       - VALIDATE, SAVE & DELETE METHODS
 	*****************************************************/
+
+
+
+
+	/**
+	 * This function will validate that the data being stored in the CataBlogItem
+	 * object is safe to be saved to the database.
+	 *
+	 * @return boolean|string Wether or not all the objects parameters are valid.
+	 */
 	public function validate() {
 		
 		// catablog item must have an image associated with it
@@ -268,7 +291,17 @@ class CataBlogItem {
 		
 		return true;
 	}
-	
+
+
+
+
+	/**
+	 * This function is used to validate an uploaded image and see if it is
+	 * acceptable for CataBlog usage.
+	 *
+	 * @param string $image A file path to an uploaded image.
+	 * @return boolean|string Wether or not the image is an acceptable format.
+	 */
 	public function validateImage($image) {
 		list($width, $height, $format) = getimagesize($image);
 		switch($format) {
@@ -299,6 +332,16 @@ class CataBlogItem {
 		return true;
 	}
 
+
+
+
+	/**
+	 * This function will save the current CataBlogItem object to the 
+	 * database. If the object has an id set, it will update, otherwise
+	 * it will create a new catalog item.
+	 *
+	 * @return boolean|string Wether or not the database write was successful.
+	 */
 	public function save() {
 				
 		$params = array();
@@ -358,6 +401,8 @@ class CataBlogItem {
 		$this->updatePostMeta();
 		
 		// update post terms
+		// NOTE: this is the one instance where $this->categories should be an array on term ids, otherwise
+		//       it is an array of term names keyed by term id.
 		$terms_set = wp_set_object_terms($this->id, $this->categories, $this->_custom_tax_name);
 		if ($terms_set instanceof WP_Error) {
 			return __("Could not set categories, please try again.", 'catablog');
@@ -365,7 +410,18 @@ class CataBlogItem {
 		
 		return true;
 	}
-	
+
+
+
+
+	/**
+	 * This function removes the current CataBlogItem object from the
+	 * database. The object must have an id greater then zero to actually
+	 * delete the catalog item from the database.
+	 *
+	 * @param boolean $remove_images Wether or not the catalog item's associated images should be deleted from disc.
+	 * @return void
+	 */
 	public function delete($remove_images=true) {
 		if ($this->id > 0) {
 			
@@ -398,9 +454,18 @@ class CataBlogItem {
 		}
 		
 	}
-	
-	
-	
+
+
+
+
+	/**
+	 * Attach a new secondary image to the current CataBlogItem object. You
+	 * should validate the image you wish to attach using validateImage before
+	 * running this function with an uploaded file.
+	 *
+	 * @param string $tmp_path A file path to an uploaded image.
+	 * @return boolean|string Wether or not the image was successfully attached to the catalog item.
+	 */
 	public function addSubImage($tmp_path) {
 		if (function_exists('get_upload_space_available')) {
 			$space_available = get_upload_space_available();
@@ -448,16 +513,17 @@ class CataBlogItem {
 		
 		return true;
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
 	/*****************************************************
 	**       - IMAGE GENERATION METHODS
 	*****************************************************/
+
+
+
+
 	public function makeFullsize($filepath=NULL) {
 		if ($filepath === NULL) {
 			$filepath = $this->getImage();

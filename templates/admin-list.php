@@ -70,7 +70,7 @@
 			
 			<?php foreach ($results as $result): ?>
 				<?php $edit   = 'admin.php?page=catablog&amp;id='.$result->getId() ?>
-				<?php $remove = 'admin.php?page=catablog-delete&amp;id='.$result->getId() ?>
+				<?php $remove = wp_nonce_url(('admin.php?page=catablog-delete&amp;id='.$result->getId()), "catablog-delete") ?>
 				
 				<tr>
 					<th class="check-column">

@@ -40,8 +40,8 @@ jQuery(function($) {
 			}
 			else if (jQuery(this).get(0).nodeName.toLowerCase() == "img") {
 				// selected element is an image tag
-				if (console) {
-					console.log('You are using the CataBlog LightBox in an out of date fashion, please reload the Catablog template in the admin options panel.');
+				if (typeof(console) !== 'undefined' && console != null) {
+					console.log('You are using the CataBlog LightBox in an incorrect way, please set the lightbox selector to point at anchor tags surrounding your thumbnail images.');
 				}
 				
 				jQuery(this).css('cursor','pointer').bind('click', function(event) {
@@ -58,7 +58,7 @@ jQuery(function($) {
 			}
 			else {
 				// selected element is of an unsupported tag type
-				if (console) {
+				if (typeof(console) !== 'undefined' && console != null) {
 					console.log('You are using the CataBlog LightBox in an incorrect way, please set the lightbox selector to point at anchor tags surrounding your thumbnail images.');
 				}
 			}
@@ -113,22 +113,30 @@ jQuery(function($) {
 			
 			
 			lightbox.show();
-
-
-			// load the full size picture and expand the lightbox to fit the images dimensions
-			var fullsize_pic = new Image();
-			fullsize_pic.onload = function() {
-				var row  = jQuery(element).closest('.catablog-row').get(0);
-				var meta = calculateMeta(row);
-				expand_lightbox(this, meta);
-			}
 			
-			if (element.href != undefined) {
-				fullsize_pic.src = element.href;
-			}
-			else {
-				fullsize_pic.src = element.src.replace("/catablog/thumbnails", "/catablog/fullsize");;;
-			}
+			load_catablog_image(element);
+
+
+			// // load the full size picture and expand the lightbox to fit the images dimensions
+			// var fullsize_pic = new Image();
+			// fullsize_pic.onload = function() {
+			// 	var row  = jQuery(element).closest('.catablog-row').get(0);
+			// 	var meta = calculateMeta(row);
+			// 	expand_lightbox(this, meta);
+			// };
+			// fullsize_pic.onerror = function() {
+			// 	if (this.src.indexOf("/catablog/originals") < 0) {
+			// 		this.src = this.src.replace("/catablog/fullsize", "/catablog/originals");;;
+			// 	}
+			// };
+			// 
+			// 
+			// if (element.nodeName.toLowerCase() == 'a') {
+			// 	fullsize_pic.src = element.href;
+			// }
+			// else {
+			// 	fullsize_pic.src = element.src.replace("/catablog/thumbnails", "/catablog/fullsize");;;
+			// }
 			
 			
 		}
@@ -169,7 +177,7 @@ jQuery(function($) {
 			jQuery('#catablog-lightbox-image').height(h);
 			
 			if (!jQuery('#catablog-lightbox-image').append("<img src='"+s+"' />")) {
-				if (console) {
+				if (typeof(console) !== 'undefined' && console != null) {
 					console.log('failed appending image to html dom');
 				}
 			};
@@ -219,21 +227,36 @@ jQuery(function($) {
 			jQuery('#catablog-lightbox-image').fadeOut(speed, function() {
 				jQuery(this).remove();
 				
-				var fullsize_pic = new Image();
-				fullsize_pic.onload = function() {
-					var meta = calculateMeta(row);
-					expand_lightbox(this, meta);
-				};
 				
-				if (element.href != undefined) {
-					fullsize_pic.src = element.href;
-				}
-				else {
-					fullsize_pic.src = element.src.replace("/catablog/thumbnails", "/catablog/fullsize");;
-				}
-				
+				load_catablog_image(element);
 				
 			});			
+		}
+		
+		
+		function load_catablog_image(element) {
+			var load_attempts = 0;
+			
+			var fullsize_pic = new Image();
+			fullsize_pic.onload = function() {
+				var row  = jQuery(element).closest('.catablog-row').get(0);
+				var meta = calculateMeta(row);
+				expand_lightbox(this, meta);
+			};
+			fullsize_pic.onerror = function() {
+				load_attempts++;
+				if (load_attempts < 2) {
+					this.src = this.src.replace("/catablog/fullsize", "/catablog/originals");
+				}
+
+			};
+			
+			if (element.nodeName.toLowerCase() == 'a') {
+				fullsize_pic.src = element.href;
+			}
+			else {
+				fullsize_pic.src = element.src.replace("/catablog/thumbnails", "/catablog/fullsize");;
+			}
 		}
 		
 		
@@ -265,7 +288,38 @@ jQuery(function($) {
 				current_image -= 1;
 			}
 			
-			var new_href      = new_image.href;
+			
+			// check if the new_image is an a tag or its wrapped in an a tag
+			// if wrapped in an anchor tag, replace new_image with the anchor tag
+			// if not wrapped in an achor tag, log an error to the console if it exists
+			if (new_image.nodeName.toLowerCase() != 'a') {
+				if (jQuery(new_image).closest('a').size() > 0) {
+					new_image = jQuery(new_image).closest('a').get(0);
+				} else {	
+					if (new_image.nodeName.toLowerCase() == 'img') {
+						
+					}
+					else {
+						if (typeof(console) !== 'undefined' && console != null) {
+							console.log("Could not find the adjacent image because the adjacent .catablog-image element is not an anchor or image tag.");
+						}
+						
+						hold_click = false;
+						return false;
+					}
+					
+				}
+			}
+			
+			var new_href = '';
+			if (new_image.nodeName.toLowerCase() == 'a') {
+				var new_href = new_image.href;
+			}
+			else {
+				var new_href = new_image.src;
+			}
+			
+			
 			var new_extension = new_href.split('.').pop().toLowerCase();
 			if (in_array(new_extension, image_extensions) == false) {
 				if (current_image == 0) {

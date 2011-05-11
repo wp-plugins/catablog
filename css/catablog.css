@@ -95,15 +95,13 @@
 
 
 
-
-
 .catablog-credits {
 	display: block;
 	clear: both;
 	overflow: hidden;
-	height: 1px;
-	padding: 0px;
-	margin: 0 0 1em 0;
+	height: 0px !important;
+	padding: 0px !important;
+	margin: 0 0 1em 0 !important;
 }
 
 
@@ -198,7 +196,7 @@
 	width: 50%;
 	text-decoration: none;
 	background: transparent;
-	background-image: url("data:image/gif;base64,AAAA");
+	background-image: url("./../images/blank.gif");
 }
 #catablog-lightbox-image a span {
 	display: none;
