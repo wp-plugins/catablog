@@ -33,13 +33,13 @@ Please remember that CataBlog is written, maintained, supported and documented b
 
 == Installation ==
 
-1. Make sure your server is running `PHP 5` or better and has the `GD` library for image manipulation.
+1. Make sure your server is running `PHP 5` or better and has the `GD` library.
 1. Upload `catablog` to the `/wp-content/plugins/` directory.
 1. Activate the plugin through the `Plugins` menu in WordPress.
-1. If you want you may also network activate CataBlog. Note that each new site you make will require an installation step, simply do so when reminded and all will be good.
+1. If you want you may also network activate CataBlog.
 1. Create catalog items by uploading image files.
-1. Sprinkle the `[catablog]` and `[catablog category='dog']` ShortCodes throughout your blog to show your catalog.
-1. You may also use the template tag, which operates just like the ShortCode, `<?php catablog_show_items($category, $template, $sort, $order, $operator); ?>`.
+1. Sprinkle the `[catablog]` [Shortcode](http://codex.wordpress.org/Shortcode_API "The Shortcode API") throughout your blog to show your catalog.
+1. You may also use the template tag, which operates similarly to the Shortcode: `<?php catablog_show_items($cat, $template, $sort, $order, $operator); ?>`
 
 == Frequently Asked Questions ==
 
