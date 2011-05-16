@@ -1,7 +1,7 @@
 === CataBlog ===
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
-Tags: admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce
+Tags: admin, image, images, posts, Post, links, catalog, gallery, photo, photos, photo-gallery, portfolio, product catalog, discography, library, collection, store, organize, media, thumbnail, product, listing, list, BuddyPress, ecommerce
 Requires at least: 3.1
 Tested up to: 3.1
 Stable tag: 1.2.7
@@ -33,7 +33,7 @@ Please remember that CataBlog is written, maintained, supported and documented b
 
 == Installation ==
 
-1. Make sure your server is running `PHP 5` or better and has the `GD` library.
+1. Make sure your server is running `PHP 5` or better and has the `GD` extension.
 1. Upload `catablog` to the `/wp-content/plugins/` directory.
 1. Activate the plugin through the `Plugins` menu in WordPress.
 1. If you want you may also network activate CataBlog.
