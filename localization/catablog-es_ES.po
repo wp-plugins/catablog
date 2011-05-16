@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: CataBlog 1.2.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-05-11 11:25-0800\n"
-"PO-Revision-Date: 2011-05-11 11:27-0800\n"
+"PO-Revision-Date: 2011-05-11 21:43-0800\n"
 "Last-Translator: Zachary Segal <zac@illproductions.com>\n"
 "Language-Team: illProductions <zac@illproductions.com>\n"
 "MIME-Version: 1.0\n"
@@ -170,9 +170,9 @@ msgid "Error during set category, could not load item with id %s."
 msgstr "Error durante la categoría de conjunto, no se puede cargar el elemento con id %s."
 
 #: ../lib/CataBlog.class.php:892
-#, fuzzy, php-format
+#, php-format
 msgid "Error during bulk delete, could not load item with id %s."
-msgstr "Error durante la eliminación masiva, no pudo encontrar el punto de Identificación."
+msgstr "Error durante la eliminación masiva, no se puede cargar el elemento con id %s."
 
 #: ../lib/CataBlog.class.php:922
 msgid "No file was selected for upload, please try again."
@@ -205,9 +205,8 @@ msgid "The CataBlog upload directories have been locked."
 msgstr "El CataBlog subir directorios se han bloqueado."
 
 #: ../lib/CataBlog.class.php:1157
-#, fuzzy
 msgid "Commas, Pipes and reserved HTML characters are not allowed in category names."
-msgstr "Las comas y caracteres reservados HTML no están permitidos en los nombres de categoría."
+msgstr "Las comas, Tubos y reservados caracteres HTML no están permitidos en los nombres de categoría."
 
 #: ../lib/CataBlog.class.php:1163
 msgid "Please be a little more specific with your category name."
@@ -247,32 +246,30 @@ msgid "sub image deleted successfully"
 msgstr "sub imagen eliminado con éxito"
 
 #: ../lib/CataBlog.class.php:1323
-#, fuzzy, php-format
+#, php-format
 msgid "%s library items deleted successfully."
-msgstr "sub imagen eliminado con éxito"
+msgstr "%s elementos de la biblioteca eliminado con éxito."
 
 #: ../lib/CataBlog.class.php:1326
-#, fuzzy
 msgid "CataBlog Library Cleared Successfully."
-msgstr "Base de datos aclarados con éxito"
+msgstr "Colección CataBlog aclarados con éxito."
 
 #: ../lib/CataBlog.class.php:1339
-#, fuzzy
 msgid "CataBlog Options, Directories and Terms Deleted Successfully."
-msgstr "Opciones CataBlog y directorios se han instalado con éxito."
+msgstr "Opciones CataBlog, Directorios y Condiciones eliminados con éxito."
 
 #: ../lib/CataBlog.class.php:1340
 msgid "You may now go deactivate CataBlog and nothing will be left behind."
-msgstr ""
+msgstr "Ahora puede ir a desactivar CataBlog y nada se quedará atrás."
 
 #: ../lib/CataBlog.class.php:1341
 msgid "If you want to continue using CataBlog, go to the library to re-install necessary settings."
-msgstr ""
+msgstr "Si desea seguir utilizando CataBlog, ir a la biblioteca para volver a instalar los ajustes necesarios."
 
 #: ../lib/CataBlog.class.php:1474
-#, fuzzy, php-format
+#, php-format
 msgid "CataBlog %s LightBox Styles | %s"
-msgstr "CataBlog LightBox Inline Stylesheet"
+msgstr "CataBlog %s LightBox Styles | %s"
 
 #: ../lib/CataBlog.class.php:1494
 msgid "You may also press &quot;P&quot; or the left arrow on your keyboard"
@@ -299,9 +296,9 @@ msgid "CLOSE"
 msgstr "CERRAR"
 
 #: ../lib/CataBlog.class.php:1503
-#, fuzzy, php-format
+#, php-format
 msgid "CataBlog %s LightBox JavaScript | %s"
-msgstr "CataBlog LightBox JavaScript"
+msgstr "CataBlog %s LightBox JavaScript | %s"
 
 #: ../lib/CataBlog.class.php:1505
 msgid "End CataBlog LightBox JavaScript"
@@ -318,19 +315,18 @@ msgid "Learn More"
 msgstr "Más información"
 
 #: ../lib/CataBlog.class.php:1778
-#, fuzzy, php-format
+#, php-format
 msgid "CataBlog options and directories have been successfully installed. Please, %srefresh now%s"
-msgstr "Opciones CataBlog y directorios se han instalado con éxito."
+msgstr "Opciones CataBlog y directorios se han instalado con éxito. Por favor, %sactualice ahora%s"
 
 #: ../lib/CataBlog.class.php:1828
-#, fuzzy, php-format
+#, php-format
 msgid "There was an error creating the default term: %s"
-msgstr "Se ha producido un error al crear el término por defecto:"
+msgstr "Se ha producido un error al crear el término por defecto: %s"
 
 #: ../lib/CataBlog.class.php:1865
-#, fuzzy
 msgid "CataBlog options and directories have been successfully upgraded."
-msgstr "Opciones CataBlog y directorios se han instalado con éxito."
+msgstr "Opciones CataBlog y directorios se han actualizado correctamente."
 
 #: ../lib/CataBlog.class.php:2086
 #: ../lib/CataBlog.class.php:2126
@@ -900,9 +896,8 @@ msgid "Bulk Actions"
 msgstr "Acciones"
 
 #: ../templates/admin-library.php:30
-#, fuzzy
 msgid "Edit Categories"
-msgstr "Categorías"
+msgstr "Editar categorías"
 
 #: ../templates/admin-library.php:31
 msgid "Delete"
@@ -925,47 +920,41 @@ msgid "Grid View"
 msgstr "Cuadrícula Vista"
 
 #: ../templates/admin-library.php:93
-#, fuzzy
 msgid "Edit Multiple Catalog Item's Categories"
-msgstr "Todos los productos del catálogo procesados"
+msgstr "Editar categorías del artículo Catálogo de múltiples"
 
 #: ../templates/admin-library.php:98
-#, fuzzy
 msgid "Add to categories"
-msgstr "Todas las categorías"
+msgstr "Agregar a las categorías"
 
 #: ../templates/admin-library.php:103
 #: ../templates/admin-library.php:123
-#, fuzzy
 msgid "You have no categories."
-msgstr "En estos momentos no tienen categorías."
+msgstr "Usted no tiene categorías."
 
 #: ../templates/admin-library.php:118
-#, fuzzy
 msgid "Remove from categories"
-msgstr "la eliminación de categorías catálogo ..."
+msgstr "Borrar de categorías"
 
 #: ../templates/admin-library.php:142
-#, fuzzy
 msgid "Change Multiple Categories"
-msgstr "Todas las categorías"
+msgstr "Cambio múltiples categorías"
 
 #: ../templates/admin-library.php:144
 msgid "Select the categories you would like each selected item to be part of by checking their boxes."
-msgstr ""
+msgstr "Seleccione las categorías que le gustaría que cada elemento seleccionado para formar parte de la comprobación de sus cajas."
 
 #: ../templates/admin-library.php:145
 msgid "After the bulk edit, the selected items will be in only the categories selected above."
-msgstr ""
+msgstr "Después de la edición masiva, los elementos seleccionados será sólo en las categorías seleccionadas anteriormente."
 
 #: ../templates/admin-library.php:167
 msgid "Please select a bulk action to apply."
 msgstr "Por favor, seleccione una acción masiva de aplicar."
 
 #: ../templates/admin-library.php:174
-#, fuzzy
 msgid "Please select at least one catalog item first."
-msgstr "Por favor, seleccione una acción masiva de aplicar."
+msgstr "Por favor, seleccione al menos un elemento de primer catálogo."
 
 #: ../templates/admin-library.php:193
 msgid "Are you sure you want to delete multiple items?"
@@ -1335,19 +1324,16 @@ msgid "Click the <em>Regenerate Now</em> button to recreate all the thumbnail an
 msgstr "Haga clic en la <em>Regenerar Ahora</em> para volver a crear todas las imágenes en miniatura y la mesa de luz que CataBlog ha generado durante el tiempo que lo utilice. Esto también es útil al restaurar los datos exportados desde otra versión de CataBlog. después de haber subido las imágenes originales que debe volver a generar las imágenes para que muestre correctamente."
 
 #: ../templates/admin-options.php:357
-#, fuzzy
 msgid "Remove CataBlog"
-msgstr "Restablecer CataBlog"
+msgstr "Retire CataBlog"
 
 #: ../templates/admin-options.php:359
-#, fuzzy
 msgid "Remove All CataBlog Data"
-msgstr "Restablecer todos los datos CataBlog"
+msgstr "Eliminar todos los datos CataBlog"
 
 #: ../templates/admin-options.php:361
-#, fuzzy
 msgid "Delete your entire catalog, deleting all photos and custom data permanently. Sometimes you can use this to fix an improper installation."
-msgstr "Reinicie su catálogo completo, borrando todas las fotos y datos personalizados de forma permanente. A veces se puede usar esto para arreglar una instalación incorrecta."
+msgstr "Eliminar todo el catálogo, eliminar todas las fotos y datos personalizados de forma permanente. A veces se puede usar esto para arreglar una instalación incorrecta."
 
 #: ../templates/admin-options.php:370
 #, php-format
@@ -1373,7 +1359,7 @@ msgstr "Usted debe tener un explorador Javascript activado para poder regenerar 
 
 #: ../templates/admin-regenerate.php:15
 msgid "Your CataBlog library is empty, there are no images to render."
-msgstr ""
+msgstr "Su biblioteca CataBlog está vacío, no hay imágenes para hacer."
 
 #: ../templates/admin-regenerate.php:28
 msgid "Waiting For Thumbnail Rendering To Finish..."
@@ -1381,26 +1367,23 @@ msgstr "Esperando Miniatura de que termine el renderizado..."
 
 #: ../templates/admin-regenerate.php:33
 msgid "Rendering all images from their original files, this may take awhile so please be patient."
-msgstr ""
+msgstr "Representación de todas las imágenes de sus archivos originales, esto puede tomar un tiempo así que por favor sea paciente."
 
 #: ../templates/admin-regenerate.php:41
 msgid "Image rendering is now complete, you may now go to any other admin panel you may want."
 msgstr "De representación en imágenes se ha completado, ahora puede ir a cualquier otro panel de administración es posible que desee."
 
 #: ../templates/admin-remove.php:4
-#, fuzzy
 msgid "CataBlog Remove"
-msgstr "CataBlog Artículo"
+msgstr "CataBlog Quitar"
 
 #: ../templates/admin-remove.php:8
-#, fuzzy
 msgid "You must have a JavaScript enabled browser to remove your catalog installation, sorry..."
-msgstr "Usted debe tener un explorador Javascript activado para poder cambiar las opciones de CataBlog."
+msgstr "Usted debe tener un explorador tener Javascript activado para eliminar la instalación de catálogo, lo siento ..."
 
 #: ../templates/admin-remove.php:16
-#, fuzzy
 msgid "Removing CataBlog..."
-msgstr "la eliminación de artículos del catálogo ..."
+msgstr "Eliminación CataBlog ..."
 
 #: ../templates/admin-rescan.php:4
 msgid "CataBlog Rescan Original Images Results"
@@ -1419,9 +1402,9 @@ msgid "New images should be uploaded into the following folder:"
 msgstr "Nuevas imágenes deben ser cargados en la carpeta siguiente:"
 
 #: ../templates/admin-rescan.php:36
-#, fuzzy, php-format
+#, php-format
 msgid "New Image Found, creating catalog item %s"
-msgstr "Nueva imagen que se encuentra, la creación de tema catálogo"
+msgstr "Nueva imagen que se encuentra, la creación de tema catálogo %s"
 
 #~ msgid ""
 #~ "CataBlog must be setup for this site before you may use it! %s Setup "
