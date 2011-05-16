@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CataBlog 1.2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-11 11:25-0800\n"
-"PO-Revision-Date: 2011-05-11 21:43-0800\n"
+"POT-Creation-Date: 2011-05-16 07:23-0800\n"
+"PO-Revision-Date: 2011-05-16 07:23-0800\n"
 "Last-Translator: Zachary Segal <zac@illproductions.com>\n"
 "Language-Team: illProductions <zac@illproductions.com>\n"
 "MIME-Version: 1.0\n"
@@ -328,94 +328,94 @@ msgstr "Se ha producido un error al crear el término por defecto: %s"
 msgid "CataBlog options and directories have been successfully upgraded."
 msgstr "Opciones CataBlog y directorios se han actualizado correctamente."
 
-#: ../lib/CataBlog.class.php:2086
-#: ../lib/CataBlog.class.php:2126
-#: ../lib/CataBlog.class.php:2129
-#: ../lib/CataBlog.class.php:2132
+#: ../lib/CataBlog.class.php:2084
+#: ../lib/CataBlog.class.php:2124
+#: ../lib/CataBlog.class.php:2127
+#: ../lib/CataBlog.class.php:2130
 msgid "Error:"
 msgstr "Error:"
 
-#: ../lib/CataBlog.class.php:2100
+#: ../lib/CataBlog.class.php:2098
 msgid "Success:"
 msgstr "Éxito:"
 
-#: ../lib/CataBlog.class.php:2100
+#: ../lib/CataBlog.class.php:2098
 #, php-format
 msgid " %s inserted into catalog categories."
 msgstr "%s inserta en categorías catálogo."
 
-#: ../lib/CataBlog.class.php:2108
+#: ../lib/CataBlog.class.php:2106
 msgid "All New Categories Created"
 msgstr "Todas las categorías Nueva creación"
 
-#: ../lib/CataBlog.class.php:2112
+#: ../lib/CataBlog.class.php:2110
 msgid "No New Categories Created"
 msgstr "No hay nuevas categorías creadas"
 
-#: ../lib/CataBlog.class.php:2125
+#: ../lib/CataBlog.class.php:2123
 msgid "Update:"
 msgstr "Actualización:"
 
-#: ../lib/CataBlog.class.php:2125
+#: ../lib/CataBlog.class.php:2123
 #, php-format
 msgid " %s updated in database."
 msgstr "%s actualizada la base de datos."
 
-#: ../lib/CataBlog.class.php:2126
+#: ../lib/CataBlog.class.php:2124
 #, php-format
 msgid " %s was not inserted into the database."
 msgstr "%s no fue insertado en la base de datos."
 
-#: ../lib/CataBlog.class.php:2129
+#: ../lib/CataBlog.class.php:2127
 msgid "Item had no title and could not be made."
 msgstr "Artículo no tiene título y no pudo realizar."
 
-#: ../lib/CataBlog.class.php:2132
+#: ../lib/CataBlog.class.php:2130
 msgid "Item had no primary image name and could not be made."
 msgstr "Artículo no tiene nombre de la imagen principal y no pudo realizar."
 
-#: ../lib/CataBlog.class.php:2169
+#: ../lib/CataBlog.class.php:2167
 msgid "Insert:"
 msgstr "Insertar:"
 
-#: ../lib/CataBlog.class.php:2169
+#: ../lib/CataBlog.class.php:2167
 #, php-format
 msgid " %s inserted into the database."
 msgstr "%s inserta en la base de datos."
 
-#: ../lib/CataBlog.class.php:2194
+#: ../lib/CataBlog.class.php:2192
 msgid "All Catalog Items Processed"
 msgstr "Todos los productos del catálogo procesados"
 
-#: ../lib/CataBlog.class.php:2259
+#: ../lib/CataBlog.class.php:2257
 msgid "Uploaded File Exceeded The PHP Configurations Max File Size."
 msgstr "El archivo subido excede el máximo de configuraciones de PHP Tamaño del archivo."
 
-#: ../lib/CataBlog.class.php:2262
+#: ../lib/CataBlog.class.php:2260
 msgid "Upload File Exceeded The HTML Form's Max File Size."
 msgstr "Carga de archivos ha superado el máximo de formulario HTML Tamaño del archivo."
 
-#: ../lib/CataBlog.class.php:2265
+#: ../lib/CataBlog.class.php:2263
 msgid "File Only Partially Uploaded, Please Try Again."
 msgstr "El archivo sólo parcialmente cargado, por favor intente de nuevo."
 
-#: ../lib/CataBlog.class.php:2268
+#: ../lib/CataBlog.class.php:2266
 msgid "No File Selected For Upload. Please Resubmit The Form."
 msgstr "No hay archivos seleccionados para subir. Por favor, vuelva a enviar el formulario."
 
-#: ../lib/CataBlog.class.php:2271
+#: ../lib/CataBlog.class.php:2269
 msgid "Your Server's PHP Configuration Does Not Have A Temporary Folder For Uploads, Please Contact The System Admin."
 msgstr "Configuración de su servidor PHP no tiene una carpeta temporal de Cargas, Póngase en contacto con el administrador del sistema."
 
-#: ../lib/CataBlog.class.php:2274
+#: ../lib/CataBlog.class.php:2272
 msgid "Your Server's PHP Configuration Can Not Write To Disc, Please Contact The System Admin."
 msgstr "Configuración de su servidor PHP no se puede escribir en el disco, Por favor contacte al administrador del sistema."
 
-#: ../lib/CataBlog.class.php:2277
+#: ../lib/CataBlog.class.php:2275
 msgid "A PHP Extension Is Blocking PHP From Excepting Uploads, Please Contact The System Admin."
 msgstr "Una extensión de PHP está bloqueando PHP De Cargas aceptar, Póngase en contacto con el administrador del sistema."
 
-#: ../lib/CataBlog.class.php:2280
+#: ../lib/CataBlog.class.php:2278
 msgid "An Unknown Upload Error Has Occurred"
 msgstr "Un desconocido Subir error ha ocurrido"
 

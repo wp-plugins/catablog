@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce
 Requires at least: 3.1
 Tested up to: 3.1
-Stable tag: 1.2.6
+Stable tag: 1.2.7
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -33,7 +33,7 @@ Please remember that CataBlog is written, maintained, supported and documented b
 
 == Installation ==
 
-1. Make sure your server is running `PHP 5` or better and has the `GD` and `MultiByte String` libraries.
+1. Make sure your server is running `PHP 5` or better and has the `GD` library for image manipulation.
 1. Upload `catablog` to the `/wp-content/plugins/` directory.
 1. Activate the plugin through the `Plugins` menu in WordPress.
 1. If you want you may also network activate CataBlog. Note that each new site you make will require an installation step, simply do so when reminded and all will be good.
@@ -66,7 +66,7 @@ The CataBlog Admin section is made and tested to work best with these browsers:
 The CataBlog LightBox and Templates are tested to work in these browsers:
 
 1. Internet Explorer 6, 7, 8 and 9
-1. Firefox 2 and above
+1. Firefox 2, 3 and 4
 1. Safari and Chrome
 1. JavaScript must be enabled for LightBox support.
 
