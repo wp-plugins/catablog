@@ -33,7 +33,7 @@ Please remember that CataBlog is written, maintained, supported and documented b
 
 == Installation ==
 
-1. Make sure your server is running `PHP 5` or better and has the `GD` library.
+1. Make sure your server is running `PHP 5` or better and has the `GD` extension.
 1. Upload `catablog` to the `/wp-content/plugins/` directory.
 1. Activate the plugin through the `Plugins` menu in WordPress.
 1. If you want you may also network activate CataBlog.
