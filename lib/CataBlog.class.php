@@ -2056,12 +2056,10 @@ class CataBlog {
 		}
 		$import_terms = array_intersect_key($import_terms,array_unique(array_map('strtolower',$import_terms)));
 		
-		$this->get_terms(true);
-		
 		// extract a list of every category that is not already created
 		$make_terms = $import_terms;
 		if (isset($_REQUEST['catablog_clear_db']) === false) {
-			$existant_terms = $this->get_terms();
+			$existant_terms = $this->get_terms(true);
 			foreach ($existant_terms as $existant_term) {
 				foreach ($make_terms as $key => $make_term) {				
 					if ($make_term == $existant_term->name) {

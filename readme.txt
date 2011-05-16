@@ -57,23 +57,30 @@ Please remember that CataBlog is written, maintained, supported and documented b
 
 The CataBlog Admin section is made and tested to work best with these browsers:
 
-1. Internet Explorer 8
+1. Internet Explorer 9
 1. FireFox 4
 1. Safari 5
-1. Chrome 10
-1. JavaScript Should Be Enabled
+1. Chrome 11
+1. JavaScript should be enabled for full support.
+
+The CataBlog LightBox and Templates are tested to work in these browsers:
+
+1. Internet Explorer 6, 7, 8 and 9
+1. Firefox 2 and above
+1. Safari and Chrome
+1. JavaScript must be enabled for LightBox support.
 
 = I installed CataBlog, now where is it? =
 
-Look for CataBlog in your WordPress Admin Panel right underneath the Comments section.
+Look for CataBlog in your WordPress Admin Menu on the bottom, underneath the Settings section.
 
 = How do I add a new item to my catalog? =
 
-Login to the Admin Panel of your WordPress blog and go to the CataBlog section by clicking its icon right below the Comments section. Now you can click "Add New" next to the page title or in the CataBlog menu itself.
+Login to the Admin Panel of your WordPress blog and go to the CataBlog section by clicking its icon below the Settings section. Now you can click "Add New" next to the page title or in the CataBlog menu itself.
 
 = How do I customize my catalog's layout? =
 
-You can easily override CataBlog's CSS classes to create your own design and easily incorporate CataBlog into your site's layout. The recommended way to do this would be to create a catablog.css style file in your theme's directory and add your CSS override code in there. Read more about it here http://catablog.illproductions.com/documentation.
+You can easily override CataBlog's CSS classes to create your own design and easily incorporate CataBlog into your site's layout. The recommended way to do this would be to create a catablog.css style file in your theme's directory and add your CSS override code in there. Read more about it at http://catablog.illproductions.com/documentation/displaying-your-catalog-in-posts/.
 
 = Where can I learn more about CataBlog? =
 
@@ -90,8 +97,22 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Changelog ==
 
+= 1.2.7 =
+* New: Bulk Edit Item Categories.
+* New: The PHP MultiByte String Library is no longer necessary to run CataBlog, but still recommended.
+* New: Replace reset action with remove, allowing for an easy way to uninstall CataBlog.
+* Fix: All Admin actions that edit your catalog now check for a security nonce.
+* Fix: CSV Export no longer adds an extra header for the nonexistent id column.
+* Fix: %MAIN-IMAGE% token will always be linked to its larger size image if the LightBox is enabled.
+* Fix: %TITLE-LINK% token is now replaced correctly and in used in the default template.
+* Fix: Refactored activation, installation and upgrade methods.
+* Fix: LightBox console does not interfere with Internet Explorer browser.
+* Fix: LightBox will attempt to load the original upload if the rendered image request returns not found.
+* Fix: jQuery selector for the LightBox reverts to .catablog-image if empty.
+* Fix: Incrementally better JavaScript performance in the Admin Panels.
+
 = 1.2.6 =
-* Fix: All plugin URLs will now be secure connections if the page is loaded will SSL.
+* Fix: All plugin URLs will now be secure connections if the main page is securely loaded.
 * Fix: Removed die() function from plugin completely, so changing your server configurations won't break your entire site in some fringe cases.
 * Fix: Refactored the plugin activation function so it is more reliable.
 * New: Plugin version number is now saved in your database to help the plugin update itself.
