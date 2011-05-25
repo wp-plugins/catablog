@@ -1,3 +1,7 @@
+<?php $current_cat = (isset($_GET['category']))? '&amp;category='.$_GET['category'] : '' ?>
+<?php $current_page = (isset($_GET['paged']))? '&amp;paged='.$_GET['paged'] : ''?>
+
+
 <div class="wrap">
 
 		<div id="icon-catablog" class="icon32"><br /></div>
@@ -23,6 +27,7 @@
 			
 			<form id="catablog-bulk-action-form" method="post" action="admin.php?page=catablog-bulkedit" class="alignleft actions hide">
 				<input type="hidden" name="page" value="catablog-bulkedit" />
+				<input type="hidden" name="reference" value="admin.php?page=catablog<?php echo $current_cat ?><?php echo $current_page ?>" />
 				<?php wp_nonce_field( 'catablog_bulkedit', '_catablog_bulkedit_nonce', false, true ) ?>
 				
 				<select id="bulk-action" name="bulk-action">
@@ -36,7 +41,7 @@
 			</form>
 			
 			<form method="get" action="admin.php?page=catablog" class="alignleft actions">
-				<label for="cat">View:</label>
+				<label for="cat"><?php _e('View', 'catablog') ?>:</label>
 				<input type="hidden" name="page" value="catablog" />
 				<select id="cat" name="category" class="postform">
 					<option value="-1">- <?php _e("All Categories", 'catablog'); ?></option>
@@ -56,17 +61,37 @@
 				*/ ?>
 			</form>
 			
+			
+				<form class="tablenav-pages" action="" method="get">
+					<span class="displaying-num"><?php printf(__('%s items', 'catablog'), $total_catalog_items) ?></span> <!-- elementos -->
+					
+					<?php if ($total_catalog_items > $limit): ?>
+					
+					<a class='first-page <?php echo ($paged < 2)? 'disabled' : '' ?>' title='<?php _e('Go to the first page', 'catablog') ?>' href='<?php echo $first_catalog_page_link ?>'>&laquo;</a>
+					<a class='prev-page <?php echo ($paged < 2)? 'disabled' : '' ?>' title='<?php _e('Go to the previous page', 'catablog') ?>' href='<?php echo $prev_catalog_page_link ?>'>&lsaquo;</a>
+				
+					<span class="paging-input">
+						<input type="hidden" name="page" value="catablog" />
+						<input class='current-page' title='<?php _e('Current page') ?>' type='text' name='paged' value='<?php echo $paged ?>' size='1' />
+						<?php _e('of', 'catablog') ?>
+						<span class='total-pages'><?php echo $total_catalog_pages ?></span>
+					</span>
+					
+					<a class='next-page <?php echo ($paged >= $total_catalog_pages)? 'disabled' : '' ?>' title='<?php _e('Go to the next page', 'catablog') ?>' href='<?php echo $next_catalog_page_link ?>'>&rsaquo;</a>
+					<a class='last-page <?php echo ($paged >= $total_catalog_pages)? 'disabled' : '' ?>' title='<?php _e('Go to the last page', 'catablog') ?>' href='<?php echo $last_catalog_page_link ?>'>&raquo;</a>
+					<?php endif ?>
+				</form>
+
+			
 			<div id="catablog-view-switch" class="view-switch">
 				<?php $list_class = ($view == 'list')? 'class="current"' : 'class=""' ?>
 				<?php $grid_class = ($view == 'grid')? 'class="current"' : 'class=""' ?>
 				<?php $meta       = 'width="20" height="20" border="0"'; ?>
-				<?php $current_cat = (isset($_GET['category']))? '&amp;category='.$_GET['category'] : '' ?>
-				<?php $current_page = (isset($_GET['offset']))? '&amp;offset='.$_GET['offset'] : ''?>
 				
-				<a href="admin.php?page=catablog<?php echo $current_page ?><?php echo $current_cat ?>&amp;view=list">
+				<a href="admin.php?page=catablog<?php echo $current_cat ?><?php echo $current_page ?>&amp;view=list">
 					<img src="<?php echo $this->urls['images'] ?>/blank.gif" id="view-switch-list" <?php echo "$list_class $meta" ?> title="<?php _e("List View", 'catablog'); ?>" alt="<?php _e("List View", 'catablog'); ?>"/>
 				</a>
-				<a href="admin.php?page=catablog<?php echo $current_page ?><?php echo $current_cat ?>&amp;view=grid">
+				<a href="admin.php?page=catablog<?php echo $current_cat ?><?php echo $current_page ?>&amp;view=grid">
 					<img src="<?php echo $this->urls['images'] ?>/blank.gif" id="view-switch-excerpt" <?php echo "$grid_class $meta" ?> title="<?php _e("Grid View", 'catablog'); ?>" alt="<?php _e("Grid View", 'catablog'); ?>"/>
 				</a>
 			</div>
@@ -83,6 +108,28 @@
 				
 		?>
 		
+		
+		<?php if ($total_catalog_items > $limit): ?>
+			<div class="tablenav">
+				<form class="tablenav-pages" action="" method="get">
+					<span class="displaying-num"><?php printf(__('%s items', 'catablog'), $total_catalog_items) ?></span> <!-- elementos -->
+			
+					<a class='first-page <?php echo ($paged < 2)? 'disabled' : '' ?>' title='<?php _e('Go to the first page', 'catablog') ?>' href='<?php echo $first_catalog_page_link ?>'>&laquo;</a>
+					<a class='prev-page <?php echo ($paged < 2)? 'disabled' : '' ?>' title='<?php _e('Go to the previous page', 'catablog') ?>' href='<?php echo $prev_catalog_page_link ?>'>&lsaquo;</a>
+			
+					<span class="paging-input">
+						<input type="hidden" name="page" value="catablog" />
+						<input class='current-page' title='<?php _e('Current page') ?>' type='text' name='paged' value='<?php echo $paged ?>' size='1' />
+						<?php _e('of', 'catablog') ?>
+						<span class='total-pages'><?php echo $total_catalog_pages ?></span>
+					</span>
+				
+					<a class='next-page <?php echo ($paged >= $total_catalog_pages)? 'disabled' : '' ?>' title='<?php _e('Go to the next page', 'catablog') ?>' href='<?php echo $next_catalog_page_link ?>'>&rsaquo;</a>
+					<a class='last-page <?php echo ($paged >= $total_catalog_pages)? 'disabled' : '' ?>' title='<?php _e('Go to the last page', 'catablog') ?>' href='<?php echo $last_catalog_page_link ?>'>&raquo;</a>
+				</form>
+			</div>
+		<?php endif ?>
+
 		
 		<div id='catablog_load_curtain'>&nbsp;</div>
 
@@ -138,6 +185,7 @@
 					<?php wp_nonce_field( 'catablog_bulkedit', '_catablog_bulkedit_nonce', false, true ) ?>
 					<input type="hidden" name="page" value="catablog-bulkedit" />
 					<input type="hidden" name="bulk-action" value="edit-category" />
+					<input type="hidden" name="reference" value="admin.php?page=catablog<?php echo $current_cat ?><?php echo $current_page ?>" />
 					
 					<input type="submit" name="save" value="<?php _e("Change Multiple Categories", 'catablog'); ?>" class="button-primary" />
 					<p><small>
@@ -217,10 +265,10 @@
 		
 		
 		// lazy load the images
-		calculate_lazy_loads();
-		$(window).bind('scroll resize', function(event) {
-			calculate_lazy_loads();
-		});
+		// calculate_lazy_loads();
+		// $(window).bind('scroll resize', function(event) {
+		// 	calculate_lazy_loads();
+		// });
 		
 		/*
 		// initialize the sortables

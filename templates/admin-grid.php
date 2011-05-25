@@ -13,9 +13,7 @@
 				<?php $edit   = 'admin.php?page=catablog&amp;id='.$result->getId() ?>
 				<?php $remove = 'admin.php?page=catablog-delete&amp;id='.$result->getId() ?>
 				<li>
-					<a href="<?php echo $edit ?>" rel="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" class="catablog-admin-thumbnail lazyload">
-						<noscript><img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" class="catablog-grid-thumbnail" width="100" height="100" alt="" /></noscript>
-					</a>
+					<a href="<?php echo $edit ?>" class="catablog-admin-thumbnail"><img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" class="catablog-grid-thumbnail" width="100" height="100" alt="" /></a>
 					
 					<a href="<?php echo $edit ?>" class="catablog-title"><small>
 						<?php $truncated_title = (function_exists('mb_substr'))? mb_substr($result->getTitle(), 0, 30) : substr($result->getTitle(), 0, 30) ?>
@@ -27,4 +25,5 @@
 					
 				</li>
 			<?php endforeach; ?>
+			<li class="clear">&nbsp;</li>
 		</ul>

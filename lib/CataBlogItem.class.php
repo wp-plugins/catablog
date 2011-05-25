@@ -4,7 +4,7 @@
  *
  * This file contains the class for each CataBlog Item that is fetched from the database.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.2.7.1
+ * @version 1.2.8
  * @package catablog
  */
 
@@ -170,7 +170,7 @@ class CataBlogItem {
 			'numberposts' => $limit,
 		);
 		
-		if ($categories !== false) {
+		if (!empty($categories)) {
 			
 			$tax_query_array = array(
 				array(
@@ -716,6 +716,20 @@ class CataBlogItem {
 	}
 	public function getCategories() {
 		return $this->categories;
+	}
+	public function getCategorySlugs() {
+		global $wp_plugin_catablog_class;
+		
+		$slugs = array();
+		$terms = $wp_plugin_catablog_class->get_terms();
+		
+		foreach ($terms as $term) {
+			if ($this->inCategory($term->name)) {
+				$slugs[] = $term->slug;
+			}
+		}
+		
+		return $slugs;
 	}
 	public function getCustomPostName() {
 		return $this->_custom_post_name;

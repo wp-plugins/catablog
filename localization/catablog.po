@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CataBlog 1.2.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-11 11:25-0800\n"
-"PO-Revision-Date: 2011-05-11 11:25-0800\n"
+"POT-Creation-Date: 2011-05-25 14:16-0800\n"
+"PO-Revision-Date: 2011-05-25 14:16-0800\n"
 "Last-Translator: Zachary Segal <zac@illproductions.com>\n"
 "Language-Team: illProductions <zac@illproductions.com>\n"
 "MIME-Version: 1.0\n"
@@ -51,7 +51,7 @@ msgstr ""
 
 #: ../lib/CataBlog.class.php:294
 #: ../templates/admin-404.php:11
-#: ../templates/admin-library.php:5
+#: ../templates/admin-library.php:9
 msgid "CataBlog Library"
 msgstr ""
 
@@ -65,7 +65,7 @@ msgid "Add New CataBlog Entry"
 msgstr ""
 
 #: ../lib/CataBlog.class.php:295
-#: ../templates/admin-library.php:6
+#: ../templates/admin-library.php:10
 msgid "Add New"
 msgstr ""
 
@@ -87,335 +87,335 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:394
-#: ../lib/CataBlog.class.php:431
+#: ../lib/CataBlog.class.php:446
+#: ../lib/CataBlog.class.php:483
 msgid "Changes Saved Successfully"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:397
+#: ../lib/CataBlog.class.php:449
 msgid "Catalog Item Deleted Successfully."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:400
+#: ../lib/CataBlog.class.php:452
 msgid "Could Not Delete Item Because ID was non existent."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:403
+#: ../lib/CataBlog.class.php:455
 msgid "Could not verify bulk edit action nonce, please refresh page and try again."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:406
+#: ../lib/CataBlog.class.php:458
 msgid "Bulk categories edit performed successfully."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:409
+#: ../lib/CataBlog.class.php:461
 msgid "Bulk delete performed successfully."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:412
+#: ../lib/CataBlog.class.php:464
 msgid "Reset all data successfully."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:467
+#: ../lib/CataBlog.class.php:519
 msgid "CataBlog Options Saved"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:509
+#: ../lib/CataBlog.class.php:561
 msgid "Please Let The Rendering Below Complete Before Navigating Away From This Page"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:527
+#: ../lib/CataBlog.class.php:579
 msgid "Form Validation Error. Please reload the page and try again."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:550
-#: ../lib/CataBlog.class.php:551
-#: ../lib/CataBlog.class.php:552
+#: ../lib/CataBlog.class.php:602
+#: ../lib/CataBlog.class.php:603
+#: ../lib/CataBlog.class.php:604
 msgid "not present"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:640
+#: ../lib/CataBlog.class.php:692
 msgid "The file you selected was to large or you didn't select anything at all, please try again."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:644
 #: ../lib/CataBlog.class.php:696
 #: ../lib/CataBlog.class.php:748
-#: ../lib/CataBlog.class.php:786
-#: ../lib/CataBlog.class.php:913
+#: ../lib/CataBlog.class.php:800
+#: ../lib/CataBlog.class.php:838
+#: ../lib/CataBlog.class.php:971
 msgid "WordPress Nonce Error, please reload the form and try again."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:700
+#: ../lib/CataBlog.class.php:752
 msgid "full form was not submitted, please try again."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:744
-#: ../lib/CataBlog.class.php:782
+#: ../lib/CataBlog.class.php:796
+#: ../lib/CataBlog.class.php:834
 msgid "You didn't select anything to upload, please try again."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:752
-#: ../lib/CataBlog.class.php:790
+#: ../lib/CataBlog.class.php:804
+#: ../lib/CataBlog.class.php:842
 msgid "No item ID posted, press back arrow and try again."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:833
+#: ../lib/CataBlog.class.php:885
 msgid "Please make your selection by checking the boxes in the list below."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:875
+#: ../lib/CataBlog.class.php:931
 #, php-format
 msgid "Error during set category, could not load item with id %s."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:892
+#: ../lib/CataBlog.class.php:949
 #, php-format
 msgid "Error during bulk delete, could not load item with id %s."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:922
+#: ../lib/CataBlog.class.php:980
 msgid "No file was selected for upload, please try again."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:931
+#: ../lib/CataBlog.class.php:989
 msgid "Uploaded XML File Could Not Be Parsed, Check That The File's Content Is Valid XML."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:937
+#: ../lib/CataBlog.class.php:995
 msgid "Uploaded CSV File Could Not Be Parsed, Check That The File's Format Is Valid."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:941
+#: ../lib/CataBlog.class.php:999
 msgid "Uploaded file was not of proper format, please make sure the filename has an xml or csv extension."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1008
+#: ../lib/CataBlog.class.php:1066
 msgid "The CataBlog upload directories have been unlocked."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1011
-#: ../lib/CataBlog.class.php:1024
+#: ../lib/CataBlog.class.php:1069
+#: ../lib/CataBlog.class.php:1082
 #: ../templates/admin-options.php:322
 msgid "Could not lock/unlock the directory. Are you using a unix based server?"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1021
+#: ../lib/CataBlog.class.php:1079
 msgid "The CataBlog upload directories have been locked."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1157
+#: ../lib/CataBlog.class.php:1215
 msgid "Commas, Pipes and reserved HTML characters are not allowed in category names."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1163
+#: ../lib/CataBlog.class.php:1221
 msgid "Please be a little more specific with your category name."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1175
+#: ../lib/CataBlog.class.php:1233
 msgid "There already is a category with that name."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1204
+#: ../lib/CataBlog.class.php:1262
 msgid "Term Removed Successfully."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1207
+#: ../lib/CataBlog.class.php:1265
 msgid "Term did not exist, please refresh page and try again."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1249
+#: ../lib/CataBlog.class.php:1307
 msgid "unsupported image size type"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1258
+#: ../lib/CataBlog.class.php:1316
 #, php-format
 msgid "Rendering... %s of %s"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1260
+#: ../lib/CataBlog.class.php:1318
 msgid "Image rendering is now complete."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1301
+#: ../lib/CataBlog.class.php:1359
 msgid "error"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1304
+#: ../lib/CataBlog.class.php:1362
 msgid "sub image deleted successfully"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1323
+#: ../lib/CataBlog.class.php:1381
 #, php-format
 msgid "%s library items deleted successfully."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1326
+#: ../lib/CataBlog.class.php:1384
 msgid "CataBlog Library Cleared Successfully."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1339
+#: ../lib/CataBlog.class.php:1397
 msgid "CataBlog Options, Directories and Terms Deleted Successfully."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1340
+#: ../lib/CataBlog.class.php:1398
 msgid "You may now go deactivate CataBlog and nothing will be left behind."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1341
+#: ../lib/CataBlog.class.php:1399
 msgid "If you want to continue using CataBlog, go to the library to re-install necessary settings."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1474
+#: ../lib/CataBlog.class.php:1532
 #, php-format
 msgid "CataBlog %s LightBox Styles | %s"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1494
+#: ../lib/CataBlog.class.php:1552
 msgid "You may also press &quot;P&quot; or the left arrow on your keyboard"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1495
+#: ../lib/CataBlog.class.php:1553
 msgid "You may also press &quot;N&quot; or the right arrow on your keyboard"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1496
+#: ../lib/CataBlog.class.php:1554
 msgid "Close LightBox Now"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1497
+#: ../lib/CataBlog.class.php:1555
 msgid "PREV"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1498
+#: ../lib/CataBlog.class.php:1556
 msgid "NEXT"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1499
+#: ../lib/CataBlog.class.php:1557
 msgid "CLOSE"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1503
+#: ../lib/CataBlog.class.php:1561
 #, php-format
 msgid "CataBlog %s LightBox JavaScript | %s"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1505
+#: ../lib/CataBlog.class.php:1563
 msgid "End CataBlog LightBox JavaScript"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1664
+#: ../lib/CataBlog.class.php:1728
 #, php-format
 msgid "CataBlog ShortCode Parameter Error: The template attribute of this ShortCode points to a file that does not exist. Please make sure their is a file with the name '%s.htm' in the views directory."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1665
-#: ../templates/admin-library.php:16
+#: ../lib/CataBlog.class.php:1729
+#: ../templates/admin-library.php:20
 msgid "Learn More"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1778
+#: ../lib/CataBlog.class.php:1842
 #, php-format
 msgid "CataBlog options and directories have been successfully installed. Please, %srefresh now%s"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1828
+#: ../lib/CataBlog.class.php:1892
 #, php-format
 msgid "There was an error creating the default term: %s"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:1865
+#: ../lib/CataBlog.class.php:1929
 msgid "CataBlog options and directories have been successfully upgraded."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2086
-#: ../lib/CataBlog.class.php:2126
-#: ../lib/CataBlog.class.php:2129
-#: ../lib/CataBlog.class.php:2132
+#: ../lib/CataBlog.class.php:2148
+#: ../lib/CataBlog.class.php:2188
+#: ../lib/CataBlog.class.php:2191
+#: ../lib/CataBlog.class.php:2194
 msgid "Error:"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2100
+#: ../lib/CataBlog.class.php:2162
 msgid "Success:"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2100
+#: ../lib/CataBlog.class.php:2162
 #, php-format
 msgid " %s inserted into catalog categories."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2108
+#: ../lib/CataBlog.class.php:2170
 msgid "All New Categories Created"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2112
+#: ../lib/CataBlog.class.php:2174
 msgid "No New Categories Created"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2125
+#: ../lib/CataBlog.class.php:2187
 msgid "Update:"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2125
+#: ../lib/CataBlog.class.php:2187
 #, php-format
 msgid " %s updated in database."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2126
+#: ../lib/CataBlog.class.php:2188
 #, php-format
 msgid " %s was not inserted into the database."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2129
+#: ../lib/CataBlog.class.php:2191
 msgid "Item had no title and could not be made."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2132
+#: ../lib/CataBlog.class.php:2194
 msgid "Item had no primary image name and could not be made."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2169
+#: ../lib/CataBlog.class.php:2231
 msgid "Insert:"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2169
+#: ../lib/CataBlog.class.php:2231
 #, php-format
 msgid " %s inserted into the database."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2194
+#: ../lib/CataBlog.class.php:2256
 msgid "All Catalog Items Processed"
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2259
+#: ../lib/CataBlog.class.php:2321
 msgid "Uploaded File Exceeded The PHP Configurations Max File Size."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2262
+#: ../lib/CataBlog.class.php:2324
 msgid "Upload File Exceeded The HTML Form's Max File Size."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2265
+#: ../lib/CataBlog.class.php:2327
 msgid "File Only Partially Uploaded, Please Try Again."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2268
+#: ../lib/CataBlog.class.php:2330
 msgid "No File Selected For Upload. Please Resubmit The Form."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2271
+#: ../lib/CataBlog.class.php:2333
 msgid "Your Server's PHP Configuration Does Not Have A Temporary Folder For Uploads, Please Contact The System Admin."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2274
+#: ../lib/CataBlog.class.php:2336
 msgid "Your Server's PHP Configuration Can Not Write To Disc, Please Contact The System Admin."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2277
+#: ../lib/CataBlog.class.php:2339
 msgid "A PHP Extension Is Blocking PHP From Excepting Uploads, Please Contact The System Admin."
 msgstr ""
 
-#: ../lib/CataBlog.class.php:2280
+#: ../lib/CataBlog.class.php:2342
 msgid "An Unknown Upload Error Has Occurred"
 msgstr ""
 
@@ -727,7 +727,7 @@ msgid "Item Price"
 msgstr ""
 
 #: ../templates/admin-edit.php:131
-msgid "If your catalog item has a price above zero, it will generate a buy now button you may display, read more here."
+msgid "If your catalog item has a price above zero, it will generate a buy now button you may display."
 msgstr ""
 
 #: ../templates/admin-edit.php:136
@@ -776,7 +776,7 @@ msgstr ""
 
 #: ../templates/admin-edit.php:212
 #: ../templates/admin-edit.php:236
-#: ../templates/admin-library.php:92
+#: ../templates/admin-library.php:139
 msgid "[close]"
 msgstr ""
 
@@ -887,96 +887,136 @@ msgstr ""
 msgid "DataBase Cleared Successfully"
 msgstr ""
 
-#: ../templates/admin-library.php:15
+#: ../templates/admin-library.php:19
 msgid "You must have a JavaScript enabled browser for bulk actions and to change the order of your items."
 msgstr ""
 
-#: ../templates/admin-library.php:29
+#: ../templates/admin-library.php:34
 msgid "Bulk Actions"
 msgstr ""
 
-#: ../templates/admin-library.php:30
+#: ../templates/admin-library.php:35
 msgid "Edit Categories"
 msgstr ""
 
-#: ../templates/admin-library.php:31
+#: ../templates/admin-library.php:36
 msgid "Delete"
 msgstr ""
 
-#: ../templates/admin-library.php:34
+#: ../templates/admin-library.php:39
 msgid "Apply"
 msgstr ""
 
-#: ../templates/admin-library.php:42
+#: ../templates/admin-library.php:44
+msgid "View"
+msgstr ""
+
+#: ../templates/admin-library.php:47
 msgid "All Categories"
 msgstr ""
 
-#: ../templates/admin-library.php:67
-msgid "List View"
+#: ../templates/admin-library.php:66
+#: ../templates/admin-library.php:115
+#, php-format
+msgid "%s items"
 msgstr ""
 
 #: ../templates/admin-library.php:70
+#: ../templates/admin-library.php:117
+msgid "Go to the first page"
+msgstr ""
+
+#: ../templates/admin-library.php:71
+#: ../templates/admin-library.php:118
+msgid "Go to the previous page"
+msgstr ""
+
+#: ../templates/admin-library.php:75
+#: ../templates/admin-library.php:122
+msgid "Current page"
+msgstr ""
+
+#: ../templates/admin-library.php:76
+#: ../templates/admin-library.php:123
+msgid "of"
+msgstr ""
+
+#: ../templates/admin-library.php:80
+#: ../templates/admin-library.php:127
+msgid "Go to the next page"
+msgstr ""
+
+#: ../templates/admin-library.php:81
+#: ../templates/admin-library.php:128
+msgid "Go to the last page"
+msgstr ""
+
+#: ../templates/admin-library.php:92
+msgid "List View"
+msgstr ""
+
+#: ../templates/admin-library.php:95
 msgid "Grid View"
 msgstr ""
 
-#: ../templates/admin-library.php:93
+#: ../templates/admin-library.php:140
 msgid "Edit Multiple Catalog Item's Categories"
 msgstr ""
 
-#: ../templates/admin-library.php:98
+#: ../templates/admin-library.php:145
 msgid "Add to categories"
 msgstr ""
 
-#: ../templates/admin-library.php:103
-#: ../templates/admin-library.php:123
+#: ../templates/admin-library.php:150
+#: ../templates/admin-library.php:170
 msgid "You have no categories."
 msgstr ""
 
-#: ../templates/admin-library.php:118
+#: ../templates/admin-library.php:165
 msgid "Remove from categories"
 msgstr ""
 
-#: ../templates/admin-library.php:142
+#: ../templates/admin-library.php:190
 msgid "Change Multiple Categories"
 msgstr ""
 
-#: ../templates/admin-library.php:144
+#: ../templates/admin-library.php:192
 msgid "Select the categories you would like each selected item to be part of by checking their boxes."
 msgstr ""
 
-#: ../templates/admin-library.php:145
+#: ../templates/admin-library.php:193
 msgid "After the bulk edit, the selected items will be in only the categories selected above."
 msgstr ""
 
-#: ../templates/admin-library.php:167
+#: ../templates/admin-library.php:215
 msgid "Please select a bulk action to apply."
 msgstr ""
 
-#: ../templates/admin-library.php:174
+#: ../templates/admin-library.php:222
 msgid "Please select at least one catalog item first."
 msgstr ""
 
-#: ../templates/admin-library.php:193
+#: ../templates/admin-library.php:241
 msgid "Are you sure you want to delete multiple items?"
 msgstr ""
 
-#: ../templates/admin-library.php:238
+#: ../templates/admin-library.php:286
 msgid "This feature only works when viewing a single category."
 msgstr ""
 
-#: ../templates/admin-library.php:267
+#: ../templates/admin-library.php:315
 msgid "You have not saved your order. If you leave now you will loose your changes. Are you sure you want to continue leaving this page?"
 msgstr ""
 
-#: ../templates/admin-library.php:277
+#: ../templates/admin-library.php:325
 msgid "Drag the items below to rearrange their order."
 msgstr ""
 
-#: ../templates/admin-library.php:301
+#: ../templates/admin-library.php:349
 msgid "Saving new catalog order..."
 msgstr ""
 
-#: ../templates/admin-library.php:303
+#: ../templates/admin-library.php:351
 msgid "Your catalog items have been rearranged successfully."
 msgstr ""
 
@@ -995,11 +1035,11 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: ../templates/admin-list.php:88
+#: ../templates/admin-list.php:86
 msgid "Edit"
 msgstr ""
 
-#: ../templates/admin-list.php:90
+#: ../templates/admin-list.php:88
 msgid "Trash"
 msgstr ""
 
@@ -1404,5 +1444,13 @@ msgstr ""
 #: ../templates/admin-rescan.php:36
 #, php-format
 msgid "New Image Found, creating catalog item %s"
+msgstr ""
+
+#: ../templates/admin-screen-options-library.php:1
+msgid "Show on screen"
+msgstr ""
+
+#: ../templates/admin-screen-options-library.php:4
+msgid "Catalog items"
 msgstr ""
 

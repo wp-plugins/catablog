@@ -128,7 +128,7 @@
 						<br />
 						<input type="text" name="price" id="price" class="text-field" value="<?php echo $result->getPrice() ?>">
 						<small>
-							<?php _e("If your catalog item has a price above zero, it will generate a buy now button you may display, read more here.", 'catablog'); ?>
+							<?php _e("If your catalog item has a price above zero, it will generate a buy now button you may display.", 'catablog'); ?>
 						</small>
 					</p>
 					

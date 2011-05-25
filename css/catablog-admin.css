@@ -549,7 +549,17 @@ form#catablog-edit fieldset div {
 
 
 
-
+#catablog_items.catablog-grid-view {
+	clear: both;
+}
+#catablog_items.catablog-grid-view li.clear {
+	clear: left;
+	float: none;
+	height: 0;
+	padding: 0;
+	margin: 0;
+	border: 0 none;
+}
 #catablog_items.catablog-grid-view li {
 	display: block;
 	position: relative;	
