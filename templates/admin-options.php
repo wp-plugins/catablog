@@ -30,9 +30,9 @@
 		<ul id="catablog-options-menu">
 			<li><a href="#thumbnails" title="Set size and how thumbnails will be made"><?php _e("Thumbnails", "catablog"); ?></a></li>
 			<li><a href="#lightbox" title=""><?php _e("LightBox", "catablog"); ?></a></li>
+			<li><a href="#public" title=""><?php _e("Public", "catablog"); ?></a></li>
 			<li><a href="#title" title=""><?php _e("Title", "catablog"); ?></a></li>
 			<li><a href="#description" title=""><?php _e("Description", "catablog"); ?></a></li>
-			<?php /*<li><a href="#public" title=""><?php _e("Public", "catablog"); ?></a></li> */ ?>
 			<li><a href="#template" title="Control how your catalog is rendered"><?php _e("Template", "catablog"); ?></a></li>
 			<li><a href="#store" title=""><?php _e("Store", "catablog"); ?></a></li>
 			<li><a id="catablog-options-menu-export" href="#export" title=""><?php _e("Export", "catablog"); ?></a></li>
@@ -89,7 +89,7 @@
 				<?php $checked = ($lightbox_render)? "checked='checked'" : "" ?>
 				<label for="lightbox_render"><?php _e("Render a new image to be used for the lightbox:", "catablog"); ?></label>
 				<input type="checkbox" name="lightbox_render" id="lightbox_render" <?php echo $checked ?> /><br />
-				<small><?php _e("check this box to render a similarly sized image for each catalog item to be used with the LightBox.")?></small>
+				<small><?php _e("check this box to render a similarly sized image for each catalog item to be used with the LightBox.", "catablog")?></small>
 			</p>
 			
 			<p>
@@ -97,16 +97,62 @@
 				<input type='text' name='lightbox_image_size' id='lightbox_image_size' class='integer_field' size='5' value='<?php echo $lightbox_size ?>' />
 				<span><?php _e("pixels", "catablog"); ?></span><br />
 				<small class="error hidden"><?php _e("Your lightbox size must be a positive integer.", "catablog"); ?><br /></small>
-				<small><?php _e("This is the maximum length of either the height or width, depending on whichever is longer in the original uploaded image.", "catablog"); ?></small>
+				<small><?php _e("This is the maximum length of either the height or width, depending on whichever is longer in the original uploaded image.", "catablog") ?></small>
 			</p>
 			
 			<p>
 				<label for='lightbox_selector'><?php _e("LightBox jQuery Selector:", "catablog"); ?></label>
 				<input type='text' name='lightbox_selector' id='lightbox_selector' class='' size='50' value='<?php echo $lightbox_selector ?>' />
 				<br />
-				<small><?php _e("This lets you modify the selector used by jQuery to attach the LightBox to image thumbnails. The default value is: .catablog-image")?></small>
+				<small><?php _e("This lets you modify the selector used by jQuery to attach the LightBox to image thumbnails. The default value is: .catablog-image", "catablog") ?></small>
 			</p>
 		</div>
+		
+		
+			   
+			     
+			      
+			        
+		
+		<?php /*  PUBLIC SETTINGS PANEL  */ ?>
+		<div id="catablog-options-public" class="catablog-options-panel hide">
+			<p>
+				<?php $checked = ($public_posts_enabled)? "checked='checked'" : "" ?>
+				<label for="public_posts"><?php _e("Enable Individual Pages and Category Archives:", "catablog"); ?></label>
+				<input type="checkbox" name="public_posts" id="public_posts" <?php echo $checked ?> /><br/>
+				<small><?php _e("If this is checked, each and every catalog item will get its very own page, complete with permalink.", "catablog") ?></small><br />
+				<small><?php _e("Also, each CataBlog Category will have their own archive page automatically generated.", "catablog") ?></small><br />
+				<small><?php printf(__("These CataBlog Category pages can easily be added to your %sMenus%s with the Screen Options panel.", "catablog"), "<a href='nav-menus.php#screen-options'>", '</a>') ?></small>
+			</p>
+			
+			<p>
+				<label for='public_post_slug'><?php _e("Individual Pages Slug:", "catablog"); ?></label>
+				<input type='text' name='public_post_slug' id='public_post_slug' size='20' value='<?php echo $public_posts_slug ?>' /><br />
+				<small><?php _e("This is the identifying slug your blog will use to create your individual catalog item pages.", "catablog"); ?></small>
+			</p>
+			
+			<p>
+				<label for='public_tax_slug'><?php _e("Category Pages Slug:", "catablog"); ?></label>
+				<input type='text' name='public_tax_slug' id='public_tax_slug' size='20' value='<?php echo $public_tax_slug ?>' /><br />
+				<small><?php _e("This is the identifying slug your blog will use to create your catalog archive pages.", "catablog") ?></small>
+			</p>
+			
+			<p>&nbsp;</p>
+			
+			<p>
+				<strong class="warning"><?php _e('Catalog Slugs Warning', 'catablog')?></strong><br />
+				<small><?php printf(__('Please make sure you do not set either of your catalog slugs to a %sWordPress Reserved Term%s.', 'catablog'), '<a href="http://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms" target="_blank">', '</a>') ?></small><br />
+				<small><?php _e("These labels must also be URL friendly, so they may be transformed from your original input.", 'catablog') ?></small>
+			</p>
+			
+			<p>
+				<strong class="warning"><?php _e('Changing Catalog Slugs', 'catablog')?></strong><br />
+				<small><?php printf(__('If you change these values, please immediately visit the %sPermalinks%s panel to update your rewrite rules.', 'catablog'), '<a href="options-permalink.php">', '</a>') ?></small><br />
+				<small><?php _e("Your individual catalog item pages and archives will not work until you have updated your rewrite rules.", 'catablog') ?></small>
+			</p>
+			
+		</div>
+		
 		
 		
 		<?php /*  TITLE SETTINGS PANEL  */ ?>

@@ -3,7 +3,7 @@
 Plugin Name: CataBlog
 Plugin URI: http://catablog.illproductions.com/
 Description: CataBlog is a comprehensive and effortless tool that helps you create, organize and share catalogs, stores, galleries and portfolios on your blog.
-Version: 1.2.8
+Version: 1.2.9
 Author: Zachary Segal
 Author URI: http://catablog.illproductions.com/about/
 
@@ -21,6 +21,7 @@ GNU General Public License for more details.
 */
 
 
+
 // Make sure we don't expose any info if called directly
 if ( !function_exists( 'add_action' ) ) {
 	echo "Hi there!  I'm just a plugin, not much I can do when called directly.";
@@ -28,12 +29,16 @@ if ( !function_exists( 'add_action' ) ) {
 }
 
 
+
+// Global variable to hold the catablog class.
+// Always reference this variable instead of instantiating a new CataBlog class.
 global $wp_plugin_catablog_class;
 
 
+
+// Load the CataBlog WordPress plugin if PHP is version 5.0 or above
 function catablog_load_plugin() {
 	
-	/** LOAD PLUGIN **/
 	// load necessary libraries
 	require('lib/CataBlog.class.php');
 	require('lib/CataBlogItem.class.php');
@@ -44,48 +49,75 @@ function catablog_load_plugin() {
 	$wp_plugin_catablog_class = new CataBlog();
 	$wp_plugin_catablog_class->registerWordPressHooks();
 
-	// Declare a function for use in custom wordpress templates
+	/**
+	 * Template function to emulate the CataBlog Shortcode behavior.
+	 * This function will echo out your catalog.
+	 *
+	 * @param string $category A list of CataBlog category names separated by commas
+	 * @param string $template A CataBlog template file name
+	 * @param string $sort The column to sort your catalog by, defaults to menu_order
+	 * @param string $order The order to sort your catalog by, default to ascending
+	 * @param string $operator The operator to apply to the categories passed in, defaults to IN
+	 * @return void
+	 */
 	function catablog_show_items($category=null, $template=null, $sort='menu_order', $order='asc', $operator='IN') {
 		global $wp_plugin_catablog_class;
 		$wp_plugin_catablog_class->frontend_init(true);
 		echo $wp_plugin_catablog_class->frontend_content(array('category'=>$category, 'template'=>$template, 'sort'=>$sort, 'order'=>$order, 'operator'=>$operator));
 	}
+	
+	/**
+	 * Template function for fetching a single catalog item by id
+	 *
+	 * @param integer $id The id of a catalog item to fetch
+	 * @return CataBlogItem|NULL Returns a CataBlogItem object if a catalog item was found, otherwise NULL
+	 */
+	function catablog_get_item($id=false) {
+		if (is_numeric($id) && $id > 0) {
+			return CataBlogItem::getItem($id);
+		}
+		return null;
+	}
 
 }
-catablog_load_plugin();
+if (version_compare(phpversion(), '5.0.0', '>=')) {
+	catablog_load_plugin();
+}
 
 
 
+// Test that the system meets all requirements on activation
 function catablog_activate() {
-	// exit("activate");
+	
 	// check if PHP is version 5
 	if (version_compare(phpversion(), '5.0.0', '<')) {
-		exit(__("<strong>CataBlog</strong> requires <strong>PHP 5</strong> or better running on your web server. You're version of PHP is to old, please contact your hosting company or IT department for an upgrade. Thanks.", 'catablog'));
+		wp_die(__("<strong>CataBlog</strong> requires <strong>PHP 5</strong> or better running on your web server. You're version of PHP is to old, please contact your hosting company or IT department for an upgrade. Thanks.", 'catablog'));
 	}
 	
 	// check if GD Library is loaded in PHP
 	if (!extension_loaded('gd') || !function_exists('gd_info')) {
-	    exit(__("<strong>CataBlog</strong> requires that the <strong>GD Library</strong> be installed on your web server's version of PHP. Please contact your hosting company or IT department for more information. Thanks.", 'catablog'));
+	    wp_die(__("<strong>CataBlog</strong> requires that the <strong>GD Library</strong> be installed on your web server's version of PHP. Please contact your hosting company or IT department for more information. Thanks.", 'catablog'));
 	}
 	
 	// check WordPress version
 	if (version_compare(get_bloginfo('version'), '3.1', '<')) {
-		exit(__("<strong>CataBlog</strong> requires <strong>WordPress 3.1</strong> or above. Please upgrade WordPress or contact your system administrator about upgrading.", 'catablog'));
+		wp_die(__("<strong>CataBlog</strong> requires <strong>WordPress 3.1</strong> or above. Please upgrade WordPress or contact your system administrator about upgrading.", 'catablog'));
 	}
 	
 	// check if the wp uploads folder is writable
 	$uploads_dir = wp_upload_dir();
 	if ($uploads_dir['error'] !== false) {
-		exit(__("<strong>CataBlog</strong> could not detect your upload directory or it is not writable by PHP. Please make sure Apache and PHP have write permission for the configured uploads folder. Contact your hosting company or IT department for more information. Thanks.", 'catablog'));
+		wp_die(__("<strong>CataBlog</strong> could not detect your upload directory or it is not writable by PHP. Please make sure Apache and PHP have write permission for the configured uploads folder. Contact your hosting company or IT department for more information. Thanks.", 'catablog'));
 	}
 }
 register_activation_hook( __FILE__, 'catablog_activate' );
 
 
 
-
+// Remote post on deactivation
 function catablog_deactivate() {
-	$body_array = array('action'=>'deactivate', 'site-url'=>site_url(), 'version'=>'1.2.8');
+	$body_array = array('action'=>'deactivate', 'site-url'=>site_url(), 'version'=>'1.2.9');
 	$post_action = wp_remote_post('http://catablog.illproductions.com/tracker.php', array('body'=>$body_array));
 }
 register_deactivation_hook( __FILE__, 'catablog_deactivate' );
+

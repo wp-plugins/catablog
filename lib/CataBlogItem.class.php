@@ -4,7 +4,7 @@
  *
  * This file contains the class for each CataBlog Item that is fetched from the database.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.2.8
+ * @version 1.2.9
  * @package catablog
  */
 
@@ -41,6 +41,7 @@ class CataBlogItem {
 	private $_custom_post_name   = "";
 	private $_custom_tax_name    = "";
 	private $_post_meta_name     = "catablog-post-meta";
+	private $_post_name          = "";
 	
 	// construction method
 	public function __construct($post_parameters=null) {
@@ -96,13 +97,14 @@ class CataBlogItem {
 				$category_ids[$term->term_id] = $term->name;
 			}			
 		}
-				
+		
 		$item->id           = $post->ID;
 		$item->title        = $post->post_title;
 		$item->description  = $post->post_content;
 		$item->date         = $post->post_date;
 		$item->categories   = $category_ids;
 		$item->order        = $post->menu_order;
+		$item->_post_name   = $post->post_name;
 		
 		$meta = get_post_meta($post->ID, $item->_post_meta_name, true);
 		$item->processPostMeta($meta);
@@ -175,7 +177,7 @@ class CataBlogItem {
 			$tax_query_array = array(
 				array(
 					'taxonomy' => $cata->getCustomTaxName(),
-					'field'    => 'slug',
+					'field'    => 'id',
 					'terms'    => $categories,
 					'operator' => $operator  // 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN'
 				)
@@ -197,6 +199,7 @@ class CataBlogItem {
 			$item->date         = $post->post_date;
 			$item->categories   = array();
 			$item->order        = $post->menu_order;
+			$item->_post_name   = $post->post_name;
 			
 			$item_cats = array();
 			if ($load_categories) {
@@ -343,14 +346,14 @@ class CataBlogItem {
 	 * @return boolean|string Wether or not the database write was successful.
 	 */
 	public function save() {
-				
+		
+		
 		$params = array();
-		$params['post_title']    = $this->title;
-		$params['post_content']  = $this->description;
-		$params['post_status']   = 'publish';
-		$params['post_type']     = $this->_custom_post_name;
-		$params['menu_order']    = $this->order;
-		$params['post_date']     = $this->date;
+		$params['post_title']   = $this->title;
+		$params['post_name']    = sanitize_title($this->title);
+		$params['post_content'] = $this->description;
+		$params['menu_order']   = $this->order;
+		$params['post_date']    = $this->date;
 		
 		if ($this->id > 0) {
 			$params['ID'] = $this->id;
@@ -360,6 +363,10 @@ class CataBlogItem {
 			}
 		}
 		else {
+			$params['post_status']    = 'publish';
+			$params['comment_status'] = 'closed';
+			$params['post_type']      = $this->_custom_post_name;
+			
 			$this->id = wp_insert_post($params);
 			if ($this->id === false) {
 				return false;
@@ -368,25 +375,28 @@ class CataBlogItem {
 		
 		// if the image has been set after loading process image
 		if ($this->_main_image_changed) {
-			// store the new uploaded file in the originals directory
-			$upload_path     = $this->image;
-			$sanatized_title = $this->getSanitizedTitle();
-			$move_path       = $this->_wp_upload_dir . "/catablog/originals/$sanatized_title";
+			
+			$filename   = $_FILES['new_image']['name'];
+			$image_name = $this->unique_filename($filename);
+			$move_path  = $this->_wp_upload_dir . "/catablog/originals/$image_name";
+			
+			// move file to originals folder and set the filename in the object
 			$moved = move_uploaded_file($this->image, $move_path);
-			$this->image = $sanatized_title;
-
+			$this->image = $image_name;
+			
 			// save the new image's title to the post meta
 			$this->updatePostMeta();
 
+			// TODO REMOVE THIS NO LONGER NEEDED
 			// remove the old files associated with this item
-			foreach ($this->_old_images as $old_image) {
-				foreach (array('originals', 'thumbnails', 'fullsize') as $folder) {
-					$path = $this->_wp_upload_dir."/catablog/$folder/$old_image";
-					if (is_file($path)) {
-						unlink($path);
-					}					
-				}
-			}
+			// foreach ($this->_old_images as $old_image) {
+			// 	foreach (array('originals', 'thumbnails', 'fullsize') as $folder) {
+			// 		$path = $this->_wp_upload_dir."/catablog/$folder/$old_image";
+			// 		if (is_file($path)) {
+			// 			unlink($path);
+			// 		}					
+			// 	}
+			// }
 
 			// generate a thumbnail for the new image
 			$this->makeThumbnail();
@@ -491,22 +501,20 @@ class CataBlogItem {
 			default: return __("The image could not be used because it is an unsupported format. JPEG, GIF and PNG formats only, please.", 'catablog');
 		}
 		
-		$sanatized_title = $this->getSanitizedTitle();
-		$move_path       = $this->_wp_upload_dir . "/catablog/originals/$sanatized_title";
-		$moved           = move_uploaded_file($tmp_path, $move_path);
+		$filename   = $_FILES['new_sub_image']['name'];
+		$image_name = $this->unique_filename($filename);
+		$move_path  = $this->_wp_upload_dir . "/catablog/originals/$image_name";
 		
-		if ($moved !== true) {
-			$error = __('Could not move the uploaded file on your server', 'catablog');
-			return $error;
-		}
+		// move file to originals folder and set the filename into sub images array in the object
+		$moved = move_uploaded_file($tmp_path, $move_path);
+		$this->sub_images[] = $image_name;
 		
-		$this->sub_images[] = $sanatized_title;
 		$this->updatePostMeta();
 		
 		// generate a thumbnail for the new image
-		$this->makeThumbnail($sanatized_title);
+		$this->makeThumbnail($image_name);
 		if ($this->_options['lightbox-render']) {
-			$this->makeFullsize($sanatized_title);
+			$this->makeFullsize($image_name);
 		}
 		
 		delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
@@ -750,7 +758,12 @@ class CataBlogItem {
 		$categories   = implode('|', $this->getCategories());
 		return array($image, $subimages, $title, $description, $date, $order, $link, $price, $product_code, $categories);
 	}
-	
+	public function getPostMetaKey() {
+		return $this->_post_meta_name;
+	}
+	public function getPermalink() {
+		return get_permalink($this->id);
+	}
 	
 	
 	
@@ -872,10 +885,28 @@ class CataBlogItem {
 		return $param_names;
 	}
 	
-	private function getSanitizedTitle() {
-		$special_chars_removed = preg_replace("/[^a-zA-Z0-9s]/", "", $this->title);
-		return sanitize_title($special_chars_removed) . "-" . time() . ".jpg";
+	private function unique_filename($filename) {
+		$original = $filename;
+		$test_path  = $this->_wp_upload_dir . "/catablog/originals/$filename";
+		$count = 2;
+		
+		while (is_file($test_path) && $count < 1000) {
+			$filename_array = explode('.', $original);
+			$extension      = array_pop($filename_array);
+			$filename_two   = (implode('.', $filename_array)) . "-" . $count . "." . $extension;
+			
+			$test_path = $this->_wp_upload_dir . "/catablog/originals/$filename_two";
+			$filename  = $filename_two;
+			
+			$count++;
+		}
+		
+		return $filename;
 	}
+	// private function getSanitizedTitle() {
+	// 	$special_chars_removed = preg_replace("/[^a-zA-Z0-9s]/", "", $this->title);
+	// 	return sanitize_title($special_chars_removed) . ".jpg";
+	// }
 	
 	private function html2rgb($color) {
 		if ($color[0] == '#') {

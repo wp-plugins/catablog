@@ -1,16 +1,16 @@
 === CataBlog ===
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
-Tags: admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce
+Tags: plugin, admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce, Spanish, German, Swedish
 Requires at least: 3.1
 Tested up to: 3.2
-Stable tag: 1.2.8
+Stable tag: 1.2.9
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
 == Description ==
 
-CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use categories to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution too with the LightBox effect, perfect for simple galleries. Easy, intuitive and smart design makes it trivial to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
+CataBlog allows you to catalog pretty much anything you would want and share it through your blog in a simple but elegant gallery. Upload images, give them titles, links, descriptions and then save them into your catalog. Use categories to organize and filter your catalog items into multiple different catalogs. Show off your photos in high resolution with the LightBox effect, perfect for simple galleries. Easy, intuitive and smart design makes it trivial to keep track of all your different catalogs and create amazing e-stores, galleries, lists and more.
 
 PLEASE DO NOT EMAIL ME DIRECTLY
 
@@ -18,15 +18,16 @@ Instead post your questions and comments on the appropriate forums. If you have 
 
 Highlighted Features:
 
+* Generate individual and category pages for your entire catalog.
 * Filter by multiple categories with one ShortCode.
+* Localized for Spanish, Swedish and German.
 * Sort your catalog by order, title, date or randomly.
 * Add multiple images to a catalog item.
 * Control exactly how your catalog HTML code is rendered.
-* Use Categories to organize your catalog display.
 * Import and Export your catalog in XML and CSV formats.
 * Compatible with WordPress MultiSite and Network Activation.
-* Automatically import new image files into the catalog.
-* The Options Page is well organized and supports many configurations.
+* Upload images with FTP and automatically import new files into the catalog.
+* The Options Page is well organized and supports many configurable settings.
 * Easy management of your catalog with superiorly designed admin controls.
 
 Please remember that CataBlog is written, maintained, supported and documented by Zachary Segal. CataBlog is free software, and as such comes with absolutely no warranty or guarantee of service. Please feel free to visit http://catablog.illproductions.com and http://www.illproductions.com for more information about CataBlog and Zachary anytime.
@@ -96,6 +97,20 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.2.9 =
+* New: Public Catalog Items: create individual and category pages for your entire catalog.
+* New: Screen Options for the Library page give users control over pagination and visible data.
+* New: Add CataBlog menu to the WordPress Admin Bar.
+* New: Preliminary contextual help added through out the plugins Admin panels.
+* New: New template function to get a single catalog item by id, catablog_get_item($id).
+* New: German localization.
+* Fix: Setting or not setting the category parameter in the Shortcode should behave as expected.
+* Fix: %TITLE-LINK% token now includes the title target and relationship settings.
+* Fix: %LINK-TARGET% and %LINK-REL% tokens work once again.
+* Fix: Image uploads no longer append a timestamp to the file name.
+* Fix: Your theme's catablog.css file is once again automatically loaded.
+* Fix: CataBlog class should no longer load if PHP is not at least version 5.
 
 = 1.2.8 =
 * Fix: Category filter is better checked before being attached to the catalog query.

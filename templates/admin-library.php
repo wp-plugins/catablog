@@ -7,7 +7,7 @@
 		<div id="icon-catablog" class="icon32"><br /></div>
 		<h2>
 			<span><?php _e("CataBlog Library", 'catablog'); ?></span>
-			<a href="admin.php?page=catablog-new" class="button add-new-h2"><?php _e("Add New", 'catablog'); ?></a>
+			<a href="admin.php?page=catablog-upload" class="button add-new-h2"><?php _e("Add New", 'catablog'); ?></a>
 			
 		</h2>
 		<div id="message" class="updated hide">
@@ -142,7 +142,7 @@
 				
 				<div class="catablog-modal-body">
 					<div id="catablog-category-add-checklist">
-						<strong class="list-title"><?php _e("Add to categories", "catablog") ?></strong>
+						<strong class="list-title">[+] <?php _e("Add to categories", "catablog") ?></strong>
 						<ul class="list:category categorychecklist form-no-clear">
 						
 							<?php $categories = $this->get_terms() ?>
@@ -162,7 +162,7 @@
 					</div>
 					
 					<div id="catablog-category-remove-checklist">
-						<strong class="list-title"><?php _e("Remove from categories", "catablog") ?></strong>
+						<strong class="list-title">[-] <?php _e("Remove from categories", "catablog") ?></strong>
 						<ul class="list:category categorychecklist form-no-clear">
 						
 							<?php $categories = $this->get_terms() ?>
@@ -200,9 +200,10 @@
 </div>
 
 <script type="text/javascript">
-	var timer = null;
-	
 	jQuery(document).ready(function($) {
+		
+		var timer = null;
+		
 		
 		/************************************************************************************
 		** form bindings that should happen first
@@ -256,6 +257,7 @@
 			$(this).closest('form').submit();
 		});
 		
+		
 		// BIND HIDE MODAL WINDOW
 		$('.hide-modal-window').bind('click', function(event) {
 			jQuery('.catablog-modal:visible').hide();
@@ -264,13 +266,86 @@
 		});
 		
 		
-		// lazy load the images
-		// calculate_lazy_loads();
-		// $(window).bind('scroll resize', function(event) {
-		// 	calculate_lazy_loads();
-		// });
+		// BIND TRASH CATALOG ITEM WARNING
+		$('.remove_link').bind('click', function(event) {
+			return (confirm('<?php _e("Are you sure you want to permanently delete this catalog items?", "catablog"); ?>'));
+		});
 		
-		/*
+		
+		// BIND THE SCREEN SETTINGS AJAX SAVE
+		$('.hide-catablog-column-tog').bind('change', function(event) {
+			var column_class = "." + this.id.replace("hide-", "");
+			
+			if (!this.checked) {
+				$(column_class).hide();
+			}
+			else {
+				$(column_class).show();
+			}
+			
+			saveScreenSettings();
+		});
+		$('#entry_per_page').bind('change', function(event) {
+			saveScreenSettings();
+		});
+		
+		// SAVE SCREEN SETTINGS PANEL WITH AJAX
+		function saveScreenSettings() {
+			var hide = []
+			var params = {
+				'action':   'catablog_update_screen_settings',
+				'security': '<?php echo wp_create_nonce("catablog-update-screen-settings") ?>',
+			}
+			
+			// var form_values = {};
+			$('#adv-settings input').each(function() {
+				var name  = $(this).attr('name');
+				var value = $(this).attr('value');
+				
+				if ($(this).attr('type') == 'checkbox') {
+					if ($(this).attr('checked')) {
+						hide.push(value);
+					} 
+				}
+				else {
+					params[name] = value;
+				}
+			});
+			
+			params.hide = hide;
+			
+			// make AJAX call
+			$.post(ajaxurl, params, function(data) {
+				try {
+					var json = eval(data);
+					if (json.success == false) {
+						alert(json.error);
+					}
+					else {
+						// do nothing on success
+					}
+				}
+				catch(error) {
+					alert(error);
+				}
+				
+			});
+			
+			return false;
+		}
+
+		
+		
+		
+		<?php /*
+		
+		// lazy load the images
+		calculate_lazy_loads();
+		$(window).bind('scroll resize', function(event) {
+			calculate_lazy_loads();
+		});
+		
+		
 		// initialize the sortables
 		var catablog_items_path = "#catablog_items";
 		$(catablog_items_path).sortable({
@@ -352,6 +427,7 @@
 			});
 		}
 		*/
-		
+		 ?>
+
 	});
 </script>

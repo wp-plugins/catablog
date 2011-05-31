@@ -1,27 +1,29 @@
 	<table class="widefat post" cellspacing="0">
 		<thead>
 			<tr>
-				<th class="manage-column column-cb check-column"><input type="checkbox" /></th>
-				<th class="manage-column cb_icon_column"><?php _e("Image", "catablog"); ?></th>
+				<th class="column-cb check-column"><input type="checkbox" /></th>
+				<th class="cb_icon_column"><?php _e("Image", "catablog"); ?></th>
 				<?php $css_sort = ($sort=='title')? "sorted" : "sortable" ?>
 				<?php $sort_url = ($order=='asc')? "&amp;order=desc" : "&amp;order=asc" ?>
 				<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".$_GET['category'] : "" ?>
-				<th class="manage-column <?php echo "$css_sort $order" ?>" style="width:120px;">
+				<th class="<?php echo "$css_sort $order" ?>" style="width:120px;">
 					<a href="admin.php?page=catablog&amp;sort=title<?php echo $sort_url . $cat_url ?>">
 						<span><?php _e("Title", "catablog"); ?></span>
 						<span class="sorting-indicator">&nbsp;</span>
 					</a>
 				</th>
-				<?php /*<th class="manage-column"><?php _e("Link", "catablog"); ?></th>*/ ?>
-				<th class="manage-column"><?php _e("Description", "catablog"); ?></th>
-				<th class="manage-column"><?php _e("Categories", "catablog"); ?></th>
-				<?php /*<th class="manage-column"><?php _e("Price", "catablog"); ?></th>*/ ?>
-				<?php /*<th class="manage-column"><?php _e("Product Code", "catablog"); ?></th>*/ ?>
 				
+				
+				<th class="column-description <?php echo $description_col_class ?>"><?php _e("Description", "catablog"); ?></th>
+				<th class="column-link <?php echo $link_col_class ?>"><?php _e("Link", "catablog"); ?></th>
+				<th class="column-price <?php echo $price_col_class ?>"><?php _e("Price", "catablog"); ?></th>
+				<th class="column-product_code <?php echo $product_code_col_class ?>"><?php _e("Product Code", "catablog"); ?></th>
+
+				<th class="column-categories <?php echo $categories_col_class ?>"><?php _e("Categories", "catablog"); ?></th>				
 				<?php $css_sort = ($sort=='menu_order')? "sorted" : "sortable" ?>
 				<?php $sort_url = ($order=='asc')? "&amp;order=desc" : "&amp;order=asc" ?>
 				<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".$_GET['category'] : "" ?>
-				<th class="manage-column <?php echo "$css_sort $order" ?>" style="width:80px;">
+				<th class="column-order <?php echo "$css_sort $order" ?> <?php echo $order_col_class ?>" style="width:80px;">
 					<a href="admin.php?page=catablog&amp;sort=menu_order<?php echo $sort_url . $cat_url ?>">
 						<span><?php _e("Order", "catablog"); ?></span>
 						<span class="sorting-indicator">&nbsp;</span>
@@ -31,7 +33,7 @@
 				<?php $css_sort = ($sort=='date')? "sorted" : "sortable" ?>
 				<?php $sort_url = ($order=='asc')? "&amp;order=desc" : "&amp;order=asc" ?>
 				<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".$_GET['category'] : "" ?>
-				<th class="manage-column <?php echo "$css_sort $order" ?>" style="width:100px;">
+				<th class="column-date <?php echo "$css_sort $order" ?> <?php echo $date_col_class ?>" style="width:100px;">
 					<a href="admin.php?page=catablog&amp;sort=date<?php echo $sort_url . $cat_url ?>">
 						<span><?php _e("Date", "catablog"); ?></span>
 						<span class="sorting-indicator">&nbsp;</span>
@@ -41,16 +43,18 @@
 		</thead>
 		<tfoot>
 			<tr>
-				<th class="manage-column column-cb check-column"><input type="checkbox" /></th>
-				<th class="manage-column cb_icon_column"><?php _e("Image", "catablog"); ?></th>
-				<th class="manage-column"><?php _e("Title", "catablog"); ?></th>
-				<?php /*<th class="manage-column"><?php _e("Link", "catablog"); ?></th>*/ ?>
-				<th class="manage-column"><?php _e("Description", "catablog"); ?></th>
-				<th class="manage-column"><?php _e("Categories", "catablog"); ?></th>
-				<?php /*<th class="manage-column"><?php _e("Price", "catablog"); ?></th> */?>
-				<?php /*<th class="manage-column"><?php _e("Product Code", "catablog"); ?></th> */?>
-				<th class="manage-column"><?php _e("Order", "catablog"); ?></th>
-				<th class="manage-column"><?php _e("Date", "catablog"); ?></th>
+				<th class="column-cb check-column"><input type="checkbox" /></th>
+				<th class="cb_icon_column"><?php _e("Image", "catablog"); ?></th>
+				<th class=""><?php _e("Title", "catablog"); ?></th>
+
+				<th class="column-description <?php echo $description_col_class ?>"><?php _e("Description", "catablog"); ?></th>
+				<th class="column-link <?php echo $link_col_class ?>"><?php _e("Link", "catablog"); ?></th>
+				<th class="column-price <?php echo $price_col_class ?>"><?php _e("Price", "catablog"); ?></th>
+				<th class="column-product_code <?php echo $product_code_col_class ?>"><?php _e("Product Code", "catablog"); ?></th>
+				
+				<th class="column-categories <?php echo $categories_col_class ?>"><?php _e("Categories", "catablog"); ?></th>
+				<th class="column-order <?php echo $order_col_class ?>"><?php _e("Order", "catablog"); ?></th>
+				<th class="column-date <?php echo $date_col_class ?>"><?php _e("Date", "catablog"); ?></th>
 			</tr>
 		</tfoot>
 		
@@ -74,7 +78,6 @@
 				
 				<tr>
 					<th class="check-column">
-						<span>&nbsp;<?php //echo $result->getOrder() ?></span>
 						<input type="checkbox" class="bulk_selection" name="bulk_action_id" value="<?php echo $result->getId() ?>" />
 					</th>
 					<td class="cb_icon_column">
@@ -85,17 +88,21 @@
 						<div class="row-actions">
 							<span><a href="<?php echo $edit ?>"><?php _e("Edit", "catablog"); ?></a></span>
 							<span> | </span>
-							<span class="trash"><a href="<?php echo $remove ?>" class="remove_link"><?php _e("Trash", "catablog"); ?></a></span>
+							<span class="trash"><a href="<?php echo $remove ?>" class="remove_link"><?php _e("Delete", "catablog"); ?></a></span>
 						</div>
 					</td>
 					
-					<td><?php echo $result->getDescriptionSummary() ?></td>
 					
-					<td><?php echo implode(', ', $result->getCategories())?></td>
+					<td class="column-description <?php echo $description_col_class ?>"><?php echo $result->getDescriptionSummary() ?></td>
+					<td class="column-link <?php echo $link_col_class ?>"><?php echo $result->getLink() ?></td>
+					<td class="column-price <?php echo $price_col_class ?>"><?php echo $result->getPrice() ?></td>
+					<td class="column-product_code <?php echo $product_code_col_class ?>"><?php echo $result->getProductCode() ?></td>
 					
-					<td>&nbsp;&nbsp;<?php echo htmlspecialchars($result->getOrder(), ENT_QUOTES, 'UTF-8') ?></td>
+					<td class="column-categories <?php echo $categories_col_class ?>"><?php echo implode(', ', $result->getCategories())?></td>
 					
-					<td>
+					<td class="column-order <?php echo $order_col_class ?>">&nbsp;&nbsp;<?php echo htmlspecialchars($result->getOrder(), ENT_QUOTES, 'UTF-8') ?></td>
+					
+					<td class="column-date <?php echo $date_col_class ?>">
 						<span><?php echo str_replace('-', '/', substr($result->getDate(), 0, 10)) ?></span>
 						<br />
 						<span><?php echo substr($result->getDate(), 11) ?></span>

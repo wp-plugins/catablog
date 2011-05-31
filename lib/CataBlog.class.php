@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.2.8
+ * @version 1.2.9
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.2.8";
+	private $version     = "1.2.9";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -106,15 +106,23 @@ class CataBlog {
 	**       - WORDPRESS HOOKS
 	*****************************************************/
 	public function registerWordPressHooks() {
-		
-		// print_r($this->options);
-		
 		// register custom post type and taxonomy
 		add_action('init', array(&$this, 'initialize_plugin'), 0);
 		
+		// register custom menus in the Admin Menu Bar
+		add_action('admin_bar_menu', array(&$this, 'admin_bar_menu'), 100);
+		add_action('admin_bar_menu', array(&$this, 'admin_bar_edit_button'), 20);
 		// register admin hooks
 		if (is_admin()) {
+			
+			// register admin menus, stylesheets and javascript libraries
 			add_action('admin_menu', array(&$this, 'admin_menu'));
+			add_action('admin_print_styles', array(&$this, 'admin_print_styles'));
+			add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
+			
+			// register help and screen settings panel
+			add_filter('screen_settings', array(&$this, 'screen_settings'), 10, 2);
+			add_filter('contextual_help', array(&$this, 'contextual_help'), 10, 2);
 			
 			$catablog_page       = strpos($_SERVER['QUERY_STRING'], 'page=catablog') !== false;
 			$catablog_remove_page = strpos($_SERVER['QUERY_STRING'], 'page=catablog-remove') !== false;
@@ -133,15 +141,17 @@ class CataBlog {
 			
 			// register admin ajax actions
 			// add_action('wp_ajax_catablog_reorder', array($this, 'ajax_reorder_items'));
-			add_action('wp_ajax_catablog_fetch', array($this, 'ajax_fetch_items'));
+			add_action('wp_ajax_catablog_update_screen_settings', array($this, 'ajax_update_screen_settings'));
+			
 			add_action('wp_ajax_catablog_new_category', array($this, 'ajax_new_category'));
 			add_action('wp_ajax_catablog_delete_category', array($this, 'ajax_delete_category'));
+			
 			add_action('wp_ajax_catablog_flush_fullsize', array($this, 'ajax_flush_fullsize'));
 			add_action('wp_ajax_catablog_render_images', array(&$this, 'ajax_render_images'));
+			
 			add_action('wp_ajax_catablog_delete_subimage', array(&$this, 'ajax_delete_subimage'));
 			add_action('wp_ajax_catablog_delete_library', array(&$this, 'ajax_delete_library'));
 			add_action('wp_ajax_catablog_delete_system', array(&$this, 'ajax_delete_system'));
-			
 		}
 		
 		// register frontend hooks
@@ -150,8 +160,41 @@ class CataBlog {
 			add_action('wp_head', array(&$this, 'frontend_header'));
 			add_action('wp_footer', array(&$this, 'frontend_footer'));
 			add_shortcode('catablog', array(&$this, 'frontend_content'));
+			add_filter('the_content', array(&$this, 'frontend_single_filter_content'));
 		}
 	}
+	
+	public function frontend_single_filter_content($content) {
+		global $post;
+		
+		if ($post->post_type == $this->custom_post_name) {
+			if (is_single()) {
+				$result = CataBlogItem::getItem($post->ID);
+				return $this->frontend_render_catalog_row($result, 'default');
+			}
+			else {
+				
+				$result = new CataBlogItem;
+				$meta = get_post_meta($post->ID, $result->getPostMetaKey(), true);
+				$path = $this->urls['thumbnails'] . "/" . $meta['image'];
+				
+				$html  = "<div class='catablog-row'>\n";
+				$html .= "  <div class='catablog-images-column'>\n";
+				$html .= "    <img src='$path' class='catablog-image' />\n";
+				$html .= "  </div>\n";
+				$html .= "  <div class='catablog-description'>";
+				$html .= "    $content";
+				$html .= "  </div>";
+				$html .= "</div>";
+				echo $html;
+				
+				return;
+			}
+		}
+		
+		return $content;
+	}
+	
 	
 	
 	
@@ -168,26 +211,38 @@ class CataBlog {
 		load_plugin_textdomain('catablog', false, '/catablog/localization');
 		$this->default_term_name = __("Uncategorized", "catablog");
 		
+		
+		// attempt to load public settings, default to private if options not available
+		$public_posts_enabled = (isset($this->options['public_posts']))?     $this->options['public_posts'] : false;
+		$public_posts_slug    = (isset($this->options['public_post_slug']))? array('slug'=>$this->options['public_post_slug']) : true;
+		$public_tax_slug      = (isset($this->options['public_tax_slug']))?  array('slug'=>$this->options['public_tax_slug']) : true;
+		
+		
 		// create the custom post type
-		$params['label']              = __("CataBlog Item", 'catablog');
-		$params['public']              = false;
-		$params['rewrite']             = false;
+		$params['label']               = __("CataBlog Item", 'catablog');
+		$params['public']              = $public_posts_enabled;
+		$params['show_ui']             = false;
+		$params['show_in_nav_menus']   = false;
 		$params['supports']            = array('title', 'editor');
 		$params['description']         = __("A Catalog Item, generated by CataBlog.", 'catablog');
 		$params['hierarchical']        = false;
 		$params['taxonomies']          = array($this->custom_tax_name);
 		$params['menu_position']       = 45;
 		$params['menu_icon']           = $this->urls['plugin']."/images/catablog-icon-16.png";
+		$params['rewrite']             = $public_posts_slug;
 		register_post_type($this->custom_post_name, $params);
+		
 		
 		// create the custom taxonomy
 		$params = array();
-		$params['hierarchical']          = false;
 		$params['label']                = __("CataBlog Category", 'catablog');
-		$params['query_var']             = true;
-		$params['rewrite']               = false;
-		$params['public']                = false;
+		$params['public']                = $public_posts_enabled;
+		$params['show_ui']               = false;
+		$params['show_tagcloud']         = true;
+		$params['hierarchical']          = false;
+		$params['rewrite']               = $public_tax_slug;
 		register_taxonomy($this->custom_tax_name, $this->custom_post_name, $params);
+		
 	}
 	
 	
@@ -207,11 +262,12 @@ class CataBlog {
 	*****************************************************/
 	public function admin_init() {
 		
+		
 		// go straigt to create new item action, no interface
 		if(strpos($_SERVER['QUERY_STRING'], 'catablog-create') !== false) {
 			$this->admin_create(true);
 		}
-
+		
 		// go straigt to save item action, no interface
 		if(strpos($_SERVER['QUERY_STRING'], 'catablog-save') !== false) {
 			$this->admin_save(true);
@@ -227,14 +283,10 @@ class CataBlog {
 			$this->admin_bulk_edit(true);
 		}
 		
-		
-		
 		// if export action is being called go directly to admin_export method 
 		if(strpos($_SERVER['QUERY_STRING'], 'catablog-export') !== false) {
 			$this->admin_export();
 		}
-		
-		
 		
 		// go striaght to replace main image action
 		if(strpos($_SERVER['QUERY_STRING'], 'catablog-replace-image') !== false) {
@@ -247,17 +299,6 @@ class CataBlog {
 		}
 		
 		
-		
-		// display an error message if catablog options are empty or directories are missing
-		// if(strpos($_SERVER['QUERY_STRING'], 'catablog-install') === false) {
-		// 	if ($this->is_installed() === false) {
-		// 		$link = wp_nonce_url('admin.php?page=catablog-install', 'catablog-install');
-		// 		$message = sprintf(__("CataBlog must be setup for this site before you may use it! %s Setup CataBlog Now %s"), "<a href='$link'>", "</a>");
-		// 		$this->wp_error($message);
-		// 	}
-		// }
-		
-		
 		// set cookie to remember the admin view settings
 		if(isset($_GET['page']) && $_GET['page'] == 'catablog') {
 			$options = array('sort', 'order', 'view');
@@ -267,34 +308,20 @@ class CataBlog {
 				}
 				
 			}
+			// remove old view cookie if still present
 			setCookie("catablog-view-cookie", false, (time() - 36000));
 		}
-		
-		
-		// load javascript libraries for admin panels
-		wp_enqueue_script('jquery');		
-		wp_enqueue_script('jquery-ui-sortable');
-		wp_enqueue_script('farbtastic');
-		wp_enqueue_style('farbtastic');
-		wp_enqueue_script('catablog-admin', $this->urls['javascript'] . '/catablog-admin.js', array('jquery'), $this->version);
-		
-		
-		// load css stylesheets for admin panels
-		// wp_enqueue_style('jquery-ui-lightness', $this->urls['css'] . '/ui-lightness/jquery-ui-1.8.1.custom.css', false, '1.8.1');
-		wp_enqueue_style('catablog-admin-css', $this->urls['css'] . '/catablog-admin.css', false, $this->version);
 	}
-	
 	
 	public function admin_menu() {
 		// register main plugin menu
-		add_menu_page("Edit CataBlog", "CataBlog", $this->user_level, 'catablog', array($this, 'admin_library'), $this->urls['plugin']."/images/catablog-icon-16.png");
-		
+		add_menu_page("CataBlog Library", "CataBlog", $this->user_level, 'catablog', array(&$this, 'admin_library'), $this->urls['plugin']."/images/catablog-icon-16.png");
 		
 		// register main plugin pages
-		$library_page  = add_submenu_page('catablog', __("CataBlog Library", 'catablog'), __('Library', 'catablog'), $this->user_level, 'catablog', array(&$this, 'admin_library'));
-		$new_item_page = add_submenu_page('catablog', __("Add New CataBlog Entry", 'catablog'), __('Add New', 'catablog'), $this->user_level, 'catablog-new', array(&$this, 'admin_new'));
-		$options_page  = add_submenu_page('catablog', __("CataBlog Options", 'catablog'), __('Options', 'catablog'), $this->user_level, 'catablog-options', array(&$this, 'admin_options'));
-		$about_page    = add_submenu_page('catablog', __("About CataBlog", 'catablog'), __('About', 'catablog'), $this->user_level, 'catablog-about', array(&$this, 'admin_about'));
+		add_submenu_page('catablog', __("CataBlog Library", 'catablog'), __('Library', 'catablog'), $this->user_level, 'catablog', array(&$this, 'admin_library'));
+		add_submenu_page('catablog', __("Add New CataBlog Entry", 'catablog'), __('Add New', 'catablog'), $this->user_level, 'catablog-upload', array(&$this, 'admin_new'));
+		add_submenu_page('catablog', __("CataBlog Options", 'catablog'), __('Options', 'catablog'), $this->user_level, 'catablog-options', array(&$this, 'admin_options'));
+		add_submenu_page('catablog', __("About CataBlog", 'catablog'), __('About', 'catablog'), $this->user_level, 'catablog-about', array(&$this, 'admin_about'));
 		
 		// register create/edit/delete catalog item actions
 		add_submenu_page('catablog-hidden', "Create CataBlog Item", "Create", $this->user_level, 'catablog-create', array(&$this, 'admin_create'));
@@ -316,16 +343,59 @@ class CataBlog {
 		// register about page actions to hidden menu
 		// add_submenu_page('catablog-hidden', "CataBlog Install", "Install", $this->user_level, 'catablog-install', array(&$this, 'admin_install'));
 		add_submenu_page('catablog-hidden', "CataBlog Remove", "Remove", $this->user_level, 'catablog-remove', array(&$this, 'admin_remove_all'));
+	}
+	
+	
+	public function admin_print_styles() {
+		$catablog_page = strpos($_SERVER['QUERY_STRING'], 'page=catablog') !== false;
+		if ($catablog_page) {
+			wp_enqueue_style('farbtastic');
+			wp_enqueue_style('catablog-admin-css', $this->urls['css'] . '/catablog-admin.css', false, $this->version);
+		}
+	}
+	
+	
+	public function admin_enqueue_scripts() {
+		$catablog_page = strpos($_SERVER['QUERY_STRING'], 'page=catablog') !== false;
+		if ($catablog_page) {
+			wp_enqueue_script('jquery');		
+			wp_enqueue_script('jquery-ui-sortable');
+			wp_enqueue_script('farbtastic');
+			wp_enqueue_script('swfupload');
+			wp_enqueue_script('catablog-admin', $this->urls['javascript'] . '/catablog-admin.js', array('jquery'), $this->version);
+		}
+	}
+	
+	public function admin_bar_edit_button() {
+		global $post;
 		
+		if ($post->post_type == $this->custom_post_name) {
+			global $wp_admin_bar;
+			$wp_admin_bar->add_menu( array( 'id' => 'edit-catablog-entry', 'title' => __('Edit CataBlog Entry', 'catablog'), 'href' => get_admin_url(null, 'admin.php?page=catablog&id='.$post->ID), ) );	
+		}
+	}
+	
+	public function admin_bar_menu() {
+		global $wp_admin_bar;
 		
-		// add_filter('screen_settings', array(&$this, 'append_library_screen_settings'), 10, 2);
+		// add a CataBlog menu to the Admin Menu Bar
+		$wp_admin_bar->add_menu( array( 'id' => 'catablog-menu', 'title' => __( 'CataBlog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog'), ) );
+		$wp_admin_bar->add_menu( array( 'parent' => 'catablog-menu', 'id' => 'catablog-library', 'title' => __( 'Library', 'catablog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog'), ) );
+		$wp_admin_bar->add_menu( array( 'parent' => 'catablog-menu', 'id' => 'catablog-new-entry', 'title' => __( 'Add New', 'catablog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog-upload'), ) );
+		$wp_admin_bar->add_menu( array( 'parent' => 'catablog-menu', 'id' => 'catablog-options', 'title' => __( 'Options', 'catablog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog-options'), ) );
+		$wp_admin_bar->add_menu( array( 'parent' => 'catablog-menu', 'id' => 'catablog-about', 'title' => __( 'About', 'catablog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog-about'), ) );
+		
+		// add a CataBlog Entry sub menu item to the Admin Menu Bar Add New menu
+		$wp_admin_bar->add_menu( array( 'parent' => 'new-content', 'id' => 'new-catablog-entry', 'title' => __( 'CataBlog Entry', 'catablog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog-upload'), ) );
 		
 	}
 	
-	public function append_library_screen_settings($current, $screen) {
+	
+	public function screen_settings($current, $screen) {
 		if (!isset($screen->id)) {
 			return false;
 		}
+		
 		
 		if ($screen->id == 'toplevel_page_catablog') {
 			ob_start();
@@ -333,6 +403,21 @@ class CataBlog {
 			return ob_get_clean();
 		}
 		
+	}
+	
+	
+	public function contextual_help($contextual_help, $screen) {
+		if (!isset($screen)) {
+			return false;
+		}
+		
+		if (strpos($screen, 'catablog') !== false) {
+			ob_start();
+			include_once($this->directories['template'] . '/admin-contextual-help.php');
+			return ob_get_clean();
+		}
+		
+		return $contextual_help;
 	}
 	
 	
@@ -353,20 +438,44 @@ class CataBlog {
 	
 	public function admin_library() {
 		
+		
 		// if id is set show edit form
 		if (isset($_GET['id'])) {
 			$this->admin_edit();
 			return false;
 		}
 		
+		// order and pagination defaults
 		$sort   = 'date';
 		$order  = 'desc';
-		
 		$paged  = 1;
 		$offset = 0;
 		$limit  = 20;
-		
 		$category_filter = false;
+		
+		
+		$user = wp_get_current_user();
+		$screen_settings = get_user_meta($user->ID, 'catablog_screen_settings', true);
+		
+		if (is_numeric($screen_settings['limit'])) {
+			$limit = $screen_settings['limit'];
+		}
+		
+		if (!is_array($screen_settings['hide-columns'])) {
+			$screen_settings['hide-columns'] = array();
+		}
+
+		$table_columns = array('description', 'link', 'price', 'product_code', 'categories', 'order', 'date');
+		foreach ($table_columns as $table_column) {
+			// creates variable names like $description_col_class
+			if (in_array($table_column, $screen_settings['hide-columns'])) {
+				${$table_column."_col_class"} = "hide";
+			}
+			else {
+				${$table_column."_col_class"} = "";
+			}
+		}		
+		
 		
 		$selected_term = false;//$this->get_default_term();
 		if (isset($_GET['category']) && is_numeric($_GET['category'])) {
@@ -390,7 +499,7 @@ class CataBlog {
 		
 		
 		if ($selected_term) {
-			$category_filter = $selected_term->slug;
+			$category_filter = array($selected_term->term_id);
 		}
 		
 		$sort = 'date';
@@ -443,7 +552,7 @@ class CataBlog {
 		if (isset($_GET['message'])) {
 			switch ($_GET['message']) {
 				case 1:
-					$this->wp_message(__("Changes Saved Successfully", 'catablog'));
+					$this->wp_message(__("Changes Saved Successfully.", 'catablog'));
 					break;
 				case 2:
 					$this->wp_message(__("Catalog Item Deleted Successfully.", 'catablog'));
@@ -465,24 +574,34 @@ class CataBlog {
 			}
 		}
 		
+		
 		include_once($this->directories['template'] . '/admin-library.php');
 	}
 	
 	public function admin_edit() {
 		if (isset($_GET['id'])) {
 			
+			if (isset($_GET['message'])) {
+				switch ($_GET['message']) {
+					case 1:
+						
+						$message = __("Changes Saved Successfully.", 'catablog');
+						
+						if ($this->options['public_posts']) {
+							$permalink = get_permalink($_GET['id']);
+							$message .= sprintf(" (<a href='$permalink'>%s</a>)", __("View Now"));
+						}
+						
+						$this->wp_message($message);
+						break;
+				}
+			}
+			
+			
 			$result = CataBlogItem::getItem($_GET['id']);
 			if (!$result) {
 				include_once($this->directories['template'] . '/admin-404.php');
 				return false;
-			}
-			
-			if (isset($_GET['message'])) {
-				switch ($_GET['message']) {
-					case 1:
-						$this->wp_message(__("Changes Saved Successfully", 'catablog'));
-						break;
-				}
 			}
 			
 			include_once($this->directories['template'] . '/admin-edit.php');
@@ -511,12 +630,27 @@ class CataBlog {
 				$post_vars = array_map('stripslashes_deep', $_POST);
 				$post_vars = array_map('trim', $post_vars);
 				
-				// validate post data
-				$post_vars['link_relationship'] = preg_replace('/[^a-z0-9_-]/', '', $post_vars['link_relationship']);
+				// transform link target and rel value so it only contains alphanumeric, hyphen, underscore
+				// $post_vars['link_target'] = preg_replace('/[^a-z0-9_-]/', '', $post_vars['link_target']);
+				// $post_vars['link_relationship'] = preg_replace('/[^a-z0-9_-]/', '', $post_vars['link_relationship']);
+				
+				// transform catalog slugs
+				if ($this->string_length($post_vars['public_post_slug']) > 0) {
+					$post_vars['public_post_slug'] = sanitize_title_with_dashes($post_vars['public_post_slug']);
+				}
+				else {
+					$post_vars['public_post_slug'] = $this->custom_post_name;
+				}
+				if ($this->string_length($post_vars['public_tax_slug']) > 0) {
+					$post_vars['public_tax_slug'] = sanitize_title_with_dashes($post_vars['public_tax_slug']);
+				}
+				else {
+					$post_vars['public_tax_slug'] = $this->custom_tax_name;
+				}
 				
 				
 				// set default values for post message and image recalculation
-				$save_message           = __("CataBlog Options Saved", 'catablog');
+				$save_message = __("CataBlog Options Saved", 'catablog');
 				
 				// get image size and rendering differences
 				$image_size_different   = $post_vars['thumbnail_size'] != $this->options['thumbnail-size'];
@@ -552,6 +686,9 @@ class CataBlog {
 				$this->options['view-buynow']          = $post_vars['view-code-buynow'];
 				$this->options['filter-description']   = isset($post_vars['wp-filters-enabled']);
 				$this->options['nl2br-description']    = isset($post_vars['nl2br-enabled']);
+				$this->options['public_posts']         = isset($post_vars['public_posts']);
+				$this->options['public_post_slug']     = $post_vars['public_post_slug'];
+				$this->options['public_tax_slug']      = $post_vars['public_tax_slug'];
 				
 				$this->save_wp_options();
 				
@@ -573,6 +710,10 @@ class CataBlog {
 					}					
 				}
 				
+				
+				// TODO: flush the rewrite rules if the catalog slug options have been updated
+				
+				
 				$this->wp_message($save_message);
 			}
 			else {
@@ -592,9 +733,12 @@ class CataBlog {
 		$link_relationship            = $this->options['link-relationship'];
 		$wp_filters_enabled           = $this->options['filter-description'];
 		$nl2br_enabled                = $this->options['nl2br-description'];
+		$public_posts_enabled         = $this->options['public_posts'];
+		$public_posts_slug            = $this->options['public_post_slug'];
+		$public_tax_slug              = $this->options['public_tax_slug'];
 		
 		include_once($this->directories['template'] . '/admin-options.php');
-	}
+	}   	
 	
 	public function admin_about() {
 		global $wpdb;
@@ -656,7 +800,7 @@ class CataBlog {
 		$error = false;
 		
 		$new_item = new CataBlogItem();
-		$nonce_verified = true; //wp_verify_nonce( $_REQUEST['_catablog_create_nonce'], 'catablog_create' );
+		$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_create_nonce'], 'catablog_create' );
 		if ($nonce_verified) {
 			
 			$tmp_name = $_FILES['new_image']['tmp_name'];
@@ -732,7 +876,7 @@ class CataBlog {
 					$write = $result->save();
 					if ($write === true) {
 						// wp_redirect( self_admin_url("admin.php?page=catablog&message=1") );
-						header('Location: admin.php?page=catablog&message=1'); die;
+						header('Location: admin.php?page=catablog&id=' . $result->getId() . '&message=1'); die;
 						// header('Location: admin.php?page=catablog&id=' . $result->getId() . '&message=1'); die;
 					}
 					else {
@@ -772,20 +916,20 @@ class CataBlog {
 				if ($this->string_length($tmp_name) > 0) {
 					$validate = $result->validateImage($tmp_name);
 					if ($validate === true) {
+						
 						$to_delete = array();
 						$to_delete["original"]  = $this->directories['originals'] . "/" . $result->getImage();
 						$to_delete["thumbnail"] = $this->directories['thumbnails'] . "/" . $result->getImage();
 						$to_delete["fullsize"]  = $this->directories['fullsize'] . "/" . $result->getImage();
-						
-						$result->setImage($tmp_name);
-						
 						foreach ($to_delete as $file) {
 							if (is_file($file)) {
 								unlink($file);
 							}
 						}
 						
+						$result->setImage($tmp_name);
 						$result->save();
+						
 						header('Location: admin.php?page=catablog&id=' . $_POST['id']); die;
 					}
 					else {
@@ -1179,14 +1323,29 @@ class CataBlog {
 	/*****************************************************
 	**       - ADMIN AJAX ACTIONS
 	*****************************************************/
-	public function ajax_fetch_items() {
-		check_ajax_referer('catablog-fetch-items', 'security');
+	public function ajax_update_screen_settings() {
+		check_ajax_referer('catablog-update-screen-settings','security');
 		
-		echo $offset = $_REQUEST['offset'];
+		$fields = array('description', 'link', 'price', 'product_code', 'categories', 'order', 'date');
+		$hide_array = is_array($_REQUEST['hide'])? $_REQUEST['hide'] : array();
 		
-		$exit;
+		$settings = array();
+		$settings['limit'] = $_REQUEST['entry-per-page'];
+		
+		$settings['hide-columns'] = array();
+		foreach ($fields as $field) {
+			if (!in_array($field, $hide_array)) {
+				$settings['hide-columns'][] = $field;
+			}
+		}
+		
+		$user  = wp_get_current_user();
+		update_user_meta($user->ID, 'catablog_screen_settings', $settings);
+		
+		echo "({'success':true, 'message':'".__('Screen Options updated successfully.', 'catablog')."'})";
+		
+		die;
 	}
-	
 	
 	public function ajax_reorder_items() {
 		check_ajax_referer('catablog-reorder', 'security');
@@ -1493,7 +1652,8 @@ class CataBlog {
 		
 		// $this->load_support_files = true;
 		
-		// only load support files if catablog shortcode was found on page
+		// only load support files if catablog shortcode was found on page.
+		// $this->load_support_files is hard set to true at the top of this class.
 		if ($this->load_support_files) {
 			if ($this->options['lightbox-enabled']) {
 				wp_enqueue_script('catablog-lightbox', $this->urls['javascript'] . '/catablog.lightbox.js', array('jquery'), $this->version);
@@ -1501,6 +1661,7 @@ class CataBlog {
 			
 			wp_enqueue_style('catablog-stylesheet', $this->urls['css'] . '/catablog.css', false, $this->version);
 			
+			$path = get_stylesheet_directory() . '/catablog.css';
 			$theme_catablog_stylesheet = get_stylesheet_directory_uri() . '/catablog.css';
 			if (file_exists($path)) {
 				wp_enqueue_style('catablog-custom-stylesheet', $theme_catablog_stylesheet, false, $this->version);
@@ -1570,10 +1731,6 @@ class CataBlog {
 		
 		extract(shortcode_atts($shortcode_params, $atts));
 		
-		// extract all category names
-		$categories = explode(',', $category);
-		array_walk($categories, create_function('&$val', '$val = trim($val);'));
-		
 		// if sort equals order, change it to menu_order
 		$sort = ($sort == 'order')? 'menu_order' : $sort;
 		
@@ -1585,18 +1742,29 @@ class CataBlog {
 			$results = $this->results_cache;
 		}
 		else {
-			$slugs = array();
-			foreach ($categories as $category) {
-				foreach ($this->get_terms() as $term) {
-					if (strtolower($category) == strtolower($term->name)) {
-						$slugs[] = $term->slug;
+			
+			// extract all category names
+			if (!empty($category)) {
+				$categories = explode(',', $category);
+				array_walk($categories, create_function('&$val', '$val = trim($val);'));
+
+				$category_ids = array();
+				foreach ($categories as $category) {
+					$id = -1;
+					foreach ($this->get_terms() as $term) {
+						if (strtolower($category) == strtolower($term->name)) {
+							$id = $term->term_id;
+						}
+
+						$category_ids[] = $id;
 					}
 				}
+
+				$category_ids = array_unique($category_ids);
+				$category = $category_ids;
 			}
 			
-			$slugs = array_unique($slugs);
-			
-			$results = CataBlogItem::getItems($slugs, $operator, $sort, $order);
+			$results = CataBlogItem::getItems($category, $operator, $sort, $order);
 		}
 		
 		ob_start();
@@ -1622,9 +1790,14 @@ class CataBlog {
 	
 	public function frontend_render_catalog_row($result, $template_override=false) {
 		
-		// $timer_start = microtime();
-		
+		// calculate and get values for usage in multiple tokens
 		$thumbnail_size = $this->options['thumbnail-size'];
+		$target = htmlspecialchars($this->options['link-target'], ENT_QUOTES, 'UTF-8');
+		$target = ($this->string_length($target) > 0)? "target='$target'" : "";
+		$rel    = htmlspecialchars($this->options['link-relationship'], ENT_QUOTES, 'UTF-8');
+		$rel    = ($this->string_length($rel) > 0)? "rel='$rel'" : "";
+		$link   = $result->getLink();
+		
 		
 		$values = array();
 		
@@ -1633,7 +1806,8 @@ class CataBlog {
 		$values['paypal-email'] = $this->options['paypal-email'];
 		$values['link-target']  = $target;
 		$values['link-rel']     = $rel;
-
+		
+		
 		// filter description if neccessary
 		$description = $result->getDescription();
 		if ($this->options['filter-description']) {
@@ -1644,12 +1818,6 @@ class CataBlog {
 		if ($this->options['nl2br-description']) {
 			$description = nl2br($description);
 		}
-		
-		$target = htmlspecialchars($this->options['link-target'], ENT_QUOTES, 'UTF-8');
-		$target = ($this->string_length($target) > 0)? "target='$target'" : "";
-		$rel    = htmlspecialchars($this->options['link-relationship'], ENT_QUOTES, 'UTF-8');
-		$rel    = ($this->string_length($rel) > 0)? "rel='$rel'" : "";
-		$link   = $result->getLink();
 		
 		
 		// catalog item image paths
@@ -1662,10 +1830,12 @@ class CataBlog {
 			$values['image-lightbox']  = $values['image-original'];
 		}
 		
+		
 		// catalog item title and content
 		$values['title']           = $result->getTitle();
-		$values['title-link']      = ($this->string_length($link) > 0)? "<a href='".$link."'>".$values['title']."</a>" : $values['title'];
+		$values['title-link']      = ($this->string_length($link) > 0)? "<a href='".$link."' $target $rel>".$values['title']."</a>" : $values['title'];
 		$values['description']     = $description;
+		
 		
 		// catalog item attributes
 		$date_mysql_string         = $result->getDate();
@@ -1673,14 +1843,18 @@ class CataBlog {
 		$values['time']            = mysql2date(get_option('time_format'), $date_mysql_string);
 		$values['order']           = $result->getOrder();
 		
+		
 		// catalog item field values
 		$values['link']            = ($this->string_length($link) > 0)? $link : $values['image-lightbox'];
+		$values['permalink']       = get_permalink($this->id);
 		$values['price']           = number_format(((float)($result->getPrice())), 2, '.', '');
 		$values['product-code']    = $result->getProductCode();
+		
 		
 		// catalog item category values
 		$values['category']        = implode(', ', $result->getCategories());
 		$values['category-slugs']  = implode(' ', $result->getCategorySlugs());
+		
 		
 		// catalog item images
 		$values['main-image']      = '<img src="'.$values['image-thumbnail'].'" alt="" />';
@@ -1693,13 +1867,10 @@ class CataBlog {
 		}
 		
 		
-		
 		// deprecatted values
 		$values['title-text']     = $values['title'];
 		$values['image']          = $values['image-thumbnail'];
 		$values['image-fullsize'] = $values['image-lightbox'];
-		
-		
 		
 		
 		// generate the buy now button if the price of the item is greater then 0
@@ -1712,7 +1883,6 @@ class CataBlog {
 			}
 		}
 		$values['buy-now-button']  = $buy_now_button;
-		
 		
 		
 		// check if theme is empty, if so use default theme
@@ -1741,7 +1911,6 @@ class CataBlog {
 			}
 		}
 		
-		// echo $template;
 		
 		// loop through each items array of values and replace tokens
 		foreach($values as $key => $value) {
@@ -1749,9 +1918,8 @@ class CataBlog {
 			$template  = str_replace($search, $value, $template);
 		}
 		
-		$processed_row = $template;
 		
-		// write the string to the current output buffer
+		$processed_row = $template;
 		return $processed_row;
 	}
 	
@@ -1860,6 +2028,9 @@ class CataBlog {
 		$default_options['view-buynow']        = "";
 		$default_options['filter-description'] = false;
 		$default_options['nl2br-description']  = true;
+		$default_options['public_posts']       = false;
+		$default_options['public_post_slug']   = $this->custom_post_name;
+		$default_options['public_tax_slug']    = $this->custom_tax_name;
 		
 		$this->options = $default_options;
 		$this->save_wp_options();
@@ -1920,6 +2091,7 @@ class CataBlog {
 			return false;
 		}
 		
+		$this->upgrade_user_options();
 		$this->upgrade_options();
 		$this->upgrade_directories();
 		
@@ -1929,7 +2101,22 @@ class CataBlog {
 		$this->wp_message(__('CataBlog options and directories have been successfully upgraded.', 'catablog'));
 	}
 	
+	private function upgrade_user_options() {
+		if (version_compare($this->options['version'], '1.2.9', '<')) {
+			$screen_settings = array('limit'=>20);
+			$user  = wp_get_current_user();
+			update_user_meta($user->ID, 'catablog_screen_settings', $screen_settings);
+		}
+	}
+	
 	private function upgrade_options() {
+		
+		// add new public post and taxonomy options
+		if (version_compare($this->options['version'], '1.2.9', '<')) {
+			$this->options['public_posts']     = false;
+			$this->options['public_post_slug'] = $this->custom_post_name;
+			$this->options['public_tax_slug']  = $this->custom_tax_name;
+		}
 		
 		// update the version number
 		$this->options['version']  = $this->version;
@@ -2416,7 +2603,6 @@ class CataBlog {
 		}
 	}
 	
-
 
 	
 	

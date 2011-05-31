@@ -56,7 +56,13 @@
 					<div id="catablog-edit-main-text">
 						<label for="catablog-title"><?php _e("Title", 'catablog'); ?></label>
 						<input type="text" name="title" id="catablog-title" maxlength="200" value="<?php echo htmlspecialchars($result->getTitle(), ENT_QUOTES, 'UTF-8') ?>" />
-						<br /><br />
+
+						<?php if ($this->options['public_posts']): ?>
+							<p><small>Permalink: <a href="<?php echo $result->getPermalink() ?>"><?php echo $result->getPermalink() ?></a></small></p>
+						<?php else: ?>
+							<p>&nbsp;</p>
+						<?php endif ?>
+
 						<label for="catablog-description"><?php _e("Description", 'catablog'); ?> [<small><?php _e("accepts html formatting", 'catablog'); ?></small>]</label>
 						<textarea name="description" id="catablog-description"><?php echo htmlspecialchars($result->getDescription(), ENT_QUOTES, 'UTF-8') ?></textarea>
 					</div>

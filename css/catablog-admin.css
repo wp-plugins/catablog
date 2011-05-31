@@ -812,3 +812,7 @@ table.catablog_stats td {
 .hide {
 	display: none;
 }
+.warning {
+	color: #c00;
+	text-decoration: underline;
+}
