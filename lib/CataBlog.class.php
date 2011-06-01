@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.2.9
+ * @version 1.2.9.1
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.2.9";
+	private $version     = "1.2.9.1";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -160,40 +160,16 @@ class CataBlog {
 			add_action('wp_head', array(&$this, 'frontend_header'));
 			add_action('wp_footer', array(&$this, 'frontend_footer'));
 			add_shortcode('catablog', array(&$this, 'frontend_content'));
-			add_filter('the_content', array(&$this, 'frontend_single_filter_content'));
+			
+			// add content and excerpt filters if the public feature is enabled
+			$public_posts_enabled = (isset($this->options['public_posts']))? $this->options['public_posts'] : false;
+			if ($public_posts_enabled) {
+				add_filter('the_content', array(&$this, 'frontend_single_filter_content'), 12);
+				add_filter('the_excerpt', array(&$this, 'frontend_single_filter_content'), 12);	
+			}
 		}
 	}
 	
-	public function frontend_single_filter_content($content) {
-		global $post;
-		
-		if ($post->post_type == $this->custom_post_name) {
-			if (is_single()) {
-				$result = CataBlogItem::getItem($post->ID);
-				return $this->frontend_render_catalog_row($result, 'default');
-			}
-			else {
-				
-				$result = new CataBlogItem;
-				$meta = get_post_meta($post->ID, $result->getPostMetaKey(), true);
-				$path = $this->urls['thumbnails'] . "/" . $meta['image'];
-				
-				$html  = "<div class='catablog-row'>\n";
-				$html .= "  <div class='catablog-images-column'>\n";
-				$html .= "    <img src='$path' class='catablog-image' />\n";
-				$html .= "  </div>\n";
-				$html .= "  <div class='catablog-description'>";
-				$html .= "    $content";
-				$html .= "  </div>";
-				$html .= "</div>";
-				echo $html;
-				
-				return;
-			}
-		}
-		
-		return $content;
-	}
 	
 	
 	
@@ -1788,6 +1764,24 @@ class CataBlog {
 		return ob_get_clean();
 	}
 	
+	
+	
+	
+	public function frontend_single_filter_content($content) {
+		global $post;
+		
+		if ($post->post_type == $this->custom_post_name) {
+			$result  = CataBlogItem::postToItem($post);
+			// $result->setDescription($content);
+			$content = $this->frontend_render_catalog_row($result, 'single');
+		}
+		
+		return $content;
+	}
+	
+	
+	
+	
 	public function frontend_render_catalog_row($result, $template_override=false) {
 		
 		// calculate and get values for usage in multiple tokens
@@ -1813,7 +1807,9 @@ class CataBlog {
 		if ($this->options['filter-description']) {
 			$pattern     = '/\[(catablog)\b(.*?)(?:(\/))?\](?:(.+?)\[\/\2\])?/s';
 			$description = preg_replace($pattern, '', $description);
+			remove_filter('the_content', array(&$this, 'frontend_single_filter_content'), 12);
 			$description = apply_filters('the_content', $description);
+			add_filter('the_content', array(&$this, 'frontend_single_filter_content'), 12);
 		}
 		if ($this->options['nl2br-description']) {
 			$description = nl2br($description);

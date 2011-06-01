@@ -4,7 +4,7 @@
  *
  * This file contains the class for each CataBlog Item that is fetched from the database.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.2.9
+ * @version 1.2.9.1
  * @package catablog
  */
 
@@ -112,6 +112,46 @@ class CataBlogItem {
 		return $item;
 	}
 
+
+	/**
+	 * Convert a standard WordPress post object into a CataBlogItem
+	 * object.
+	 *
+	 * @param object $post A standard WordPress post object
+	 * @return null|CataBlogItem
+	 */
+	public static function postToItem($post) {
+		if (empty($post)) {
+			return null;
+		}
+		
+		$item = new CataBlogItem;
+		
+		if ($post->post_type != $item->getCustomPostName()) {
+			return null;
+		}
+		
+		$category_ids = array();
+		$terms = get_the_terms($post->ID, $item->_custom_tax_name);
+		if (is_array($terms)) {
+			foreach ($terms as $term) {
+				$category_ids[$term->term_id] = $term->name;
+			}			
+		}				
+		
+		$item->id           = $post->ID;
+		$item->title        = $post->post_title;
+		$item->description  = $post->post_content;
+		$item->date         = $post->post_date;
+		$item->categories   = $category_ids;
+		$item->order        = $post->menu_order;
+		$item->_post_name   = $post->post_name;
+		
+		$meta = get_post_meta($post->ID, $item->_post_meta_name, true);
+		$item->processPostMeta($meta);
+		
+		return $item;
+	}
 
 
 

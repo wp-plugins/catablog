@@ -5,8 +5,8 @@ msgstr ""
 "Project-Id-Version: CataBlog 1.2.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-05-31 13:30-0800\n"
-"PO-Revision-Date: 2011-05-31 13:30-0800\n"
-"Last-Translator: Zachary Segal <zac@illproductions.com>\n"
+"PO-Revision-Date: 2011-06-01 11:00+0100\n"
+"Last-Translator: dtpstudio <buelter@dtpstudio.de>\n"
 "Language-Team: illProductions <zac@illproductions.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -102,15 +102,13 @@ msgid "CataBlog"
 msgstr "CataBlog"
 
 #: ../lib/CataBlog.class.php:389
-#, fuzzy
 msgid "CataBlog Entry"
-msgstr "CataBlog-Eintrag bearbeiten"
+msgstr "CataBlog-Eintrag"
 
 #: ../lib/CataBlog.class.php:555
 #: ../lib/CataBlog.class.php:588
-#, fuzzy
 msgid "Changes Saved Successfully."
-msgstr "Änderungen übernommen"
+msgstr "Änderungen übernommen."
 
 #: ../lib/CataBlog.class.php:558
 msgid "Catalog Item Deleted Successfully."
@@ -137,7 +135,6 @@ msgid "Reset all data successfully."
 msgstr "Zürucksetzen erfolgreich."
 
 #: ../lib/CataBlog.class.php:592
-#, fuzzy
 msgid "View Now"
 msgstr "Ansicht"
 
@@ -230,9 +227,8 @@ msgid "The CataBlog upload directories have been locked."
 msgstr "Die CataBlog-Upload-Verzeichnisse sind gesperrt."
 
 #: ../lib/CataBlog.class.php:1345
-#, fuzzy
 msgid "Screen Options updated successfully."
-msgstr "Zürucksetzen erfolgreich."
+msgstr "Anzeigeeinstellungen erfolgreich aktualisiert."
 
 #: ../lib/CataBlog.class.php:1374
 msgid "Commas, Pipes and reserved HTML characters are not allowed in category names."
@@ -619,62 +615,61 @@ msgstr "Gesamtspeicherverbrauch:"
 
 #: ../templates/admin-contextual-help.php:11
 msgid "You may edit your catalog entry as you see fit in this panel."
-msgstr ""
+msgstr "Du kannst hier den Eintrag bearbeiten."
 
 #: ../templates/admin-contextual-help.php:12
 msgid "Notice that the description accepts HTML code. This makes it easy to refine your catalog layout inside your description."
-msgstr ""
+msgstr "In der Beschreibung kannst du HTML verwenden. Dies kann zum Anpassen des Layouts genutzt werden."
 
 #: ../templates/admin-contextual-help.php:17
 msgid "CataBlog is a comprehensive and easy to use cataloging system for WordPress. "
-msgstr ""
+msgstr "CataBlog ist ein leicht verständliches und einfach zu bedienendes Katalogisierungssystem für WordPress."
 
 #: ../templates/admin-contextual-help.php:19
 msgid "Get started by making your first catalog item, click the <strong>Add New</strong> button near the page title. "
-msgstr ""
+msgstr "Klicke <strong>Eintrag hinzufügen</strong> um einen Katalogeintrag zu erstellen."
 
 #: ../templates/admin-contextual-help.php:22
 #, php-format
 msgid "You may learn more about CataBlog at %scatablog.illproductions.com%s. "
-msgstr ""
+msgstr "Erfahre mehr über CataBlog auf %scatablog.illproductions.com%s."
 
 #: ../templates/admin-contextual-help.php:25
 #, php-format
 msgid "A lot of time and effort has gone into creating this plugin, %splease donate%s to Zach and help the continued development of CataBlog."
-msgstr ""
+msgstr "Die Entwicklung dieses Plugins hat eine Menge Zeit und Aufwand erfordert. Du kannst Zach durch eine %sSpende%s unterstützen, CataBlog weiterzuentwickeln."
 
 #: ../templates/admin-contextual-help.php:34
 msgid "To create a new catalog entry first upload an image by selecting a file and then clicking the upload button. "
-msgstr ""
+msgstr "Um einen neuen Eintrag zu erstellen, lade zunächst ein Bild hoch."
 
 #: ../templates/admin-contextual-help.php:35
 msgid "After the upload is successful a new catalog entry will be generated with the name of the file you uploaded. "
-msgstr ""
+msgstr "Nachdem der Upload abgeschlossen ist, wird ein neuer Katalogeintrag mit dem Namen der Datei angelegt."
 
 #: ../templates/admin-contextual-help.php:44
 msgid "CataBlog offer many options that let you modify your catalog and its appearance."
-msgstr ""
+msgstr "CataBlog bietet viele Einstellungen, mit denen du den Katalog und die Darstellung anpassen kannst."
 
 #: ../templates/admin-contextual-help.php:52
-#, fuzzy
 msgid "Please make sure to support the plugin author by donating."
-msgstr "Gib bitte eine Kategoriebezeichnung ein"
+msgstr "Bitte unterstütze den Plugin-Autor mit einer Spende."
 
 #: ../templates/admin-contextual-help.php:60
 msgid "Your CataBlog originals upload folder is being scanned for any files that are not currently in the database."
-msgstr ""
+msgstr "Dein CataBlog-Upload-Ordner wird nach Dateien durchsucht, die noch nicht in der Datenbank sind."
 
 #: ../templates/admin-contextual-help.php:68
 msgid "CataBlog is regenerating all the images in the CataBlog thumbnail and LightBox folders."
-msgstr ""
+msgstr "CataBlog verarbeitet alle Bilder in den Vorschau- und LightBox-Ordnern."
 
 #: ../templates/admin-contextual-help.php:76
 msgid "CataBlog is being completely removed, afterwards you may go back to the library view to reinstall the default settings."
-msgstr ""
+msgstr "CataBlog wird vollständig entfernt. Hiernach kannst du Standardeinstellungen neu laden."
 
 #: ../templates/admin-contextual-help.php:77
 msgid "If you wish to completely remove CataBlog, do not go to the library view, instead disable CataBlog after this is complete."
-msgstr ""
+msgstr "Möchtest du CataBlog komplett löschen, deaktiviere das Plugin nachdem dies abgeschlossen ist."
 
 #: ../templates/admin-discfull.php:4
 msgid "Storage Space Full!"
@@ -1083,9 +1078,8 @@ msgid "Are you sure you want to delete multiple items?"
 msgstr "Bist du dir sicher, dass du mehrere Einträge löschen möchtest?"
 
 #: ../templates/admin-library.php:271
-#, fuzzy
 msgid "Are you sure you want to permanently delete this catalog items?"
-msgstr "Bist du sicher, dass du dieses Bild löschen möchtest?"
+msgstr "Bist du sicher, dass du diese Einträge löschen möchtest?"
 
 #: ../templates/admin-list.php:5
 #: ../templates/admin-list.php:47
@@ -1094,7 +1088,6 @@ msgstr "Bild"
 
 #: ../templates/admin-list.php:19
 #: ../templates/admin-list.php:52
-#, fuzzy
 msgid "Price"
 msgstr "Preis"
 
@@ -1147,7 +1140,7 @@ msgstr "LightBox"
 
 #: ../templates/admin-options.php:33
 msgid "Public"
-msgstr ""
+msgstr "Veröffentlichung"
 
 #: ../templates/admin-options.php:36
 msgid "Template"
@@ -1244,64 +1237,62 @@ msgstr "Hiermit kannst du den jQuery-Selector verändern, der LightBox an Vorsch
 
 #: ../templates/admin-options.php:121
 msgid "Enable Individual Pages and Category Archives:"
-msgstr ""
+msgstr "Aktiviere individuelle Seiten und Kategoriearchive:"
 
 #: ../templates/admin-options.php:123
 msgid "If this is checked, each and every catalog item will get its very own page, complete with permalink."
-msgstr ""
+msgstr "Setzt du ein Häkchen, wird jedem Katalogeintrag seine eigene Seite zugewiesen (mit Permalink)."
 
 #: ../templates/admin-options.php:124
 msgid "Also, each CataBlog Category will have their own archive page automatically generated."
-msgstr ""
+msgstr "Auch wird automatisch für jede Kategorie eine Archivseite generiert."
 
 #: ../templates/admin-options.php:125
 #, php-format
 msgid "These CataBlog Category pages can easily be added to your %sMenus%s with the Screen Options panel."
-msgstr ""
+msgstr "Diese Kategorieseiten können einem %sMenü%s hinzugefügt werden."
 
 #: ../templates/admin-options.php:129
 msgid "Individual Pages Slug:"
-msgstr ""
+msgstr "Einzelseitenbasis:"
 
 #: ../templates/admin-options.php:131
 msgid "This is the identifying slug your blog will use to create your individual catalog item pages."
-msgstr ""
+msgstr "Dies ist die Basis, die dein Blog für Seiten mit einem Eintrag nutzt."
 
 #: ../templates/admin-options.php:135
-#, fuzzy
 msgid "Category Pages Slug:"
-msgstr "Kategorien"
+msgstr "Kategorieseitenbasis:"
 
 #: ../templates/admin-options.php:137
 msgid "This is the identifying slug your blog will use to create your catalog archive pages."
-msgstr ""
+msgstr "Dies ist die Basis, die dein Blog für Katalogarchivseiten nutzt."
 
 #: ../templates/admin-options.php:143
-#, fuzzy
 msgid "Catalog Slugs Warning"
-msgstr "CataBlog-Bildverarbeitung"
+msgstr "Hinweis zu Katalogbasen"
 
 #: ../templates/admin-options.php:144
 #, php-format
 msgid "Please make sure you do not set either of your catalog slugs to a %sWordPress Reserved Term%s."
-msgstr ""
+msgstr "Bitte achte darauf, dass du keine %svon WordPress genutzten Begriffe%s verwendest."
 
 #: ../templates/admin-options.php:145
 msgid "These labels must also be URL friendly, so they may be transformed from your original input."
-msgstr ""
+msgstr "Diese Begriffe sollten für URLs geeignet sein, um Verarbeitungsfehler zu vermeiden."
 
 #: ../templates/admin-options.php:149
 msgid "Changing Catalog Slugs"
-msgstr ""
+msgstr "Änderung von Katalogbasen"
 
 #: ../templates/admin-options.php:150
 #, php-format
 msgid "If you change these values, please immediately visit the %sPermalinks%s panel to update your rewrite rules."
-msgstr ""
+msgstr "Wenn du diese Werte änderst, aktualisiere die mod_rewrite-Regeln unter %sPermalinks%s."
 
 #: ../templates/admin-options.php:151
 msgid "Your individual catalog item pages and archives will not work until you have updated your rewrite rules."
-msgstr ""
+msgstr "Die Katalogseiten werden nicht funktionieren, bis du die Regeln aktualisiert hast."
 
 #: ../templates/admin-options.php:161
 msgid "Link Target:"

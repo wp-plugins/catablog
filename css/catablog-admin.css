@@ -465,7 +465,7 @@ form#catablog-edit fieldset div {
 
 #catablog-options-menu {
 	float: left;
-	width: 100px;
+	width: 115px;
 	margin: 0 0 0 0;
 }
 #catablog-options-menu li a {
@@ -485,7 +485,7 @@ form#catablog-edit fieldset div {
 }
 
 .catablog-options-panel {
-	margin: 0 0 0 100px !important;
+	margin: 0 0 0 115px !important;
 	min-height: 340px;
 	padding: 1em;
 	border: 1px #ddd solid;;
