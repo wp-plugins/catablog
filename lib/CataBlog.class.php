@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.2.9.2
+ * @version 1.2.9.5
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.2.9.2";
+	private $version     = "1.2.9.5";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -39,8 +39,8 @@ class CataBlog {
 	private $default_bg_color       = "#ffffff";
 	
 	// two private arrays for storing common file paths
-	private $directories   = array();
-	private $urls          = array();
+	public $directories   = array();
+	public $urls          = array();
 	
 	// default term name and variables to cache fetched terms from the database
 	private $terms             = NULL;
@@ -141,6 +141,7 @@ class CataBlog {
 			
 			// register admin ajax actions
 			// add_action('wp_ajax_catablog_reorder', array($this, 'ajax_reorder_items'));
+			add_action('wp_ajax_catablog_micro_save', array($this, 'ajax_micro_save'));
 			add_action('wp_ajax_catablog_update_screen_settings', array($this, 'ajax_update_screen_settings'));
 			
 			add_action('wp_ajax_catablog_new_category', array($this, 'ajax_new_category'));
@@ -338,6 +339,9 @@ class CataBlog {
 			wp_enqueue_script('jquery-ui-sortable');
 			wp_enqueue_script('farbtastic');
 			wp_enqueue_script('swfupload');
+
+			wp_enqueue_script('catablog-handlers', $this->urls['javascript'] . '/catablog.handlers.js', array('jquery'), '1.0');
+			// wp_enqueue_script('catablog-swfupload', $this->urls['javascript'] . '/swfupload.js', array('jquery'), '2.2.0.1');
 			wp_enqueue_script('catablog-admin', $this->urls['javascript'] . '/catablog-admin.js', array('jquery'), $this->version);
 		}
 	}
@@ -1299,6 +1303,29 @@ class CataBlog {
 	/*****************************************************
 	**       - ADMIN AJAX ACTIONS
 	*****************************************************/
+	public function ajax_micro_save() {
+		check_ajax_referer('catablog-micro-save','security');
+		
+		$id = $_REQUEST['id'];
+		$item = CataBlogItem::getItem($id);
+		
+		$title = $_REQUEST['title'];
+		$description = $_REQUEST['description'];
+
+		$item->setTitle($title);
+		$item->setDescription($description);
+		$validate = $item->validate();
+		if ($validate === true) {
+			$item->save();
+			echo "({'success':true, 'message':'".__('micro save successful','catablog')."'})";
+		}
+		else {
+			echo "({'success':false, 'message':'$validate'})";
+		}
+		
+		
+		die;
+	}
 	public function ajax_update_screen_settings() {
 		check_ajax_referer('catablog-update-screen-settings','security');
 		
@@ -1842,7 +1869,7 @@ class CataBlog {
 		
 		// catalog item field values
 		$values['link']            = ($this->string_length($link) > 0)? $link : $values['image-lightbox'];
-		$values['permalink']       = get_permalink($this->id);
+		$values['permalink']       = get_permalink($result->getId());
 		$values['price']           = number_format(((float)($result->getPrice())), 2, '.', '');
 		$values['product-code']    = $result->getProductCode();
 		
@@ -2551,7 +2578,7 @@ class CataBlog {
 		return $this->terms;
 	}
 	
-	private function get_default_term() {
+	public function get_default_term() {
 		if ($this->default_term == NULL) {
 			$terms = $this->get_terms();
 			foreach ($terms as $term) {

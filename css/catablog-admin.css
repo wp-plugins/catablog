@@ -443,7 +443,7 @@ form#catablog-edit fieldset h3 {
 	-moz-border-radius: 6px 6px 0 0;
 	border-radius: 6px 6px 0 0;
 	color: #464646;
-	border: 1px #ddd solid;
+	border: 1px #dfdfdf solid;
 }
 form#catablog-edit fieldset div {
 	border: 1px #ddd solid;
@@ -455,6 +455,72 @@ form#catablog-edit fieldset div {
 
 
 
+
+#upload-form-left-col.left-col {
+	float: left;
+	width: 17em;
+}
+#upload-form-right-col.right-col {
+	margin: 0 0 0 19em;
+	border: 1px #ccc solid;
+	border-radius: 5px;
+	background: #fcfcfc;
+}
+
+#upload-feedback {
+	padding: 1em;
+	margin: 0;
+}
+
+
+
+
+
+
+#new-items-editor li.error {
+	border: 0;
+	border-top: 1px #c00 solid;
+}
+
+#new-items-editor li {
+	display: none;
+	padding: 1em;
+	margin: 0;
+	border-top: 1px #e1e1e1 solid;
+}
+
+#new-items-editor li .button-elements {
+	float: left;
+	width: 100px;
+}
+#new-items-editor li .button-elements img {
+	width: 100px;
+	height: 100px;
+	margin-bottom: 6px;
+	border: 1px #dfdfdf solid;
+	border-radius: 5px;
+}
+
+#new-items-editor li .text-elements {
+	margin-left: 112px;
+	min-height: 100px;
+}
+#new-items-editor li .text-elements input.title,
+#new-items-editor li .text-elements textarea.description {
+	display: block;
+	width: 100%;
+	font-size: 12px;
+	line-height: 18px;
+	padding: 2px;
+	margin: 1px 0;
+}
+#new-items-editor li .text-elements textarea.description {
+	height: 4em;
+	margin-bottom: 4px;
+}
+#new-items-editor li .text-elements input.button-primary {
+	
+}
 
 
 
@@ -702,7 +768,14 @@ form#catablog-view #catablog-view-menu {
 
 
 
-
+.ajax-save {
+	padding: 0 1em;
+	line-height: 20px;
+	background-color: transparent;
+	background-image: url('./../images/ajax-loader-small.gif');
+	background-repeat: no-repeat;
+	background-position: center top;
+}
 
 
 

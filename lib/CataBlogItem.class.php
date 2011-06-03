@@ -4,7 +4,7 @@
  *
  * This file contains the class for each CataBlog Item that is fetched from the database.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.2.9.2
+ * @version 1.2.9.5
  * @package catablog
  */
 
@@ -346,7 +346,7 @@ class CataBlogItem {
 	 * @return boolean|string Wether or not the image is an acceptable format.
 	 */
 	public function validateImage($image) {
-		list($width, $height, $format) = getimagesize($image);
+		list($width, $height, $format) = @getimagesize($image);
 		switch($format) {
 			case IMAGETYPE_GIF: break;
 			case IMAGETYPE_JPEG: break;
@@ -802,6 +802,7 @@ class CataBlogItem {
 		return $this->_post_meta_name;
 	}
 	public function getPermalink() {
+		echo $this->id;
 		return get_permalink($this->id);
 	}
 	
