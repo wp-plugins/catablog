@@ -99,6 +99,9 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 == Changelog ==
 
 = 1.2.9.2 =
+* Fix: Swedish localization updated.
+
+= 1.2.9.1 =
 * Fix: Individual and CataBlog category pages now apply WordPress filters on the description if enabled.
 * Fix: CataBlog Option tabs have been enlarged for German language.
 * Fix: German localization updated.
