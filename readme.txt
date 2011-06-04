@@ -18,6 +18,7 @@ Instead post your questions and comments on the appropriate forums. If you have 
 
 Highlighted Features:
 
+* Upload multiple images at once.
 * Generate individual and category pages for your entire catalog.
 * Filter by multiple categories with one ShortCode.
 * Localized for Spanish, Swedish and German.
