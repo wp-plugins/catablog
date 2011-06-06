@@ -94,10 +94,17 @@ function catablog_swfupload_upload_complete(file) {
 }
 
 
-function catablog_swfupload_file_queued_error(message) {
-	alert(message);
+function catablog_swfupload_file_queued_error(file, error_code, message) {
+	var string = "File Queue Error:\n";
+	// for (p in message) {
+	// 	string += p + ": " + message[p];
+	// }
+	string += message;
+	alert(string);
 }
 
-function catablog_swfupload_upload_error(message) {
-	alert(message);
+function catablog_swfupload_upload_error(file, error_code, message) {
+	var string = "Upload Error:\n";
+	string += message;
+	alert(string);
 }

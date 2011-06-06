@@ -19,6 +19,7 @@
 					<input type="file" id="new_image" name="new_image"  />
 					<?php wp_nonce_field( 'catablog_create', '_catablog_create_nonce', false, true ) ?>
 					<input type="submit" name="save" value="<?php _e("Upload", "catablog") ?>" class="button-primary" />
+					<p class="error"><?php _e("Flash upload was not enabled because either JavaScript is disabled or your version of Flash is too old.", "catablog")?></p>
 				</div>
 
 				<p><?php printf(__("Maximum upload file size: %sB", "catablog"), ini_get('upload_max_filesize')); ?></p>
@@ -80,6 +81,12 @@
 
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
+		
+		flash_version = swfobject.getFlashPlayerVersion();
+		if (flash_version.major < 10) {
+			return false;
+		}
+		
 		swfu = new SWFUpload({
 			upload_url : "<?php echo '/wp-content/plugins/catablog/lib/catablog.upload.php' ?>",
 			flash_url : "<?php echo $this->urls['javascript'] ?>/swfupload.swf",
