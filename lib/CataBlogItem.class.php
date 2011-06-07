@@ -4,7 +4,7 @@
  *
  * This file contains the class for each CataBlog Item that is fetched from the database.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.2.9.6
+ * @version 1.2.9.7
  * @package catablog
  */
 

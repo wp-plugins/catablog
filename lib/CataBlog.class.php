@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.2.9.6
+ * @version 1.2.9.7
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.2.9.6";
+	private $version     = "1.2.9.7";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -338,12 +338,14 @@ class CataBlog {
 			wp_enqueue_script('jquery');		
 			wp_enqueue_script('jquery-ui-sortable');
 			wp_enqueue_script('farbtastic');
+			wp_enqueue_script('catablog-admin', $this->urls['javascript'] . '/catablog-admin.js', array('jquery'), $this->version);
+		}
+		
+		$catablog_upload_page = strpos($_SERVER['QUERY_STRING'], 'page=catablog-upload') !== false;
+		if ($catablog_page) {
 			wp_enqueue_script('swfupload');
 			wp_enqueue_script('swfobject');
-
 			wp_enqueue_script('catablog-handlers', $this->urls['javascript'] . '/catablog.handlers.js', array('jquery'), '1.0');
-			// wp_enqueue_script('catablog-swfupload', $this->urls['javascript'] . '/swfupload.js', array('jquery'), '2.2.0.1');
-			wp_enqueue_script('catablog-admin', $this->urls['javascript'] . '/catablog-admin.js', array('jquery'), $this->version);
 		}
 	}
 	

@@ -88,8 +88,8 @@
 		}
 		
 		swfu = new SWFUpload({
-			upload_url : "<?php echo '/wp-content/plugins/catablog/lib/catablog.upload.php' ?>",
-			flash_url : "<?php echo $this->urls['javascript'] ?>/swfupload.swf",
+			upload_url : "<?php echo $this->urls['plugin'] . '/lib/catablog.upload.php' ?>",
+			flash_url : "<?php echo get_bloginfo('url') . '/wp-includes/js/swfupload/swfupload.swf' ?>",
 		
 			file_types : "*.jpg;*.jpeg;*.gif;*.png",
 			file_type_description: "Web Image Files",
