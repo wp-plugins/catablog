@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce, Spanish, German, Swedish
 Requires at least: 3.1
 Tested up to: 3.2
-Stable tag: 1.2.9.7
+Stable tag: 1.2.9.8
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -18,6 +18,7 @@ Instead post your questions and comments on the appropriate forums. If you have 
 
 Highlighted Features:
 
+* Set separate height and width values for catalog thumbnails.
 * Generate individual and category pages for your entire catalog.
 * Filter by multiple categories with one ShortCode.
 * Localized for Spanish, Swedish and German.
@@ -97,6 +98,18 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.2.9.8 =
+* New: Thumbnail size now supports separate width and height values.
+* Fix: Category operator 'AND' should work.
+* Fix: LightBox next and previous navigation should stop at the start and end of each Shortcode.
+* Fix: Removed item id from the beginning of an item's Permalink.
+* Fix: Better looking multiple file upload button.
+* Fix: Multiple file upload should work on WordPress installations that have a base path.
+* Fix: Changes to the catalog slugs should now be effective immediately.
+* Fix: When uploading multiple files the item's order attribute should be set correctly.
+* Fix: Bulk menu is now always visible, fixing a jumpy interface on slower internet connections.
+* Fix: Errors should be reported when servers runs out of memory rendering images.
 
 = 1.2.9.7 =
 * Fix: Multiple file uploads should not give 404 errors with certain WordPress setups.

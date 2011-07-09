@@ -83,6 +83,11 @@ function possibly_disable_save_button() {
 
 
 function renderCataBlogItems(images, type, nonce, callback) {
+	jQuery('body').ajaxError(function(event, j, a) {
+		jQuery('#catablog-console').append('<li class="error">' + j.responseText + '</li>');
+		renderCataBlogItem(images.shift(), type, images, nonce, total_count, callback);
+	});
+	
 	total_count = images.length;
 	renderCataBlogItem(images.shift(), type, images, nonce, total_count, callback);
 }
@@ -102,7 +107,7 @@ function renderCataBlogItem(image, type, a, nonce, total_count, callback) {
 		'security': nonce
 	}
 	
-	jQuery.post(ajaxurl, params, function(data) {
+	jQuery.post(ajaxurl, params, function(data, textStatus, jqXHR) {
 		try {
 			data = eval(data);
 
@@ -167,6 +172,68 @@ function calculate_lazy_loads() {
 	});
 }
 
+
+
+
+
+
+
+function shrink_width(original_width, original_height, thumbnail_width, thumbnail_height) {
+	var ratio      = thumbnail_height / original_height;
+	var new_width  = original_width * ratio;
+	var new_height = thumbnail_height;
+	var new_top    = 0;
+	var new_left   = ((thumbnail_width - new_width) / 2);;
+	
+	if (new_width > thumbnail_width) {
+		return shrink_height(original_width, original_height, thumbnail_width, thumbnail_height);
+	}
+	
+	return {'top':new_top, 'left':new_left, 'width':new_width, 'height':new_height};
+}
+
+function shrink_height(original_width, original_height, thumbnail_width, thumbnail_height) {
+	var ratio      = thumbnail_width / original_width;
+	var new_width  = thumbnail_width;
+	var new_height = original_height * ratio;
+	var new_top    = ((thumbnail_height - new_height) / 2);
+	var new_left   = 0;
+	
+	if (new_height > thumbnail_height) {
+		return shrink_width(original_width, original_height, thumbnail_width, thumbnail_height);
+	}
+	
+	return {'top':new_top, 'left':new_left, 'width':new_width, 'height':new_height};
+}
+
+
+function crop_width(original_width, original_height, thumbnail_width, thumbnail_height) {
+	var ratio      = thumbnail_width / original_width;
+	var new_width  = thumbnail_width;
+	var new_height = original_height * ratio;
+	var new_top    = ((thumbnail_height - new_height) / 2);
+	var new_left   = 0;
+	
+	if (new_height < thumbnail_height) {
+		return crop_height(original_width, original_height, thumbnail_width, thumbnail_height);
+	}
+	
+	return {'top':new_top, 'left':new_left, 'width':new_width, 'height':new_height};
+}
+
+function crop_height(original_width, original_height, thumbnail_width, thumbnail_height) {
+	var ratio      = thumbnail_height / original_height;
+	var new_width  = original_width * ratio;
+	var new_height = thumbnail_height;
+	var new_top    = 0;
+	var new_left   = ((thumbnail_width - new_width) / 2);
+	
+	if (new_width < thumbnail_width) {
+		return crop_width(original_width, original_height, thumbnail_width, thumbnail_height);
+	}
+	
+	return {'top':new_top, 'left':new_left, 'width':new_width, 'height':new_height};
+}
 
 
 

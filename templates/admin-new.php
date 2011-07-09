@@ -89,20 +89,19 @@
 		
 		swfu = new SWFUpload({
 			upload_url : "<?php echo $this->urls['plugin'] . '/lib/catablog.upload.php' ?>",
-			flash_url : "<?php echo get_bloginfo('url') . '/wp-includes/js/swfupload/swfupload.swf' ?>",
+			flash_url : "<?php echo includes_url('js/swfupload/swfupload.swf'); ?>",
 		
 			file_types : "*.jpg;*.jpeg;*.gif;*.png",
 			file_type_description: "Web Image Files",
 			file_size_limit : "<?php printf('%sB', ini_get('upload_max_filesize')) ?>",
 		
 			button_placeholder_id : 'upload_buttons',
-			button_image_url : "<?php echo $this->urls['images'] ?>/upload.png?v=<?php echo $this->version ?>",
-			button_width : 190,
+			button_image_url : "<?php echo includes_url('images/upload.png'); ?>",
+			button_width : 132,
 			button_height: 23,
-			button_text : '<span class="theFont"><?php _e("Select Images", "catablog") ?></span>',
-			button_text_style : ".theFont {font-size:12px; font-family:sans-serif;}",
-			button_text_top_padding: 2,
-			button_text_left_padding: 10,
+			button_text : '<span class="button"><?php _e("Select Images", "catablog") ?></span>',
+			button_text_style : ".button { text-align:center; font-weight:bold; font-family:'Lucida Grande',Verdana,Arial,'Bitstream Vera Sans',sans-serif; font-size:10px; text-shadow: 0 1px 0 #FFFFFF; color:#464646;}",
+			button_text_top_padding: 3,
 			button_cursor: SWFUpload.CURSOR.HAND,
 		
 			post_params : {
@@ -133,16 +132,6 @@
 
 		jQuery('#upload-form-left-col').addClass('left-col');
 		jQuery('#upload-form-right-col').addClass('right-col');
-
-			<?php /*
-			var cancel_button = '<input id="cancel-upload" type="button" disabled="disabled" value="<?php _e("Cancel Upload", "catablog") ?>" class="button">';
-			jQuery('.swfupload').after(cancel_button);
-			jQuery('#cancel-upload').bind('click', function(event) {
-				if (jQuery(this).attr('disabled')) {
-					return false;
-				}
-			});
-			*/ ?>
 	});
 
 	function catablog_micro_save(event) {
@@ -165,7 +154,8 @@
 	
 		container.find('input').attr('readonly', true);
 		container.find('textarea').attr('readonly', true);
-	
+		container.next('li').find('input.title').focus().select();
+		
 		button.attr('disabled', true);
 		button.addClass('button button-disabled').removeClass('button-primary');
 		button.after('<span class="ajax-save">&nbsp;</span>');
@@ -184,8 +174,7 @@
 				if (json.success == false) {
 					alert(json.message);
 				}
-			
-				container.next('li').find('input.title').focus().select();
+				
 				container.hide(800, function() {
 					jQuery(this).remove();
 				});

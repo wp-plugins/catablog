@@ -17,7 +17,7 @@
 $WP_ABS_PATH = '/var/www/wordpress';
 
 
-/** WordPress Administration Bootstrap */
+/* WordPress Administration Bootstrap */
 define('WP_ADMIN', true);
 if ( !defined('WP_LOAD_PATH') ) {
 	/** standard path for wordpress base folder */
@@ -32,10 +32,12 @@ if ( !defined('WP_LOAD_PATH') ) {
 			die("<li class='error'>Cannot locate wp-load.php. Please read more at <a href='http://catablog.illproductions.com' target='_blank'>catablog.illproductions.com</a></li>");
 }
 
-// let's load WordPress
+
+// load WordPress
 require_once( WP_LOAD_PATH . 'wp-load.php');
 
-// Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
+
+// Flash fails to send cookies with the upload, so pass it in GET or POST instead
 if ( is_ssl() && empty($_COOKIE[SECURE_AUTH_COOKIE]) && !empty($_REQUEST['auth_cookie']) )
 	$_COOKIE[SECURE_AUTH_COOKIE] = $_REQUEST['auth_cookie'];
 elseif ( empty($_COOKIE[AUTH_COOKIE]) && !empty($_REQUEST['auth_cookie']) )
@@ -53,16 +55,21 @@ require_once( ABSPATH . '/wp-admin/admin.php');
 header('Content-Type: text/plain; charset='.get_option('blog_charset'));
 
 
+// make sure the attempting uploader is logged into WordPress
 if (!is_user_logged_in()) {
 	die("<li class='error'>".__('Login failure. You must be logged into the WordPress Admin section.', 'catablog')."</li>");
 }
 
+// make sure the attempting uploader has permission to edit posts
 if ( !current_user_can('edit_posts')) {
 	die("<li class='error'>".__('Your Admin account does not have permission to "edit_posts".', 'catablog')."</li>");
 }
 
+// make sure the attempting uploader had passed the correct nonce value
 check_admin_referer('catablog_swfupload');
 
+
+// create global variable for catablog class
 global $wp_plugin_catablog_class;
 
 $tmp_name = $_FILES['Filedata']['tmp_name'];
@@ -77,7 +84,7 @@ if ($valid_image === true) {
 	$new_item_title = $_FILES['Filedata']['name'];
 	$new_item_title = preg_replace('/\.[^.]+$/','',$new_item_title);
 	$new_item_title = str_replace(array('_','-','.'), ' ', $new_item_title);
-	$new_item_order = wp_count_posts($new_item->custom_post_name)->publish + 1;
+	$new_item_order = wp_count_posts($new_item->getCustomPostName())->publish + 1;
 	
 	$new_item->setOrder($new_item_order);
 	$new_item->setTitle($new_item_title);

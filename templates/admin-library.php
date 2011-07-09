@@ -16,7 +16,7 @@
 
 		<noscript>
 			<div class="error">
-				<strong><?php _e("You must have a JavaScript enabled browser for bulk actions and to change the order of your items.", 'catablog'); ?>
+				<strong><?php _e("You must have a JavaScript enabled browser for bulk actions.", 'catablog'); ?>
 				<a href="http://www.google.com/search?q=what+is+javascript"><?php _e("Learn More", 'catablog'); ?></a></strong>
 			</div>
 		</noscript>
@@ -25,7 +25,7 @@
 		
 		<div class="tablenav">
 			
-			<form id="catablog-bulk-action-form" method="post" action="admin.php?page=catablog-bulkedit" class="alignleft actions hide">
+			<form id="catablog-bulk-action-form" method="post" action="admin.php?page=catablog-bulkedit" class="alignleft actions">
 				<input type="hidden" name="page" value="catablog-bulkedit" />
 				<input type="hidden" name="reference" value="admin.php?page=catablog<?php echo $current_cat ?><?php echo $current_page ?>" />
 				<?php wp_nonce_field( 'catablog_bulkedit', '_catablog_bulkedit_nonce', false, true ) ?>

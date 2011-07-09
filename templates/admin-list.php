@@ -81,7 +81,7 @@
 						<input type="checkbox" class="bulk_selection" name="bulk_action_id" value="<?php echo $result->getId() ?>" />
 					</th>
 					<td class="cb_icon_column">
-						<a href="<?php echo $edit ?>"><img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" class="cb_item_icon" width="50" height="50" alt="" /></a>
+						<a href="<?php echo $edit ?>"><img src="<?php echo $this->urls['thumbnails'] . "/" . $result->getImage() ?>" class="cb_item_icon" alt="" /></a>
 					</td>
 					<td>
 						<strong><a href="<?php echo $edit ?>" title="Edit CataBlog Item"><?php echo ($result->getTitle()) ?></a></strong>

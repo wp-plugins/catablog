@@ -403,10 +403,18 @@ jQuery(function($) {
 			
 			meta.nav   = "";
 			
-			if (current_image < (lightbox_images.length - 1)) {
+			var next_row_item = jQuery(lightbox_images[current_image]).closest('.catablog-row').next();
+			var prev_row_item = jQuery(lightbox_images[current_image]).closest('.catablog-row').prev();
+			
+			// COMMENTED LINES WILL BE BROUGHT BACK IN WHEN A CONFIG OPTION IS MADE
+			
+			// if (current_image < (lightbox_images.length - 1)) { 
+			if (next_row_item.hasClass('catablog-row')) {
 				meta.nav += next_button;
 			}
-			if (current_image > 0) {
+
+			// if (current_image > 0) {
+			if (prev_row_item.hasClass('catablog-row')) {
 				meta.nav += prev_button;
 			}
 			

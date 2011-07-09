@@ -25,6 +25,10 @@
 		</div>
 	<?php endif ?>
 	
+	<?php if ($recalculate_thumbnails || $recalculate_fullsize): ?>
+		<ul id="catablog-console" class="catablog-console-mini"></ul>
+	<?php endif ?>
+	
 	<form action="admin.php?page=catablog-options" id="catablog-options" class="catablog-form" method="post">
 		
 		<ul id="catablog-options-menu">
@@ -44,12 +48,20 @@
 		<?php /*  THUMBNAIL SETTINGS PANEL */ ?>
 		<div id="catablog-options-thumbnails" class="catablog-options-panel">
 			<p>
-				<label for='thumbnail_size'><?php _e("Thumbnail Size:", "catablog"); ?></label>
-				<input type='text' name='thumbnail_size' id='thumbnail_size' class='integer_field' size='5' value='<?php echo $thumbnail_size ?>' />
+				<label for='thumbnail_width'><?php _e("Thumbnail Width:", "catablog"); ?></label>
+				<input type='text' name='thumbnail_width' id='thumbnail_width' class='integer_field' size='5' value='<?php echo $thumbnail_width ?>' />
 				<span><?php _e("pixels", "catablog"); ?></span><br />
 				
-				<small class="error hidden"><?php _e("Your thumbnail size must be a positive integer.", "catablog"); ?><br /></small>
-				<small><?php _e("this will change the thumbnail size of all your catalog items.", "catablog"); ?></small>
+				<small class="error hidden"><?php _e("Your thumbnail width must be a positive integer.", "catablog"); ?><br /></small>
+				<small><?php _e("this will change the thumbnail width of all your catalog items.", "catablog"); ?></small>
+			</p>
+			<p>
+				<label for='thumbnail_height'><?php _e("Thumbnail Height:", "catablog"); ?></label>
+				<input type='text' name='thumbnail_height' id='thumbnail_height' class='integer_field' size='5' value='<?php echo $thumbnail_height ?>' />
+				<span><?php _e("pixels", "catablog"); ?></span><br />
+				
+				<small class="error hidden"><?php _e("Your thumbnail height must be a positive integer.", "catablog"); ?><br /></small>
+				<small><?php _e("this will change the thumbnail height of all your catalog items.", "catablog"); ?></small>
 			</p>
 			<p>
 				<?php $checked = ($keep_aspect_ratio)? "checked='checked'" : "" ?>
@@ -69,7 +81,7 @@
 			<div>
 				<label><?php _e("Thumbnail Preview", "catablog"); ?></label>
 				<p id="thumbnail_preview">
-					<span id='demo_box' class='demo_box' style='width:<?php echo $thumbnail_size ?>px; height:<?php echo $thumbnail_size ?>px;'>&nbsp;</span>
+					<span id='demo_box' class='demo_box' style='width:<?php echo $thumbnail_width ?>px; height:<?php echo $thumbnail_height ?>px;'>&nbsp;</span>
 				</p>
 			</div>
 		</div>
@@ -143,12 +155,6 @@
 				<strong class="warning"><?php _e('Catalog Slugs Warning', 'catablog')?></strong><br />
 				<small><?php printf(__('Please make sure you do not set either of your catalog slugs to a %sWordPress Reserved Term%s.', 'catablog'), '<a href="http://codex.wordpress.org/Function_Reference/register_taxonomy#Reserved_Terms" target="_blank">', '</a>') ?></small><br />
 				<small><?php _e("These labels must also be URL friendly, so they may be transformed from your original input.", 'catablog') ?></small>
-			</p>
-			
-			<p>
-				<strong class="warning"><?php _e('Changing Catalog Slugs', 'catablog')?></strong><br />
-				<small><?php printf(__('If you change these values, please immediately visit the %sPermalinks%s panel to update your rewrite rules.', 'catablog'), '<a href="options-permalink.php">', '</a>') ?></small><br />
-				<small><?php _e("Your individual catalog item pages and archives will not work until you have updated your rewrite rules.", 'catablog') ?></small>
 			</p>
 			
 		</div>
@@ -458,39 +464,74 @@
 		/****************************************
 		** THUMBNAILS PANEL
 		****************************************/
-		// update the thumbnail preview size dynamically
-		$('#thumbnail_size').bind('keyup', function(event) {
-			var v = this.value;
-			if (is_integer(v) && (v > 0)) {
-				$(this).siblings('small.error').hide();
-				if ($(this).attr('id') == 'thumbnail_size') {
-					jQuery('#demo_box').animate({width:(v-1), height:(v-1)}, 100);
-				}
-			}
-		});
-		
-		
-		// update thumbnail preview for keep aspect ratio option
-		if ($('#keep_aspect_ratio').attr('checked') == false) {
-			$('#demo_box').addClass('crop');
-		}
-		$('#keep_aspect_ratio').bind('change', function(event) {
-			if (this.checked) {
-				$('#demo_box').removeClass('crop');
-			}
-			else {
-				$('#demo_box').addClass('crop');
-			}
-		});
-		
 		// load image for thumbnail preview
 		var thumbnail_preview = new Image;
 		thumbnail_preview.onload = function() {
-			var preview = '<img src="'+this.src+'" />';
+			var preview = '<img src="'+this.src+'" class="hide" />';
 			$('#demo_box').append(preview);
+			resize_image_adjustment();
 		}
 		thumbnail_preview.src = "<?php echo $this->urls['images'] ?>/catablog-thumbnail-preview.jpg";
 		
+		
+		
+		// update the thumbnail preview size dynamically
+		$('#thumbnail_width').bind('keyup', function(event) {
+			var v = this.value;
+			if (is_integer(v) && (v > 0)) {
+				$(this).siblings('small.error').hide();
+				resize_image_adjustment();
+				jQuery('#demo_box').animate({width:(v-1)}, 100);
+			}
+		});
+		$('#thumbnail_height').bind('keyup', function(event) {
+			var v = this.value;
+			if (is_integer(v) && (v > 0)) {
+				$(this).siblings('small.error').hide();
+				resize_image_adjustment();
+				jQuery('#demo_box').animate({height:(v-1)}, 100);
+			}
+		});
+		
+		
+		
+		$('#keep_aspect_ratio').bind('change', function(event) {
+			resize_image_adjustment();
+		});
+		
+		
+		// calculate and resize the image with in the thumbnail preview box
+		function resize_image_adjustment() {
+			var original_width  = parseInt(thumbnail_preview.width);
+			var original_height = parseInt(thumbnail_preview.height);
+			var thumbnail_width  = parseInt(jQuery('#thumbnail_width').val());
+			var thumbnail_height = parseInt(jQuery('#thumbnail_height').val());
+			var thumbnail_crop   = !($('#keep_aspect_ratio').attr('checked'));
+			var params = {};
+			
+			if (thumbnail_crop) {
+				if (thumbnail_width > thumbnail_height) {
+					params = crop_width(original_width, original_height, thumbnail_width, thumbnail_height);
+				}
+				else {
+					params = crop_height(original_width, original_height, thumbnail_width, thumbnail_height);
+				}
+			}
+			else {
+				if (thumbnail_width > thumbnail_height) {
+					params = shrink_width(original_width, original_height, thumbnail_width, thumbnail_height);
+				}
+				else {
+					params = shrink_height(original_width, original_height, thumbnail_width, thumbnail_height);
+				}
+			}
+			
+			jQuery('#demo_box img').animate(params, 100, function() {
+				if (jQuery(this).hasClass('hide')) {
+					jQuery(this).removeClass('hide');
+				}
+			});
+		}
 		
 		
 		

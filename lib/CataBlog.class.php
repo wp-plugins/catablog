@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.2.9.7
+ * @version 1.2.9.8
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.2.9.7";
+	private $version     = "1.2.9.8";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -193,6 +193,16 @@ class CataBlog {
 		$public_posts_enabled = (isset($this->options['public_posts']))?     $this->options['public_posts'] : false;
 		$public_posts_slug    = (isset($this->options['public_post_slug']))? array('slug'=>$this->options['public_post_slug']) : true;
 		$public_tax_slug      = (isset($this->options['public_tax_slug']))?  array('slug'=>$this->options['public_tax_slug']) : true;
+		
+		
+		// if saving options and public option enabled use post values instead of saved option values
+		$catablog_options_page = strpos($_SERVER['QUERY_STRING'], 'page=catablog-options') !== false;
+		if ($catablog_options_page && isset($_POST['public_posts'])) {
+			$post_vars = array_map('stripslashes_deep', $_POST);
+			$post_vars = array_map('trim', $post_vars);
+			$public_posts_slug = array('slug'=>$post_vars['public_post_slug']);
+			$public_tax_slug   = array('slug'=>$post_vars['public_tax_slug']);
+		}
 		
 		
 		// create the custom post type
@@ -613,9 +623,11 @@ class CataBlog {
 				$post_vars = array_map('stripslashes_deep', $_POST);
 				$post_vars = array_map('trim', $post_vars);
 				
+				
 				// transform link target and rel value so it only contains alphanumeric, hyphen, underscore
 				// $post_vars['link_target'] = preg_replace('/[^a-z0-9_-]/', '', $post_vars['link_target']);
 				// $post_vars['link_relationship'] = preg_replace('/[^a-z0-9_-]/', '', $post_vars['link_relationship']);
+				
 				
 				// transform catalog slugs
 				if ($this->string_length($post_vars['public_post_slug']) > 0) {
@@ -632,11 +644,19 @@ class CataBlog {
 				}
 				
 				
+				// flush the rewrite rules for public option updates
+				flush_rewrite_rules(false);
+				
+				
 				// set default values for post message and image recalculation
 				$save_message = __("CataBlog Options Saved", 'catablog');
 				
+				
 				// get image size and rendering differences
-				$image_size_different   = $post_vars['thumbnail_size'] != $this->options['thumbnail-size'];
+				$image_width_different  = $post_vars['thumbnail_width'] != $this->options['thumbnail-width'];
+				$image_height_different = $post_vars['thumbnail_height'] != $this->options['thumbnail-height'];
+				$image_size_different   = ($image_width_different || $image_height_different);
+				
 				$bg_color_different     = $post_vars['bg_color'] != $this->options['background-color'];
 				$keep_ratio_different   = isset($post_vars['keep_aspect_ratio']) != $this->options['keep-aspect-ratio'];
 				$fullsize_different     = $post_vars['lightbox_image_size'] != $this->options['image-size'];
@@ -655,7 +675,8 @@ class CataBlog {
 				}
 				
 				// save new plugins options to database
-				$this->options['thumbnail-size']       = $post_vars['thumbnail_size'];
+				$this->options['thumbnail-width']      = $post_vars['thumbnail_width'];
+				$this->options['thumbnail-height']     = $post_vars['thumbnail_height'];
 				$this->options['image-size']           = $post_vars['lightbox_image_size'];
 				$this->options['lightbox-enabled']     = isset($post_vars['lightbox_enabled']);
 				$this->options['lightbox-render']      = isset($post_vars['lightbox_render']);
@@ -693,10 +714,6 @@ class CataBlog {
 					}					
 				}
 				
-				
-				// TODO: flush the rewrite rules if the catalog slug options have been updated
-				
-				
 				$this->wp_message($save_message);
 			}
 			else {
@@ -704,7 +721,15 @@ class CataBlog {
 			}
 		}
 		
-		$thumbnail_size               = $this->options['thumbnail-size'];
+		if (!isset($this->options['thumbnail-width'])) {
+			$this->options['thumbnail-width'] = $this->options['thumbnail-size'];
+		}
+		if (!isset($this->options['thumbnail-height'])) {
+			$this->options['thumbnail-height'] = $this->options['thumbnail-size'];
+		}
+		
+		$thumbnail_width              = $this->options['thumbnail-width'];
+		$thumbnail_height             = $this->options['thumbnail-height'];
 		$lightbox_size                = $this->options['image-size'];
 		$lightbox_enabled             = $this->options['lightbox-enabled'];
 		$lightbox_render              = $this->options['lightbox-render'];
@@ -719,6 +744,8 @@ class CataBlog {
 		$public_posts_enabled         = $this->options['public_posts'];
 		$public_posts_slug            = $this->options['public_post_slug'];
 		$public_tax_slug              = $this->options['public_tax_slug'];
+		
+
 		
 		include_once($this->directories['template'] . '/admin-options.php');
 	}   	
@@ -1452,6 +1479,15 @@ class CataBlog {
 	}
 	
 	public function ajax_render_images() {
+		
+		function catablog_shutdown() {
+			$last_error = error_get_last();
+			if ($last_error['type'] === E_ERROR) {
+				echo "<strong>" . $_REQUEST['image'] . " Error:</strong> " . $last_error['message'];
+			}
+		}
+		register_shutdown_function('catablog_shutdown');
+		
 		check_ajax_referer('catablog-render-images', 'security');
 		
 		$name  = $_REQUEST['image'];
@@ -1472,6 +1508,7 @@ class CataBlog {
 				$success = __("unsupported image size type", 'catablog');
 				break;
 		}
+		
 		
 		if ($success !== true) {
 			$message = $success;
@@ -1679,21 +1716,22 @@ class CataBlog {
 	
 	public function frontend_header() {
 		if ($this->load_support_files) {
-			$size = $this->options['thumbnail-size'];
-			$size1 = $size + 10;
-			$size2 = $size - 10;
+			$width  = $this->options['thumbnail-width'];
+			$height = $this->options['thumbnail-height'];
+			$size1  = $width + 10;
+			$size2  = $width - 10;
 			
 			$inline_styles = array();
 			
-			$inline_styles[] = ".catablog-row {min-height:{$size}px; height:auto !important; height:{$size}px;}";
-			$inline_styles[] = ".catablog-image {width:{$size}px;}";
+			$inline_styles[] = ".catablog-row {min-height:{$height}px; height:auto !important; height:{$height}px;}";
+			$inline_styles[] = ".catablog-image {width:{$width}px;}";
 			$inline_styles[] = ".catablog-title {margin:0 0 0 {$size1}px !important;}";
 			$inline_styles[] = ".catablog-description {margin:0 0 0 {$size1}px; !important}";
-			$inline_styles[] = ".catablog-images-column {width:{$size}px;} ";
+			$inline_styles[] = ".catablog-images-column {width:{$width}px;} ";
 			
-			$inline_styles[] = ".catablog-gallery.catablog-row {width:{$size}px; height:{$size}px;}";
-			$inline_styles[] = ".catablog-gallery.catablog-row .catablog-image {width:{$size}px; height:{$size}px;}";
-			$inline_styles[] = ".catablog-gallery.catablog-row .catablog-image img {width:{$size}px; height:{$size}px;}";
+			$inline_styles[] = ".catablog-gallery.catablog-row {width:{$width}px; height:{$height}px;}";
+			$inline_styles[] = ".catablog-gallery.catablog-row .catablog-image {width:{$width}px; height:{$height}px;}";
+			$inline_styles[] = ".catablog-gallery.catablog-row .catablog-image img {width:{$width}px; height:{$height}px;}";
 			$inline_styles[] = ".catablog-gallery.catablog-row .catablog-title {width:{$size2}px;}";
 			
 			echo "<!-- ".sprintf(__('CataBlog %s LightBox Styles | %s'), $this->version, $this->blog_url)." -->\n";
@@ -1749,23 +1787,34 @@ class CataBlog {
 		}
 		else {
 			
-			// extract all category names
+			// extract all category ids
 			if (!empty($category)) {
+				
+				// separate categories and trim names
 				$categories = explode(',', $category);
 				array_walk($categories, create_function('&$val', '$val = trim($val);'));
-
+				
+				// load all category names and ids in the catalog
+				$catalog_terms = array();
+				foreach ($this->get_terms() as $term) {
+					$lowercase_name = strtolower($term->name);
+					$catalog_terms[$lowercase_name] = $term->term_id;
+				}
+				
+				// loop over shortcode categories, matching names and setting ids if available
 				$category_ids = array();
 				foreach ($categories as $category) {
 					$id = -1;
-					foreach ($this->get_terms() as $term) {
-						if (strtolower($category) == strtolower($term->name)) {
-							$id = $term->term_id;
-						}
-
-						$category_ids[] = $id;
+					$lowercase_name = strtolower($category);
+					
+					if (in_array($lowercase_name, array_keys($catalog_terms))) {
+						$id = $catalog_terms[$lowercase_name];
 					}
+					
+					$category_ids[] = $id;
 				}
-
+				
+				// remove any duplicate category ids and set the ids array to $category
 				$category_ids = array_unique($category_ids);
 				$category = $category_ids;
 			}
@@ -1815,7 +1864,9 @@ class CataBlog {
 	public function frontend_render_catalog_row($result, $template_override=false) {
 		
 		// calculate and get values for usage in multiple tokens
-		$thumbnail_size = $this->options['thumbnail-size'];
+		$thumbnail_width  = $this->options['thumbnail-width'];
+		$thumbnail_height = $this->options['thumbnail-height'];
+		
 		$target = htmlspecialchars($this->options['link-target'], ENT_QUOTES, 'UTF-8');
 		$target = ($this->string_length($target) > 0)? "target='$target'" : "";
 		$rel    = htmlspecialchars($this->options['link-relationship'], ENT_QUOTES, 'UTF-8');
@@ -1826,7 +1877,8 @@ class CataBlog {
 		$values = array();
 		
 		// system wide token values
-		$values['image-size']   = $thumbnail_size;
+		$values['image-width']  = $thumbnail_width;
+		$values['image-height'] = $thumbnail_height;
 		$values['paypal-email'] = $this->options['paypal-email'];
 		$values['link-target']  = $target;
 		$values['link-rel']     = $rel;
@@ -2040,7 +2092,8 @@ class CataBlog {
 	private function install_options() {
 		$default_options = array();
 		$default_options['version']            = $this->version;
-		$default_options['thumbnail-size']     = $this->default_thumbnail_size;
+		$default_options['thumbnail-width']    = $this->default_thumbnail_size;
+		$default_options['thumbnail-height']   = $this->default_thumbnail_size;
 		$default_options['image-size']         = $this->default_image_size;
 		$default_options['background-color']   = $this->default_bg_color;
 		$default_options['paypal-email']       = "";
@@ -2136,6 +2189,13 @@ class CataBlog {
 	}
 	
 	private function upgrade_options() {
+		
+		// add new thumbnail width and height options
+		if (version_compare($this->options['version'], '1.2.9.8', '<')) {
+			$this->options['thumbnail-width']  = $this->options['thumbnail-size'];
+			$this->options['thumbnail-height'] = $this->options['thumbnail-size'];
+			unset($this->options['thumbnail-size']);
+		}
 		
 		// add new public post and taxonomy options
 		if (version_compare($this->options['version'], '1.2.9', '<')) {

@@ -4,7 +4,7 @@
  *
  * This file contains the class for each CataBlog Item that is fetched from the database.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.2.9.7
+ * @version 1.2.9.8
  * @package catablog
  */
 
@@ -647,19 +647,12 @@ class CataBlogItem {
 		}
 		
 		list($width, $height, $format) = @getimagesize($original);
-		$canvas_size = $this->_options['thumbnail-size'];			
+		$canvas_width = $this->_options['thumbnail-width'];
+		$canvas_height = $this->_options['thumbnail-height'];
 		
 		if ($width < 1 || $height < 1) {
 			return "<strong>$filepath</strong>: " . __("Original image dimensions are less then 1px. Most likely PHP does not have permission to read the original file.", 'catablog');
 		}
-		
-		
-		// create a blank canvas of user specified size and color
-		$bg_color = $this->html2rgb($this->_options['background-color']);
-		$canvas   = imagecreatetruecolor($canvas_size, $canvas_size);
-		$bg_color = imagecolorallocate($canvas, $bg_color[0], $bg_color[1], $bg_color[2]);
-		imagefilledrectangle($canvas, 0, 0, $width, $height, $bg_color);
-		
 		
 		switch($format) {
 			case IMAGETYPE_GIF:
@@ -676,48 +669,104 @@ class CataBlogItem {
 		}
 		
 		
-		$x_offset = 0;
-		$y_offset = 0;
-		if ($this->_options['keep-aspect-ratio']) {
-			if ($height > $width) {    // resize to the height
-				$ratio      = $canvas_size / $height;
-				$new_height = $height * $ratio;
-				$new_width  = $width * $ratio;
-				$x_offset   = ($canvas_size - $new_width) / 2;
+		// rotate loaded image and get its dimensions
+		$upload = $this->rotateImage($upload, $original);
+		$width = imagesx($upload);
+		$height = imagesy($upload);
+		
+		
+		// create a blank canvas of user specified size and color
+		$bg_color = $this->html2rgb($this->_options['background-color']);
+		$canvas   = imagecreatetruecolor($canvas_width, $canvas_height);
+		$bg_color = imagecolorallocate($canvas, $bg_color[0], $bg_color[1], $bg_color[2]);
+		imagefilledrectangle($canvas, 0, 0, $canvas_width, $canvas_height, $bg_color);
+		
+		
+		// determine settings to place the original image into the thumbnail canvas
+		if (!$this->_options['keep-aspect-ratio']) {
+			if ($width > $height) {
+				$params = $this->crop_width($width, $height, $canvas_width, $canvas_height);
 			}
-			else {    // resize to the width
-				$ratio      = $canvas_size / $width;
-				$new_height = $height * $ratio;
-				$new_width  = $width * $ratio;
-				$y_offset   = ($canvas_size - $new_height) / 2;
+			else {
+				$params = $this->crop_height($width, $height, $canvas_width, $canvas_height);
 			}
 		}
 		else {
-			if ($height > $width) {    // resize to the height
-				$ratio      = $canvas_size / $width;
-				$new_height = $height * $ratio;
-				$new_width  = $width * $ratio;
-				$y_offset   = ($canvas_size - $new_height) / 2;
+			if ($width > $height) {
+				$params = $this->shrink_width($width, $height, $canvas_width, $canvas_height);
 			}
-			else {    // resize to the width
-				$ratio      = $canvas_size / $height;
-				$new_height = $height * $ratio;
-				$new_width  = $width * $ratio;
-				$x_offset   = ($canvas_size - $new_width) / 2;
+			else {
+				$params = $this->shrink_height($width, $height, $canvas_width, $canvas_height);
 			}
 		}
 		
-		imagecopyresampled($canvas, $upload, $x_offset, $y_offset, 0, 0, $new_width, $new_height, $width, $height);
-		
-		// rotate the final canvas to match the original files orientation
-		$canvas = $this->rotateImage($canvas, $original);
-		
+		imagecopyresampled($canvas, $upload, $params['left'], $params['top'], 0, 0, $params['width'], $params['height'], $width, $height);
 		imagejpeg($canvas, $thumb, $quality);
-		
 		imagedestroy($canvas);
 		
 		return true;
 	}
+	
+	
+	private function shrink_width($original_width, $original_height, $thumbnail_width, $thumbnail_height) {
+		$ratio      = $thumbnail_height / $original_height;
+		$new_width  = $original_width * $ratio;
+		$new_height = $thumbnail_height;
+		$new_top    = 0;
+		$new_left   = (($thumbnail_width - $new_width) / 2);
+
+		if ($new_width > $thumbnail_width) {
+			return $this->shrink_height($original_width, $original_height, $thumbnail_width, $thumbnail_height);
+		}
+
+		return array('top'=>$new_top, 'left'=>$new_left, 'width'=>$new_width, 'height'=>$new_height);
+	}
+
+	private function shrink_height($original_width, $original_height, $thumbnail_width, $thumbnail_height) {
+		$ratio      = $thumbnail_width / $original_width;
+		$new_width  = $thumbnail_width;
+		$new_height = $original_height * $ratio;
+		$new_top    = (($thumbnail_height - $new_height) / 2);
+		$new_left   = 0;
+
+		if ($new_height > $thumbnail_height) {
+			return $this->shrink_width($original_width, $original_height, $thumbnail_width, $thumbnail_height);
+		}
+
+		return array('top'=>$new_top, 'left'=>$new_left, 'width'=>$new_width, 'height'=>$new_height);
+	}
+
+	private function crop_width($original_width, $original_height, $thumbnail_width, $thumbnail_height) {
+		$ratio      = $thumbnail_width / $original_width;
+		$new_width  = $thumbnail_width;
+		$new_height = $original_height * $ratio;
+		$new_top    = (($thumbnail_height - $new_height) / 2);
+		$new_left   = 0;
+
+		if ($new_height < $thumbnail_height) {
+			return $this->crop_height($original_width, $original_height, $thumbnail_width, $thumbnail_height);
+		}
+
+		return array('top'=>$new_top, 'left'=>$new_left, 'width'=>$new_width, 'height'=>$new_height);
+	}
+
+	private function crop_height($original_width, $original_height, $thumbnail_width, $thumbnail_height) {
+		$ratio      = $thumbnail_height / $original_height;
+		$new_width  = $original_width * $ratio;
+		$new_height = $thumbnail_height;
+		$new_top    = 0;
+		$new_left   = (($thumbnail_width - $new_width) / 2);
+
+		if ($new_width < $thumbnail_width) {
+			return $this->crop_width($original_width, $original_height, $thumbnail_width, $thumbnail_height);
+		}
+
+		return array('top'=>$new_top, 'left'=>$new_left, 'width'=>$new_width, 'height'=>$new_height);
+	}
+	
+	
+	
+	
 	
 	
 	
@@ -802,7 +851,6 @@ class CataBlogItem {
 		return $this->_post_meta_name;
 	}
 	public function getPermalink() {
-		echo $this->id;
 		return get_permalink($this->id);
 	}
 	
