@@ -93,8 +93,17 @@
 			<p>
 				<?php $checked = ($lightbox_enabled)? "checked='checked'" : "" ?>
 				<label for="lightbox_enabled"><?php _e("Enable LightBox:", "catablog"); ?></label>
-				<input type="checkbox" name="lightbox_enabled" id="lightbox_enabled" <?php echo $checked ?> /><br/>
+				<input type="checkbox" name="lightbox_enabled" id="lightbox_enabled" <?php echo $checked ?> /><br />
 				<small><?php _e("Load the necessary javascript libraries to enlarge an image thumbnail with the LightBox effect.", "catablog"); ?></small>
+			</p>
+			
+			<hr />
+			
+			<p>
+				<?php $checked = ($lightbox_navigation)? "checked='checked'" : "" ?>
+				<label for='lightbox_navigation'><?php _e("LightBox Navigation - Combine All ShortCodes:", "catablog") ?></label>
+				<input type="checkbox" name="lightbox_navigation" id="lightbox_navigation" <?php echo $checked ?> /><br />
+				<small><?php _e("check this box to make the LightBox's next and previous navigation buttons jump from one ShortCode to another.", "catablog") ?></small>
 			</p>
 			
 			<p>
@@ -112,12 +121,15 @@
 				<small><?php _e("This is the maximum length of either the height or width, depending on whichever is longer in the original uploaded image.", "catablog") ?></small>
 			</p>
 			
+			<hr />
+			
 			<p>
 				<label for='lightbox_selector'><?php _e("LightBox jQuery Selector:", "catablog"); ?></label>
 				<input type='text' name='lightbox_selector' id='lightbox_selector' class='' size='50' value='<?php echo $lightbox_selector ?>' />
 				<br />
 				<small><?php _e("This lets you modify the selector used by jQuery to attach the LightBox to image thumbnails. The default value is: .catablog-image", "catablog") ?></small>
 			</p>
+			
 		</div>
 		
 		
@@ -239,8 +251,9 @@
 		
 		
 		
-		<?php /* BUY NOW TEMPLATE SETTINGS PANEL */ ?>
+		<?php /* STORE TEMPLATE SETTINGS PANEL */ ?>
 		<div id="catablog-options-store" class="catablog-options-panel hide">
+			
 			<p>
 				<label for="paypal_email"><?php _e("PayPal Account Email Address:", "catablog"); ?></label>
 				<input type="text" name="paypal_email" id="paypal_email" size="50" value="<?php echo $paypal_email ?>" />

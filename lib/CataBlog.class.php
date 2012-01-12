@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.2.9.8
+ * @version 1.2.9.9
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.2.9.8";
+	private $version     = "1.2.9.9";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -369,6 +369,11 @@ class CataBlog {
 	}
 	
 	public function admin_bar_menu() {
+		// if user can't use catablog do not register the admin bar items
+		if (!current_user_can($this->user_level)) {
+			return false;
+		}
+		
 		global $wp_admin_bar;
 		
 		// add a CataBlog menu to the Admin Menu Bar
@@ -679,6 +684,7 @@ class CataBlog {
 				$this->options['thumbnail-height']     = $post_vars['thumbnail_height'];
 				$this->options['image-size']           = $post_vars['lightbox_image_size'];
 				$this->options['lightbox-enabled']     = isset($post_vars['lightbox_enabled']);
+				$this->options['lightbox-navigation']  = isset($post_vars['lightbox_navigation']);
 				$this->options['lightbox-render']      = isset($post_vars['lightbox_render']);
 				$this->options['lightbox-selector']    = $post_vars['lightbox_selector'];
 				$this->options['background-color']     = $post_vars['bg_color'];
@@ -732,6 +738,7 @@ class CataBlog {
 		$thumbnail_height             = $this->options['thumbnail-height'];
 		$lightbox_size                = $this->options['image-size'];
 		$lightbox_enabled             = $this->options['lightbox-enabled'];
+		$lightbox_navigation          = $this->options['lightbox-navigation'];
 		$lightbox_render              = $this->options['lightbox-render'];
 		$lightbox_selector            = $this->options['lightbox-selector'];
 		$background_color             = $this->options['background-color'];
@@ -1751,6 +1758,8 @@ class CataBlog {
 					}
 				}
 				
+				$lightbox_navigation = ($this->options['lightbox-navigation'])? "{'navigation':'combine'}" : "";
+				
 				$javascript = array();
 				
 				$javascript[] = "var js_i18n=new Object;";
@@ -1761,7 +1770,7 @@ class CataBlog {
 				$javascript[] = "js_i18n.next_label='".__('NEXT', 'catablog')."';";
 				$javascript[] = "js_i18n.close_label='".__('CLOSE', 'catablog')."';";
 				
-				$javascript[] = "jQuery(document).ready(function(){ jQuery('$selector').catablogLightbox(); });";
+				$javascript[] = "jQuery(document).ready(function(){ jQuery('$selector').catablogLightbox($lightbox_navigation); });";
 				
 				echo "<!-- ".sprintf(__('CataBlog %s LightBox JavaScript | %s'), $this->version, $this->blog_url)." -->\n";
 				echo "<script type='text/javascript'>".implode(" ", $javascript)."</script>\n";
@@ -2091,25 +2100,26 @@ class CataBlog {
 	
 	private function install_options() {
 		$default_options = array();
-		$default_options['version']            = $this->version;
-		$default_options['thumbnail-width']    = $this->default_thumbnail_size;
-		$default_options['thumbnail-height']   = $this->default_thumbnail_size;
-		$default_options['image-size']         = $this->default_image_size;
-		$default_options['background-color']   = $this->default_bg_color;
-		$default_options['paypal-email']       = "";
-		$default_options['keep-aspect-ratio']  = false;
-		$default_options['lightbox-enabled']   = false;
-		$default_options['lightbox-render']    = false;
-		$default_options['lightbox-selector']  = ".catablog-image";
-		$default_options['link-target']        = "";
-		$default_options['link-relationship']  = "";
-		$default_options['view-theme']         = file_get_contents($this->directories['template'] . '/views/default.htm');
-		$default_options['view-buynow']        = "";
-		$default_options['filter-description'] = false;
-		$default_options['nl2br-description']  = true;
-		$default_options['public_posts']       = false;
-		$default_options['public_post_slug']   = $this->custom_post_name;
-		$default_options['public_tax_slug']    = $this->custom_tax_name;
+		$default_options['version']             = $this->version;
+		$default_options['thumbnail-width']     = $this->default_thumbnail_size;
+		$default_options['thumbnail-height']    = $this->default_thumbnail_size;
+		$default_options['image-size']          = $this->default_image_size;
+		$default_options['background-color']    = $this->default_bg_color;
+		$default_options['paypal-email']        = "";
+		$default_options['keep-aspect-ratio']   = false;
+		$default_options['lightbox-enabled']    = false;
+		$default_options['lightbox-navigation'] = false;
+		$default_options['lightbox-render']     = false;
+		$default_options['lightbox-selector']   = ".catablog-image";
+		$default_options['link-target']         = "";
+		$default_options['link-relationship']   = "";
+		$default_options['view-theme']          = file_get_contents($this->directories['template'] . '/views/default.htm');
+		$default_options['view-buynow']         = "";
+		$default_options['filter-description']  = false;
+		$default_options['nl2br-description']   = true;
+		$default_options['public_posts']        = false;
+		$default_options['public_post_slug']    = $this->custom_post_name;
+		$default_options['public_tax_slug']     = $this->custom_tax_name;
 		
 		$this->options = $default_options;
 		$this->save_wp_options();
@@ -2189,6 +2199,12 @@ class CataBlog {
 	}
 	
 	private function upgrade_options() {
+		
+		// add new lightbox navigation option
+		if (version_compare($this->options['version'], '1.2.9.9', '<')) {
+			$this->options['lightbox-navigation'] = false;
+		}
+		
 		
 		// add new thumbnail width and height options
 		if (version_compare($this->options['version'], '1.2.9.8', '<')) {

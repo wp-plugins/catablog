@@ -3,8 +3,8 @@ Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce, Spanish, German, Swedish
 Requires at least: 3.1
-Tested up to: 3.2
-Stable tag: 1.2.9.8
+Tested up to: 3.3.1
+Stable tag: 1.2.9.9
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -98,6 +98,12 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.2.9.9 =
+* New: LightBox option lets you set if the LightBox scrolls from one catalog to the next on a page.
+* Fix: LightBox navigation should behave as expected when secondary images are used.
+* Fix: The CataBlog menu is only added to the WP Admin Bar if the current user has proper privileges
+* Fix: Default CSS now removes Theme constrained width and height for catalog thumbnail images.
 
 = 1.2.9.8 =
 * New: Thumbnail size now supports separate width and height values.

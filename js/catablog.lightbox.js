@@ -91,11 +91,6 @@ jQuery(function($) {
 				curtain.height(document_height);
 			}
 			
-			// if (supportPositionFixed() != true) {
-			// 	jQuery('#catablog-curtain').height(jQuery(document).height());
-			// }
-
-
 			// add the lightbox div into the DOM
 			jQuery('body').append("<div id='catablog-lightbox'><div id='catablog-whiteboard' class='loading'></div></div>");
 			var lightbox = jQuery('#catablog-lightbox');
@@ -115,31 +110,36 @@ jQuery(function($) {
 			lightbox.show();
 			
 			load_catablog_image(element);
-
-
-			// // load the full size picture and expand the lightbox to fit the images dimensions
-			// var fullsize_pic = new Image();
-			// fullsize_pic.onload = function() {
-			// 	var row  = jQuery(element).closest('.catablog-row').get(0);
-			// 	var meta = calculateMeta(row);
-			// 	expand_lightbox(this, meta);
-			// };
-			// fullsize_pic.onerror = function() {
-			// 	if (this.src.indexOf("/catablog/originals") < 0) {
-			// 		this.src = this.src.replace("/catablog/fullsize", "/catablog/originals");;;
-			// 	}
-			// };
-			// 
-			// 
-			// if (element.nodeName.toLowerCase() == 'a') {
-			// 	fullsize_pic.src = element.href;
-			// }
-			// else {
-			// 	fullsize_pic.src = element.src.replace("/catablog/thumbnails", "/catablog/fullsize");;;
-			// }
-			
 			
 		}
+		
+		
+		
+		function load_catablog_image(element) {
+			var load_attempts = 0;
+			
+			var fullsize_pic = new Image();
+			fullsize_pic.onload = function() {
+				var row  = jQuery(element).closest('.catablog-row').get(0);
+				var meta = calculateMeta(row);
+				expand_lightbox(this, meta);
+			};
+			fullsize_pic.onerror = function() {
+				load_attempts++;
+				if (load_attempts < 2) {
+					this.src = this.src.replace("/catablog/fullsize", "/catablog/originals");
+				}
+
+			};
+			
+			if (element.nodeName.toLowerCase() == 'a') {
+				fullsize_pic.src = element.href;
+			}
+			else {
+				fullsize_pic.src = element.src.replace("/catablog/thumbnails", "/catablog/fullsize");;
+			}
+		}
+		
 		
 		
 		function expand_lightbox(img, meta) {
@@ -214,6 +214,9 @@ jQuery(function($) {
 		}
 		
 		
+		
+		
+		
 		function change_lightbox(element) {
 			
 			jQuery('#catablog-whiteboard').addClass('loading');
@@ -234,31 +237,7 @@ jQuery(function($) {
 		}
 		
 		
-		function load_catablog_image(element) {
-			var load_attempts = 0;
-			
-			var fullsize_pic = new Image();
-			fullsize_pic.onload = function() {
-				var row  = jQuery(element).closest('.catablog-row').get(0);
-				var meta = calculateMeta(row);
-				expand_lightbox(this, meta);
-			};
-			fullsize_pic.onerror = function() {
-				load_attempts++;
-				if (load_attempts < 2) {
-					this.src = this.src.replace("/catablog/fullsize", "/catablog/originals");
-				}
 
-			};
-			
-			if (element.nodeName.toLowerCase() == 'a') {
-				fullsize_pic.src = element.href;
-			}
-			else {
-				fullsize_pic.src = element.src.replace("/catablog/thumbnails", "/catablog/fullsize");;
-			}
-		}
-		
 		
 		function navigate_lightbox(direction) {
 			if (hold_click) {
@@ -403,19 +382,55 @@ jQuery(function($) {
 			
 			meta.nav   = "";
 			
-			var next_row_item = jQuery(lightbox_images[current_image]).closest('.catablog-row').next();
-			var prev_row_item = jQuery(lightbox_images[current_image]).closest('.catablog-row').prev();
-			
-			// COMMENTED LINES WILL BE BROUGHT BACK IN WHEN A CONFIG OPTION IS MADE
-			
-			// if (current_image < (lightbox_images.length - 1)) { 
-			if (next_row_item.hasClass('catablog-row')) {
-				meta.nav += next_button;
-			}
+			if (settings['navigation'] == 'combine') {
+				if (current_image < (lightbox_images.length - 1)) {
+					meta.nav += next_button;
+				}
 
-			// if (current_image > 0) {
-			if (prev_row_item.hasClass('catablog-row')) {
-				meta.nav += prev_button;
+				if (current_image > 0) {
+					meta.nav += prev_button;
+				}
+			}
+			else {
+				var next_row_item = row.next().hasClass('catablog-row');
+				var prev_row_item = row.prev().hasClass('catablog-row');
+				
+				var row_images = row.find('.catablog-image');
+				if (row_images.length > 1) {
+					var clicked_image = jQuery(lightbox_images[current_image]);
+					
+					var subimage_offset = -1;
+					for (var i = 0; i < row_images.length; i++) {
+						if (clicked_image.attr('href') == row_images.eq(i).attr('href')) {
+							subimage_offset = i;
+						}
+					}
+					
+					if (subimage_offset < 0) {
+						if (typeof(console) !== 'undefined' && console != null) {
+							console.log('SubImage Offset Error, subimage clicked in a catalog row that contains no subimages.');
+						}
+					}
+					else if (subimage_offset == 0) {
+						var next_row_item = true;
+					}
+					else if (subimage_offset == (row_images.length - 1)) {
+						var prev_row_item = true;
+					}
+					else {
+						var next_row_item = true;
+						var prev_row_item = true;
+					}
+				}
+				
+				if (next_row_item) {
+					meta.nav += next_button;
+				}
+				
+				// if (current_image > 0) {
+				if (prev_row_item) {
+					meta.nav += prev_button;
+				}
 			}
 			
 			return meta;

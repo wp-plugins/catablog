@@ -23,6 +23,10 @@
 }
 .catablog-row .catablog-images-column .catablog-image img {
 	float: none;
+	max-width: none;
+	min-width: 0;
+	max-height: none;
+	min-height: 0;
 }
 .catablog-row .catablog-image.catablog-subimage {
 	float: left;
@@ -39,6 +43,7 @@
 	display: block;
 	font-size: 1.4em;
 	font-weight: bold;
+	line-height: 1;
 	clear: none;
 	float: none;
 }
