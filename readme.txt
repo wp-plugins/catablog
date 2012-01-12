@@ -100,7 +100,7 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 == Changelog ==
 
 = 1.2.9.9 =
-* New: LightBox option lets you set if the LightBox scrolls from one catalog to the next on a page.
+* New: LightBox option lets you set if the LightBox scrolls from one ShortCode to the next on a single page.
 * Fix: LightBox navigation should behave as expected when secondary images are used.
 * Fix: The CataBlog menu is only added to the WP Admin Bar if the current user has proper privileges
 * Fix: Default CSS now removes Theme constrained width and height for catalog thumbnail images.
