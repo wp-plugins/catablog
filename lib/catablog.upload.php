@@ -32,6 +32,8 @@ if ( !defined('WP_LOAD_PATH') ) {
 			die("<li class='error'>Cannot locate wp-load.php. Please read more at <a href='http://catablog.illproductions.com' target='_blank'>catablog.illproductions.com</a></li>");
 }
 
+// set PHP_SELF to default admin path instead of plugin's catablog.upload.php file
+$_SERVER['PHP_SELF'] = "/wp-admin/admin.php";
 
 // load WordPress
 require_once( WP_LOAD_PATH . 'wp-load.php');

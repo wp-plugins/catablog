@@ -5,29 +5,31 @@
 	$user = wp_get_current_user();
 	$screen_settings = get_user_meta($user->ID, 'catablog_screen_settings', true);
 	
-	// prosses screen options form if submitted
-	$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_screen_settings_nonce'], 'catablog_screen_settings' );
-	if (isset($_POST['entry-per-page']) && $nonce_verified) {
+	// processes screen options form if submitted
+	if (isset($_POST['screen-options-apply'])) {
+		$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_screen_settings_nonce'], 'catablog_screen_settings' );
+		if (isset($_POST['entry-per-page']) && $nonce_verified) {
 
-		$screen_settings['hide-columns'] = array();
-		foreach ($fields as $field) {
-			if (!in_array($field, $_REQUEST['hide'])) {
-				$screen_settings['hide-columns'][] = $field;
+			$screen_settings['hide-columns'] = array();
+			foreach ($fields as $field) {
+				if (!in_array($field, $_REQUEST['hide'])) {
+					$screen_settings['hide-columns'][] = $field;
+				}
 			}
-		}
-		
-		if (is_numeric($_REQUEST['entry-per-page'])) {
-			$screen_settings['limit'] = 1;
-			if ($_REQUEST['entry-per-page'] > 1) {
-				$screen_settings['limit'] = $_REQUEST['entry-per-page'];
+
+			if (is_numeric($_REQUEST['entry-per-page'])) {
+				$screen_settings['limit'] = 1;
+				if ($_REQUEST['entry-per-page'] > 1) {
+					$screen_settings['limit'] = $_REQUEST['entry-per-page'];
+				}
 			}
+			else {
+				$screen_settings['limit'] = 20;
+			}
+
+			$user  = wp_get_current_user();
+			update_user_meta($user->ID, 'catablog_screen_settings', $screen_settings);
 		}
-		else {
-			$screen_settings['limit'] = 20;
-		}
-		
-		$user  = wp_get_current_user();
-		update_user_meta($user->ID, 'catablog_screen_settings', $screen_settings);
 	}
 	
 ?>

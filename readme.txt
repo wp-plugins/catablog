@@ -18,6 +18,7 @@ Instead post your questions and comments on the appropriate forums. If you have 
 
 Highlighted Features:
 
+* Automatic pagination with a ShortCode limit parameter.
 * Set separate height and width values for catalog thumbnails.
 * Generate individual and category pages for your entire catalog.
 * Filter by multiple categories with one ShortCode.
@@ -98,6 +99,16 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.3 =
+* New: Removed PayPal Email from plugin options, you may now set it directly in the store template.
+* New: Templates now have their own section with more controls than before.
+* New: CataBlog ShortCode now has a limit parameter with basic pagination for large catalogs.
+* New: Toggle link to easily enable/disable the flash upload form if you need to.
+* New: Server's GD Version is now displayed in the about page.
+* New: Updated look and feel to match WordPress 3 for tabbed panels.
+* Fix: Default CSS now removes Theme constrained width and height for gallery thumbnail images.
+* Fix: Resolved some PHP warnings being fired throughout the plugin when WP_DEBUG is enabled.
 
 = 1.2.9.9 =
 * New: LightBox option lets you set if the LightBox scrolls from one ShortCode to the next on a single page.

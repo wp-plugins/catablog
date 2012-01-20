@@ -4,7 +4,7 @@
  *
  * This file contains the class for each CataBlog Item that is fetched from the database.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.2.9.9
+ * @version 1.3
  * @package catablog
  */
 
@@ -225,8 +225,13 @@ class CataBlogItem {
 			$params['tax_query'] = $tax_query_array;
 		}
 		
+		// $query = new WP_Query();
+		// $query->query($params);
+		// $posts = $query->posts;
+		// echo $query->post_count;
+		// echo $query->found_posts;
+
 		$posts = get_posts($params);
-		
 		
 		// return an array of CataBlogItems
 		foreach ($posts as $post) {

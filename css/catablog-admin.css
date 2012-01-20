@@ -420,6 +420,7 @@ th.catablog-sortable {
 
 #catablog-options {
 	display: block;
+	margin-top: 10px;
 }
 
 
@@ -533,29 +534,29 @@ form#catablog-edit fieldset div {
 
 #catablog-options-menu {
 	float: left;
-	width: 115px;
+	width: 114px;
 	margin: 0 0 0 0;
 }
 #catablog-options-menu li a {
-	position: relative;
+/*	position: relative;
 	left: 1px;
 	display: block;
 	border: 1px #e7e7e7 solid;
 	background: #e7e7e7;
 	padding: 5px 10px;
-	border-radius: 5px 0 0 5px;
+	border-radius: 5px 0 0 5px;*/
 }
 #catablog-options-menu li a.selected {
-	background: #fff;
+/*	background: #fff;
 	border-color: #e7e7e7 #fff #e7e7e7 #e7e7e7;
 	color: #444;
-	text-decoration: none;
+	text-decoration: none;*/
 }
 
 .catablog-options-panel {
 	margin: 0 0 0 115px !important;
 	min-height: 340px;
-	padding: 1em;
+	padding: 1em 1em 1em 2em;
 	border: 1px #ddd solid;;
 	background-color: #fff;
 	border-radius: 0 3px 3px 3px;
@@ -875,6 +876,142 @@ table.catablog_stats td {
 }
 
 
+
+
+
+
+
+#catablog-template-management {
+	position: relative;
+	background-color: transparent;
+	margin: 10px 0 0 0;
+	padding: 0px;
+	height: 605px;
+}
+.catablog-panel-tabs {
+	position: relative;
+	width: 115px;
+	margin: 0px;
+	padding: 0px 0px 0px 0px;
+	border: 1px #dfdfdf solid;
+	background-color: #dfdfdf;
+	border-radius: 3px 0 0 3px;
+	overflow: visible;
+	overflow-x: visible;
+	overflow-y: visible;
+}
+.catablog-panel-tabs li {
+	position: relative;
+	margin: 0;
+}
+.catablog-panel-tabs li strong {
+	display: block;
+	padding: 5px;
+	background-color: #fff;
+	border-bottom: 1px #999 solid;
+}
+.catablog-panel-tabs li a {
+	display: block;
+	padding: 5px;
+	line-height: 20px;
+	background-color: #ececec;
+	border-top: 1px #dfdfdf solid;
+	border-bottom: 1px #f9f9f9 solid;
+	text-indent: 1em;
+}
+.catablog-panel-tabs li a:hover {
+	background-color: #e4e4e4;
+}
+.catablog-panel-tabs li.selected a  {
+	background-color: #777;
+	background-image: -webkit-linear-gradient(bottom,#6D6D6D,gray);
+	background-image: -moz-linear-gradient(center bottom , #6D6D6D, #808080);
+	
+	color: #fff !important;
+	text-shadow: 0 -1px 0 #333;
+	text-decoration: none;
+}
+.catablog-panel-tabs li.selected a:after {
+	content: " ";
+	display: block;
+	position: absolute;
+	top: 8px;
+	right: -8px;
+	width: 15px;
+	height: 15px;
+	margin: 0px;
+	padding: 0px;
+	
+	
+	-webkit-transform: matrix(-0.6, 1, 0.6, 1, 0, 0);
+	-moz-transform: matrix(-0.6, 1, 0.6, 1, 0, 0);
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	background-color: #777;
+	background-image: -webkit-linear-gradient(right bottom, #6D6D6D, gray);
+	background-image: -moz-linear-gradient(right bottom, #6D6D6D, gray);
+	color: #333;
+	cursor: auto;
+	z-index: 1000;
+}
+
+
+
+#catablog-template-editor {
+	display: block;
+	position: absolute;
+	top: 0px;
+	left: 116px;
+	right: 10px;
+	margin: 0;
+	padding: 1em 1em 1em 2em;
+	border-radius: 0 3px 3px 0;
+	border: 1px #dfdfdf solid;
+	background-color: #f9f9f9;
+}
+
+#catablog-template-code {
+	width: 100%;
+	height: 30em;
+	margin: 0 0 1em 0;
+	font-family: Consolas,Monaco,monospace;
+	font-size: 12px;
+	overflow: scroll;
+}
+
+
+#catablog-template-name {
+	padding-top: 0;
+}
+#catablog-template-name a.delete-link {
+	display: none;
+	font-size: 16px;
+	float: right;
+}
+#catablog-template-name input {
+	font-size: 12px;
+	float: right;
+	text-align: right;
+	font-family: Consolas,Monaco,monospace;
+	width: 30em;
+	height: 25px;
+	padding: 0 3px;
+	overflow: hidden;
+	background-color: transparent;
+	border: 0 none;
+}
+
+
+
+#catablog-template-name.disabled {
+	color: #aaa;
+}
+#catablog-template-name.disabled a.delete-link {
+	display: none;
+}
+#catablog-template-name.disabled input {
+	display: none;
+}
 
 
 

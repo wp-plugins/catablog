@@ -38,6 +38,7 @@
 __('CataBlog Version:');
 __('MySQL Version:');
 __('PHP Version:');
+__('GD Version:');
 __('PHP Memory Usage:');
 __('PHP Memory Limit:');
 __('Max Uploaded File Size:');

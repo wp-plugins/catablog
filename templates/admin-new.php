@@ -19,7 +19,7 @@
 					<input type="file" id="new_image" name="new_image"  />
 					<?php wp_nonce_field( 'catablog_create', '_catablog_create_nonce', false, true ) ?>
 					<input type="submit" name="save" value="<?php _e("Upload", "catablog") ?>" class="button-primary" />
-					<p class="error"><?php _e("Flash upload was not enabled because either JavaScript is disabled or your version of Flash is too old.", "catablog")?></p>
+					<p class="error"><?php _e("Flash upload was not enabled.", "catablog"); ?><br /><?php _e("Either you elected to disable it, JavaScript is disabled, or your version of Flash is too old.", "catablog")?></p>
 				</div>
 
 				<p><?php printf(__("Maximum upload file size: %sB", "catablog"), ini_get('upload_max_filesize')); ?></p>
@@ -29,6 +29,17 @@
 					<?php _e("You may upload JPEG, GIF and PNG graphic formats only.", "catablog"); ?><br />
 					<strong><?php _e("No animated GIFs please.", "catablog"); ?></strong>
 				</small></p>
+				
+				<p id="catablog-disable-flash-form" class="hide"><small>
+					<?php _e("Flash uploader not working for you?", "catablog"); ?><br />
+					<a id="catablog-disable-flash-upload" href='#disable-flash'><?php _e("Disable Flash Upload") ?></a>
+				</small></p>
+				
+				<p id="catablog-enable-flash-form" class=""><small>
+					<?php _e("Why not try the flash uploader?", "catablog"); ?><br />
+					<a id="catablog-enable-flash-upload" href='#enable-flash'><?php _e("Enable Flash Upload") ?></a>
+				</small></p>
+				
 			</div>
 <?php /*
 			<h3><strong><?php _e("Choose Categories","catablog") ?></strong></h3>
@@ -81,6 +92,23 @@
 
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
+		
+		$('#catablog-disable-flash-upload').click(function(event) {
+			setCookie('catablog-flash-upload','disabled',365);
+			window.location.reload();
+		});
+		
+		$('#catablog-enable-flash-upload').click(function(event) {
+			setCookie('catablog-flash-upload','enabled',-1);
+			window.location.reload();
+		});
+		
+		if (getCookie('catablog-flash-upload') == 'disabled') {
+			return false;
+		}
+		
+		$('#catablog-enable-flash-form').hide();
+		$('#catablog-disable-flash-form').show();
 		
 		flash_version = swfobject.getFlashPlayerVersion();
 		if (flash_version.major < 10) {

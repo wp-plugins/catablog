@@ -39,6 +39,40 @@ switch ($screen) {
 
 
 
+	case 'catablog_page_catablog-templates':
+		$message  = "<p>";
+		$message .= __("First select a template file to edit by clicking it in the templates list. ", "catablog");
+		$message .= __("Than simply change the HTML code using CataBlog Tokens for specific values. ", "catablog");
+		$message .= __("You may also make your own template files and use the template parameter in the CataBlog ShortCode to specify which template shall be used to render your catalog. ", "catablog");
+		$message .= "</p>";
+
+		$message .= "<p>";
+		$message .= __("The <strong>Default View</strong> will be used as your basic template if no others are specified in your CataBlog ShortCodes.", "catablog");
+		$message .= "</p>";
+
+		$message .= "<p>";
+		$message .= __("The <strong>Single View</strong> will be used to render all Public Single Catalog Pages.", "catablog");
+		$message .= "</p>";
+		
+		$message .= "<p>";
+		$message .= __("The <strong>Store View</strong> will be used to render your <code>%BUY-NOW-BUTTON%</code>.", "catablog");
+		$message .= "</p>";
+
+		$message .= "<p>";
+		$message .= sprintf(__("The rest of the templates are there for your convenience and may be found on your server at:<br /><code>%s</code>", "catablog"), $this->directories['user_views']);
+		$message .= "</p>";
+		
+
+		$message .= "<p>";
+		$message .= __("Read more and get the entire list of token at: ", "catablog");
+		$message .= sprintf("<a href='http://catablog.illproductions.com/documentation/making-custom-templates/' target='_blank'/>%s</a>", __("CataBlog Documentation - Making Custom Templates", "catablog"));
+		$message .= "</p>";
+		
+		
+		echo $message;
+		break;
+
+
 	case 'catablog_page_catablog-options':
 		$message  = "<p>";
 		$message .= __("CataBlog offer many options that let you modify your catalog and its appearance.", "catablog");

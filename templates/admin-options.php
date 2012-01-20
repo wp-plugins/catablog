@@ -31,16 +31,21 @@
 	
 	<form action="admin.php?page=catablog-options" id="catablog-options" class="catablog-form" method="post">
 		
-		<ul id="catablog-options-menu">
+		<ul id="catablog-options-menu" class="catablog-panel-tabs">
+			<li><strong><?php _e("Options", "catablog"); ?></strong></li>
 			<li><a href="#thumbnails" title="Set size and how thumbnails will be made"><?php _e("Thumbnails", "catablog"); ?></a></li>
 			<li><a href="#lightbox" title=""><?php _e("LightBox", "catablog"); ?></a></li>
 			<li><a href="#public" title=""><?php _e("Public", "catablog"); ?></a></li>
-			<li><a href="#title" title=""><?php _e("Title", "catablog"); ?></a></li>
+			<li><a href="#title" title=""><?php _e("Title Link", "catablog"); ?></a></li>
 			<li><a href="#description" title=""><?php _e("Description", "catablog"); ?></a></li>
+
+			<?php /*
 			<li><a href="#template" title="Control how your catalog is rendered"><?php _e("Template", "catablog"); ?></a></li>
 			<li><a href="#store" title=""><?php _e("Store", "catablog"); ?></a></li>
-			<li><a id="catablog-options-menu-export" href="#export" title=""><?php _e("Export", "catablog"); ?></a></li>
+			<li><a href="#fields" title=""><?php _e("Custom Fields", "catablog"); ?></a></li>
+			*/ ?>
 			<li><a href="#import" title=""><?php _e("Import", "catablog"); ?></a></li>
+			<li><a id="catablog-options-menu-export" href="#export" title=""><?php _e("Export", "catablog"); ?></a></li>
 			<li><a id="catablog-options-menu-system" href="#system" title=""><?php _e("Systems", "catablog"); ?></a></li>
 		</ul>
 		
@@ -219,80 +224,19 @@
 			</p>
 		</div>
 		
-		<?php /*  TEMPLATE SETTINGS PANEL  */ ?>
-		<div id="catablog-options-template" class="catablog-options-panel hide">
-			<p>
-				<?php $views = new CataBlogDirectory($this->directories['views']); ?>
-				<?php if ($views->isDirectory()): ?>
-					<select id="catablog-template-view-menu">
-						<?php foreach($views->getFileArray() as $key => $view): ?>
-							<?php echo "<option value='$view'>$view</option>"; ?>
-						<?php endforeach ?>
-					</select>
-					<a href="<?php echo $this->urls['views'] ?>" id="catablog-view-set-template" class="catablog-load-code button add-new-h2"><?php _e("Load Template", "catablog"); ?></a>
-				<?php else: ?>
-					<p class="error"><?php _e("Could not locate the views directory. Please reinstall CataBlog.", "catablog"); ?></p>
-				<?php endif ?>
-				
-				
-			</p>
-			<p>
-				<textarea name="view-code-template" id="catablog-view-set-template-code" class="catablog-code" rows="10" cols="30"><?php echo $this->options['view-theme'] ?></textarea>
-				
-				<small>
-					<?php _e("You may change the html code rendered by <strong>CataBlog</strong> here, this allows you to make fundamental changes to how catalogs will appear in your posts. You may choose a template from the drop down menu at top and then click <em>Load Template</em> to load it into the template code. If you want to setup a photo gallery I would recommend that you load the <em>Gallery template</em> and then click save below. To setup a shopping cart you should load the <em>Default Template</em> code and then load a Store Template.", "catablog"); ?>
-				</small>
-			</p>
-			
-			<p><small>
-				<?php _e("Don't forget to click <strong>Save Changes</strong> at the bottom of the page to finalize your changes and use the new code for your blog.", "catablog"); ?>
-			</small></p>
+		
+		<?php /*  CUSTOM FIELDS SETTINGS PANEL */ ?>
+		<div id="catablog-options-fields" class="catablog-options-panel hide">
+			<p>COMING SOON</p>
 		</div>
 		
 		
-		
-		<?php /* STORE TEMPLATE SETTINGS PANEL */ ?>
-		<div id="catablog-options-store" class="catablog-options-panel hide">
-			
-			<p>
-				<label for="paypal_email"><?php _e("PayPal Account Email Address:", "catablog"); ?></label>
-				<input type="text" name="paypal_email" id="paypal_email" size="50" value="<?php echo $paypal_email ?>" />
-			</p>
-			
-			<p><small>
-				<?php printf(__("Enter in an email address here that has been registered with %sPayPal%s and choose a <em>Buy Now Template</em> below to setup a store. You may then give items a price and product code. When an item has a price above zero a 'Buy Now' button will appear under the description of that CataBlog item.", "catablog"), '<a href="http://www.paypal.com" target="_blank">', '</a>'); ?>
-			</small></p>
-			
-			<hr />
-			
-			<p>
-				<?php $views = new CataBlogDirectory($this->directories['buttons']) ?>
-				<?php if ($views->isDirectory()): ?>
-					<select id="catablog-template-store-menu">
-						<?php foreach($views->getFileArray() as $key => $view): ?>
-							<?php echo "<option value='$view'>$view</option>" ?>
-						<?php endforeach ?>
-					</select>
-					<a href="<?php echo $this->urls['buttons'] ?>" id="catablog-view-set-buynow" class="catablog-load-code button add-new-h2"><?php _e("Load Template", "catablog"); ?></a>
-				<?php else: ?>
-					<p class="error"><?php _e("Could not locate the views directory. Please reinstall CataBlog.", "catablog"); ?></p>
-				<?php endif ?>
-			</p>
-			<p>
-				<textarea name="view-code-buynow" id="catablog-view-set-buynow-code" class="catablog-code" rows="10" cols="30"><?php echo $this->options['view-buynow'] ?></textarea>
-				<small>
-					<?php _e("You may change the html code rendered for the <strong>Buy Now</strong> button here. All value tokens are available here too, so place the title, description or any other values you may want to use from the current catalog item in this code as well.", "catablog"); ?>
-				</small>
-			</p>
-			<p style="clear:both;">&nbsp;</p>
-			
-			<input type="hidden" name="save" id="save" value="yes" />
-			<?php wp_nonce_field( 'catablog_options', '_catablog_options_nonce', false, true ) ?>
-			<input id="catablog-options-submit" type="submit" class="hide" value="<?php _e('Save Changes') ?>" />
-			
-		</div>
+		<input type="hidden" name="save" id="save" value="yes" />
+		<?php wp_nonce_field( 'catablog_options', '_catablog_options_nonce', false, true ) ?>
+		<input id="catablog-options-submit" type="submit" class="hide" value="<?php _e('Save Changes') ?>" />
+
 	</form>	
-	
+
 	
 	
 	
@@ -430,7 +374,7 @@
 	
 	
 	<?php /*  SUBMIT FORM BUTTON  */ ?>
-	<p class="submit" style="margin-left:100px;">
+	<p class="submit" style="margin-left:135px;">
 		<input type="button" id="save_changes" class="button-primary" value="<?php _e('Save Changes') ?>" />
 		<span><?php printf(__('or %sundo current changes%s', 'catablog'), '<a href="admin.php?page=catablog-options">', '</a>'); ?></span>
 	</p>
@@ -445,7 +389,7 @@
 		****************************************/
 		$('#save_changes').bind('click', function(event) {
 			var form_action = $('#catablog-options').attr('action');
-			var active_tab  = $('#catablog-options-menu li a.selected').attr('href');
+			var active_tab  = $('#catablog-options-menu li.selected a').attr('href');
 			
 			$('#catablog-options').attr('action', (form_action+active_tab))
 			$('#catablog-options').submit();
@@ -457,17 +401,17 @@
 		****************************************/		
 		$('#catablog-options-menu li a').bind('click', function(event) {
 			$('.catablog-options-panel:visible').hide();
-			$('#catablog-options-menu li a.selected').removeClass('selected');
+			$('#catablog-options-menu li.selected').removeClass('selected');
 			
-			$(this).addClass('selected');
+			$(this).closest('li').addClass('selected');
 			var panel = '#catablog-options-' + $(this).attr('href').substring(1);
 			$(panel).show();
 		});
 		
-		var path = '#catablog-options-menu li:first a';
+		var path = '#catablog-options-menu li a:first';
 		var hash = window.location.hash;
 		if (hash.length > 0) {
-			path = '#catablog-options-menu li a[href='+hash+']';
+			path = '#catablog-options-menu li a[href="'+hash+'"]';
 		}
 		$(path).click();
 		
