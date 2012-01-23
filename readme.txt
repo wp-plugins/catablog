@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce, Spanish, German, Swedish
 Requires at least: 3.1
 Tested up to: 3.3.1
-Stable tag: 1.2.9.9
+Stable tag: 1.3
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -104,11 +104,13 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * New: Removed PayPal Email from plugin options, you may now set it directly in the store template.
 * New: Templates now have their own section with more controls than before.
 * New: CataBlog ShortCode now has a limit parameter with basic pagination for large catalogs.
-* New: Toggle link to easily enable/disable the flash upload form if you need to.
+* New: CataBlog ShortCode now has a navigation parameter for hiding a limited ShortCode's next and previous links.
+* New: Toggle link to easily enable/disable the flash upload form on the CataBlog Add New page.
+* New: Updated look and feel for tabbed panels that match WordPress 3.3.1.
 * New: Server's GD Version is now displayed in the about page.
-* New: Updated look and feel to match WordPress 3 for tabbed panels.
+* Fix: CataBlog's WP Admin Bar buttons now appear in the appropriate order for WordPress 3.3.1.
 * Fix: Default CSS now removes Theme constrained width and height for gallery thumbnail images.
-* Fix: Resolved some PHP warnings being fired throughout the plugin when WP_DEBUG is enabled.
+* Fix: Resolved PHP warnings being fired throughout the plugin when WP_DEBUG is enabled.
 
 = 1.2.9.9 =
 * New: LightBox option lets you set if the LightBox scrolls from one ShortCode to the next on a single page.

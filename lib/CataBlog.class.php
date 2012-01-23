@@ -113,8 +113,9 @@ class CataBlog {
 		add_action('init', array(&$this, 'initialize_plugin'), 0);
 		
 		// register custom menus in the Admin Menu Bar
-		add_action('admin_bar_menu', array(&$this, 'admin_bar_menu'), 100);
-		add_action('admin_bar_menu', array(&$this, 'admin_bar_edit_button'), 20);
+		add_action('wp_before_admin_bar_render', array(&$this, 'admin_bar_edit_button'), 99);
+		add_action('wp_before_admin_bar_render', array(&$this, 'admin_bar_menu'), 100);
+		
 		// register admin hooks
 		if (is_admin()) {
 			
@@ -1902,7 +1903,7 @@ class CataBlog {
 	}
 
 	public function frontend_content($atts) {
-		$shortcode_params = array('category'=>false, 'template'=>false, 'sort'=>'menu_order', 'order'=>'asc', 'operator'=>'IN', 'limit'=>-1);
+		$shortcode_params = array('category'=>false, 'template'=>false, 'sort'=>'menu_order', 'order'=>'asc', 'operator'=>'IN', 'limit'=>-1, 'navigation'=>true);
 		
 		extract(shortcode_atts($shortcode_params, $atts));
 		
@@ -1911,6 +1912,10 @@ class CataBlog {
 		
 		// modify the operator if it is a possibly wrong format to work with WP.
 		$operator = str_replace("-", " ", strtoupper($operator));
+		
+		// disable navigation if it is present in the turn off words array
+		$turn_off_nav_words = array('no', 'off', 'disable', 'disabled');
+		$navigation = (in_array(strtolower($navigation), $turn_off_nav_words))? false : true;
 		
 		$paged = 0;
 		if (isset($_REQUEST['catablog-paged'])) {
@@ -1983,7 +1988,9 @@ class CataBlog {
 		}
 		echo "</div>";
 		
-		$this->frontend_build_navigation($paged, $limit, $total);
+		if ($navigation) {
+			$this->frontend_build_navigation($paged, $limit, $total);
+		}
 		
 		return ob_get_clean();
 	}
@@ -2006,17 +2013,17 @@ class CataBlog {
 			$prev_http_query = http_build_query($prev_params, '&amp;');
 			
 			if ($paged < 1) {
-				$prev_link = "<span class='catablog-navigation-link catablog-previous-link catablog-disabled'>Prev</span>";
+				$prev_link = "<span class='catablog-navigation-link catablog-previous-link catablog-disabled'>".__("Previous", "catablog")."</span>";
 			}
 			else {
-				$prev_link = "<a href='?$prev_http_query' class='catablog-navigation-link catablog-previous-link'>Prev</a>";
+				$prev_link = "<a href='?$prev_http_query' class='catablog-navigation-link catablog-previous-link'>".__("Previous", "catablog")."</a>";
 			}
 			
 			if ((($paged * $limit) + $limit) >= $total) {
-				$next_link = "<span class='catablog-navigation-link catablog-next-link catablog-disabled'>Next</span>";
+				$next_link = "<span class='catablog-navigation-link catablog-next-link catablog-disabled'>".__("Next", "catablog")."</span>";
 			}
 			else {
-				$next_link = "<a href='?$next_http_query' class='catablog-navigation-link catablog-next-link'>Next</a>";
+				$next_link = "<a href='?$next_http_query' class='catablog-navigation-link catablog-next-link'>".__("Next", "catablog")."</a>";
 			}
 			
 			$first_item  = (($paged * $limit));
@@ -2439,18 +2446,26 @@ class CataBlog {
 		if (version_compare($this->options['version'], '1.3', '<')) {
 			
 			// Save the old default template stored in catablog-options to default.htm
-			$fn = "default.htm";
-			$filepath = $this->directories['user_views'] . '/' . $fn;
-			$fp = fopen($filepath, 'w');
-			fwrite($fp, $this->options['view-theme']);
-			fclose($fp);
+			if (isset($this->options['view-theme'])) {
+				if ($this->string_length($this->options['view-theme']) > 0) {
+					$fn = "default.htm";
+					$filepath = $this->directories['user_views'] . '/' . $fn;
+					$fp = fopen($filepath, 'w');
+					fwrite($fp, $this->options['view-theme']);
+					fclose($fp);
+				}
+			}
 			
 			// Save the old store template stored in catablog-options to store.htm
-			$fn = "store.htm";
-			$filepath = $this->directories['user_views'] . '/' . $fn;
-			$fp = fopen($filepath, 'w');
-			fwrite($fp, $this->options['view-buynow']);
-			fclose($fp);
+			if (isset($this->options['view-buynow'])) {
+				if ($this->string_length($this->options['view-buynow']) > 0) {
+					$fn = "store.htm";
+					$filepath = $this->directories['user_views'] . '/' . $fn;
+					$fp = fopen($filepath, 'w');
+					fwrite($fp, $this->options['view-buynow']);
+					fclose($fp);
+				}
+			}
 			
 			// Remove the old template information from catablog-options
 			unset($this->options['view-theme']);
