@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce, Spanish, German, Swedish
 Requires at least: 3.1
 Tested up to: 3.3.1
-Stable tag: 1.3
+Stable tag: 1.3.1
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -99,6 +99,11 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.3.1 =
+* New: Added limit and navigation parameters to the PHP function catablog_show_items().
+* Fix: Resolved upgrade issue where system template wasn't being migrated properly.
+* Fix: Resolved display bugs with selected tabs.
 
 = 1.3 =
 * New: Removed PayPal Email from plugin options, you may now set it directly in the store template.

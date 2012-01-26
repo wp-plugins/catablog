@@ -945,14 +945,20 @@ table.catablog_stats td {
 	
 	-webkit-transform: matrix(-0.6, 1, 0.6, 1, 0, 0);
 	-moz-transform: matrix(-0.6, 1, 0.6, 1, 0, 0);
+	-o-transform: matrix(-0.6, 1, 0.6, 1, 0, 0);
+	-ms-transform: matrix(-0.6, 1, 0.6, 1, 0, 0);
+	transform: matrix(-0.6, 1, 0.6, 1, 0, 0);
+	
 	-webkit-user-select: none;
 	-moz-user-select: none;
+	user-select: none;
+	
 	background-color: #777;
 	background-image: -webkit-linear-gradient(right bottom, #6D6D6D, gray);
 	background-image: -moz-linear-gradient(right bottom, #6D6D6D, gray);
 	color: #333;
 	cursor: auto;
-	z-index: 1000;
+	z-index: 200;
 }
 
 

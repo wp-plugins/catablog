@@ -3,7 +3,7 @@
 Plugin Name: CataBlog
 Plugin URI: http://catablog.illproductions.com/
 Description: CataBlog is a comprehensive and effortless tool that helps you create, organize and share catalogs, stores, galleries and portfolios on your blog.
-Version: 1.3
+Version: 1.3.1
 Author: Zachary Segal
 Author URI: http://catablog.illproductions.com/about/
 
@@ -60,10 +60,19 @@ function catablog_load_plugin() {
 	 * @param string $operator The operator to apply to the categories passed in, defaults to IN
 	 * @return void
 	 */
-	function catablog_show_items($category=null, $template=null, $sort='menu_order', $order='asc', $operator='IN') {
+	function catablog_show_items($category=null, $template=null, $sort='menu_order', $order='asc', $operator='IN', $limit=null, $navigation=true) {
 		global $wp_plugin_catablog_class;
 		$wp_plugin_catablog_class->frontend_init(true);
-		echo $wp_plugin_catablog_class->frontend_content(array('category'=>$category, 'template'=>$template, 'sort'=>$sort, 'order'=>$order, 'operator'=>$operator));
+		
+		if ($template === null) {
+			$template = 'default';
+		}
+		
+		if ($limit === null) {
+			$limit = -1;
+		}
+		
+		echo $wp_plugin_catablog_class->frontend_content(array('category'=>$category, 'template'=>$template, 'sort'=>$sort, 'order'=>$order, 'operator'=>$operator, 'limit'=>$limit, 'navigation'=>$navigation));
 	}
 	
 	/**
@@ -116,7 +125,7 @@ register_activation_hook( __FILE__, 'catablog_activate' );
 
 // Remote post on deactivation
 function catablog_deactivate() {
-	$body_array = array('action'=>'deactivate', 'site-url'=>site_url(), 'version'=>'1.3');
+	$body_array = array('action'=>'deactivate', 'site-url'=>site_url(), 'version'=>'1.3.1');
 	$post_action = wp_remote_post('http://catablog.illproductions.com/tracker.php', array('body'=>$body_array));
 }
 register_deactivation_hook( __FILE__, 'catablog_deactivate' );

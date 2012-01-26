@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.3
+ * @version 1.3.1
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.3";
+	private $version     = "1.3.1";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -1914,7 +1914,7 @@ class CataBlog {
 		$operator = str_replace("-", " ", strtoupper($operator));
 		
 		// disable navigation if it is present in the turn off words array
-		$turn_off_nav_words = array('no', 'off', 'disable', 'disabled');
+		$turn_off_nav_words = array(false, 'no', 'off', 'disable', 'disabled');
 		$navigation = (in_array(strtolower($navigation), $turn_off_nav_words))? false : true;
 		
 		$paged = 0;
@@ -2444,6 +2444,9 @@ class CataBlog {
 		
 		// remove old template option settings
 		if (version_compare($this->options['version'], '1.3', '<')) {
+			
+			// install the template directory so files may be written
+			$this->install_directories();
 			
 			// Save the old default template stored in catablog-options to default.htm
 			if (isset($this->options['view-theme'])) {
