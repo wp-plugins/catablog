@@ -51,7 +51,11 @@ switch ($screen) {
 		$message .= "</p>";
 
 		$message .= "<p>";
-		$message .= __("The <strong>Single View</strong> will be used to render all Public Single Catalog Pages.", "catablog");
+		$message .= __("The <strong>Single View</strong> will be used to render all Public CataBlog Single Pages.", "catablog");
+		$message .= "</p>";
+
+		$message .= "<p>";
+		$message .= __("The <strong>Archive View</strong> will be used to render all Public CataBlog Archive (Category) Pages.", "catablog");
 		$message .= "</p>";
 		
 		$message .= "<p>";

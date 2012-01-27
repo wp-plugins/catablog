@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce, Spanish, German, Swedish
 Requires at least: 3.1
 Tested up to: 3.3.1
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -42,7 +42,7 @@ Please remember that CataBlog is written, maintained, supported and documented b
 1. If you want you may also network activate CataBlog.
 1. Create catalog items by uploading image files.
 1. Sprinkle the `[catablog]` [Shortcode](http://codex.wordpress.org/Shortcode_API "The Shortcode API") throughout your blog to show your catalog.
-1. You may also use the template tag, which operates similarly to the Shortcode: `<?php catablog_show_items($cat, $template, $sort, $order, $operator); ?>`
+1. You may also use the template tag, which operates similarly to the Shortcode: `<?php catablog_show_items($cat, $template, $sort, $order, $operator, $limit, $show_navigation); ?>`
 
 == Frequently Asked Questions ==
 
@@ -68,8 +68,8 @@ The CataBlog Admin section is made and tested to work best with these browsers:
 
 The CataBlog LightBox and Templates are tested to work in these browsers:
 
-1. Internet Explorer 6, 7, 8 and 9
-1. Firefox 2, 3 and 4
+1. Internet Explorer 7, 8 and 9
+1. Firefox 3 and above
 1. Safari and Chrome
 1. JavaScript must be enabled for LightBox support.
 
@@ -99,6 +99,12 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.3.2 =
+* New: Navigation options allow for changing the link labels and position in paginated catalogs.
+* New: Template View added for archive listing pages.
+* New: Added an %EXCERPT% token with a max length option for archive pages.
+* Fix: Create and populate the templates folder before extracting old template data to upgrade from a version before 1.3.
 
 = 1.3.1 =
 * New: Added limit and navigation parameters to the PHP function catablog_show_items().

@@ -36,6 +36,7 @@
 			<li><a href="#thumbnails" title="Set size and how thumbnails will be made"><?php _e("Thumbnails", "catablog"); ?></a></li>
 			<li><a href="#lightbox" title=""><?php _e("LightBox", "catablog"); ?></a></li>
 			<li><a href="#public" title=""><?php _e("Public", "catablog"); ?></a></li>
+			<li><a href="#navigation" title=""><?php _e("Navigation", "catablog"); ?></a></li>
 			<li><a href="#title" title=""><?php _e("Title Link", "catablog"); ?></a></li>
 			<li><a href="#description" title=""><?php _e("Description", "catablog"); ?></a></li>
 
@@ -178,6 +179,50 @@
 		
 		
 		
+		<?php /*  NAVIGATION SETTINGS PANEL  */ ?>
+		<div id="catablog-options-navigation" class="catablog-options-panel hide">
+			<p>
+				<label for="nav_prev_label"><?php _e("Previous Link Label:", "catablog"); ?></label>
+				<input type="text" id="nav_prev_label" name="nav_prev_label" value="<?php echo $nav_prev_label ?>" /><br />
+				<small>
+					<?php _e("What word would you like to be used for a paginated catalog's previous page link.", "catablog"); ?>
+				</small>
+			</p>
+			
+			<p>
+				<label for="nav_next_label"><?php _e("Next Link Label:", "catablog"); ?></label>
+				<input type="text" id="nav_next_label" name="nav_next_label" value="<?php echo $nav_next_label ?>" /><br />
+				<small>
+					<?php _e("What word would you like to be used for a paginated catalog's next page link.", "catablog"); ?>
+				</small>
+			</p>
+			
+			<hr />
+			
+			<p>
+				<label for="nav_location"><?php _e("Display Location:", "catablog"); ?></label>
+				<select name="nav_location">
+					<?php $nav_location_options = array("top"=>__("Above Catalog", "CataBlog"), "bottom"=>__("Below Catalog", "CataBlog"), "both"=>__("Above and Below", "CataBlog")); ?>
+					<?php foreach ($nav_location_options as $key => $value): ?>
+						<?php $selected = ($nav_location == $key)? 'selected="selected"' : ''; ?>
+						<option value="<?php echo $key; ?>"<?php echo $selected ?>><?php echo $value; ?></option>
+					<?php endforeach ?>
+				</select><br />
+				<small>
+					<?php _e("Select where you would like your navigation controls to be displayed", "catablog"); ?>
+				</small>
+			</p>
+			
+			<p>
+				<?php $checked = ($nav_show_meta)? "checked='checked'" : "" ?>
+				<label for="nav_show_meta"><?php _e("Show Extra Navigation Info:", "catablog"); ?></label>
+				<input type="checkbox" name="nav_show_meta" id="nav_show_meta" <?php echo $checked ?> /><br/>
+				<small><?php _e("If this is checked then the index of the catalog items being viewed on the page will be shown.", "catablog") ?></small><br />
+			</p>
+		</div>
+		
+		
+		
 		<?php /*  TITLE SETTINGS PANEL  */ ?>
 		<div id="catablog-options-title" class="catablog-options-panel hide">
 			<p>
@@ -220,6 +265,15 @@
 					<?php printf(__("Filter your catalog item's description through the standard PHP function %s.", "catablog"), '<a href="http://php.net/manual/en/function.nl2br.php" target="_blank">nl2br()</a>'); ?><br />
 					<?php _e("This will insert HTML line breaks before all new lines in your catalog descriptions.", "catablog"); ?><br />
 					<?php _e("Turn this off if unwanted line breaks are being rendered on your page.", "catablog"); ?>
+				</small>
+			</p>
+			
+			<p>
+				<label for="excerpt_length"><?php _e("Excerpt Length:", "catablog"); ?></label>
+				<input type="text" id="excerpt_length" name="excerpt_length" value="<?php echo $excerpt_length ?>" maxlength="10" /><br />
+				<small>
+					<?php _e("The excerpt length lets you set how many characters long the description will be when using the %EXCERPT% token.", "catablog"); ?><br />
+					<?php _e("The excerpt will cut off any incomplete words at the end, so don't worry if the character count is a little different.", "catablog"); ?>
 				</small>
 			</p>
 		</div>

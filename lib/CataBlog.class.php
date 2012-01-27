@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.3.1
+ * @version 1.3.2
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.3.1";
+	private $version     = "1.3.2";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -716,9 +716,14 @@ class CataBlog {
 				$this->options['link-relationship']    = strip_tags($post_vars['link_relationship']);
 				$this->options['filter-description']   = isset($post_vars['wp-filters-enabled']);
 				$this->options['nl2br-description']    = isset($post_vars['nl2br-enabled']);
+				$this->options['excerpt-length']       = $post_vars['excerpt_length'];
 				$this->options['public_posts']         = isset($post_vars['public_posts']);
 				$this->options['public_post_slug']     = $post_vars['public_post_slug'];
 				$this->options['public_tax_slug']      = $post_vars['public_tax_slug'];
+				$this->options['nav-prev-label']       = $post_vars['nav_prev_label'];
+				$this->options['nav-next-label']       = $post_vars['nav_next_label'];
+				$this->options['nav-location']         = $post_vars['nav_location'];
+				$this->options['nav-show-meta']        = isset($post_vars['nav_show_meta']);
 				
 				$this->save_wp_options();
 				
@@ -767,10 +772,14 @@ class CataBlog {
 		$link_relationship            = $this->options['link-relationship'];
 		$wp_filters_enabled           = $this->options['filter-description'];
 		$nl2br_enabled                = $this->options['nl2br-description'];
+		$excerpt_length               = $this->options['excerpt-length'];
 		$public_posts_enabled         = $this->options['public_posts'];
 		$public_posts_slug            = $this->options['public_post_slug'];
 		$public_tax_slug              = $this->options['public_tax_slug'];
-		
+		$nav_prev_label               = $this->options['nav-prev-label'];
+		$nav_next_label               = $this->options['nav-next-label'];
+		$nav_location                 = $this->options['nav-location'];
+		$nav_show_meta                = $this->options['nav-show-meta'];
 
 		
 		include_once($this->directories['template'] . '/admin-options.php');
@@ -1973,6 +1982,12 @@ class CataBlog {
 		
 		ob_start();
 		
+		if ($navigation) {
+			if ($this->options['nav-location'] != 'bottom') {
+				$this->frontend_build_navigation($paged, $limit, $total);
+			}
+		}
+		
 		echo "<div class='catablog-catalog'>";
 		foreach ($results as $result) {
 			
@@ -1989,7 +2004,9 @@ class CataBlog {
 		echo "</div>";
 		
 		if ($navigation) {
-			$this->frontend_build_navigation($paged, $limit, $total);
+			if ($this->options['nav-location'] != 'top') {
+				$this->frontend_build_navigation($paged, $limit, $total);
+			}
 		}
 		
 		return ob_get_clean();
@@ -2013,27 +2030,32 @@ class CataBlog {
 			$prev_http_query = http_build_query($prev_params, '&amp;');
 			
 			if ($paged < 1) {
-				$prev_link = "<span class='catablog-navigation-link catablog-previous-link catablog-disabled'>".__("Previous", "catablog")."</span>";
+				$prev_link = "<span class='catablog-navigation-link catablog-previous-link catablog-disabled'>".$this->options['nav-prev-label']."</span>";
 			}
 			else {
-				$prev_link = "<a href='?$prev_http_query' class='catablog-navigation-link catablog-previous-link'>".__("Previous", "catablog")."</a>";
+				$prev_link = "<a href='?$prev_http_query' class='catablog-navigation-link catablog-previous-link'>".$this->options['nav-prev-label']."</a>";
 			}
 			
 			if ((($paged * $limit) + $limit) >= $total) {
-				$next_link = "<span class='catablog-navigation-link catablog-next-link catablog-disabled'>".__("Next", "catablog")."</span>";
+				$next_link = "<span class='catablog-navigation-link catablog-next-link catablog-disabled'>".$this->options['nav-next-label']."</span>";
 			}
 			else {
-				$next_link = "<a href='?$next_http_query' class='catablog-navigation-link catablog-next-link'>".__("Next", "catablog")."</a>";
+				$next_link = "<a href='?$next_http_query' class='catablog-navigation-link catablog-next-link'>".$this->options['nav-next-label']."</a>";
 			}
 			
 			$first_item  = (($paged * $limit));
 			$first_item  = ($total > 0)? $first_item + 1 : $first_item;
 			$last_item   = $first_item + ($limit - 1);
 			$last_item   = ($last_item > $total)? $total : $last_item;
-			$page_meta   = "<span class='catablog-navigation-meta'>" . sprintf(__("%s to %s of %s", "catablog"), $first_item, $last_item, $total) . "</span>";
 			$meta_spacer = "<span class='catablog-navigation-meta-spacer'> - </span>";
+			$page_meta = "";
 			
-			echo "<p class='catablog-navigation'>{$prev_link}{$meta_spacer}{$next_link}{$meta_spacer}{$page_meta}</p>";
+			if ($this->options['nav-show-meta'] === true) {
+				$page_meta  = $meta_spacer;
+				$page_meta .= "<span class='catablog-navigation-meta'>" . sprintf(__("%s to %s of %s", "catablog"), $first_item, $last_item, $total) . "</span>";
+			}
+			
+			echo "<p class='catablog-navigation'>{$prev_link}{$meta_spacer}{$next_link}{$page_meta}</p>";
 		}
 	}
 	
@@ -2043,8 +2065,17 @@ class CataBlog {
 		
 		if ($post->post_type == $this->custom_post_name) {
 			$result  = CataBlogItem::postToItem($post);
-			// $result->setDescription($content);
-			$content = $this->frontend_render_catalog_row($result, 'single');
+			
+			if (is_single()) {
+				$content = $this->frontend_render_catalog_row($result, 'single');
+			}
+			elseif (is_archive() || is_search()) {
+				$content = $this->frontend_render_catalog_row($result, 'archive');
+			}
+			else {
+				$content = $this->frontend_render_catalog_row($result, 'default');
+			}
+			
 		}
 		
 		return $content;
@@ -2104,7 +2135,13 @@ class CataBlog {
 		$values['title']           = $result->getTitle();
 		$values['title-link']      = ($this->string_length($link) > 0)? "<a href='".$link."' $target $rel>".$values['title']."</a>" : $values['title'];
 		$values['description']     = $description;
-		
+		$values['excerpt']         = $description;
+		if ($this->string_length($values['excerpt']) > $this->options['excerpt-length']) {
+			$values['excerpt'] = $this->sub_string($values['excerpt'], 0, $this->options['excerpt-length']);
+			$cut_to_last_word  = strrpos($values['excerpt'], ' ');
+			$values['excerpt'] = $this->sub_string($values['excerpt'], 0, $cut_to_last_word);
+			$values['excerpt'] .= '...';
+		}
 		
 		// catalog item attributes
 		$date_mysql_string         = $result->getDate();
@@ -2314,9 +2351,14 @@ class CataBlog {
 		$default_options['link-relationship']   = "";
 		$default_options['filter-description']  = false;
 		$default_options['nl2br-description']   = true;
+		$default_options['excerpt-length']      = 55;
 		$default_options['public_posts']        = false;
 		$default_options['public_post_slug']    = $this->custom_post_name;
 		$default_options['public_tax_slug']     = $this->custom_tax_name;
+		$default_options['nav-prev-label']      = __('Previous', "catablog");
+		$default_options['nav-next-label']      = __('Next', "catablog");
+		$default_options['nav-location']        = "bottom";
+		$default_options['nav-show-meta']       = true;
 		
 		$this->options = $default_options;
 		$this->save_wp_options();
@@ -2343,7 +2385,7 @@ class CataBlog {
 			while ($file = $d->read()) { 
 				
 				$extension = end(explode(".", strtolower($file)));
-				$media_accepted = array('txt', 'html', 'htm');
+				$media_accepted = array('htm');
 				
 				if (in_array($extension, $media_accepted)) {
 					
@@ -2445,8 +2487,9 @@ class CataBlog {
 		// remove old template option settings
 		if (version_compare($this->options['version'], '1.3', '<')) {
 			
-			// install the template directory so files may be written
+			// install the template directory and files so they may be overwritten
 			$this->install_directories();
+			$this->install_user_templates();
 			
 			// Save the old default template stored in catablog-options to default.htm
 			if (isset($this->options['view-theme'])) {
@@ -2476,6 +2519,20 @@ class CataBlog {
 			unset($this->options['paypal-email']);
 		}
 		
+		// add new archive template to user's template files
+		if (version_compare($this->options['version'], '1.3.2', '<')) {
+			if ($this->upgrade_user_templates() === false) {
+				$this->wp_error(__('The New CataBlog Templates cannot be written. ', "catablog") . __(' Please check your server file permissions and apache configuration.', "catablog"));
+				return false;
+			}
+			
+			$this->options['excerpt-length'] = 55;
+			$this->options['nav-prev-label'] = __('Previous', "catablog");
+			$this->options['nav-next-label'] = __('Next', "catablog");
+			$this->options['nav-location']   = 'bottom';
+			$this->options['nav-show-meta']  = true;
+		}
+		
 		// !! MAKE SURE NEW UPDATES GO AT THE END OF THE VERSION LIST !!
 		
 		// update the version number
@@ -2485,6 +2542,33 @@ class CataBlog {
 	
 	private function upgrade_directories() {
 		// their are no upgrade instructions for the directories
+	}
+	
+	private function upgrade_user_templates() {
+		$system_templates_dir = $this->directories['views'];
+		if (is_dir($system_templates_dir)) {
+			$d = dir($system_templates_dir);
+			while ($file = $d->read()) { 
+				
+				$extension = end(explode(".", strtolower($file)));
+				$media_accepted = array('htm');
+				
+				if (in_array($extension, $media_accepted)) {
+					
+					$source = $system_templates_dir . '/' . $file;
+					$dest   = $this->directories['user_views'] . '/' . $file;
+					
+					// only copy the file to the user templates directory if it doesn't exist
+					if (!is_file($dest)) {
+						if (!copy($source, $dest)) {
+							return false;
+						}
+					}
+				}
+			}
+			
+			$d->close();
+		}
 	}
 	
 	
@@ -2938,6 +3022,15 @@ class CataBlog {
 		}
 		else {
 			return strlen($string);
+		}
+	}
+	
+	private function sub_string($string, $start, $length) {
+		if (function_exists('mb_substr')) {
+			return mb_substr($string, $start, $length);
+		}
+		else {
+			return substr($string, $start, $length);
 		}
 	}
 	

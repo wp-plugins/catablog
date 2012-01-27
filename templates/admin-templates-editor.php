@@ -23,7 +23,7 @@
 				<li><strong><?php _e("Views", "catablog") ?></strong></li>
 				
 				<?php $file_array = $views->getFileArray(); ?>
-				<?php $standard_templates = array('default.htm', 'single.htm', 'store.htm'); ?>
+				<?php $standard_templates = array('default.htm', 'single.htm', 'archive.htm', 'store.htm'); ?>
 				
 				<?php foreach ($standard_templates as $standard_template): ?>
 					<?php if (in_array($standard_template, $file_array)): ?>
@@ -80,6 +80,9 @@
 				</small></li>
 				<li><small>
 					<?php _e("If you do not specify a template and the default template cannot be found then CataBlog will not be able to render your catalog.", "catablog"); ?>
+				</small></li>
+				<li><small>
+					<?php printf(__("If you need more help read the %shelp panel%s.", "catablog"), '<a href="#contextual-help-link" id="catablog-click-contextual-help-link">', '</a>'); ?>
 				</small></li>
 			</ul>
 			
@@ -203,6 +206,10 @@
 		
 	 	$("#catablog-template-name input").focus(function() { $(this).select(); } );
 		$("#catablog-template-name input").mouseup(function(event){ event.preventDefault(); });
+		
+		$('#catablog-click-contextual-help-link').click(function(event) {
+			$('#contextual-help-link').click();
+		})
 		
 	}); // end onready
 </script>
