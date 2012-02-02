@@ -4,7 +4,7 @@
  *
  * This file contains the class for each CataBlog Item that is fetched from the database.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.3.2
+ * @version 1.4
  * @package catablog
  */
 
@@ -56,7 +56,9 @@ class CataBlogItem {
 		
 		if (isset($post_parameters)) {
 			foreach ($this->getParameterArray() as $param_name) {
-				$this->{$param_name} = $post_parameters[$param_name];
+				if (isset($post_parameters[$param_name])) {
+					$this->{$param_name} = $post_parameters[$param_name];
+				}
 			}
 		}
 	}
@@ -840,6 +842,7 @@ class CataBlogItem {
 		return $this->_custom_tax_name;
 	}
 	public function getCSVArray() {
+		$id           = $this->getId();
 		$image        = $this->getImage();
 		$subimages    = implode('|', $this->getSubImages());
 		$title        = $this->getTitle();
@@ -850,7 +853,7 @@ class CataBlogItem {
 		$price        = $this->getPrice();
 		$product_code = $this->getProductCode();
 		$categories   = implode('|', $this->getCategories());
-		return array($image, $subimages, $title, $description, $date, $order, $link, $price, $product_code, $categories);
+		return array($id, $image, $subimages, $title, $description, $date, $order, $link, $price, $product_code, $categories);
 	}
 	public function getPostMetaKey() {
 		return $this->_post_meta_name;

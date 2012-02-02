@@ -4,6 +4,7 @@
 
 <?php foreach ($results as $result): ?>
 	<item>
+		<id><?php echo $result->getId()?></id>
 		<image><![CDATA[<?php echo $result->getImage() ?>]]></image>
 		<subimages>
 <?php foreach ($result->getSubImages() as $image): ?>

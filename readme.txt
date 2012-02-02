@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce, Spanish, German, Swedish
 Requires at least: 3.1
 Tested up to: 3.3.1
-Stable tag: 1.3.2
+Stable tag: 1.4
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -18,6 +18,7 @@ Instead post your questions and comments on the appropriate forums. If you have 
 
 Highlighted Features:
 
+* Widgets for displaying your catalog and catalog categories in sidebars.
 * Automatic pagination with a ShortCode limit parameter.
 * Set separate height and width values for catalog thumbnails.
 * Generate individual and category pages for your entire catalog.
@@ -61,9 +62,9 @@ Please remember that CataBlog is written, maintained, supported and documented b
 The CataBlog Admin section is made and tested to work best with these browsers:
 
 1. Internet Explorer 9
-1. FireFox 4
+1. FireFox 10
 1. Safari 5
-1. Chrome 11
+1. Chrome 16
 1. JavaScript should be enabled for full support.
 
 The CataBlog LightBox and Templates are tested to work in these browsers:
@@ -99,6 +100,13 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.4 =
+* New: CataBlog Sidebar Widget for displaying your catalogs.
+* New: CataBlog Category Sidebar Widget for displaying your catalog's categories.
+* New: CataBlog Category ShortCode and PHP Function for better theme integration and easier setup.
+* Fix: Import script properly updates entries with a matching id.
+* Fix: Import script is more verbose when errors occur.
 
 = 1.3.2 =
 * New: Navigation options allow for changing the link labels and position in paginated catalogs.

@@ -1,5 +1,5 @@
 /*
- * CataBlog StyleSheet, version 1.3.2
+ * CataBlog StyleSheet, version 1.4
  */
 
 
@@ -104,11 +104,24 @@
 	padding: 5px;
 	font-weight: normal;
 	font-size: 1em;
+	overflow: hidden;
 }
 .catablog-gallery.catablog-row .catablog-description {
 	display: none;
 	margin: 0 !important;
 }
+
+
+
+/* Widget classes */
+.CataBlogWidget .catablog-gallery.catablog-row {
+	overflow: visible;
+}
+.CataBlogWidget .catablog-gallery.catablog-row .catablog-image {
+	position: relative;
+	overflow: visible;
+}
+
 
 
 /* Single and Archive view classes */

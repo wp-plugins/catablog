@@ -3,7 +3,7 @@
 Plugin Name: CataBlog
 Plugin URI: http://catablog.illproductions.com/
 Description: CataBlog is a comprehensive and effortless tool that helps you create, organize and share catalogs, stores, galleries and portfolios on your blog.
-Version: 1.3.2
+Version: 1.4
 Author: Zachary Segal
 Author URI: http://catablog.illproductions.com/about/
 
@@ -43,6 +43,7 @@ function catablog_load_plugin() {
 	require('lib/CataBlog.class.php');
 	require('lib/CataBlogItem.class.php');
 	require('lib/CataBlogDirectory.class.php');
+	require('lib/CataBlogWidget.class.php');
 
 	// create CataBlog class and hook into WordPress
 	global $wp_plugin_catablog_class;
@@ -87,6 +88,43 @@ function catablog_load_plugin() {
 		}
 		return null;
 	}
+	
+	/**
+	 * Template function for rendering a list of dropdown
+	 * menu of all CataBlog categories.
+	 *
+	 * @param boolean $is_dropdown Render the list as a dropdown menu
+	 * @param boolean $show_count Render the number of items in each category
+	 * @return void
+	 */
+	function catablog_show_categories($is_dropdown=false, $show_count=false) {
+		global $wp_plugin_catablog_class;
+		
+		$cat_args = array(
+			'taxonomy'     => $wp_plugin_catablog_class->getCustomTaxName(),
+			'title_li'     => '',
+			'orderby'      => 'name',
+			'show_count'   => $show_count,
+			'hierarchical' => false,
+
+		);
+		
+		if ($is_dropdown) {
+			$categories = $wp_plugin_catablog_class->get_terms();
+			echo '<select id="catablog-terms" name="catablog-terms" class="postform">';
+			echo '<option value="-1">'.__("Select Category").'</option>';
+			foreach ($categories as $cat) {
+				$cat_count = ($show_count) ? " ($cat->count)" : "";
+				echo '<option value="'.$cat->slug.'">'.$cat->name.$cat_count.'</option>';
+			}
+			echo '</select>';
+			
+			
+		}
+		else {
+			echo "<ul>" . wp_list_categories($cat_args) . "</ul>";
+		}
+	}
 
 }
 if (version_compare(phpversion(), '5.0.0', '>=')) {
@@ -125,7 +163,7 @@ register_activation_hook( __FILE__, 'catablog_activate' );
 
 // Remote post on deactivation
 function catablog_deactivate() {
-	$body_array = array('action'=>'deactivate', 'site-url'=>site_url(), 'version'=>'1.3.2');
+	$body_array = array('action'=>'deactivate', 'site-url'=>site_url(), 'version'=>'1.4');
 	$post_action = wp_remote_post('http://catablog.illproductions.com/tracker.php', array('body'=>$body_array));
 }
 register_deactivation_hook( __FILE__, 'catablog_deactivate' );

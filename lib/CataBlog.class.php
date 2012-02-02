@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.3.2
+ * @version 1.4
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.3.2";
+	private $version     = "1.4";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -116,6 +116,10 @@ class CataBlog {
 		add_action('wp_before_admin_bar_render', array(&$this, 'admin_bar_edit_button'), 99);
 		add_action('wp_before_admin_bar_render', array(&$this, 'admin_bar_menu'), 100);
 		
+		// register custom sidebar widgets
+		add_action( 'widgets_init', create_function('', 'return register_widget("CataBlogWidget");') );
+		add_action( 'widgets_init', create_function('', 'return register_widget("CataBlogCategoryWidget");') );
+		
 		// register admin hooks
 		if (is_admin()) {
 			
@@ -165,6 +169,7 @@ class CataBlog {
 			add_action('wp_head', array(&$this, 'frontend_header'));
 			add_action('wp_footer', array(&$this, 'frontend_footer'));
 			add_shortcode('catablog', array(&$this, 'frontend_content'));
+			add_shortcode('catablog_categories', array(&$this, 'frontend_render_categories'));
 			
 			// add content and excerpt filters if the public feature is enabled
 			$public_posts_enabled = (isset($this->options['public_posts']))? $this->options['public_posts'] : false;
@@ -1284,8 +1289,8 @@ class CataBlog {
 			}
 			else if ($extension == 'csv') {
 				$data = $this->csv_to_array($upload['tmp_name']);
-				if (empty($data)) {
-					$error = __('Uploaded CSV File Could Not Be Parsed, Check That The File\'s Format Is Valid.', 'catablog');
+				if (!is_array($data)) {
+					$error = $data;
 				}
 			}
 			else {
@@ -1332,6 +1337,10 @@ class CataBlog {
 			$outstream   = fopen("php://output", 'w');
 			$field_names = array('image','subimages','title','description','date','order','link','price','product_code','categories');
 			$header      = NULL;
+			
+			if (true) {
+				array_unshift($field_names, 'id');
+			}
 			
 			foreach ($results as $result) {
 				if (!$header) {
@@ -1848,10 +1857,10 @@ class CataBlog {
 			if (file_exists($path)) {
 				wp_enqueue_style('catablog-custom-stylesheet', $theme_catablog_stylesheet, false, $this->version);
 			}
-						
 		}
 		
 	}
+	
 	
 	public function frontend_header() {
 		if ($this->load_support_files) {
@@ -1878,6 +1887,7 @@ class CataBlog {
 			// echo "<!-- ".__('End CataBlog LightBox Inline Stylesheet')." -->\n\n";
 		}
 	}
+	
 	
 	public function frontend_footer() {
 		
@@ -1910,8 +1920,11 @@ class CataBlog {
 			}
 		}
 	}
-
+	
+	
+	// CAUSE FOUR EXTRA DATABASE HITS ON SINGLE AND ARCHIVE FRONTEND PAGES!!!
 	public function frontend_content($atts) {
+		
 		$shortcode_params = array('category'=>false, 'template'=>false, 'sort'=>'menu_order', 'order'=>'asc', 'operator'=>'IN', 'limit'=>-1, 'navigation'=>true);
 		
 		extract(shortcode_atts($shortcode_params, $atts));
@@ -2082,8 +2095,6 @@ class CataBlog {
 	}
 	
 	
-	
-	
 	public function frontend_render_catalog_row($result, $template_override=false) {
 		
 		// calculate and get values for usage in multiple tokens
@@ -2239,8 +2250,25 @@ class CataBlog {
 		return $processed_row;
 	}
 	
-
 	
+	public function frontend_render_categories($atts) {
+		$shortcode_params = array('dropdown'=>false, 'count'=>false);
+		
+		extract(shortcode_atts($shortcode_params, $atts));
+		
+		$turn_on_words = array(true, 'yes', 'on', 'enable', 'enabled');
+		$dropdown   = (in_array(strtolower($dropdown), $turn_on_words, true))? true : false;
+		$count    = (in_array(strtolower($count), $turn_on_words, true))? true : false;
+		
+		catablog_show_categories($dropdown, $count);
+	}
+	
+	
+	
+	
+	
+
+
 
 
 
@@ -2666,7 +2694,7 @@ class CataBlog {
 		foreach ($xml->item as $item) {
 			$row = array();
 			
-			$row['id']           = (integer) $item->image;
+			$row['id']           = (integer) $item->id;
 			$row['order']        = (integer) ((isset($item->order))? $item->order : $item->ordinal);
 			$row['date']         = (string) $item->date;
 			$row['image']        = (string) $item->image;
@@ -2709,27 +2737,48 @@ class CataBlog {
 	
 	public function csv_to_array($filename='', $delimiter=',') {
 		if(!file_exists($filename) || !is_readable($filename)) {
-			return FALSE;
+			return __('Uploaded CSV File Could Not Be Parsed, Check That The File\'s Format Is Valid.', 'catablog');
 		}
+		
+		$line_errors = array();
 		
 		ini_set('auto_detect_line_endings', true);
 		
 		$header = NULL;
 		$data = array();
 		if (($handle = fopen($filename, 'r')) !== FALSE) {
+			
+			$file_line = 1;
 			while (($row = fgetcsv($handle, 0, $delimiter)) !== FALSE) {
+				
+				if ($row[0] === NULL) {
+					$file_line++;
+					continue;
+				}
+				
 				if(!$header) {
 					$header = $row;
 				}
 				else {//if (count($row) == 9) {
-					$data[] = array_combine($header, $row);
+					if (count($row) === count($header)) {
+						$data[] = array_combine($header, $row);
+					}
+					else {
+						$line_errors[] = $file_line;
+					}
 				}
+				
+				$file_line++;
 			}
 			fclose($handle);
 		}
 		
 		foreach ($data as $key => $row) {
 			$data[$key]['date'] = date('Y-m-d G:i:s', strtotime($row['date']));
+		}
+		
+		if (count($line_errors) > 0) {
+			return sprintf(__("There was an error parsing your CSV file on lines: %s.", "catablog"), implode($line_errors, ', '));
 		}
 		
 		return $data;
@@ -2767,7 +2816,7 @@ class CataBlog {
 			}
 		}
 		
-		// create the neccessary new categories from the previous export
+		// create the neccessary new categories from the previous extraction
 		$new_term_made = false;
 		foreach ($make_terms as $key => $make_term) {
 			$category_slug = $this->string2slug($make_term);
@@ -2809,15 +2858,19 @@ class CataBlog {
 		// load all existing catalog item ids
 		$existant_ids = CataBlogItem::getItemIds();
 		
+		// set new order to the number of catablog posts plus one
+		// $new_order = wp_count_posts($this->custom_post_name)->publish + 1;
+		
 		// import each new catalog item
-		$new_order = wp_count_posts($this->custom_post_name)->publish + 1;
-
 		foreach ($data as $row) {
-			$error = false;
 			
-			$success_message = '<li class="updated">' . __('Update:', 'catablog') . sprintf(__(' %s updated in database.', 'catablog'), '<em>'.$row['title'].'</em>') . '</li>';
+			// set error and confermation variables
+			$error = false;
+			$success_message = '<li class="updated">' . __('Insert:', 'catablog') . sprintf(__(' %s inserted into the database.', 'catablog'), '<em>'.$row['title'].'</em>') . '</li>';
+//			$success_message = '<li class="updated">' . __('Update:', 'catablog') . sprintf(__(' %s updated in database.', 'catablog'), '<em>'.$row['title'].'</em>') . '</li>';
 			$error_message   = '<li class="error">' . __('Error:', 'catablog') . sprintf(__(' %s was not inserted into the database.', 'catablog'), '<strong>'.$row['title'].'</strong>') . '</li>';
 			
+			// Validate that the title and image values are set
 			if ($this->string_length($row['title']) < 1) {
 				$error = '<li class="error"><strong>' . __('Error:', 'catablog') . "</strong> " . __('Item had no title and could not be made.', 'catablog') . '</li>';
 			}
@@ -2831,48 +2884,57 @@ class CataBlog {
 			else {
 				
 				// transform categories array
-				$categories = $row['categories'];
-				if (is_array($categories) === false) {
-					$categories = explode('|', $categories);
-					$row['categories'] = array();
-				}
-				foreach ($categories as $cat) {
-					foreach ($import_terms as $term_id => $term_name) {
-						if (strtolower($term_name) == strtolower($cat)) {
-							$row['categories'][] = $term_id;
+				if (isset($row['categories'])) {
+					$categories = $row['categories'];
+					if (is_array($categories) === false) {
+						$categories = explode('|', $categories);
+						$row['categories'] = array();
+					}
+					foreach ($categories as $cat) {
+						foreach ($import_terms as $term_id => $term_name) {
+							if (strtolower($term_name) == strtolower($cat)) {
+								$row['categories'][] = $term_id;
+							}
 						}
-					}					
+					}
 				}
 				
 				// transform subimages array
-				$subimages = $row['subimages'];
-				if (is_array($subimages) === false) {
-					if ($this->string_length($subimages) > 0) {
-						$subimages = explode('|', $subimages);
+				if (isset($row['subimages'])) {
+					$subimages = $row['subimages'];
+					if (is_array($subimages) === false) {
+						if ($this->string_length($subimages) > 0) {
+							$subimages = explode('|', $subimages);
+						}
+						else {
+							$subimages = array();
+						}
 					}
-					else {
-						$subimages = array();
-					}
+					$row['sub_images'] = $subimages;
+					unset($row['subimages']);
 				}
-				$row['sub_images'] = $subimages;
-				unset($row['subimages']);
 				
 				// unset id if it is not already in the database.
-				if (!in_array($row['id'], $existant_ids)) {
-					$success_message = '<li class="updated">' . __('Insert:', 'catablog') . sprintf(__(' %s inserted into the database.', 'catablog'), '<em>'.$row['title'].'</em>') . '</li>';
-					unset($row['id']);
+				if (isset($row['id'])) {
+					if (in_array($row['id'], $existant_ids)) {
+						$success_message = '<li class="updated">' . __('Update:', 'catablog') . sprintf(__(' %s updated in database.', 'catablog'), '<em>'.$row['title'].'</em>') . '</li>';
+					}
+					else {
+						$success_message = '<li class="updated">' . __('Insert:', 'catablog') . sprintf(__(' %s inserted into the database.', 'catablog'), '<em>'.$row['title'].'</em>') . '</li>';
+						unset($row['id']);
+					}
 				}
 				
 				$item = new CataBlogItem($row);
 				
-				$item->setOrder($new_order);
-				
+				// $item->setOrder($new_order);
+				// var_dump($item);
 				$results = $item->save();
 				
 				if ($results === true) {
-					if (!isset($row['id'])) {
-						$existant_ids[] = $item->getId();
-					}
+					// if (!isset($row['id'])) {
+						// $existant_ids[] = $item->getId();
+					// }
 					echo $success_message;
 				}
 				else {
@@ -2880,11 +2942,11 @@ class CataBlog {
 				}
 			}
 			
-			$new_order += 1;
-					// return false;
+			// $new_order += 1;
+			// return false;
 		}
 		
-		echo '<li class="updated"><strong>' . __('All Catalog Items Processed', 'catablog') . '</strong></li>';
+		echo '<li class="updated"><strong>' . sprintf(__('%s Catalog Items Inserted', 'catablog'), count($data)) . '</strong></li>';
 		
 	}
 	

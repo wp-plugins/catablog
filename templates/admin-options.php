@@ -327,7 +327,7 @@
 			<strong><?php _e("Backing Up Images:", "catablog"); ?></strong><br />
 			<?php _e("Please copy the <em>catablog</em> directory to a secure location.", "catablog"); ?><br />
 			<?php _e("The directory for this WordPress blog can be located on your web server at:", "catablog"); ?><br />
-			<small><em><?php echo $this->directories['uploads'] ?></em></small>
+			<code><em><?php echo $this->directories['uploads'] ?></em></code>
 		</p>
 	</div>
 	
