@@ -3043,7 +3043,7 @@ class CataBlog {
 		update_option($this->options_name, $this->options);
 	}
 	
-	private function get_options() {
+	public function get_options() {
 		return get_option($this->options_name);
 	}
 	

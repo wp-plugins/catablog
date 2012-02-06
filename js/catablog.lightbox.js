@@ -168,7 +168,7 @@ jQuery(function($) {
 			}
 			
 			var title       = "<h4 class='catablog-lightbox-title'>" + meta.title + "</h4>";
-			var description = "<p class='catablog-lightbox-desc'>" + meta.description + "</p>";
+			var description = "<div class='catablog-lightbox-desc'>" + meta.description + "</div>";
 			var nav         = meta.nav;
 			var close       = meta.close
 			

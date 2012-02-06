@@ -245,6 +245,13 @@ class CataBlogCategoryWidget extends WP_Widget {
 		
 		global $wp_plugin_catablog_class;
 		
+		$catablog_options = $wp_plugin_catablog_class->get_options();
+		if (false === $catablog_options['public_posts']) {
+			printf(__("This widget requires you to enable the %sCataBlog Public Option%s.", "catablog"), '<a href="'.get_admin_url(null, 'admin.php?page=catablog-options#public').'">', '</a>');
+			return false;
+		}
+		
+		
 		$instance = wp_parse_args( (array) $instance, array(
 			'title'     => '',
 			'dropdown'  => NULL,
@@ -292,6 +299,15 @@ class CataBlogCategoryWidget extends WP_Widget {
 	}
 	
 	function widget($args, $instance) {
+		
+		global $wp_plugin_catablog_class;
+		
+		$catablog_options = $wp_plugin_catablog_class->get_options();
+		if (false === $catablog_options['public_posts']) {
+			return false;
+		}
+		
+		
 		extract($args, EXTR_SKIP);
 		
 		echo $before_widget;
@@ -305,50 +321,7 @@ class CataBlogCategoryWidget extends WP_Widget {
 		
 		// WIDGET CODE GOES HERE
 		
-		global $wp_plugin_catablog_class;
-		
-		if ($d) {
-			
-			$categories = $wp_plugin_catablog_class->get_terms();
-			echo '<select id="catablog-terms" name="catablog-terms" class="postform">';
-			echo '<option value="-1">'.__("Select Category").'</option>';
-			foreach ($categories as $cat) {
-				$cat_count = ($c) ? " ($cat->count)" : "";
-				echo '<option value="'.$cat->slug.'">'.$cat->name.$cat_count.'</option>';
-			}
-			echo '</select>';
-			
-?>
-
-<script type='text/javascript'>
-/* <![CDATA[ */
-	var cb_dropdown = document.getElementById("catablog-terms");
-	function onCataBlogCatChange() {
-		if ( cb_dropdown.options[cb_dropdown.selectedIndex].value.length > 0 ) {
-			location.href = "<?php echo home_url(); ?>/?catablog-terms="+cb_dropdown.options[cb_dropdown.selectedIndex].value;
-		}
-	}
-	cb_dropdown.onchange = onCataBlogCatChange;
-/* ]]> */
-</script>
-
-<?php
-			
-			
-		}
-		else {
-			$cat_args = array(
-				'taxonomy'     => $wp_plugin_catablog_class->getCustomTaxName(),
-				'title_li'     => '',
-				'orderby'      => 'name',
-				'show_count'   => $c,
-				'hierarchical' => $h,
-
-			);
-			
-			echo "<ul>" . wp_list_categories($cat_args) . "</ul>";
-		}
-		
+		catablog_show_categories($d, $c);
 		
 		// WIDGET CODE ENDS HERE
 		

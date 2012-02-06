@@ -59,6 +59,8 @@ function catablog_load_plugin() {
 	 * @param string $sort The column to sort your catalog by, defaults to menu_order
 	 * @param string $order The order to sort your catalog by, default to ascending
 	 * @param string $operator The operator to apply to the categories passed in, defaults to IN
+	 * @param integer $limit The number of catalog items shown per page
+	 * @param boolean $navigation Wether to render the navigation controls for this catalog.
 	 * @return void
 	 */
 	function catablog_show_items($category=null, $template=null, $sort='menu_order', $order='asc', $operator='IN', $limit=null, $navigation=true) {
@@ -90,7 +92,7 @@ function catablog_load_plugin() {
 	}
 	
 	/**
-	 * Template function for rendering a list of dropdown
+	 * Template function for rendering a list or dropdown
 	 * menu of all CataBlog categories.
 	 *
 	 * @param boolean $is_dropdown Render the list as a dropdown menu
@@ -99,6 +101,16 @@ function catablog_load_plugin() {
 	 */
 	function catablog_show_categories($is_dropdown=false, $show_count=false) {
 		global $wp_plugin_catablog_class;
+		
+		$catablog_options = $wp_plugin_catablog_class->get_options();
+		if (false === $catablog_options['public_posts']) {
+			echo "<p><strong>";
+			_e("CataBlog Error:", "catablog");
+			echo "</strong><br />";
+			printf(__("CataBlog Categories require you to enable the %sCataBlog Public Option%s.", "catablog"), '<a href="'.get_admin_url(null, 'admin.php?page=catablog-options#public').'">', '</a>');
+			echo "</p>";
+			return false;
+		}
 		
 		$cat_args = array(
 			'taxonomy'     => $wp_plugin_catablog_class->getCustomTaxName(),
@@ -119,6 +131,22 @@ function catablog_load_plugin() {
 			}
 			echo '</select>';
 			
+?>
+
+<script type='text/javascript'>
+/* <![CDATA[ */
+	var cb_dropdown = document.getElementById("catablog-terms");
+	function onCataBlogCatChange() {
+		if ( cb_dropdown.options[cb_dropdown.selectedIndex].value.length > 0 ) {
+			location.href = "<?php echo home_url(); ?>/?catablog-terms="+cb_dropdown.options[cb_dropdown.selectedIndex].value;
+		}
+	}
+	cb_dropdown.onchange = onCataBlogCatChange;
+/* ]]> */
+</script>
+
+
+<?php
 			
 		}
 		else {

@@ -1,7 +1,7 @@
 === CataBlog ===
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
-Tags: plugin, admin, image, images, posts, Post, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce, Spanish, German, Swedish
+Tags: plugin, admin, image, images, posts, Post, widget, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce, Spanish, German, Swedish
 Requires at least: 3.1
 Tested up to: 3.3.1
 Stable tag: 1.4
@@ -100,6 +100,13 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.4.1 =
+* Fix: Categories Function now disables itself if the public option is not enabled.
+* Fix: Categories Shortcode now disables itself if the public option is not enabled.
+* Fix: Categories Shortcode drop down menu now goes to category pages automatically.
+* Fix: Categories Widget now disables itself if the public option is not enabled.
+* Fix: LightBox description is now a div for increased compatibility.
 
 = 1.4 =
 * New: CataBlog Sidebar Widget for displaying your catalogs.
