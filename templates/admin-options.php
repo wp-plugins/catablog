@@ -158,14 +158,16 @@
 			<p>
 				<label for='public_post_slug'><?php _e("Individual Pages Slug:", "catablog"); ?></label>
 				<input type='text' name='public_post_slug' id='public_post_slug' size='20' value='<?php echo $public_posts_slug ?>' /><br />
-				<small><?php _e("This is the identifying slug your blog will use to create your individual catalog item pages.", "catablog"); ?></small>
+				<small><?php _e("This is the identifying slug your blog will use to create your individual catalog item pages.", "catablog"); ?></small><br />
 			</p>
 			
 			<p>
 				<label for='public_tax_slug'><?php _e("Category Pages Slug:", "catablog"); ?></label>
 				<input type='text' name='public_tax_slug' id='public_tax_slug' size='20' value='<?php echo $public_tax_slug ?>' /><br />
-				<small><?php _e("This is the identifying slug your blog will use to create your catalog archive pages.", "catablog") ?></small>
+				<small><?php _e("This is the identifying slug your blog will use to create your catalog archive pages.", "catablog") ?></small><br />
 			</p>
+			
+			<p class="error hidden"><small><?php _e("Your public slugs cannot be the same.", "catablog"); ?></small></p>
 			
 			<p>&nbsp;</p>
 			
@@ -185,7 +187,7 @@
 				<label for="nav_prev_label"><?php _e("Previous Link Label:", "catablog"); ?></label>
 				<input type="text" id="nav_prev_label" name="nav_prev_label" value="<?php echo $nav_prev_label ?>" /><br />
 				<small>
-					<?php _e("What word would you like to be used for a paginated catalog's previous page link.", "catablog"); ?>
+					<?php _e("The word you would like to be used for a paginated catalog's previous page link.", "catablog"); ?>
 				</small>
 			</p>
 			
@@ -193,7 +195,7 @@
 				<label for="nav_next_label"><?php _e("Next Link Label:", "catablog"); ?></label>
 				<input type="text" id="nav_next_label" name="nav_next_label" value="<?php echo $nav_next_label ?>" /><br />
 				<small>
-					<?php _e("What word would you like to be used for a paginated catalog's next page link.", "catablog"); ?>
+					<?php _e("The word you would like to be used for a paginated catalog's next page link.", "catablog"); ?>
 				</small>
 			</p>
 			
@@ -442,10 +444,6 @@
 		** BIND SAVE CHANGES BUTTON
 		****************************************/
 		$('#save_changes').bind('click', function(event) {
-			var form_action = $('#catablog-options').attr('action');
-			var active_tab  = $('#catablog-options-menu li.selected a').attr('href');
-			
-			$('#catablog-options').attr('action', (form_action+active_tab))
 			$('#catablog-options').submit();
 		});
 		
@@ -490,7 +488,7 @@
 		$('#thumbnail_width').bind('keyup', function(event) {
 			var v = this.value;
 			if (is_integer(v) && (v > 0)) {
-				$(this).siblings('small.error').hide();
+				$(this).siblings('small.error').addClass('hidden');
 				resize_image_adjustment();
 				jQuery('#demo_box').animate({width:(v-1)}, 100);
 			}
@@ -498,7 +496,7 @@
 		$('#thumbnail_height').bind('keyup', function(event) {
 			var v = this.value;
 			if (is_integer(v) && (v > 0)) {
-				$(this).siblings('small.error').hide();
+				$(this).siblings('small.error').addClass('hidden');
 				resize_image_adjustment();
 				jQuery('#demo_box').animate({height:(v-1)}, 100);
 			}
@@ -567,15 +565,27 @@
 		/****************************************
 		** PUBLIC PANEL
 		****************************************/
-		$('#public-catalog-slug').attr('readonly', !$('#public-catalog-items').attr('checked'));
-		$('#public-catalog-items').bind('click', function(event) {
+		$('#public_post_slug, #public_tax_slug').attr('readonly', !$('#public_posts').attr('checked'));
+		$('#public_posts').bind('click', function(event) {
 			if (this.checked) {
-				$('#public-catalog-slug').attr('readonly', false);
+				$('#public_post_slug, #public_tax_slug').attr('readonly', false);
 			}
 			else {
-				$('#public-catalog-slug').attr('readonly', true);
+				$('#public_post_slug, #public_tax_slug').attr('readonly', true);
 			}
-		});	
+		});
+		$('#public_post_slug, #public_tax_slug').bind('keyup', function() {
+			var post_slug = $('#public_post_slug').val();
+			var tax_slug  = $('#public_tax_slug').val();
+			if (post_slug == tax_slug) {
+				$(this).parent().siblings('.error').removeClass('hidden');
+			}
+			else {
+				$(this).parent().siblings('.error').addClass('hidden');
+			}
+			
+			possibly_disable_save_button();
+		})
 		
 		
 		
@@ -623,6 +633,21 @@
 		/****************************************
 		** GENERAL FORM BINDINGS
 		****************************************/
+		// check for errors when form is submitted
+		$('#catablog-options').bind('submit', function(event) {
+			if (jQuery('.error:not(.hidden)').size() > 0) {
+				alert("<?php _e('There are errors, please correct them before saving.', 'catablog'); ?>");
+				return false;
+			}
+			
+			var form_action = $(this).attr('action');
+			var active_tab  = $('#catablog-options-menu li.selected a').attr('href');
+			form_action    += (active_tab == undefined) ? "" : active_tab;
+			
+			$(this).attr('action', form_action);
+			
+		});
+		
 		// enter key submits form
 		$('#catablog-options input').bind('keydown', function(event) {
 			if(event.keyCode == 13){
@@ -648,7 +673,7 @@
 				// do nothing
 			}
 			else {
-				$(this).siblings('small.error').show();
+				$(this).siblings('small.error').removeClass('hidden');
 			}
 			
 			possibly_disable_save_button();
@@ -659,7 +684,6 @@
 			var message = $(this).html() + "?";
 			return confirm(message);
 		})
-		
 		
 		
 		

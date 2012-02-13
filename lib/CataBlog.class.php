@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.4.1
+ * @version 1.4.2
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.4.1";
+	private $version     = "1.4.2";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -676,6 +676,10 @@ class CataBlog {
 					$post_vars['public_tax_slug'] = $this->custom_tax_name;
 				}
 				
+				// make sure public post and tax slugs are not the same
+				if ($post_vars['public_post_slug'] == $post_vars['public_tax_slug']) {
+					$this->wp_error(__('Form Validation Error. Please make sure that the individual and category public page slugs are not identical.', 'catablog'));
+				}
 				
 				// flush the rewrite rules for public option updates
 				flush_rewrite_rules(false);
@@ -2349,7 +2353,7 @@ class CataBlog {
 			}
 			
 			if ($this->install_user_templates() === false) {
-				$this->wp_error(__('The CataBlog Templates Directory cannot be written. ', "catablog") . __(' Please check your server file permissions and apache configuration.', "catablog"));
+				$this->wp_error(__('The CataBlog Templates Directory cannot be written. ', "catablog") . __('Please check your server file permissions and apache configuration.', "catablog"));
 				return false;
 			}
 		}
@@ -2550,7 +2554,7 @@ class CataBlog {
 		// add new archive template to user's template files
 		if (version_compare($this->options['version'], '1.3.2', '<')) {
 			if ($this->upgrade_user_templates() === false) {
-				$this->wp_error(__('The New CataBlog Templates cannot be written. ', "catablog") . __(' Please check your server file permissions and apache configuration.', "catablog"));
+				$this->wp_error(__('The New CataBlog Templates cannot be written. ', "catablog") . __('Please check your server file permissions and apache configuration.', "catablog"));
 				return false;
 			}
 			

@@ -69,7 +69,7 @@ switch ($screen) {
 
 		$message .= "<p>";
 		$message .= __("Read more and get the entire list of token at: ", "catablog");
-		$message .= sprintf("<a href='http://catablog.illproductions.com/documentation/making-custom-templates/' target='_blank'/>%s</a>", __("CataBlog Documentation - Making Custom Templates", "catablog"));
+		$message .= sprintf(" <a href='http://catablog.illproductions.com/documentation/making-custom-templates/' target='_blank'/>%s</a>", "CataBlog Documentation - Making Custom Templates");
 		$message .= "</p>";
 		
 		

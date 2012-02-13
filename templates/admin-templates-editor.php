@@ -41,7 +41,7 @@
 					<?php endif ?>
 				<?php endforeach ?>
 				
-				<li><a href="#new" id="catablog-template-new">+ new</a></li>
+				<li><a href="#new" id="catablog-template-new"><?php printf("+ %s", __("new", "catablog")); ?></a></li>
 				
 			<?php else: ?>
 				
@@ -59,6 +59,7 @@
 			
 			<form action="admin.php?page=catablog-templates-save" method="post">
 				<textarea name="template-code" id="catablog-template-code" class="catablog-code" rows="10" cols="30" disabled="disabled"></textarea>
+				
 				<fieldset>
 					<input type="hidden" id="catablog-template-filename" name="catablog-template-filename" value="" />
 					<?php wp_nonce_field( 'catablog_templates_save', '_catablog_templates_save_nonce', false, true ) ?>

@@ -1,7 +1,6 @@
-body {
-/*	min-width: 900px !important;*/
-}
-
+/*
+ * CataBlog Admin StyleSheet
+ */
 
 .error {
 	background-color: #FFEBE8;
@@ -667,24 +666,6 @@ form#catablog-edit fieldset div {
 
 
 
-/*
-form#catablog-import-export fieldset div.controls {
-	float: left;
-	width: 280px;
-	
-}
-form#catablog-import-export fieldset div.advice {
-	margin: 0 0 0 300px;
-	border-left: 1px #e3e3e3 solid;
-	padding: 0 0 0 20px;
-}
-*/
-
-
-
-
-
-
 
 
 
@@ -698,21 +679,6 @@ form fieldset.disabled input {
 	color: #888 !important;
 }
 
-
-
-
-
-/*
-
-form#catablog-view {}
-form#catablog-view #catablog-view-menu {
-	display: block;
-	margin: 0 0 10px 0;
-	padding: 3px;
-	margin: 0 0 10px 0;
-	width: 100%;
-}
-*/
 
 
 

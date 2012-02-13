@@ -32,12 +32,12 @@
 				
 				<p id="catablog-disable-flash-form" class="hide"><small>
 					<?php _e("Flash uploader not working for you?", "catablog"); ?><br />
-					<a id="catablog-disable-flash-upload" href='#disable-flash'><?php _e("Disable Flash Upload") ?></a>
+					<a id="catablog-disable-flash-upload" href='#disable-flash'><?php _e("Disable Flash Upload", "catablog") ?></a>
 				</small></p>
 				
 				<p id="catablog-enable-flash-form" class=""><small>
 					<?php _e("Why not try the flash uploader?", "catablog"); ?><br />
-					<a id="catablog-enable-flash-upload" href='#enable-flash'><?php _e("Enable Flash Upload") ?></a>
+					<a id="catablog-enable-flash-upload" href='#enable-flash'><?php _e("Enable Flash Upload", "catablog") ?></a>
 				</small></p>
 				
 			</div>

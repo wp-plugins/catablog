@@ -70,7 +70,7 @@ function disable_save_button() {
 
 
 function possibly_disable_save_button() {
-	if (jQuery('small.error:visible').size() == 0) {
+	if (jQuery('.error:not(.hidden)').size() == 0) {
 		jQuery('#save_changes').attr('disabled', false);
 		jQuery('#save_changes').attr('class', 'button-primary');
 	}

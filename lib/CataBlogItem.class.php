@@ -4,7 +4,7 @@
  *
  * This file contains the class for each CataBlog Item that is fetched from the database.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.4.1
+ * @version 1.4.2
  * @package catablog
  */
 
@@ -401,6 +401,7 @@ class CataBlogItem {
 		$params['post_content'] = $this->description;
 		$params['menu_order']   = $this->order;
 		$params['post_date']    = $this->date;
+		$params['post_status']  = 'publish';
 		
 		if ($this->id > 0) {
 			$params['ID'] = $this->id;
