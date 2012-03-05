@@ -3,7 +3,7 @@
 Plugin Name: CataBlog
 Plugin URI: http://catablog.illproductions.com/
 Description: CataBlog is a comprehensive and effortless tool that helps you create, organize and share catalogs, stores, galleries and portfolios on your blog.
-Version: 1.4.3
+Version: 1.4.4
 Author: Zachary Segal
 Author URI: http://catablog.illproductions.com/about/
 
@@ -30,7 +30,7 @@ if ( !function_exists( 'add_action' ) ) {
 
 
 
-// Global variable to hold the catablog class.
+// Global CataBlog Singleton
 // Always reference this variable instead of instantiating a new CataBlog class.
 global $wp_plugin_catablog_class;
 
@@ -75,7 +75,7 @@ function catablog_load_plugin() {
 			$limit = -1;
 		}
 		
-		echo $wp_plugin_catablog_class->frontend_content(array('category'=>$category, 'template'=>$template, 'sort'=>$sort, 'order'=>$order, 'operator'=>$operator, 'limit'=>$limit, 'navigation'=>$navigation));
+		echo $wp_plugin_catablog_class->frontend_shortcode_catablog(array('category'=>$category, 'template'=>$template, 'sort'=>$sort, 'order'=>$order, 'operator'=>$operator, 'limit'=>$limit, 'navigation'=>$navigation));
 	}
 	
 	/**
@@ -102,56 +102,7 @@ function catablog_load_plugin() {
 	function catablog_show_categories($is_dropdown=false, $show_count=false) {
 		global $wp_plugin_catablog_class;
 		
-		$catablog_options = $wp_plugin_catablog_class->get_options();
-		if (false === $catablog_options['public_posts']) {
-			echo "<p><strong>";
-			_e("CataBlog Error:", "catablog");
-			echo "</strong><br />";
-			printf(__("CataBlog Categories require you to enable the %sCataBlog Public Option%s.", "catablog"), '<a href="'.get_admin_url(null, 'admin.php?page=catablog-options#public').'">', '</a>');
-			echo "</p>";
-			return false;
-		}
-		
-		$cat_args = array(
-			'taxonomy'     => $wp_plugin_catablog_class->getCustomTaxName(),
-			'title_li'     => '',
-			'orderby'      => 'name',
-			'show_count'   => $show_count,
-			'hierarchical' => false,
-			'echo'         => false,
-		);
-		
-		if ($is_dropdown) {
-			$categories = $wp_plugin_catablog_class->get_terms();
-			echo '<select id="catablog-terms" name="catablog-terms" class="postform">';
-			echo '<option value="-1">'.__("Select Category").'</option>';
-			foreach ($categories as $cat) {
-				$cat_count = ($show_count) ? " ($cat->count)" : "";
-				echo '<option value="'.$cat->slug.'">'.$cat->name.$cat_count.'</option>';
-			}
-			echo '</select>';
-			
-?>
-
-<script type='text/javascript'>
-/* <![CDATA[ */
-	var cb_dropdown = document.getElementById("catablog-terms");
-	function onCataBlogCatChange() {
-		if ( cb_dropdown.options[cb_dropdown.selectedIndex].value.length > 0 ) {
-			location.href = "<?php echo home_url(); ?>/?catablog-terms="+cb_dropdown.options[cb_dropdown.selectedIndex].value;
-		}
-	}
-	cb_dropdown.onchange = onCataBlogCatChange;
-/* ]]> */
-</script>
-
-
-<?php
-			
-		}
-		else {
-			echo "<ul>" . wp_list_categories($cat_args) . "</ul>";
-		}
+		echo $wp_plugin_catablog_class->frontend_render_categories($is_dropdown, $show_count);
 	}
 
 }

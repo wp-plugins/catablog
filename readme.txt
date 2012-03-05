@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, widget, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce, Spanish, German, Swedish
 Requires at least: 3.1
 Tested up to: 3.3.1
-Stable tag: 1.4.3
+Stable tag: 1.4.4
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -101,8 +101,13 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Changelog ==
 
+= 1.4.4 =
+* Fix: The CataBlog Category Shortcode now returns the HTML code instead of writing it to the main buffer.
+* Fix: All CataBlog Shortcodes are now registered in the admin side of WordPress for Relevanssi. (Thanks msaari)
+* Fix: Boolean Shortcode attributes properly understand strings 'true' and 'false'.
+
 = 1.4.3 =
-* Fix: Corrected a rendering bug in the CataBlog Categories Widget (Thanks xdmytro).
+* Fix: Corrected a rendering bug in the CataBlog Categories Widget. (Thanks xdmytro)
 
 = 1.4.2 =
 * Fix: Updated localization, including a now complete spanish translation.

@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.4.3
+ * @version 1.4.4
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.4.3";
+	private $version     = "1.4.4";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -168,8 +168,6 @@ class CataBlog {
 			add_action('wp_enqueue_scripts', array(&$this, 'frontend_init'));
 			add_action('wp_head', array(&$this, 'frontend_header'));
 			add_action('wp_footer', array(&$this, 'frontend_footer'));
-			add_shortcode('catablog', array(&$this, 'frontend_content'));
-			add_shortcode('catablog_categories', array(&$this, 'frontend_render_categories'));
 			
 			// add content and excerpt filters if the public feature is enabled
 			$public_posts_enabled = (isset($this->options['public_posts']))? $this->options['public_posts'] : false;
@@ -178,6 +176,10 @@ class CataBlog {
 				add_filter('the_excerpt', array(&$this, 'frontend_single_filter_content'), 12);	
 			}
 		}
+		
+		// register shortcodes
+		add_shortcode('catablog', array(&$this, 'frontend_shortcode_catablog'));
+		add_shortcode('catablog_categories', array(&$this, 'frontend_shortcode_catablog_categories'));
 	}
 	
 	
@@ -1848,7 +1850,9 @@ class CataBlog {
 		// $this->load_support_files = true;
 		
 		// only load support files if catablog shortcode was found on page.
-		// $this->load_support_files is hard set to true at the top of this class.
+		
+		
+		// $this->load_support_files is hard set to true as a private variable of this class.
 		if ($this->load_support_files) {
 			if ($this->options['lightbox-enabled']) {
 				wp_enqueue_script('catablog-lightbox', $this->urls['javascript'] . '/catablog.lightbox.js', array('jquery'), $this->version);
@@ -1927,7 +1931,7 @@ class CataBlog {
 	
 	
 	// CAUSE FOUR EXTRA DATABASE HITS ON SINGLE AND ARCHIVE FRONTEND PAGES!!!
-	public function frontend_content($atts) {
+	public function frontend_shortcode_catablog($atts) {
 		
 		$shortcode_params = array('category'=>false, 'template'=>false, 'sort'=>'menu_order', 'order'=>'asc', 'operator'=>'IN', 'limit'=>-1, 'navigation'=>true);
 		
@@ -1940,7 +1944,7 @@ class CataBlog {
 		$operator = str_replace("-", " ", strtoupper($operator));
 		
 		// disable navigation if it is present in the turn off words array
-		$turn_off_nav_words = array(false, 'no', 'off', 'disable', 'disabled');
+		$turn_off_nav_words = array(false, 'no', 'off', 'disable', 'disabled', 'false');
 		$navigation = (in_array(strtolower($navigation), $turn_off_nav_words))? false : true;
 		
 		$paged = 0;
@@ -2080,19 +2084,21 @@ class CataBlog {
 	public function frontend_single_filter_content($content) {
 		global $post;
 		
-		if ($post->post_type == $this->custom_post_name) {
-			$result  = CataBlogItem::postToItem($post);
-			
-			if (is_single()) {
-				$content = $this->frontend_render_catalog_row($result, 'single');
+		if (isset($post) && isset($post->post_type)) {
+			if ($post->post_type == $this->custom_post_name) {
+				$result  = CataBlogItem::postToItem($post);
+
+				if (is_single()) {
+					$content = $this->frontend_render_catalog_row($result, 'single');
+				}
+				elseif (is_archive() || is_search()) {
+					$content = $this->frontend_render_catalog_row($result, 'archive');
+				}
+				else {
+					$content = $this->frontend_render_catalog_row($result, 'default');
+				}
+
 			}
-			elseif (is_archive() || is_search()) {
-				$content = $this->frontend_render_catalog_row($result, 'archive');
-			}
-			else {
-				$content = $this->frontend_render_catalog_row($result, 'default');
-			}
-			
 		}
 		
 		return $content;
@@ -2255,20 +2261,67 @@ class CataBlog {
 	}
 	
 	
-	public function frontend_render_categories($atts) {
+	
+	
+	
+	
+	public function frontend_shortcode_catablog_categories($atts) {
 		$shortcode_params = array('dropdown'=>false, 'count'=>false);
 		
 		extract(shortcode_atts($shortcode_params, $atts));
 		
-		$turn_on_words = array(true, 'yes', 'on', 'enable', 'enabled');
+		$turn_on_words = array(true, 'yes', 'on', 'enable', 'enabled', 'true');
 		$dropdown   = (in_array(strtolower($dropdown), $turn_on_words, true))? true : false;
 		$count    = (in_array(strtolower($count), $turn_on_words, true))? true : false;
 		
-		catablog_show_categories($dropdown, $count);
+		return $this->frontend_render_categories($dropdown, $count);
 	}
 	
 	
-	
+	public function frontend_render_categories($dropdown, $count) {
+		global $wp_plugin_catablog_class;
+		$html = "";
+		
+		$catablog_options = $wp_plugin_catablog_class->get_options();
+		if (false === $catablog_options['public_posts']) {
+			$error  = "<p><strong>";
+			$error .= __("CataBlog Error:", "catablog");
+			$error .= "</strong><br />";
+			$error .= sprintf(__("CataBlog Categories require you to enable the %sCataBlog Public Option%s.", "catablog"), '<a href="'.get_admin_url(null, 'admin.php?page=catablog-options#public').'">', '</a>');
+			$error .= "</p>";
+			return $error;
+		}
+
+		$cat_args = array(
+			'taxonomy'     => $wp_plugin_catablog_class->getCustomTaxName(),
+			'title_li'     => '',
+			'orderby'      => 'name',
+			'show_count'   => $count,
+			'hierarchical' => false,
+			'echo'         => false,
+		);
+
+		if (!$dropdown) {
+			$html .= "<ul>" . wp_list_categories($cat_args) . "</ul>";
+		}
+		else {
+			$categories = $wp_plugin_catablog_class->get_terms();
+			$html .= '<select id="catablog-terms" name="catablog-terms" class="postform">';
+			$html .= '<option value="-1">'.__("Select Category").'</option>';
+			foreach ($categories as $cat) {
+				$cat_count = ($count) ? " ($cat->count)" : "";
+				$html .= '<option value="'.$cat->slug.'">'.$cat->name.$cat_count.'</option>';
+			}
+			$html .= '</select>';
+			
+			$javascript = file_get_contents($this->directories['template'] . '/widget-javascript.php');
+			$javascript = str_replace('%%HOME_URL%%', home_url(), $javascript);
+			
+			$html .= $javascript;
+		}
+		
+		return $html;
+	}
 	
 	
 

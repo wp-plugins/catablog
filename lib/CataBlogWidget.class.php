@@ -4,7 +4,7 @@
  *
  * This file contains the widget classes for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.4.3
+ * @version 1.4.4
  * @package catablog
  */
 
@@ -321,7 +321,7 @@ class CataBlogCategoryWidget extends WP_Widget {
 		
 		// WIDGET CODE GOES HERE
 		
-		catablog_show_categories($d, $c);
+		echo $wp_plugin_catablog_class->frontend_render_categories($d, $c);
 		
 		// WIDGET CODE ENDS HERE
 		
