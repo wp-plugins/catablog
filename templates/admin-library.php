@@ -33,6 +33,7 @@
 				<select id="bulk-action" name="bulk-action">
 					<option value="">- <?php _e("Bulk Actions", 'catablog'); ?></option>
 					<option value="edit-category"><?php _e("Edit Categories", 'catablog'); ?></option>
+					<option value="add-to-gallery"><?php _e("Add to Gallery", 'catablog'); ?></option>
 					<option value="delete"><?php _e("Delete", 'catablog'); ?></option>
 				</select>
 				
@@ -197,6 +198,37 @@
 			</form>
 		</div>
 		
+		
+		<div id="add-to-gallery-window" class="catablog-modal">
+			<form id="catablog-add-to-gallery" class="catablog-form" method="post" action="admin.php?page=catablog-gallery-append">
+				<h3 class="catablog-modal-title">
+					<span style="float:right;"><a href="#" class="hide-modal-window"><?php _e("[close]", 'catablog'); ?></a></span>
+					<strong><?php _e("Add Catalog Item's To Gallery", 'catablog'); ?></strong>
+				</h3>
+				
+				<div class="catablog-modal-body">
+					
+					
+					<select name="gallery_id" id="catablog_gallery_id">
+						<option value="-1">- <?php _e("Select a Gallery", "catablog"); ?></option>
+						<?php foreach(CataBlogGallery::getGalleries('title') as $gallery): ?>
+							<?php echo "<option value='{$gallery->getId()}'>{$gallery->getTitle()}</option>"?>
+						<?php endforeach; ?>
+					</select>
+					
+					<?php wp_nonce_field( 'catablog_append_gallery', '_catablog_append_gallery_nonce', false, true ) ?>
+					
+					<input type="submit" name="save" value="<?php _e("Add To Gallery", 'catablog'); ?>" class="button-primary" />
+					<p><small>
+						<?php _e("Select the gallery you would like the selected library item to be added to.", 'catablog'); ?><br />
+						<?php _e("Note that a library item may be in more than one gallery, or in a gallery more than one time.", "catablog"); ?><br />
+						<?php _e("Also note that if you delete a library item, it will be removed from all galleries.", "catablog"); ?><br />
+					</small></p>
+				</div>
+				
+			</form>
+		</div>
+		
 </div>
 
 <script type="text/javascript">
@@ -232,6 +264,19 @@
 				
 				checked_catalog_items.each(function() {
 					$('#catablog-edit-category').append("<input type='hidden' name='bulk_selection[]' value='"+this.value+"' />");
+				});
+				
+				return false;
+			}
+			
+			// add library items to a gallery
+			if ($('#bulk-action').val() == 'add-to-gallery') {
+				
+				jQuery('#add-to-gallery-window').show();
+				jQuery('#catablog_load_curtain').fadeTo(200, 0.8);
+				
+				checked_catalog_items.each(function() {
+					$('#catablog-add-to-gallery').append("<input type='hidden' name='item_ids[]' value='"+this.value+"' />");
 				});
 				
 				return false;
@@ -333,101 +378,6 @@
 			
 			return false;
 		}
-
 		
-		
-		
-		<?php /*
-		
-		// lazy load the images
-		calculate_lazy_loads();
-		$(window).bind('scroll resize', function(event) {
-			calculate_lazy_loads();
-		});
-		
-		
-		// initialize the sortables
-		var catablog_items_path = "#catablog_items";
-		$(catablog_items_path).sortable({
-			disabled: true,
-			forcePlaceholderSize: true,
-			opacity: 0.7, 
-			<?php echo ($view == 'list')? "axis: 'y'" : "" ?>
-		});
-		
-		
-		$('#enable_sort').bind('click', function(event) {
-			if ($(this).attr('disabled')) {
-				alert('<?php _e("This feature only works when viewing a single category.", "catablog"); ?>');
-				return false;
-			}
-			
-			var items = $(catablog_items_path);
-			if ($(this).hasClass('button-primary')) {
-				
-				// disable sortable and save order using ajax
-				items.sortable('option', 'disabled', true);
-				ajax_save_order();
-				
-				// remove disable link classes and show bulk selection
-				items.find('a').removeClass('cb_disabled_link');
-				items.find('input.bulk_selection').show();
-				unbind_discourage_leaving_page();
-				
-				// enable selection of text and remove sort enabled class
-				items.enableSelection();
-				items.removeClass('sort_enabled');
-				
-				// swap button to original state
-				$(this).html('Change Order').removeClass('button-primary');
-			}
-			else {
-				
-				// disable links, hide bulk selection and discourage leaving page
-				items.find('a').addClass('cb_disabled_link');
-				items.find('input.bulk_selection').hide();
-				
-				discourage_leaving_page('<?php _e("You have not saved your order. If you leave now you will loose your changes. Are you sure you want to continue leaving this page?", "catablog"); ?>');
-				
-				// disable selection of text and add sort enabled class
-				items.disableSelection();
-				items.addClass('sort_enabled');
-				
-				// enable sortable items
-				items.sortable('option', 'disabled', false);
-				
-				// display helpful message to user
-				var help_message = '<?php _e("Drag the items below to rearrange their order.", "catablog"); ?>';
-				$('#message strong').html(help_message);
-				$('#message').show();
-				
-				// swap button to active state
-				$(this).html('Save Order').addClass('button-primary');
-			}
-			
-			return false;
-		});
-		
-		function ajax_save_order() {
-			var ids = [];
-			$('#catablog_items input.bulk_selection').each(function(i) {
-				var id = $(this).attr('value');
-				ids.push(id);
-			});
-			
-			var params = {
-				'action':   'catablog_reorder',
-				'security': '<?php echo wp_create_nonce("catablog-reorder") ?>',
-				'ids[]':    ids
-			}
-			
-			$('#message strong').html('<?php _e("Saving new catalog order...", "catablog"); ?>');			
-			$.post(ajaxurl, params, function(data) {
-				$('#message strong').html('<?php _e("Your catalog items have been rearranged successfully.", "catablog"); ?>');
-			});
-		}
-		*/
-		 ?>
-
 	});
 </script>

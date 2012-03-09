@@ -101,6 +101,9 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 == Changelog ==
 
+= 1.4.8 =
+* New: Beta version of the new Galleries feature.
+
 = 1.4.4 =
 * Fix: The CataBlog Category Shortcode now returns the HTML code instead of writing it to the main buffer.
 * Fix: All CataBlog Shortcodes are now registered in the admin side of WordPress for Relevanssi. (Thanks msaari)

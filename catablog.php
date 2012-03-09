@@ -3,7 +3,7 @@
 Plugin Name: CataBlog
 Plugin URI: http://catablog.illproductions.com/
 Description: CataBlog is a comprehensive and effortless tool that helps you create, organize and share catalogs, stores, galleries and portfolios on your blog.
-Version: 1.4.4
+Version: 1.4.8
 Author: Zachary Segal
 Author URI: http://catablog.illproductions.com/about/
 
@@ -42,6 +42,7 @@ function catablog_load_plugin() {
 	// load necessary libraries
 	require('lib/CataBlog.class.php');
 	require('lib/CataBlogItem.class.php');
+	require('lib/CataBlogGallery.class.php');
 	require('lib/CataBlogDirectory.class.php');
 	require('lib/CataBlogWidget.class.php');
 

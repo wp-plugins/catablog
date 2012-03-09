@@ -4,7 +4,7 @@
  *
  * This file contains the class for each CataBlog Item that is fetched from the database.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.4.4
+ * @version 1.4.8
  * @package catablog
  */
 
@@ -264,6 +264,66 @@ class CataBlogItem {
 			$item->processPostMeta($meta);
 			
 			$items[] = $item;
+		}
+		
+		return $items;
+	}
+	
+	
+	
+	/**
+	 * Get a collection of catalog items from the database using an array of ids.
+	 * May possibly return an empty array.
+	 *
+	 * @param ids $ids The array of catalog item ids to be fetched from the database.
+	 * @return array An array of CataBlogItem objects
+	 */
+	public static function getItemsByIds($ids) {
+		
+		$items = array();
+		
+		if (!is_array($ids) || empty($ids)) {
+			$ids = array(-1);
+		}
+		
+		$cata = new CataBlogItem();
+		
+		$params = array(
+			'post_type'=> $cata->getCustomPostName(), 
+			'post__in'=> $ids,
+		);
+		
+		$posts = get_posts($params);
+		
+		// return an array of CataBlogItems
+		foreach ($posts as $post) {
+			
+			$item = new CataBlogItem();
+			
+			$item->id           = $post->ID;
+			$item->title        = $post->post_title;
+			$item->description  = $post->post_content;
+			$item->date         = $post->post_date;
+			$item->categories   = array();
+			$item->order        = $post->menu_order;
+			$item->_post_name   = $post->post_name;
+			
+			$item_cats = array();
+			if (true) { // $load_categories
+				$category_ids = array();
+				$terms = get_the_terms($post->ID, $item->_custom_tax_name);
+				if (is_array($terms)) {
+					foreach ($terms as $term) {
+						$category_ids[$term->term_id] = $term->name;
+					}
+				}
+				$item->categories = $category_ids;
+			}
+			
+			$meta = get_post_meta($post->ID, $item->_post_meta_name, true);
+			$item->processPostMeta($meta);
+			
+			$items[$item->id] = $item;
 		}
 		
 		return $items;
