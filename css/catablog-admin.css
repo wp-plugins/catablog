@@ -985,7 +985,9 @@ table.catablog_stats td {
 	display: none;
 }
 
-
+#catablog_gallery_id {
+	width: 200px;
+}
 
 #catablog_items input {
 	border: 0 none;
@@ -1028,9 +1030,12 @@ table.catablog_stats td {
 	display: inline-block;
 	vertical-align: top;
 	width: 100px;
-
 	margin: 0 5px 5px 0;
 	cursor: move;
+}
+.catablog-gallery-item img {
+	width: 100px;
+	height: auto;
 }
 .catablog-gallery-item small {
 	display: block;

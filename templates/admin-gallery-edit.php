@@ -17,17 +17,19 @@
 					<label for="catablog-gallery-form-description"><?php _e("Description", "catablog"); ?></label><br />
 					<textarea id="catablog-gallery-form-description" name="description"><?php echo $gallery->getDescription(); ?></textarea>
 					
-					<hr />
+					
 					
 					<ul>
-						<?php foreach($gallery->getItemIds() as $item_id): ?>
+					<?php foreach($gallery->getItemIds() as $item_id): ?>
+						<?php if (in_array($item_id, array_keys($gallery_items))): ?>
 							<li class="catablog-gallery-item">
 								<img src="<?php echo $this->urls['thumbnails']; ?>/<?php echo $gallery_items[$item_id]->getImage(); ?>" />
 								<small><?php echo $gallery_items[$item_id]->getTitle(); ?></small>
 								<input type="hidden" name="item_ids[]" value="<?php echo $gallery_items[$item_id]->getId(); ?>" />
 								<a href="#delete" class="catablog-delete-gallery-item" title="<?php _e("Remove Catalog Item from Gallery", "catablog"); ?>">x</a>
 							</li>
-						<?php endforeach ?>
+						<?php endif ?>
+					<?php endforeach ?>
 					</ul>
 					
 					<hr />
@@ -35,7 +37,7 @@
 					<?php wp_nonce_field( 'catablog_save_gallery', '_catablog_save_gallery_nonce', false, true ) ?>
 					<input type="hidden" name="id" value="<?php echo $gallery->getId(); ?>" />
 					<input type="submit" id="catablog-gallery-save" name="save" class="button-primary" value="<?php _e('Save Changes', 'catablog') ?>" />
-					<span><?php printf(__("or %sback to galleries%s", 'catablog'), '<a href="admin.php?page=catablog-galleries">', '</a>'); ?></span>
+					<span><?php printf(__("or %sback to galleries%s", 'catablog'), '<a href="admin.php?page=catablog-gallery">', '</a>'); ?></span>
 				</div>
 			</fieldset>
 		</form>

@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.4.8
+ * @version 1.5
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.4.8";
+	private $version     = "1.5";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -26,6 +26,7 @@ class CataBlog {
 	private $custom_post_name         = "catablog-items";
 	private $custom_post_gallery_name = "catablog-gallery";
 	private $custom_tax_name          = "catablog-terms";
+	private $custom_user_meta_name    = "catablog_screen_settings";
 	
 	// wordpress database options
 	private $options      = array();
@@ -124,6 +125,7 @@ class CataBlog {
 		// register custom sidebar widgets
 		add_action( 'widgets_init', create_function('', 'return register_widget("CataBlogWidget");') );
 		add_action( 'widgets_init', create_function('', 'return register_widget("CataBlogCategoryWidget");') );
+		
 		
 		// register admin hooks
 		if (is_admin()) {
@@ -372,7 +374,7 @@ class CataBlog {
 		// register main plugin pages
 		add_submenu_page('catablog', __("CataBlog Library", 'catablog'), __('Library', 'catablog'), $this->user_level, 'catablog', array(&$this, 'admin_library'));
 		add_submenu_page('catablog', __("Add New CataBlog Entry", 'catablog'), __('Add New', 'catablog'), $this->user_level, 'catablog-upload', array(&$this, 'admin_new'));
-		add_submenu_page('catablog', __("CataBlog Galleries", 'catablog'), __('Galleries', 'catablog'), $this->user_level, 'catablog-galleries', array(&$this, 'admin_galleries'));
+		add_submenu_page('catablog', __("CataBlog Galleries", 'catablog'), __('Galleries', 'catablog'), $this->user_level, 'catablog-gallery', array(&$this, 'admin_galleries'));
 		add_submenu_page('catablog', __("CataBlog Templates", 'catablog'), __('Templates', 'catablog'), $this->user_level, 'catablog-templates', array(&$this, 'admin_templates'));
 		add_submenu_page('catablog', __("CataBlog Options", 'catablog'), __('Options', 'catablog'), $this->user_level, 'catablog-options', array(&$this, 'admin_options'));
 		add_submenu_page('catablog', __("About CataBlog", 'catablog'), __('About', 'catablog'), $this->user_level, 'catablog-about', array(&$this, 'admin_about'));
@@ -387,7 +389,6 @@ class CataBlog {
 		
 		// register create/edit/delete catalog gallery actions
 		add_submenu_page('catablog-hidden', "Create CataBlog Gallery", "Create Gallery", $this->user_level, 'catablog-gallery-create', array(&$this, 'admin_gallery_create'));
-		add_submenu_page('catablog-hidden', "Edit CataBlog Gallery", "Edit Gallery", $this->user_level, 'catablog-gallery-edit', array(&$this, 'admin_gallery_edit'));
 		add_submenu_page('catablog-hidden', "Save CataBlog Gallery", "Save Gallery", $this->user_level, 'catablog-gallery-save', array(&$this, 'admin_gallery_save'));
 		add_submenu_page('catablog-hidden', "Append To CataBlog Gallery", "Append To Gallery", $this->user_level, 'catablog-gallery-append', array(&$this, 'admin_gallery_append_new_items'));
 		add_submenu_page('catablog-hidden', "Delete CataBlog Gallery", "Delete Gallery", $this->user_level, 'catablog-gallery-delete', array(&$this, 'admin_gallery_delete'));
@@ -399,7 +400,6 @@ class CataBlog {
 		add_submenu_page('catablog-hidden', "CataBlog Lock Folders", "Lock Folders", $this->user_level, 'catablog-lock-folders', array(&$this, 'admin_lock_folders'));
 		add_submenu_page('catablog-hidden', "CataBlog Regenerate Images", "Regenerate Images", $this->user_level, 'catablog-regenerate-images', array(&$this, 'admin_regenerate_images'));
 		add_submenu_page('catablog-hidden', "CataBlog Rescan Images", "Rescan Images Folder", $this->user_level, 'catablog-rescan-images', array(&$this, 'admin_rescan_images'));
-		add_submenu_page('catablog-hidden', "CataBlog Clear Old Data", "Clear Old Data", $this->user_level, 'catablog-clear-old-data', array(&$this, 'admin_clear_old_database'));
 		
 		// register template modification actions to hidden menu
 		add_submenu_page('catablog-hidden', "Create CataBlog Template", "Create Template", $this->user_level, 'catablog-templates-create', array(&$this, 'admin_templates_create'));
@@ -460,7 +460,7 @@ class CataBlog {
 		$wp_admin_bar->add_menu( array( 'id' => 'catablog-menu', 'title' => __( 'CataBlog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog'), ) );
 		$wp_admin_bar->add_menu( array( 'parent' => 'catablog-menu', 'id' => 'catablog-library', 'title' => __( 'Library', 'catablog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog'), ) );
 		$wp_admin_bar->add_menu( array( 'parent' => 'catablog-menu', 'id' => 'catablog-new-entry', 'title' => __( 'Add New', 'catablog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog-upload'), ) );
-		$wp_admin_bar->add_menu( array( 'parent' => 'catablog-menu', 'id' => 'catablog-galleries', 'title' => __( 'Galleries', 'catablog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog-galleries'), ) );
+		$wp_admin_bar->add_menu( array( 'parent' => 'catablog-menu', 'id' => 'catablog-gallery', 'title' => __( 'Galleries', 'catablog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog-gallery'), ) );
 		$wp_admin_bar->add_menu( array( 'parent' => 'catablog-menu', 'id' => 'catablog-templates', 'title' => __( 'Templates', 'catablog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog-templates'), ) );
 		$wp_admin_bar->add_menu( array( 'parent' => 'catablog-menu', 'id' => 'catablog-options', 'title' => __( 'Options', 'catablog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog-options'), ) );
 		$wp_admin_bar->add_menu( array( 'parent' => 'catablog-menu', 'id' => 'catablog-about', 'title' => __( 'About', 'catablog' ), 'href' => get_admin_url(null, 'admin.php?page=catablog-about'), ) );
@@ -476,12 +476,25 @@ class CataBlog {
 			return false;
 		}
 		
-		
-		if ($screen->id == 'toplevel_page_catablog') {
-			ob_start();
-			include_once($this->directories['template'] . '/admin-screen-options-library.php');
-			return ob_get_clean();
+		switch($screen->id) {
+			case 'toplevel_page_catablog':
+				ob_start();
+				include_once($this->directories['template'] . '/admin-screen-options-library.php');
+				return ob_get_clean();
+				break;
+			case 'catablog_page_catablog-upload':
+				ob_start();
+				include_once($this->directories['template'] . '/admin-screen-options-add-new.php');
+				return ob_get_clean();
+				break;
+			case 'catablog_page_catablog-gallery':
+				ob_start();
+				include_once($this->directories['template'] . '/admin-screen-options-galleries.php');
+				return ob_get_clean();
+				break;
+			
 		}
+		
 		
 	}
 	
@@ -510,7 +523,7 @@ class CataBlog {
 	
 	
 	
-	
+
 	
 	/*****************************************************
 	**       - ADMIN PAGES
@@ -535,7 +548,8 @@ class CataBlog {
 		
 		
 		$user = wp_get_current_user();
-		$screen_settings = get_user_meta($user->ID, 'catablog_screen_settings', true);
+		$user_settings = get_user_meta($user->ID, $this->custom_user_meta_name, true);
+		$screen_settings = $user_settings['library'];
 		
 		if (is_numeric($screen_settings['limit'])) {
 			$limit = $screen_settings['limit'];
@@ -859,57 +873,7 @@ class CataBlog {
 	}
 	
 	
-	public function admin_galleries() {
-		
-		
-		
-		// order and pagination defaults
-		$sort   = 'title';
-		$order  = 'asc';
-		$paged  = 1;
-		$offset = 0;
-		$limit  = 20;
-		
-		if (isset($_GET['sort'])) {
-			$sort = $_GET['sort'];
-		}
-		
-		if (isset($_GET['order'])) {
-			$order = $_GET['order'];
-		}
-		
-		if (isset($_GET['paged'])) {
-			$page_number = (int) $_GET['paged'];
-			$paged = $page_number;
-		}
-		
-		$galleries = CataBlogGallery::getGalleries($sort, $order, $offset, $limit);
-		
-		if (isset($_GET['message'])) {
-			switch ($_GET['message']) {
-				case 1:
-					$this->wp_message(__("Gallery Created Successfully.", 'catablog'));
-					break;
-				case 2:
-					$this->wp_error(__("Form Validation Error. Please check your gallery title and try again.", 'catablog'));
-					break;
-				case 3:
-					$this->wp_error(__("Form Validation Error. Please reload the page and try again.", 'catablog'));
-					break;
-				case 4:
-					$this->wp_message(__("Gallery Deleted Successfully.", 'catablog'));
-					break;
-				case 5:
-					$this->wp_error(__("Could Not Delete Gallery Because ID was non existent.", 'catablog'));
-					break;
-				case 6:
-					$this->wp_message(__('Multiple Galleries Deleted Successfully.', 'catablog'));
-					break;
-			}
-		}
-		
-		include_once($this->directories['template'] . '/admin-galleries.php');
-	}
+
 	
 	
 	public function admin_templates() {
@@ -1068,6 +1032,100 @@ class CataBlog {
 	/*****************************************************
 	**       - ADMIN GALLERY ACTIONS
 	*****************************************************/
+	public function admin_galleries() {
+		
+		// if id is set show edit form
+		if (isset($_GET['id'])) {
+			$this->admin_gallery_edit();
+			return false;
+		}
+		
+		// order and pagination defaults
+		$sort   = 'title';
+		$order  = 'asc';
+		$paged  = 1;
+		$offset = 0;
+		$limit  = 20;
+		
+		$user = wp_get_current_user();
+		$screen_settings = get_user_meta($user->ID, $this->custom_user_meta_name, true);
+		$screen_settings = $screen_settings['gallery'];
+		
+		$table_columns = array('description', 'size', 'shortcode', 'date');
+		foreach ($table_columns as $table_column) {
+			// creates variable names like $description_col_class
+			if (in_array($table_column, $screen_settings['hide-columns'])) {
+				${$table_column."_col_class"} = "hide";
+			}
+			else {
+				${$table_column."_col_class"} = "";
+			}
+		}
+		
+		if (isset($screen_settings['limit'])) {
+			$limit = $screen_settings['limit'];
+		}
+		
+		if (isset($_GET['sort'])) {
+			$sort = $_GET['sort'];
+		}
+		
+		if (isset($_GET['order'])) {
+			$order = $_GET['order'];
+		}
+		
+		if (isset($_GET['paged'])) {
+			$page_number = intval($_GET['paged']);
+			$paged = $page_number;
+		}
+		
+		$total_gallery_count = wp_count_posts($this->custom_post_gallery_name)->publish;
+		$total_gallery_pages = ceil($total_gallery_count / $limit);
+		
+		if ($paged < 1) {
+			$paged = 1;
+		}
+		if ($paged > $total_gallery_pages) {
+			$paged = $total_gallery_pages;
+		}
+		
+		$first_gallery_page_link = "?page=catablog-gallery";
+		$prev_gallery_page_link  = "?page=catablog-gallery&amp;paged=" . (($paged > 1)? ($paged - 1) : 1);
+		$next_gallery_page_link  = "?page=catablog-gallery&amp;paged=" . (($paged < $total_gallery_pages)? ($paged + 1) : $total_gallery_pages);
+		$last_gallery_page_link  = "?page=catablog-gallery&amp;paged=" . $total_gallery_pages;
+		
+		$offset = ($paged - 1) * $limit;
+		
+		$galleries = CataBlogGallery::getGalleries($sort, $order, $offset, $limit);
+		
+		if (isset($_GET['message'])) {
+			switch ($_GET['message']) {
+				case 1:
+					$this->wp_message(__("Gallery Created Successfully.", 'catablog'));
+					break;
+				case 2:
+					$this->wp_error(__("Form Validation Error. Please check your gallery title and try again.", 'catablog'));
+					break;
+				case 3:
+					$this->wp_error(__("Form Validation Error. Please reload the page and try again.", 'catablog'));
+					break;
+				case 4:
+					$this->wp_message(__("Gallery Deleted Successfully.", 'catablog'));
+					break;
+				case 5:
+					$this->wp_error(__("Could Not Delete Gallery Because ID was non existent.", 'catablog'));
+					break;
+				case 6:
+					$this->wp_message(__('Multiple Galleries Deleted Successfully.', 'catablog'));
+					break;
+			}
+		}
+		
+		include_once($this->directories['template'] . '/admin-galleries.php');
+	}
+	
+	
+	
 	public function admin_gallery_create($init_run=false) {
 		$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_create_gallery_nonce'], 'catablog_create_gallery' );
 		if ($nonce_verified) {
@@ -1080,15 +1138,15 @@ class CataBlog {
 			$validate = $new_gallery->validate();
 			if ($validate === true) {
 				$new_gallery->save();
-				header('Location: admin.php?page=catablog-galleries&message=1'); die;
+				header('Location: admin.php?page=catablog-gallery&message=1'); die;
 			}
 			else {
-				header('Location: admin.php?page=catablog-galleries&message=2'); die;
+				header('Location: admin.php?page=catablog-gallery&message=2'); die;
 			}
 			
 		}
 		else {
-			header('Location: admin.php?page=catablog-galleries&message=3'); die;
+			header('Location: admin.php?page=catablog-gallery&message=3'); die;
 		}
 	}
 	
@@ -1128,19 +1186,18 @@ class CataBlog {
 			$post_vars = array_map('stripslashes_deep', $post_vars);
 			
 			$new_gallery = new CataBlogGallery($post_vars);
-			// var_dump($new_gallery->getItemIds()); die;
 			$validate = $new_gallery->validate();
 			if ($validate === true) {
 				$new_gallery->save();
-				header('Location: admin.php?page=catablog-gallery-edit&id='.$new_gallery->getId().'&message=1'); die;
+				header('Location: admin.php?page=catablog-gallery&id='.$new_gallery->getId().'&message=1'); die;
 			}
 			else {
-				header('Location: admin.php?page=catablog-gallery-edit&id='.$new_gallery->getId().'&message=2'); die;
+				header('Location: admin.php?page=catablog-gallery&id='.$new_gallery->getId().'&message=2'); die;
 			}
 			
 		}
 		else {
-			header('Location: admin.php?page=catablog-galleries&message=3'); die;
+			header('Location: admin.php?page=catablog-gallery&id='.$_REQUEST['id'].'&message=3'); die;
 		}
 	}
 	
@@ -1186,10 +1243,10 @@ class CataBlog {
 			$gallery = CataBlogGallery::getGallery($_REQUEST['id']);
 			if ($gallery) {
 				$gallery->delete();
-				header('Location: admin.php?page=catablog-galleries&message=4'); die;
+				header('Location: admin.php?page=catablog-gallery&message=4'); die;
 			}
 			else {
-				header('Location: admin.php?page=catablog-galleries&message=5'); die;
+				header('Location: admin.php?page=catablog-gallery&message=5'); die;
 			}
 		}
 	}
@@ -1717,6 +1774,7 @@ class CataBlog {
 	
 	public function admin_remove_all() {
 		check_admin_referer('catablog-remove');
+		
 		include_once($this->directories['template'] . '/admin-remove.php');
 	}
 	
@@ -1759,24 +1817,60 @@ class CataBlog {
 	}
 	public function ajax_update_screen_settings() {
 		check_ajax_referer('catablog-update-screen-settings','security');
+		$user          = wp_get_current_user();
+		$user_settings = get_user_meta($user->ID, $this->custom_user_meta_name, true);
 		
-		$fields = array('description', 'link', 'price', 'product_code', 'categories', 'order', 'date');
-		$hide_array = is_array($_REQUEST['hide'])? $_REQUEST['hide'] : array();
+		$page = isset($_REQUEST['settings-page'])? $_REQUEST['settings-page'] : false;
+		$page_settings = array();
 		
-		$settings = array();
-		$settings['limit'] = $_REQUEST['entry-per-page'];
-		
-		$settings['hide-columns'] = array();
-		foreach ($fields as $field) {
-			if (!in_array($field, $hide_array)) {
-				$settings['hide-columns'][] = $field;
-			}
+		switch ($page) {
+			case 'library':
+				$fields = array('description', 'link', 'price', 'product_code', 'categories', 'order', 'date');
+				
+				$hide_array = array();
+				if (isset($_REQUEST['hide'])) {
+					$hide_array = $_REQUEST['hide'];
+				}
+				
+				$page_settings['limit'] = isset($_REQUEST['entry-per-page'])? intval($_REQUEST['entry-per-page']) : 5;
+				
+				$page_settings['hide-columns'] = array();
+				foreach ($fields as $field) {
+					if (!in_array($field, $hide_array)) {
+						$page_settings['hide-columns'][] = $field;
+					}
+				}
+				
+				break;
+			case 'add_new':
+			
+				// do nothing currently
+			
+				break;
+			case 'gallery':
+				$fields = array('description', 'size', 'shortcode', 'date');
+				
+				$hide_array = array();
+				if (isset($_REQUEST['hide'])) {
+					$hide_array = $_REQUEST['hide'];
+				}
+
+				$page_settings['limit'] = $_REQUEST['entry-per-page'];
+
+				$page_settings['hide-columns'] = array();
+				foreach ($fields as $field) {
+					if (!in_array($field, $hide_array)) {
+						$page_settings['hide-columns'][] = $field;
+					}
+				}
+				
+				break;
 		}
 		
-		$user  = wp_get_current_user();
-		update_user_meta($user->ID, 'catablog_screen_settings', $settings);
+		$user_settings[$page] = $page_settings;
+		update_user_meta($user->ID, $this->custom_user_meta_name, $user_settings);
 		
-		echo "({'success':true, 'message':'".__('Screen Options updated successfully.', 'catablog')."'})";
+		echo "{\"success\":true, \"message\":\"".__('Screen Options updated successfully.', 'catablog')."\"}";
 		
 		die;
 	}
@@ -1971,23 +2065,39 @@ class CataBlog {
 	public function ajax_delete_library() {
 		check_ajax_referer('catablog-delete-library', 'security');
 		
+		$gallery_counts = wp_count_posts($this->custom_post_gallery_name);
+		$item_counts    = wp_count_posts($this->custom_post_name);
 		$limit  = 20;
 		
-		$items = CataBlogItem::getItems(false, 'IN', 'date', 'asc', 0, $limit);
-		foreach ($items as $item) {
-			$item->delete(false);
+		if ($gallery_counts->publish > 0) {
+			$galleries = CataBlogGallery::getGalleries('title', 'asc',  0, $limit);
+			foreach ($galleries as $gallery) {
+				$gallery->delete();
+			}
+			
+			// NOTE that the limit value is changed here.
+			$limit = $limit - count($galleries);
 		}
 		
-		$counts = wp_count_posts($this->custom_post_name);
+		if ($limit > 0) {
+			$items = CataBlogItem::getItems(false, 'IN', 'date', 'asc', 0, $limit);
+			foreach ($items as $item) {
+				$item->delete(false);
+			}
+		}
 		
-		if ($counts->publish > 0) {
-			$message = sprintf(__('%s library items deleted successfully.', 'catablog'), count($items));
+		$gallery_counts = wp_count_posts($this->custom_post_gallery_name);
+		$item_counts    = wp_count_posts($this->custom_post_name);
+		$total_remaining = ($gallery_counts->publish) + ($item_counts->publish);
+		
+		if ($total_remaining > 0) {
+			$message = sprintf(__('%s library items deleted successfully.', 'catablog'), (20 - $Limit) );
 		}
 		else {
 			$message = sprintf(__('CataBlog Library Cleared Successfully.', 'catablog'));
 		}
 		
-		echo "({'success':true, 'remaining':$counts->publish, 'message':'$message'})";
+		echo "({'success':true, 'remaining':$total_remaining, 'message':'$message'})";
 		
 		exit;
 	}
@@ -2225,9 +2335,13 @@ class CataBlog {
 		
 		// !! NOTE: Eventually $offset and $limit should be used here for better db performance
 		$gallery = CataBlogGallery::getGallery($id);
+		if (!is_object($gallery)) {
+			return sprintf(__("Could not find a CataBlog Gallery with id %s", "catablog"), $id);
+		}
+		
 		$gallery_item_ids = $gallery->getItemIds();
 		$gallery_items = $gallery->getCataBlogItems();
-		$total = count($gallery_items);
+		$total = count($gallery_item_ids);
 		
 		if ($limit > 0) {
 			$gallery_item_ids = array_slice($gallery_item_ids, $offset, $limit, true);
@@ -2759,7 +2873,13 @@ class CataBlog {
 		if (version_compare($this->options['version'], '1.2.9', '<')) {
 			$screen_settings = array('limit'=>20);
 			$user  = wp_get_current_user();
-			update_user_meta($user->ID, 'catablog_screen_settings', $screen_settings);
+			update_user_meta($user->ID, $this->custom_user_meta_name, $screen_settings);
+		}
+		
+		if (version_compare($this->options['version'], '1.5', '<')) {
+			$user = wp_get_current_user();
+			$settings = $this->getDefaultUserSettings();
+			update_user_meta($user->ID, $this->custom_user_meta_name, $settings);
 		}
 		
 		// !! MAKE SURE NEW UPDATES GO AT THE END OF THE VERSION LIST !!
@@ -3345,6 +3465,23 @@ class CataBlog {
 			}
 		}
 		return $this->default_term;
+	}
+	
+	private function getDefaultUserSettings() {
+		$screen_settings = array();
+		
+		$screen_settings['library'] = array();
+		$screen_settings['library']['limit'] = 20;
+		$screen_settings['library']['hide-columns'] = array();
+		
+		$screen_settings['add-new'] = array();
+		$screen_settings['add-new']['hide-columns'] = array();
+		
+		$screen_settings['gallery'] = array();
+		$screen_settings['gallery']['limit'] = 20;
+		$screen_settings['gallery']['hide-columns'] = array();
+		
+		return $screen_settings;
 	}
 	
 	private function string2slug($string) {

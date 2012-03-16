@@ -4,7 +4,7 @@
  *
  * This file contains the widget classes for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.4.8
+ * @version 1.5
  * @package catablog
  */
 

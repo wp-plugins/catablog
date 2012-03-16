@@ -37,7 +37,13 @@ switch ($screen) {
 		echo $message;
 		break;
 
-
+	case 'catablog_page_catablog-gallery':
+		$message  = "<p>";
+		$message .= __("CataBlog Galleries let you create collections of library items and sort them however you want. ", "catablog");
+		$message .= __("Use the Library page's bulk actions to add library items into specific galleries.", "catablog");
+		$message .= "</p>";
+		echo $message;
+		break;
 
 	case 'catablog_page_catablog-templates':
 		$message  = "<p>";

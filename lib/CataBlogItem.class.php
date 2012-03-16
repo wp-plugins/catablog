@@ -4,7 +4,7 @@
  *
  * This file contains the class for each CataBlog Item that is fetched from the database.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.4.8
+ * @version 1.5
  * @package catablog
  */
 
@@ -207,7 +207,7 @@ class CataBlogItem {
 		$cata = new CataBlogItem();
 		
 		$params = array(
-			'post_type'=> $cata->getCustomPostName(), 
+			'post_type'=> $cata->getCustomPostName(),
 			'orderby'=> $sort,
 			'order'=>$order,
 			'offset'=>$offset,
@@ -285,14 +285,16 @@ class CataBlogItem {
 		if (!is_array($ids) || empty($ids)) {
 			$ids = array(-1);
 		}
+		$ids = array_unique($ids);
 		
 		$cata = new CataBlogItem();
 		
 		$params = array(
 			'post_type'=> $cata->getCustomPostName(), 
 			'post__in'=> $ids,
+			'numberposts'=>-1,
 		);
-		
+
 		$posts = get_posts($params);
 		
 		// return an array of CataBlogItems

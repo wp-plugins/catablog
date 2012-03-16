@@ -138,39 +138,50 @@ function renderCataBlogItem(image, type, a, nonce, total_count, callback) {
 
 
 
-
-
-
-
-
-
-
-catablog_global_lazyload_elements = null;
-	
-function calculate_lazy_loads() {
-	var scroll_top = jQuery(window).scrollTop();
-	var scroll_bottom = scroll_top + jQuery(window).height() - 20;
-	
-	if (catablog_global_lazyload_elements == null) {
-		catablog_global_lazyload_elements = jQuery('#catablog_items a.lazyload');
+function saveScreenSettings(form_element, nonce) {
+	var hide = []
+	var params = {
+		'action':   'catablog_update_screen_settings',
+		'security': nonce,
 	}
 	
-
-	catablog_global_lazyload_elements.each(function(i) {
-		var top_offset = jQuery(this).offset().top;
-	
-		if (scroll_bottom > top_offset) {
-			jQuery(this).removeClass('lazyload');
-			jQuery(this).append('<img class="cb_item_icon" />');
-			jQuery(this).children('img').hide().attr('src', jQuery(this).attr('rel')).show();
-			
-			catablog_global_lazyload_elements = catablog_global_lazyload_elements.not(this);
+	jQuery(form_element).each(function() {
+		var name  = jQuery(this).attr('name');
+		var value = jQuery(this).attr('value');
+		
+		if (jQuery(this).attr('type') == 'checkbox') {
+			if (jQuery(this).attr('checked')) {
+				hide.push(value);
+			} 
 		}
 		else {
-			return false;
+			params[name] = value;
 		}
 	});
+	
+	params.hide = hide;
+	
+	// make AJAX call
+	jQuery.post(ajaxurl, params, function(data) {
+		try {
+			var json = jQuery.parseJSON(data);
+			if (json.success == false) {
+				alert(json.error);
+			}
+			else {
+				// do nothing on success
+			}
+		}
+		catch(error) {
+			alert(error);
+		}
+		
+	});
+	
+	return false;
 }
+
+
 
 
 

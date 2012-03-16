@@ -58,16 +58,16 @@
 				<input type='text' name='thumbnail_width' id='thumbnail_width' class='integer_field' size='5' value='<?php echo $thumbnail_width ?>' />
 				<span><?php _e("pixels", "catablog"); ?></span><br />
 				
-				<small class="error hidden"><?php _e("Your thumbnail width must be a positive integer.", "catablog"); ?><br /></small>
-				<small><?php _e("this will change the thumbnail width of all your catalog items.", "catablog"); ?></small>
+				<small><?php _e("this will change the thumbnail width of all your catalog items.", "catablog"); ?></small><br />
+				<small class="catablog-form-field error hidden"><?php _e("Your thumbnail width must be a positive integer.", "catablog"); ?></small>
 			</p>
 			<p>
 				<label for='thumbnail_height'><?php _e("Thumbnail Height:", "catablog"); ?></label>
 				<input type='text' name='thumbnail_height' id='thumbnail_height' class='integer_field' size='5' value='<?php echo $thumbnail_height ?>' />
 				<span><?php _e("pixels", "catablog"); ?></span><br />
 				
-				<small class="error hidden"><?php _e("Your thumbnail height must be a positive integer.", "catablog"); ?><br /></small>
-				<small><?php _e("this will change the thumbnail height of all your catalog items.", "catablog"); ?></small>
+				<small><?php _e("this will change the thumbnail height of all your catalog items.", "catablog"); ?></small><br />
+				<small class="catablog-form-field error hidden"><?php _e("Your thumbnail height must be a positive integer.", "catablog"); ?></small>
 			</p>
 			<p>
 				<?php $checked = ($keep_aspect_ratio)? "checked='checked'" : "" ?>
@@ -121,10 +121,10 @@
 			
 			<p>
 				<label for='lightbox_image_size'><?php _e("LightBox Size:", "catablog"); ?></label>
-				<input type='text' name='lightbox_image_size' id='lightbox_image_size' class='integer_field' size='5' value='<?php echo $lightbox_size ?>' />
-				<span><?php _e("pixels", "catablog"); ?></span><br />
-				<small class="error hidden"><?php _e("Your lightbox size must be a positive integer.", "catablog"); ?><br /></small>
-				<small><?php _e("This is the maximum length of either the height or width, depending on whichever is longer in the original uploaded image.", "catablog") ?></small>
+				<input type='text' name='lightbox_image_size' id='lightbox_image_size' class='integer_field' size='3' value='<?php echo $lightbox_size ?>' />
+				<span><?php _e("pixels", "catablog"); ?></span>
+				<small><?php _e("This is the maximum length of either the height or width, depending on whichever is longer in the original uploaded image.", "catablog") ?></small><br />
+				<small class="catablog-form-field error hidden"><?php _e("Your lightbox size must be a positive integer.", "catablog"); ?></small>
 			</p>
 			
 			<hr />
@@ -167,7 +167,7 @@
 				<small><?php _e("This is the identifying slug your blog will use to create your catalog archive pages.", "catablog") ?></small><br />
 			</p>
 			
-			<p class="error hidden"><small><?php _e("Your public slugs cannot be the same.", "catablog"); ?></small></p>
+			<p class="catablog-form-field error hidden"><small><?php _e("Your public slugs cannot be the same.", "catablog"); ?></small></p>
 			
 			<p>&nbsp;</p>
 			
@@ -272,11 +272,13 @@
 			
 			<p>
 				<label for="excerpt_length"><?php _e("Excerpt Length:", "catablog"); ?></label>
-				<input type="text" id="excerpt_length" name="excerpt_length" value="<?php echo $excerpt_length ?>" maxlength="10" /><br />
+				<input type="text" id="excerpt_length" class="integer_field" name="excerpt_length" value="<?php echo $excerpt_length ?>" maxlength="5" size="3" /><br />
 				<small>
-					<?php _e("The excerpt length lets you set how many characters long the description will be when using the %EXCERPT% token.", "catablog"); ?><br />
+					<?php _e("The excerpt length lets you set how many characters long the description will be when using the %EXCERPT% token.", "catablog"); ?>
 					<?php _e("The excerpt will cut off any incomplete words at the end, so don't worry if the character count is a little different.", "catablog"); ?>
-				</small>
+				</small><br />
+				<small class="catablog-form-field error hidden"><?php _e("Your excerpt length must be a positive integer.", "catablog"); ?></small><br />
+				
 			</p>
 		</div>
 		
@@ -300,9 +302,9 @@
 	<div id="catablog-options-export" class="catablog-options-panel hide">
 		<?php $function_exists = function_exists('fputcsv') ?>
 		
-		<p><?php _e("You may export your CataBlog data to a XML or CSV file which may be used to backup and protect your work. The XML or CSV file is a simple transfer of the database information itself and the <strong>images are not included in this backup</strong>. To backup your images follow the directions at the bottom of the page.", "catablog"); ?></p>
+		<p><?php _e("You may export your CataBlog Library to a XML or CSV file which may be used to backup and protect your work. The XML or CSV file is a simple transfer of the database information itself and the <strong>images are not included in this backup</strong>. To backup your images follow the directions at the bottom of the page.", "catablog"); ?></p>
 		
-		<p>&nbsp;</p>
+		<p><?php _e("This version of CataBlog <strong>does not</strong> export galleries!", "catablog"); ?></p>
 		
 		<p>
 			<?php $link = wp_nonce_url('admin.php?page=catablog-export&amp;format=xml', 'catablog-export') ?>
@@ -326,9 +328,9 @@
 		<?php endif ?>
 		
 		<p>
-			<strong><?php _e("Backing Up Images:", "catablog"); ?></strong><br />
+			<strong><?php _e("Backing Up Images and Templates:", "catablog"); ?></strong><br />
 			<?php _e("Please copy the <em>catablog</em> directory to a secure location.", "catablog"); ?><br />
-			<?php _e("The directory for this WordPress blog can be located on your web server at:", "catablog"); ?><br />
+			<?php _e("The <em>catablog</em> directory for this WordPress installation may be located on your web server at:", "catablog"); ?><br />
 			<code><em><?php echo $this->directories['uploads'] ?></em></code>
 		</p>
 	</div>
@@ -488,7 +490,6 @@
 		$('#thumbnail_width').bind('keyup', function(event) {
 			var v = this.value;
 			if (is_integer(v) && (v > 0)) {
-				$(this).siblings('small.error').addClass('hidden');
 				resize_image_adjustment();
 				jQuery('#demo_box').animate({width:(v-1)}, 100);
 			}
@@ -496,7 +497,6 @@
 		$('#thumbnail_height').bind('keyup', function(event) {
 			var v = this.value;
 			if (is_integer(v) && (v > 0)) {
-				$(this).siblings('small.error').addClass('hidden');
 				resize_image_adjustment();
 				jQuery('#demo_box').animate({height:(v-1)}, 100);
 			}
@@ -591,51 +591,13 @@
 		
 		
 		
-		/****************************************
-		** TEMPLATE & BUY BUTTON PANELS
-		****************************************/
-		// bind the load buttons for the template drop down menus
-		$('.catablog-load-code').bind('click', function(event) {
-			var id       = this.id;
-			var selected = $(this).siblings('select').val();
-			var url = this.href + "/" + selected;
-			
-			$.get(url, function(data) {
-				$('#' + id + '-code').val(data);
-			});				
-			
-			return false;
-		});
-				
-		// bind the textareas in the catablog options form to accept tabs
-		$('#catablog-options textarea').bind('keydown', function(event) {
-			var item = this;
-			if(navigator.userAgent.match("Gecko")){
-				c = event.which;
-			}else{
-				c = event.keyCode;
-			}
-			if(c == 9){
-				replaceSelection(item,String.fromCharCode(9));
-				$("#"+item.id).focus();	
-				return false;
-			}
-		});
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		/****************************************
 		** GENERAL FORM BINDINGS
 		****************************************/
 		// check for errors when form is submitted
 		$('#catablog-options').bind('submit', function(event) {
-			if (jQuery('.error:not(.hidden)').size() > 0) {
+			if (jQuery('#catablog-options .catablog-form-field.error:not(.hidden)').size() > 0) {
 				alert("<?php _e('There are errors, please correct them before saving.', 'catablog'); ?>");
 				return false;
 			}
@@ -670,10 +632,10 @@
 			var v = this.value;
 			
 			if (is_integer(v) && (v > 0)) {
-				// do nothing
+				$(this).siblings('.error').addClass('hidden');
 			}
 			else {
-				$(this).siblings('small.error').removeClass('hidden');
+				$(this).siblings('.error').removeClass('hidden');
 			}
 			
 			possibly_disable_save_button();

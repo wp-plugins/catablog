@@ -15,6 +15,35 @@
 			</div>
 
 			<div id="select_images_form">
+				<?php /*
+				
+				<p><?php _e("Insert Newly Uploaded Images Into:", "catablog"); ?></p>
+				
+				<p>
+					<label for="catablog-upload-cateogry"><?php _e("Category", "catablog"); ?></label>
+					<select name="">
+						<?php $terms = $this->get_terms(); ?>
+						<?php $default_term = $this->get_default_term(); ?>
+						<?php foreach($terms as $term): ?>
+							<?php $selected = ($term->name == $default_term->name)? "selected='selected'" : ""; ?>
+							<?php echo "<option value='{$term->term_id}' $selected>{$term->name}</option>"; ?>
+						<?php endforeach ?>
+					</select>
+				</p>
+				
+				<p>
+					<label for="catablog-upload-gallery"><?php _e("Gallery", "catablog")?></label>
+					<select name="">
+						<option value="-1"><?php _e("- No Gallery", "catablog"); ?></option>
+						<?php $galleries = CataBlogGallery::getGalleries(); ?>
+						<?php foreach($galleries as $gallery): ?>
+							<?php echo "<option value='{$gallery->getId()}'>{$gallery->getTitle()}</option>"?>
+							
+						<?php endforeach ?>
+					</select>
+				</p>
+				*/ ?>
+				
 				<div id="upload_buttons">
 					<input type="file" id="new_image" name="new_image"  />
 					<?php wp_nonce_field( 'catablog_create', '_catablog_create_nonce', false, true ) ?>
@@ -151,6 +180,8 @@
 			upload_success_handler : catablog_swfupload_upload_success,
 			upload_complete_handler : catablog_swfupload_upload_complete,
 		});
+		
+		
 		
 		var to_show = jQuery('#dynamic_title h3:hidden');
 		var to_hide = jQuery('#dynamic_title h3:visible');

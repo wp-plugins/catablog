@@ -63,25 +63,25 @@
 			</form>
 			
 			
-				<form class="tablenav-pages" action="" method="get">
-					<span class="displaying-num"><?php printf(__('%s items', 'catablog'), $total_catalog_items) ?></span> <!-- elementos -->
-					
-					<?php if ($total_catalog_items > $limit): ?>
-					
-					<a class='first-page <?php echo ($paged < 2)? 'disabled' : '' ?>' title='<?php _e('Go to the first page', 'catablog') ?>' href='<?php echo $first_catalog_page_link ?>'>&laquo;</a>
-					<a class='prev-page <?php echo ($paged < 2)? 'disabled' : '' ?>' title='<?php _e('Go to the previous page', 'catablog') ?>' href='<?php echo $prev_catalog_page_link ?>'>&lsaquo;</a>
+			<form class="tablenav-pages" action="" method="get">
+				<span class="displaying-num"><?php printf(__('%s items', 'catablog'), $total_catalog_items) ?></span> <!-- elementos -->
 				
-					<span class="paging-input">
-						<input type="hidden" name="page" value="catablog" />
-						<input class='current-page' title='<?php _e('Current page') ?>' type='text' name='paged' value='<?php echo $paged ?>' size='1' />
-						<?php _e('of', 'catablog') ?>
-						<span class='total-pages'><?php echo $total_catalog_pages ?></span>
-					</span>
-					
-					<a class='next-page <?php echo ($paged >= $total_catalog_pages)? 'disabled' : '' ?>' title='<?php _e('Go to the next page', 'catablog') ?>' href='<?php echo $next_catalog_page_link ?>'>&rsaquo;</a>
-					<a class='last-page <?php echo ($paged >= $total_catalog_pages)? 'disabled' : '' ?>' title='<?php _e('Go to the last page', 'catablog') ?>' href='<?php echo $last_catalog_page_link ?>'>&raquo;</a>
-					<?php endif ?>
-				</form>
+				<?php if ($total_catalog_items > $limit): ?>
+				
+				<a class='first-page <?php echo ($paged < 2)? 'disabled' : '' ?>' title='<?php _e('Go to the first page', 'catablog') ?>' href='<?php echo $first_catalog_page_link ?>'>&laquo;</a>
+				<a class='prev-page <?php echo ($paged < 2)? 'disabled' : '' ?>' title='<?php _e('Go to the previous page', 'catablog') ?>' href='<?php echo $prev_catalog_page_link ?>'>&lsaquo;</a>
+			
+				<span class="paging-input">
+					<input type="hidden" name="page" value="catablog" />
+					<input class='current-page' title='<?php _e('Current page') ?>' type='text' name='paged' value='<?php echo $paged ?>' size='1' />
+					<?php _e('of', 'catablog') ?>
+					<span class='total-pages'><?php echo $total_catalog_pages ?></span>
+				</span>
+				
+				<a class='next-page <?php echo ($paged >= $total_catalog_pages)? 'disabled' : '' ?>' title='<?php _e('Go to the next page', 'catablog') ?>' href='<?php echo $next_catalog_page_link ?>'>&rsaquo;</a>
+				<a class='last-page <?php echo ($paged >= $total_catalog_pages)? 'disabled' : '' ?>' title='<?php _e('Go to the last page', 'catablog') ?>' href='<?php echo $last_catalog_page_link ?>'>&raquo;</a>
+				<?php endif ?>
+			</form>
 
 			
 			<div id="catablog-view-switch" class="view-switch">
@@ -318,6 +318,7 @@
 		
 		
 		// BIND THE SCREEN SETTINGS AJAX SAVE
+		var nonce = '<?php echo wp_create_nonce("catablog-update-screen-settings") ?>';
 		$('.hide-catablog-column-tog').bind('change', function(event) {
 			var column_class = "." + this.id.replace("hide-", "");
 			
@@ -328,56 +329,11 @@
 				$(column_class).show();
 			}
 			
-			saveScreenSettings();
+			saveScreenSettings('#adv-settings input', nonce);
 		});
 		$('#entry_per_page').bind('change', function(event) {
-			saveScreenSettings();
+			saveScreenSettings('#adv-settings input', nonce);
 		});
-		
-		// SAVE SCREEN SETTINGS PANEL WITH AJAX
-		function saveScreenSettings() {
-			var hide = []
-			var params = {
-				'action':   'catablog_update_screen_settings',
-				'security': '<?php echo wp_create_nonce("catablog-update-screen-settings") ?>',
-			}
-			
-			// var form_values = {};
-			$('#adv-settings input').each(function() {
-				var name  = $(this).attr('name');
-				var value = $(this).attr('value');
-				
-				if ($(this).attr('type') == 'checkbox') {
-					if ($(this).attr('checked')) {
-						hide.push(value);
-					} 
-				}
-				else {
-					params[name] = value;
-				}
-			});
-			
-			params.hide = hide;
-			
-			// make AJAX call
-			$.post(ajaxurl, params, function(data) {
-				try {
-					var json = eval(data);
-					if (json.success == false) {
-						alert(json.error);
-					}
-					else {
-						// do nothing on success
-					}
-				}
-				catch(error) {
-					alert(error);
-				}
-				
-			});
-			
-			return false;
-		}
 		
 	});
 </script>
