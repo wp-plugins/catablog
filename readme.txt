@@ -18,6 +18,7 @@ Instead post your questions and comments on the appropriate forums. If you have 
 
 Highlighted Features:
 
+* Easily format your catalog descriptions with the WYSIWYG TinyMCE editor.
 * Organize your catalog library into galleries with any order you want.
 * Widgets for displaying your catalog and catalog categories in sidebars.
 * Automatic pagination with a ShortCode limit parameter.
