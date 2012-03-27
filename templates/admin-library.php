@@ -154,7 +154,7 @@
 							<?php foreach ($categories as $category): ?>
 							<li>
 								<label class="catablog-category-row">
-									<input id="in-category-<?php echo $category->term_id ?>" type="checkbox" name="categories-add[]"  value="<?php echo $category->term_id ?>" />
+									<input id="in-category-<?php echo $category->term_id ?>" class="term-id" type="checkbox" name="categories-add[]"  value="<?php echo $category->term_id ?>" />
 									<span><?php echo $category->name ?></span>
 								</label>
 							</li>
@@ -174,7 +174,7 @@
 							<?php foreach ($categories as $category): ?>
 							<li>
 								<label class="catablog-category-row">
-									<input id="in-category-<?php echo $category->term_id ?>" type="checkbox" name="categories-remove[]"  value="<?php echo $category->term_id ?>" />
+									<input id="in-category-<?php echo $category->term_id ?>" class="term-id" type="checkbox" name="categories-remove[]"  value="<?php echo $category->term_id ?>" />
 									<span><?php echo $category->name ?></span>
 								</label>
 							</li>

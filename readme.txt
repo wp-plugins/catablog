@@ -1,10 +1,10 @@
 === CataBlog ===
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
-Tags: plugin, admin, image, images, posts, Post, widget, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce, Spanish, German, Swedish
+Tags: plugin, admin, image, images, posts, Post, widget, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce
 Requires at least: 3.1
 Tested up to: 3.3.1
-Stable tag: 1.5
+Stable tag: 1.6
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -63,9 +63,9 @@ Please remember that CataBlog is written, maintained, supported and documented b
 The CataBlog Admin section is made and tested to work best with these browsers:
 
 1. Internet Explorer 9
-1. FireFox 10
+1. FireFox 11
 1. Safari 5
-1. Chrome 16
+1. Chrome 17
 1. JavaScript should be enabled for full support.
 
 The CataBlog LightBox and Templates are tested to work in these browsers:
@@ -101,6 +101,17 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.6 =
+* New: WYSIWYG MCE Editor for the catalog item description.
+* New: Edit category name and slug.
+* New: Added French localization. (Thanks Nicolas)
+* Fix: Javascript syntax error fixed in Remove All CataBlog Data script.
+* Fix: Forwards browser to the CataBlog interface when a library item is loaded into the standard WP Post editor.
+* Fix: Edit library item panels do not overlap on small screens.
+* Fix: Category list line up correctly in IE now.
+* Fix: Text input boxes shouldn't cut off dangling letters in IE.
+* Fix: Modal window's position is now fixed, meaning no scrolling back to the top of the page to use it.
 
 = 1.5 =
 * New: Gallery feature for specific custom ordered groupings of catalog library items.

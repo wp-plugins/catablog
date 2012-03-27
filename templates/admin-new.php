@@ -229,7 +229,7 @@
 	
 		jQuery.post(ajaxurl, params, function(data) {
 			try {
-				var json = eval(data);
+				var json = jQuery.parseJSON(data);
 				if (json.success == false) {
 					alert(json.message);
 				}

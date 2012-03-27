@@ -24,23 +24,23 @@
 		
 		var progress_bar = $('#catablog-progress div.catablog-progress-bar');
 		
-
+		if (!confirm("Are you sure you want to remove all CataBlog data from your WordPress site? You cannot undo this.")) {
+			return false;
+		}
+		
 		
 		delete_library_part();
-		
-		
-		
 		
 		function delete_library_part() {
 			var params  = {
 				'action':   'catablog_delete_library',
-				'security': '<?php echo wp_create_nonce("catablog-delete-library") ?>',
+				'security': '<?php echo wp_create_nonce("catablog-delete-library") ?>'
 			}
 
 
 			$.post(ajaxurl, params, function(data) {
 				try {
-					var json = eval(data);
+					var json = $.parseJSON(data);
 					if (json.success == false) {
 						alert(json.error);
 					}
@@ -72,7 +72,7 @@
 			
 			$.post(ajaxurl, params, function(data) {
 				try {
-					var json = eval(data);
+					var json = $.parseJSON(data);
 					if (json.success == false) {
 						alert(json.error);
 					}

@@ -55,7 +55,7 @@
 					
 					<div id="catablog-edit-main-text">
 						<label for="catablog-title"><?php _e("Title", 'catablog'); ?></label>
-						<input type="text" name="title" id="catablog-title" maxlength="200" value="<?php echo htmlspecialchars($result->getTitle(), ENT_QUOTES, 'UTF-8') ?>" />
+						<input type="text" name="title" id="catablog-title" maxlength="200" class="catablog-entry-title" value="<?php echo htmlspecialchars($result->getTitle(), ENT_QUOTES, 'UTF-8') ?>" />
 
 						<?php if ($this->options['public_posts']): ?>
 							<p><small>Permalink: <a href="<?php echo $result->getPermalink() ?>"><?php echo $result->getPermalink() ?></a></small></p>
@@ -63,8 +63,7 @@
 							<p>&nbsp;</p>
 						<?php endif ?>
 
-						<label for="catablog-description"><?php _e("Description", 'catablog'); ?> [<small><?php _e("accepts html formatting", 'catablog'); ?></small>]</label>
-						<textarea name="description" id="catablog-description"><?php echo htmlspecialchars($result->getDescription(), ENT_QUOTES, 'UTF-8') ?></textarea>
+						<?php wp_editor($result->getDescription(), 'description', array('media_buttons'=>false, 'teeny'=>false)); ?>
 					</div>
 					
 					<div id="catablog-edit-main-save" class="clear_float">
@@ -167,15 +166,16 @@
 						<?php endif ?>
 						
 						<?php foreach ($categories as $category): ?>
-						<li>
+						<li id="catablog-category-<?php echo $category->term_id; ?>">
 							<label class="catablog-category-row">
 								<?php $checked = (in_array($category->term_id, array_keys($result->getCategories())))? 'checked="checked"' : '' ?>
-								<input id="in-category-<?php echo $category->term_id ?>" type="checkbox" <?php echo $checked ?> name="categories[]"  value="<?php echo $category->term_id ?>" />
+								<input id="in-category-<?php echo $category->term_id ?>" class="term-id" type="checkbox" <?php echo $checked ?> name="categories[]"  value="<?php echo $category->term_id ?>" />
+								<input class="term-slug" type="hidden" value="<?php echo $category->slug; ?>" />
 								<?php $default_term = $this->get_default_term() ?>
 								<?php if ($category->name != $default_term->name): ?>
-									<a href="#delete" class="catablog-category-delete hide"><small><?php _e("[DELETE]", 'catablog'); ?></small></a>
+									<a href="#edit-category-<?php echo $category->term_id; ?>" class="catablog-category-edit hide"><small><?php _e("EDIT", 'catablog'); ?></small></a>
 								<?php endif ?>
-								<span><?php echo $category->name ?></span>
+								<span class="term-name"><?php echo $category->name ?></span>
 
 							</label>
 						</li>
@@ -197,7 +197,7 @@
 					</div>
 					<p><small>
 						<?php _e("Put your items into categories to easily display subsets of your catalog on different pages.", 'catablog'); ?><br />
-						<strong><?php _e('ex:', 'catablog'); ?></strong> [catablog category="dogs and cats"]
+						<strong><?php _e('ex:', 'catablog'); ?></strong> [catablog category="dogs,cats" ]
 					</small></p>
 				</div>
 			</fieldset>
@@ -250,6 +250,7 @@
 
 			<?php wp_nonce_field( 'catablog_replace_image', '_catablog_replace_image_nonce', false, true ) ?>
 			<input type="submit" name="save" value="<?php _e("Upload", 'catablog'); ?>" class="button-primary" />
+			
 			<p><small>
 				<?php _e("Select an image on your computer to upload and replace this item's main image with.", 'catablog'); ?><br />
 				<?php _e("You may upload JPEG, GIF and PNG graphic formats only.", "catablog"); ?><br />
@@ -261,6 +262,39 @@
 	</form>
 </div>
 
+<div id="edit-category-window" class="catablog-modal">
+	<form id="catablog-edit-category" class="catablog-form" method="post" action="admin.php?page=catablog-edit-category">
+		<h3 class="catablog-modal-title">
+			<span style="float:right;"><a href="#" class="hide-modal-window"><?php _e("[close]", 'catablog'); ?></a></span>
+			<strong><?php _e("Edit Category", 'catablog'); ?></strong>
+		</h3>
+		<div class="catablog-modal-body">
+			<p><strong><?php _e("Save Other Changes Before Editing a Category.", 'catablog'); ?></strong></p>
+			
+			<p>
+				<label for="category_name"><?php _e("Category Name:", "catablog"); ?></label><br />
+				<input type="text" id="category_name" name="new_category_name" value="" /><br />
+				<small class="hidden"><?php _e("Commas, Pipes and reserved HTML characters are not allowed in category names.", "catablog"); ?></small>
+			</p>
+			
+			<p>
+				<label for="category_slug"><?php _e("Category Slug:", "catablog"); ?></label><br />
+				<input type="text" id="category_slug" name="new_category_slug" value="" /><br />
+				<small class="hidden"><?php _e("The category slug may only contain alphanumeric characters and hyphens.", "catablog"); ?></small>
+			</p>
+			
+			<?php wp_nonce_field( 'catablog_edit_category', '_catablog_edit_category_nonce', false, true ) ?>
+			<input type="hidden" name="term_id" id="term_id" value="" />
+			<input type="hidden" name="redirect_id" value="<?php echo $result->getId(); ?>" />
+			<input type="submit" name="save" value="<?php _e("Save Category Changes", 'catablog'); ?>" class="button-primary" />
+			<span><?php printf(__("or %sDelete Category%s", 'catablog'), '<a href="#delete-category" class="catablog-delete-action">', '</a>'); ?></span>
+			<p><small>
+				<?php _e("You may change the category name or slug here, you may also delete the category here.", 'catablog'); ?><br />
+				<?php _e("the slug is used in the public feature to build an archive page's url, so it should be url friendly.", "catablog"); ?><br />
+			</small></p>
+		</div>
+	</form>
+</div>
 
 <script type="text/javascript">
 	jQuery(document).ready(function($) {
@@ -298,69 +332,87 @@
 			$(this).fadeOut();
 		});
 		
+		
+		
 		// BIND CATEGORY LIST HOVERS
 		$('#catablog-category-checklist li label').live('mouseover', function(event) {
 			$(this).addClass('hover');
 			if (!catablog_category_is_loading()) {
-				$('a.catablog-category-delete', this).show();
+				$('a.catablog-category-edit', this).show();
 			}
 		});
 		$('#catablog-category-checklist li label').live('mouseout', function(event) {
 			$(this).removeClass('hover');
-			$('a.catablog-category-delete', this).hide();
+			$('a.catablog-category-edit', this).hide();
 		});
 		
-		// BIND DELETE CATEGORY LINKS
-		$('#catablog-category-checklist li label a.catablog-category-delete').live('click', function(event) {
+		
+		
+		// BIND EDIT CATEGORY LINKS
+		$('#catablog-category-checklist li label a.catablog-category-edit').live('click', function(event) {
+
 			// stop javascript event propagation and set this variable
 			event.stopPropagation();
-			var object = this;
 			
 			// make sure category changes aren't still loading
 			if (catablog_category_is_loading()) {
 				return false;
 			}
 			
-			// confirm the deletion of the category
-			if (!confirm('<?php _e("Are you sure you want to delete this category? You can not undo this.", "catablog") ?>')) {
-				return false;
-			}
+			var term_id       = $(this).siblings('.term-id').val();
+			var term_slug     = $(this).siblings('.term-slug').val();
+			var category_name = $(this).siblings('.term-name').html();
+			var editor        = $('#edit-category-window');
 			
-			// show the load indicator and disable new category button
-			catablog_category_show_load();
+			$('#term_id').val(term_id);
 			
-			// setup AJAX params
-			var term_id = $(this).siblings('input').val();
-			var params  = {
-				'action':   'catablog_delete_category',
-				'security': '<?php echo wp_create_nonce("catablog-delete-category") ?>',
-				'term_id':  term_id
-			}
+			var submit_button = editor.find('input[type="submit"]');
 			
-			// make AJAX call
-			$.post(ajaxurl, params, function(data) {
-				try {
-					var json = eval(data);
-					if (json.success == false) {
-						alert(json.error);
-					}
-					else {
-						var category = $(object).parent().parent();
-						$(category).animate({'opacity':0, 'height':0, 'padding':0, 'margin':0}, 500, function() {
-							$(category).remove();
-						});
+			editor.find('#category_name').val(category_name).bind('keyup', function() {
+				if (null == this.value.match(/^[^\,\<\>\'\"\&\|]+$/i)) {
+					if (false == $(this).parent().hasClass('error')) {
+						$(this).parent().addClass('error');
+						$(this).siblings('small').removeClass('hidden');
+						submit_button.attr('disabled', true).attr('class', 'button');
 					}
 				}
-				catch(error) {
-					alert(error);
+				else {
+					if (true == $(this).parent().hasClass('error')) {
+						$(this).parent().removeClass('error');
+						$(this).siblings('small').addClass('hidden');
+						submit_button.attr('disabled', false).attr('class', 'button-primary');
+					}
 				}
-				
-				// hide load indicator and enable new category button
-				catablog_category_hide_load();
 			});
+			
+			editor.find('#category_slug').val(term_slug).bind('keyup', function() {
+				if (null == this.value.match(/^[a-z0-9\-]+$/i)) {
+					if (false == $(this).parent().hasClass('error')) {
+						$(this).parent().addClass('error');
+						$(this).siblings('small').removeClass('hidden');
+						submit_button.attr('disabled', true).attr('class', 'button');
+					}
+				}
+				else {
+					if (true == $(this).parent().hasClass('error')) {
+						$(this).parent().removeClass('error');
+						$(this).siblings('small').addClass('hidden');
+						submit_button.attr('disabled', false).attr('class', 'button-primary');
+					}
+				}
+			});
+			
+			
+			// show the edit category window
+			editor.show();
+			jQuery('#catablog_load_curtain').fadeTo(200, 0.8);
+			
+			
 			
 			return false;
 		});
+		
+		
 		
 		
 		// BIND NEW CATEGORY TEXT INPUT BOX
@@ -371,6 +423,117 @@
 				return false;
 			}
 		});
+		
+		
+		
+		// BIND SAVE CATEGORY FORM
+		$("#catablog-edit-category").bind('submit', function() {
+			var form = this;
+			$(form).find('input[type="submit"]').attr('disabled', true).attr('class', 'button');
+			
+			catablog_category_show_load();
+			
+			var term_id   = $('#term_id').val();
+			var term_name = $('#category_name').val();
+			var term_slug = $('#category_slug').val();
+			
+			var params  = {
+				'action':   'catablog_edit_category',
+				'security': '<?php echo wp_create_nonce("catablog-edit-category") ?>',
+				'term_id':  term_id,
+				'new_category_name': term_name,
+				'new_category_slug': term_slug
+			}
+
+			// make AJAX call
+			$.post(ajaxurl, params, function(data) {
+				try {
+					var json = $.parseJSON(data);
+					if (json.success == false) {
+						alert(json.error);
+					}
+					else {
+						jQuery('.catablog-modal:visible').hide();
+						jQuery('#catablog_load_curtain').fadeOut(200);
+						
+						$(form).find('input[type="submit"]').attr('disabled', false).attr('class', 'button-primary');
+						
+						var edited_category = '#catablog-category-'+term_id;
+						$(edited_category).find('.term-name').html(json.name);
+						$(edited_category).find('.term-slug').val(json.slug);
+						
+						$(edited_category).addClass('highlight');
+						
+						catablog_category_hide_load();
+						
+						var pause = setTimeout(function() {
+							$(edited_category).switchClass( "highlight", "", 1000);
+						}, 2000);
+						
+					}
+				}
+				catch(error) {
+					alert(error);
+				}
+
+				// hide load indicator and enable new category button
+				catablog_category_hide_load();
+			});
+			
+			
+			return false;
+		});
+		
+		
+		
+		// BIND DELETE CATEGORY
+		$('.catablog-delete-action').bind('click', function(event) {
+			
+			// confirm the deletion of the category
+			if (!confirm('<?php _e("Are you sure you want to delete this category? You can not undo this.", "catablog") ?>')) {
+				return false;
+			}
+			
+			// show the load indicator and disable new category button
+			catablog_category_show_load();
+
+			// setup AJAX params
+			var term_id = $('#term_id').val();
+			var params  = {
+				'action':   'catablog_delete_category',
+				'security': '<?php echo wp_create_nonce("catablog-delete-category") ?>',
+				'term_id':  term_id
+			}
+
+			// make AJAX call
+			$.post(ajaxurl, params, function(data) {
+				try {
+					var json = $.parseJSON(data);
+					if (json.success == false) {
+						alert(json.error);
+					}
+					else {
+						jQuery('.catablog-modal:visible').hide();
+						jQuery('#catablog_load_curtain').fadeOut(200);
+						
+						var deleted_category = '#catablog-category-'+term_id;
+						$(deleted_category).animate({'opacity':0, 'height':0, 'padding':0, 'margin':0}, 800, function() {
+							$(deleted_category).remove();
+						});
+					}
+				}
+				catch(error) {
+					alert(error);
+				}
+
+				// hide load indicator and enable new category button
+				catablog_category_hide_load();
+			});
+			
+			return false;
+			
+		});
+		
 		
 		
 		// BIND NEW CATEGORY FORM
@@ -400,18 +563,24 @@
 			// make AJAX call
 			$.post(ajaxurl, params, function(data) {
 				try {
-					var json = eval(data);
+					var json = $.parseJSON(data);
 					if (json.success == false) {
 						alert(json.error);
 					}
 					else {
-						var html = '<li><label class="catablog-category-row">';
-						html    += ' <input id="in-category-'+json.id+'" type="checkbox" checked="checked" name="categories[]" value="'+json.id+'" /> ';
-						html    += ' <a href="#delete" class="catablog-category-delete hide"><small><?php echo _e("[DELETE]", "catablog") ?></small></a>';
-						html    += ' <span>'+json.name+'</span> ';
+						var html = '<li id="catablog-category-'+json.id+'" class="highlight"><label class="catablog-category-row">';
+						html    += ' <input id="in-category-'+json.id+'" class="term-id" type="checkbox" name="categories[]" value="'+json.id+'" /> ';
+						html    += ' <input class="term-slug" type="hidden" value="'+json.slug+'" />'
+						html    += ' <a href="#edit-category-'+json.id+'" class="catablog-category-edit hide"><small><?php _e("EDIT", "catablog"); ?></small></a>';
+						html    += ' <span class="term-name">'+json.name+'</span> ';
 						html    += '</label></li>';
 						
 						$('#catablog-category-checklist').append(html);
+						
+						var pause = setTimeout(function() {
+							$("#catablog-category-"+json.id+"").switchClass( "highlight", "", 1000);
+						}, 2000);
+						
 						$('#catablog-new-category-input').val('');
 					}
 				}

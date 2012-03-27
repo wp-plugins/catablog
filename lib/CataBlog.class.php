@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.5
+ * @version 1.6
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.5";
+	private $version     = "1.6";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -110,7 +110,6 @@ class CataBlog {
 	
 	
 	
-	
 	/*****************************************************
 	**       - WORDPRESS HOOKS
 	*****************************************************/
@@ -129,6 +128,9 @@ class CataBlog {
 		
 		// register admin hooks
 		if (is_admin()) {
+			
+			// forward the user to the catablog admin interface if a catablog item is loaded in the post editor (post.php)
+			add_action('posts_selection', array(&$this, 'forward_if_catablog_item_in_post_editor'), 100);
 			
 			// register admin menus, stylesheets and javascript libraries
 			add_action('admin_menu', array(&$this, 'admin_menu'));
@@ -155,11 +157,11 @@ class CataBlog {
 			}
 			
 			// register admin ajax actions
-			// add_action('wp_ajax_catablog_reorder', array($this, 'ajax_reorder_items'));
 			add_action('wp_ajax_catablog_micro_save', array($this, 'ajax_micro_save'));
 			add_action('wp_ajax_catablog_update_screen_settings', array($this, 'ajax_update_screen_settings'));
 			
 			add_action('wp_ajax_catablog_new_category', array($this, 'ajax_new_category'));
+			add_action('wp_ajax_catablog_edit_category', array($this, 'ajax_edit_category'));
 			add_action('wp_ajax_catablog_delete_category', array($this, 'ajax_delete_category'));
 			
 			add_action('wp_ajax_catablog_flush_fullsize', array($this, 'ajax_flush_fullsize'));
@@ -367,6 +369,18 @@ class CataBlog {
 		}
 	}
 	
+	public function forward_if_catablog_item_in_post_editor() {
+		global $post, $pagenow;
+		
+		if ($pagenow == 'post.php') {
+			if (isset($post)) {
+				if ($post->post_type === $this->custom_post_name) {
+					header('Location: admin.php?page=catablog&id='.$_GET['post']); die;
+				}
+			}
+		}
+	}
+	
 	public function admin_menu() {
 		// register main plugin menu
 		add_menu_page("CataBlog Library", "CataBlog", $this->user_level, 'catablog', array(&$this, 'admin_library'), $this->urls['plugin']."/images/catablog-icon-16.png");
@@ -425,6 +439,7 @@ class CataBlog {
 		if ($catablog_page) {
 			wp_enqueue_script('jquery');		
 			wp_enqueue_script('jquery-ui-sortable');
+			wp_enqueue_script('jquery-effects-core');
 			wp_enqueue_script('farbtastic');
 			wp_enqueue_script('catablog-admin', $this->urls['javascript'] . '/catablog-admin.js', array('jquery'), $this->version);
 		}
@@ -1320,28 +1335,30 @@ class CataBlog {
 				$post_vars = $_POST;
 				$post_vars = array_map('stripslashes_deep', $post_vars);
 				
+				// trim whitespace from specific fields
 				$trim_fields = array('title', 'description', 'link', 'price', 'product_code');
 				foreach ($trim_fields as $field) {
 					$post_vars[$field] = trim($post_vars[$field]);
 				}
 				
+				// build a categories array
 				$post_vars['categories'] = (isset($post_vars['categories']))? $post_vars['categories'] : array();
 				foreach ($post_vars['categories'] as $key => $value) {
 					$post_vars['categories'][$key] = (integer) $value;
 				}
 				
+				// build a sub images array
 				if (!isset($post_vars['sub_images'])) {
 					$post_vars['sub_images'] = array();
 				}
 				
+				// create new object with modified $post_vars variable
 				$result    = new CataBlogItem($post_vars);
 				$validate  = $result->validate();
 				if ($validate === true) {
 					$write = $result->save();
 					if ($write === true) {
-						// wp_redirect( self_admin_url("admin.php?page=catablog&message=1") );
 						header('Location: admin.php?page=catablog&id=' . $result->getId() . '&message=1'); die;
-						// header('Location: admin.php?page=catablog&id=' . $result->getId() . '&message=1'); die;
 					}
 					else {
 						$error = $write;
@@ -1798,22 +1815,28 @@ class CataBlog {
 		$id = $_REQUEST['id'];
 		$item = CataBlogItem::getItem($id);
 		
-		$title = $_REQUEST['title'];
-		$description = $_REQUEST['description'];
+		if ($item !== NULL) {
+			$title = $_REQUEST['title'];
+			$description = $_REQUEST['description'];
 
-		$item->setTitle($title);
-		$item->setDescription($description);
-		$validate = $item->validate();
-		if ($validate === true) {
-			$item->save();
-			echo "({'success':true, 'message':'".__('micro save successful','catablog')."'})";
+			$item->setTitle($title);
+			$item->setDescription($description);
+			$validate = $item->validate();
+			if ($validate === true) {
+				$item->save();
+				$success_message = __('micro save successful','catablog');
+				echo "{\"success\":true, \"message\":\"$success_message\"}";
+			}
+			else {
+				echo "{\"success\":false, \"message\":\"$validate\"}";
+			}
 		}
 		else {
-			echo "({'success':false, 'message':'$validate'})";
+			$error_message = __("Cannot save changes because the item id could not be found in the database.", "catablog");
+			echo "{\"success\":false, \"message\":\"$error_message\"}";
 		}
 		
-		
-		die;
+		exit;
 	}
 	public function ajax_update_screen_settings() {
 		check_ajax_referer('catablog-update-screen-settings','security');
@@ -1875,21 +1898,6 @@ class CataBlog {
 		die;
 	}
 	
-	public function ajax_reorder_items() {
-		check_ajax_referer('catablog-reorder', 'security');
-		
-		$ids    = $_POST['ids'];
-		$length = count($ids);
-		
-		for ($i=0; $i < $length; $i++) {
-			$item = CataBlogItem::getItem($ids[$i]);
-			$item->setOrder($i);
-			$item->save();
-		}
-		
-		exit;
-	}
-	
 	public function ajax_new_category() {
 		check_ajax_referer('catablog-new-category', 'security');
 		
@@ -1899,25 +1907,26 @@ class CataBlog {
 		
 		$char_check = preg_match('/[\,\|\<\>\&\'\"]/', $category_name);
 		if ($char_check > 0) {
-			echo "({'success':false, 'error':'".__('Commas, Pipes and reserved HTML characters are not allowed in category names.', 'catablog')."'})";
+			echo "{\"success\":false, \"error\":\"".__('Commas, Pipes and reserved HTML characters are not allowed in category names.', 'catablog')."\"}";
 			die;
 		};
 		
 		$string_length = $this->string_length($category_name);
 		if ($string_length < 1) {
-			echo "({'success':false, 'error':'".__('Please be a little more specific with your category name.', 'catablog')."'})";
+			echo "{\"success\":false, \"error\":\"".__('Please be a little more specific with your category name.', 'catablog')."\"}";
 			die;
 		}
 		
 		$name_exists = false;
 		foreach ($this->get_terms() as $term) {
+			// var_dump($term);
 			if (strtolower($category_name) == strtolower($term->name)) {
 				$name_exists = true;
 				break;
 			}
 		}
 		if ($name_exists) {
-			echo "({'success':false, 'error':'".__('There already is a category with that name.', 'catablog')."'})";
+			echo "{\"success\":false, \"error\":\"".__('There already is a category with that name.', 'catablog')."\"}";
 			die;
 		}
 		
@@ -1926,14 +1935,38 @@ class CataBlog {
 		$new_category_id = wp_insert_term($category_name, $this->custom_tax_name, $attr);
 		
 		if (isset($new_category_id['term_id'])) {
-			echo "({'success':true, 'id':".$new_category_id['term_id'].", 'name':'$category_name'})";
+			echo "{\"success\":true, \"id\":{$new_category_id['term_id']}, \"slug\":\"$category_slug\", \"name\":\"$category_name\"}";
 		}
 		else {
 			$error_string = "";
 			foreach ($new_category_id->get_error_messages() as $error) {
 				$error_string = $error . "  ";
 			}
-			echo "({'success':false, 'error':'".$error_string."'})";			
+			echo "{\"success\":false, \"error\":\"$error_string\"}";
+		}
+		
+		exit;
+	}
+	
+	public function ajax_edit_category() {
+		check_ajax_referer('catablog-edit-category', 'security');
+		
+		$id   = $_POST['term_id'];
+		$name = $_POST['new_category_name'];
+		$slug = $_POST['new_category_slug'];
+		$slug = $this->string2slug($slug);
+		
+		$term = get_term_by('id', $id, $this->custom_tax_name);
+		if ($term !== NULL) {
+			$update_fields = array();
+			$update_fields['name'] = $name;
+			$update_fields['slug'] = $slug;
+			wp_update_term($id, $this->custom_tax_name, $update_fields);
+			
+			echo "{\"success\":true, \"name\":\"$name\", \"slug\":\"$slug\", \"message\":\"".__("Term Edited Successfully", "catablog")."\"}";
+		}
+		else {
+			echo "{\"success\":false, \"message\":\"".__("Term did not exist, please refresh page and try again.", "catablog")."\"}";
 		}
 		
 		exit;
@@ -1946,10 +1979,10 @@ class CataBlog {
 		
 		$term_id = (integer) trim($_REQUEST['term_id']);
 		if(wp_delete_term($term_id, $this->custom_tax_name)) {
-			echo "({'success':true, 'message':'".__('Term Removed Successfully.', 'catablog')."'})";
+			echo "{\"success\":true, \"message\":\"".__('Term Removed Successfully.', 'catablog')."\"}";
 		}
 		else {
-			echo "({'success':false, 'error':'".__('Term did not exist, please refresh page and try again.', 'catablog')."'})";
+			echo "{\"success\":false, \"error\":\"".__('Term did not exist, please refresh page and try again.', 'catablog')."\"}";
 		}
 		
 		exit;
@@ -2091,13 +2124,13 @@ class CataBlog {
 		$total_remaining = ($gallery_counts->publish) + ($item_counts->publish);
 		
 		if ($total_remaining > 0) {
-			$message = sprintf(__('%s library items deleted successfully.', 'catablog'), (20 - $Limit) );
+			$message = sprintf(__('%s library items deleted successfully.', 'catablog'), ($limit) );
 		}
 		else {
 			$message = sprintf(__('CataBlog Library Cleared Successfully.', 'catablog'));
 		}
 		
-		echo "({'success':true, 'remaining':$total_remaining, 'message':'$message'})";
+		echo "{\"success\":true, \"remaining\":$total_remaining, \"message\":\"$message\"}";
 		
 		exit;
 	}
@@ -2110,7 +2143,7 @@ class CataBlog {
 		$message =  __("CataBlog Options, Directories and Terms Deleted Successfully.", "catablog");
 		$message2 = __("You may now go deactivate CataBlog and nothing will be left behind.", "catablog");
 		$message3 = __("If you want to continue using CataBlog, go to the library to re-install necessary settings.", "catablog");
-		echo "({'success':true, 'message':'$message', 'message2':'$message2', 'message3':'$message3'})";
+		echo "{\"success\":true, \"message\":\"$message\", \"message2\":\"$message2\", \"message3\":\"$message3\"}";
 		
 		exit;
 	}
@@ -2373,6 +2406,14 @@ class CataBlog {
 	
 	
 	private function frontend_build_navigation($paged, $limit, $total) {
+		// $total = floor($total / $limit);
+
+		// $unlikely_integar = 9999999999999;
+		// $base = str_replace($unlikely_integar, '%#%', get_pagenum_link($unlikely_integar));
+
+		// $args = array('format'=>'?catablog-paged=%#%', 'total'=>$total, 'current'=>max(1, $paged), 'mid_size'=>2, 'end_size'=>2);
+		// echo paginate_links($args);
+		
 		if ($limit > 0) {
 			
 			$next_params = $_GET;
@@ -3485,8 +3526,10 @@ class CataBlog {
 	}
 	
 	private function string2slug($string) {
-		$slug = "catablog-term-" . strtolower($string);
-		return  wp_unique_term_slug($slug, null);
+		$slug = strtolower($string);
+		$slug = sanitize_title($slug);
+		$slug = @wp_unique_term_slug($slug);
+		return $slug;
 	}
 	
 	private function string_length($string) {

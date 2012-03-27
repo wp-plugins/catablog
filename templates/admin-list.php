@@ -62,7 +62,7 @@
 			
 			<?php if (count($results) < 1): ?>
 				<tr>
-					<td colspan='8'><p>
+					<td colspan='10'><p>
 						<p><?php _e("No catalog items found", 'catablog'); ?></p>
 
 						<?php if ($selected_term !== false): ?>
