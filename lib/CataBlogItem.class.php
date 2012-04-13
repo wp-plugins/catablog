@@ -4,7 +4,7 @@
  *
  * This file contains the class for each CataBlog Item that is fetched from the database.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.6
+ * @version 1.6.1
  * @package catablog
  */
 
@@ -496,18 +496,7 @@ class CataBlogItem {
 			
 			// save the new image's title to the post meta
 			$this->updatePostMeta();
-
-			// TODO REMOVE THIS NO LONGER NEEDED
-			// remove the old files associated with this item
-			// foreach ($this->_old_images as $old_image) {
-			// 	foreach (array('originals', 'thumbnails', 'fullsize') as $folder) {
-			// 		$path = $this->_wp_upload_dir."/catablog/$folder/$old_image";
-			// 		if (is_file($path)) {
-			// 			unlink($path);
-			// 		}					
-			// 	}
-			// }
-
+			
 			// generate a thumbnail for the new image
 			$this->makeThumbnail();
 			if ($this->_options['lightbox-render']) {
@@ -691,14 +680,21 @@ class CataBlogItem {
 				return "<strong>$filepath</strong>: " . __("Original image could not be loaded because it is an unsupported format.", 'catablog');
 		}
 		
+		// copy the image upload onto the canvas
 		imagecopyresampled($canvas, $upload, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+		
+		// remove the upload image from memory
+		if(is_resource($upload)) @imagedestroy($upload);
 		
 		// rotate the final canvas to match the original files orientation
 		$canvas = $this->rotateImage($canvas, $original);
 		
+		// save the canvas
 		imagejpeg($canvas, $fullsize, $quality);
 		
-		imagedestroy($canvas);
+		// remove the canvas from memory
+		if(is_resource($canvas)) @imagedestroy($canvas);
+		
 		
 		return true;
 	}
@@ -770,9 +766,17 @@ class CataBlogItem {
 			}
 		}
 		
+		// copy the upload image onto the canvas
 		imagecopyresampled($canvas, $upload, $params['left'], $params['top'], 0, 0, $params['width'], $params['height'], $width, $height);
+		
+		// remove the upload from memory
+		if(is_resource($upload)) @imagedestroy($upload);
+		
+		// save the canvas
 		imagejpeg($canvas, $thumb, $quality);
-		imagedestroy($canvas);
+		
+		// remove the canvas from memory
+		if(is_resource($canvas)) @imagedestroy($canvas);
 		
 		return true;
 	}

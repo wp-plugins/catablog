@@ -99,21 +99,69 @@ if ($valid_image === true) {
 	
 	$new_item->save();
 	
+	// load the user settings for which fields to display in the quick edit form.
+	$user = wp_get_current_user();
+	$user_settings = get_user_meta($user->ID, $wp_plugin_catablog_class->get_custom_user_meta_name(), true);
+	if ($user_settings === "") {
+		$user_settings = $wp_plugin_catablog_class->getDefaultUserSettings();
+		update_user_meta($user->ID, $wp_plugin_catablog_class->custom_user_meta_name, $user_settings);
+	}
+	$hide_fields = $user_settings['add-new']['hide-columns'];
+
 	$html  = "<li>";
-	
+
 	$html .= "<div class='button-elements'>";
 	$html .= "<img src='".$wp_plugin_catablog_class->urls['thumbnails'] . '/' . $new_item->getImage()."' />";
 	$html .= "</div>";
-	
+
 	$html .= "<div class='text-elements'>";
-	$html .= "<input type='text' name='title' class='title' value='".$new_item->getTitle()."' />";
-	$html .= "<input type='hidden' name='id' class='id' value='".$new_item->getId()."' />";
-	$html .= "<textarea name='description' class='description'>".$new_item->getDescription()."</textarea>";
+	
+	$html .= "<table class='catablog-micro-save-field-table'>";
+	$html .= "<tr><th>".__("Title", "catablog")."</th>";
+	$html .= "<td>";
+	$html .= "<input type='text' name='title' class='title catablog-micro-editor-field' maxlength='200' value='".$new_item->getTitle()."' />";
+	$html .= "<span class='error hide'>".__("An item must have a title of at least one alphanumeric character.", "catablog")."</span>";
+	$html .= "</td></tr>\n";
+
+	if (!in_array('description', $hide_fields)) {
+		$html .= "<tr><th>".__("Description", "catablog")."</th>";
+		$html .= "<td><textarea name='description' class='description catablog-micro-editor-field'>".$new_item->getDescription()."</textarea></td></tr>\n";
+	}
+
+	$fields = array('link', 'price', 'product_code', 'order');
+	foreach ($fields as $field) {
+		if (!in_array($field, $hide_fields)) {
+			$readable_name = ucwords(str_replace('_', ' ', $field));
+			$function_name = 'get' . str_replace(' ', '', $readable_name);
+
+			$html .= "<tr><th>$readable_name</th>";
+			$html .= "<td>";
+			$html .= "<input type='text' name='$field' class='$field catablog-micro-editor-field' value='".$new_item->$function_name()."' />";
+			switch ($field) {
+				case 'price':
+					$html .= "<span class='error hide'>".__("An item's price must be a positive number.", "catablog")."</span>";
+					break;
+				case 'order':
+					$html .= "<span class='error hide'>".__("An item's order value must be a positive integer.", "catablog")."</span>";
+					break;
+			}
+			$html .= "</td></tr>\n";
+		}
+	}
+
+	$html .= "<tr><th>&nbsp;</th>";
+	$html .= "<td>";
 	$html .= "<input type='button' class='button-primary' name='submit' value='".__('Save Changes', 'catablog')."' />";
+	$html .= "<input type='hidden' name='id' class='id' value='".$new_item->getId()."' />";
+	$html .= "</td></tr>";
+
+	$html .= "</table>";
+
+
 	$html .= "</div>";
-	
+
 	$html .= "</li>";
-	
+
 	die($html);
 }
 else {

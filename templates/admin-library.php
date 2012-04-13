@@ -275,6 +275,8 @@
 				jQuery('#add-to-gallery-window').show();
 				jQuery('#catablog_load_curtain').fadeTo(200, 0.8);
 				
+				jQuery('#catablog-add-to-gallery').children('input[name="item_ids[]"]').remove();
+				
 				checked_catalog_items.each(function() {
 					$('#catablog-add-to-gallery').append("<input type='hidden' name='item_ids[]' value='"+this.value+"' />");
 				});

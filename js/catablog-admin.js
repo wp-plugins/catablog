@@ -54,6 +54,10 @@ function is_integer(s) {
 	return (s.toString().search(/^[0-9]+$/) == 0);
 }
 
+function is_float(s) {
+	return (s.toString().search(/^[0-9\.]+$/) == 0);
+}
+
 
 
 

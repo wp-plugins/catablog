@@ -65,9 +65,17 @@ function catablog_swfupload_upload_success(file, serverData) {
 		jQuery('#catablog-progress-current-upload .catablog-progress-bar').width('100%');
 		
 		jQuery('#new-items-editor').append(serverData);
-		jQuery('#new-items-editor li:last input.title').bind('keypress', catablog_micro_save);
-		jQuery('#new-items-editor li:last input.button-primary').bind('click', catablog_micro_save);
-		jQuery('#new-items-editor li:last').show(800);
+		var new_item = jQuery('#new-items-editor li:last');
+		
+		new_item.find('input').bind('keypress', catablog_micro_save);
+		
+		new_item.find('input.title').bind('keyup', catablog_verify_title);
+		new_item.find('input.price').bind('keyup', catablog_verify_price);
+		new_item.find('input.order').bind('keyup', catablog_verify_order);
+		
+		new_item.find('input.button-primary').unbind('keypress').bind('click', catablog_micro_save);
+		
+		new_item.show(800);
 		
 	} catch(error) {
 		this.debug(error);

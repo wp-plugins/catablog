@@ -516,6 +516,7 @@ form#catablog-edit fieldset > div {
 }
 
 #new-items-editor li .text-elements {
+	position: relative;
 	margin-left: 112px;
 	min-height: 100px;
 }
@@ -538,9 +539,28 @@ form#catablog-edit fieldset > div {
 
 
 
-
-
-
+.catablog-micro-save-field-table {
+	width: 100%;
+}
+.catablog-micro-save-field-table th {
+	font-weight: bold;
+	text-align: right;
+	vertical-align: top;
+	width: 8em;
+	line-height: 2;
+}
+.catablog-micro-save-field-table td {
+	position: relative;
+}
+.catablog-micro-save-field-table td input.catablog-micro-editor-field {
+	display: block;
+	width: 100%;
+}
+.catablog-micro-save-field-table td input.catablog-micro-editor-field.error {
+	border: 1px #c00 solid;
+	background-color: #FFEBE8;
+	padding: 3px;
+}
 
 
 #catablog-options-menu {

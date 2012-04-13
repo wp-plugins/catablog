@@ -153,8 +153,8 @@
 			file_size_limit : "<?php printf('%sB', ini_get('upload_max_filesize')) ?>",
 		
 			button_placeholder_id : 'upload_buttons',
-			button_image_url : "<?php echo includes_url('images/upload.png'); ?>",
-			button_width : 132,
+			button_image_url : "<?php echo $this->urls['images'] . '/upload.png'; ?>",
+			button_width : 190,
 			button_height: 23,
 			button_text : '<span class="button"><?php _e("Select Images", "catablog") ?></span>',
 			button_text_style : ".button { text-align:center; font-weight:bold; font-family:'Lucida Grande',Verdana,Arial,'Bitstream Vera Sans',sans-serif; font-size:10px; text-shadow: 0 1px 0 #FFFFFF; color:#464646;}",
@@ -192,7 +192,59 @@
 		jQuery('#upload-form-left-col').addClass('left-col');
 		jQuery('#upload-form-right-col').addClass('right-col');
 	});
-
+	
+	
+	function catablog_verify_title(event) {
+		// return true;
+		var title = jQuery.trim(this.value);
+		
+		if (title.length < 1 || title.length > 200) {
+			if (true == jQuery(this).siblings('.error').hasClass('hide')) {
+				jQuery(this).siblings('.error').removeClass('hide');
+				jQuery(this).closest('table').find('input.button-primary').attr('disabled', true);
+			}
+		}
+		else {
+			if (false == jQuery(this).siblings('.error').hasClass('hide')) {
+				jQuery(this).siblings('.error').addClass('hide');
+				jQuery(this).closest('table').find('input.button-primary').attr('disabled', false);
+			}
+		}
+	}
+	
+	function catablog_verify_price(event) {
+		var price = this.value;
+		if (!is_float(price)) {
+			if (true == jQuery(this).siblings('.error').hasClass('hide')) {
+				jQuery(this).siblings('.error').removeClass('hide');
+				jQuery(this).closest('table').find('input.button-primary').attr('disabled', true);
+			}
+		}
+		else {
+			if (false == jQuery(this).siblings('.error').hasClass('hide')) {
+				jQuery(this).siblings('.error').addClass('hide');
+				jQuery(this).closest('table').find('input.button-primary').attr('disabled', false);
+			}
+		}
+	}
+	
+	function catablog_verify_order(event) {
+		var order = this.value;
+		if (!is_integer(order)) {
+			if (true == jQuery(this).siblings('.error').hasClass('hide')) {
+				jQuery(this).siblings('.error').removeClass('hide');
+				jQuery(this).closest('table').find('input.button-primary').attr('disabled', true);
+			}
+		}
+		else {
+			if (false == jQuery(this).siblings('.error').hasClass('hide')) {
+				jQuery(this).siblings('.error').addClass('hide');
+				jQuery(this).closest('table').find('input.button-primary').attr('disabled', false);
+			}
+		}
+	}
+	
+	
 	function catablog_micro_save(event) {
 		if (event.type == "keypress") {
 			var key_code = (event.keyCode ? event.keyCode : event.which);
@@ -200,17 +252,36 @@
 				return true;
 			}
 		}
-	
-		if (this.disabled) {
+		
+		var container = jQuery(this).closest('li');
+		var button    = container.find('input.button-primary');
+		
+		// if the button is disabled, stop the script
+		if (button.attr('disabled') != undefined) {
+			alert("<?php _e('There are errors, please correct them before saving.', 'catablog'); ?>");
 			return false;
 		}
-	
-		var container   = jQuery(this).closest('li');
-		var button      = container.find('input.button-primary');
-		var title       = container.find('input.title').val();
-		var description = container.find('textarea.description').val();
-		var item_id     = container.find('input.id').val();
-	
+		
+		// get field values from the DOM
+		var item_id      = container.find('input.id').val();
+		var title        = container.find('input.title').val();
+		var description  = container.find('textarea.description').val();
+		var link         = container.find('input.link').val();
+		var price        = container.find('input.price').val();
+		var product_code = container.find('input.product_code').val();
+		var order        = container.find('input.order').val();
+		
+		if (description == undefined) {
+			description = '';
+		}
+		
+		// trim field values
+		title        = jQuery.trim(title);
+		link         = jQuery.trim(link);
+		price        = jQuery.trim(price);
+		product_code = jQuery.trim(product_code);
+		order        = jQuery.trim(order);
+		
 		container.find('input').attr('readonly', true);
 		container.find('textarea').attr('readonly', true);
 		container.next('li').find('input.title').focus().select();
@@ -220,13 +291,17 @@
 		button.after('<span class="ajax-save">&nbsp;</span>');
 	
 		var params = {
-			'action':   'catablog_micro_save',
-			'security': '<?php echo wp_create_nonce("catablog-micro-save") ?>',
-			'id' : item_id,
-			'title' : title,
-			'description': description
+			'action'       : 'catablog_micro_save',
+			'security'     : '<?php echo wp_create_nonce("catablog-micro-save") ?>',
+			'id'           : item_id,
+			'title'        : title,
+			'description'  : description,
+			'link'         : link,
+			'price'        : price,
+			'product_code' : product_code,
+			'order'        : order
 		}
-	
+		
 		jQuery.post(ajaxurl, params, function(data) {
 			try {
 				var json = jQuery.parseJSON(data);
@@ -242,9 +317,16 @@
 				alert(error);
 			}
 		});					
-	
+		
 		return false;
 	}
-		
+	
+	
+	// BIND THE SCREEN SETTINGS AJAX SAVE
+	var nonce = '<?php echo wp_create_nonce("catablog-update-screen-settings") ?>';
+	jQuery('.hide-catablog-column-tog').bind('change', function(event) {
+		saveScreenSettings('#adv-settings input', nonce);
+	});
+	
 
 </script>

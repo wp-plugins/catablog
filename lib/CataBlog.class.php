@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.6
+ * @version 1.6.1
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.6";
+	private $version     = "1.6.1";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -27,6 +27,7 @@ class CataBlog {
 	private $custom_post_gallery_name = "catablog-gallery";
 	private $custom_tax_name          = "catablog-terms";
 	private $custom_user_meta_name    = "catablog_screen_settings";
+	private $pagination_query_label   = "catablog-page";
 	
 	// wordpress database options
 	private $options      = array();
@@ -1816,11 +1817,26 @@ class CataBlog {
 		$item = CataBlogItem::getItem($id);
 		
 		if ($item !== NULL) {
-			$title = $_REQUEST['title'];
-			$description = $_REQUEST['description'];
+			$title        = $_REQUEST['title'];
+			$description  = $_REQUEST['description'];
+			$link         = $_REQUEST['link'];
+			$price        = $_REQUEST['price'];
+			$product_code = $_REQUEST['product_code'];;
+			$order        = $_REQUEST['order'];
 
 			$item->setTitle($title);
 			$item->setDescription($description);
+			$item->setLink($link);
+			$item->setProductCode($product_code);
+			
+			if (is_numeric($price) && $price > 0) {
+				$item->setPrice($price);
+			}
+			
+			if (is_numeric($order) && $order > 0) {
+				$item->setOrder($order);
+			}
+			
 			$validate = $item->validate();
 			if ($validate === true) {
 				$item->save();
@@ -1865,9 +1881,21 @@ class CataBlog {
 				}
 				
 				break;
-			case 'add_new':
+			case 'add-new':
 			
-				// do nothing currently
+				$fields = array('description', 'link', 'price', 'product_code', 'order');
+				
+				$hide_array = array();
+				if (isset($_REQUEST['hide'])) {
+					$hide_array = $_REQUEST['hide'];
+				}
+				
+				$page_settings['hide-columns'] = array();
+				foreach ($fields as $field) {
+					if (!in_array($field, $hide_array)) {
+						$page_settings['hide-columns'][] = $field;
+					}
+				}
 			
 				break;
 			case 'gallery':
@@ -2259,11 +2287,14 @@ class CataBlog {
 		$turn_off_nav_words = array(false, 'no', 'off', 'disable', 'disabled', 'false');
 		$navigation = (in_array(strtolower($navigation), $turn_off_nav_words))? false : true;
 		
-		$paged = 0;
-		if (isset($_REQUEST['catablog-paged'])) {
-			$paged = (is_numeric($_REQUEST['catablog-paged']))? intval($_REQUEST['catablog-paged']) : 0;
+		// initialize pagination variables
+		$paged = 1;
+		$total = 0;
+		
+		if (isset($_REQUEST[$this->pagination_query_label])) {
+			$paged = (is_numeric($_REQUEST[$this->pagination_query_label]))? intval($_REQUEST[$this->pagination_query_label]) : 1;
 		}
-		$offset = $paged * $limit;
+		$offset = ($paged-1) * $limit;
 		
 		// get items from cache and start the output buffer
 		if (isset($this->results_cache)) {
@@ -2360,11 +2391,14 @@ class CataBlog {
 		$turn_off_nav_words = array(false, 'no', 'off', 'disable', 'disabled', 'false');
 		$navigation = (in_array(strtolower($navigation), $turn_off_nav_words))? false : true;
 		
-		$paged = 0;
-		if (isset($_REQUEST['catablog-paged'])) {
-			$paged = (is_numeric($_REQUEST['catablog-paged']))? intval($_REQUEST['catablog-paged']) : 0;
+		// initialize pagination variables
+		$paged = 1;
+		$total = 0;
+		
+		if (isset($_REQUEST[$this->pagination_query_label])) {
+			$paged = (is_numeric($_REQUEST[$this->pagination_query_label]))? intval($_REQUEST[$this->pagination_query_label]) : 1;
 		}
-		$offset = $paged * $limit;
+		$offset = ($paged-1) * $limit;
 		
 		// !! NOTE: Eventually $offset and $limit should be used here for better db performance
 		$gallery = CataBlogGallery::getGallery($id);
@@ -2374,6 +2408,13 @@ class CataBlog {
 		
 		$gallery_item_ids = $gallery->getItemIds();
 		$gallery_items = $gallery->getCataBlogItems();
+		
+		foreach ($gallery_item_ids as $key => $item_id) {
+			if (!isset($gallery_items[$item_id])) {
+				unset($gallery_item_ids[$key]);
+			}
+		}
+		
 		$total = count($gallery_item_ids);
 		
 		if ($limit > 0) {
@@ -2406,57 +2447,39 @@ class CataBlog {
 	
 	
 	private function frontend_build_navigation($paged, $limit, $total) {
-		// $total = floor($total / $limit);
-
-		// $unlikely_integar = 9999999999999;
-		// $base = str_replace($unlikely_integar, '%#%', get_pagenum_link($unlikely_integar));
-
-		// $args = array('format'=>'?catablog-paged=%#%', 'total'=>$total, 'current'=>max(1, $paged), 'mid_size'=>2, 'end_size'=>2);
-		// echo paginate_links($args);
+		$total = ceil($total / $limit);
 		
-		if ($limit > 0) {
-			
-			$next_params = $_GET;
-			$prev_params = $_GET;
-			
-			$next_params['catablog-paged'] = $paged + 1;
-			$prev_params['catablog-paged'] = $paged - 1;
-			
-			if ($prev_params['catablog-paged'] < 1) {
-				unset($prev_params['catablog-paged']);
-			}
-			
-			$next_http_query = http_build_query($next_params, '&amp;');
-			$prev_http_query = http_build_query($prev_params, '&amp;');
-			
-			if ($paged < 1) {
-				$prev_link = "<span class='catablog-navigation-link catablog-previous-link catablog-disabled'>".$this->options['nav-prev-label']."</span>";
-			}
-			else {
-				$prev_link = "<a href='?$prev_http_query' class='catablog-navigation-link catablog-previous-link'>".$this->options['nav-prev-label']."</a>";
-			}
-			
-			if ((($paged * $limit) + $limit) >= $total) {
-				$next_link = "<span class='catablog-navigation-link catablog-next-link catablog-disabled'>".$this->options['nav-next-label']."</span>";
-			}
-			else {
-				$next_link = "<a href='?$next_http_query' class='catablog-navigation-link catablog-next-link'>".$this->options['nav-next-label']."</a>";
-			}
-			
-			$first_item  = (($paged * $limit));
-			$first_item  = ($total > 0)? $first_item + 1 : $first_item;
-			$last_item   = $first_item + ($limit - 1);
-			$last_item   = ($last_item > $total)? $total : $last_item;
-			$meta_spacer = "<span class='catablog-navigation-meta-spacer'> - </span>";
-			$page_meta = "";
-			
-			if ($this->options['nav-show-meta'] === true) {
-				$page_meta  = $meta_spacer;
-				$page_meta .= "<span class='catablog-navigation-meta'>" . sprintf(__("%s to %s of %s", "catablog"), $first_item, $last_item, $total) . "</span>";
-			}
-			
-			echo "<p class='catablog-navigation'>{$prev_link}{$meta_spacer}{$next_link}{$page_meta}</p>";
+		$query_vars = $_GET;
+		unset($query_vars[$this->pagination_query_label]);
+		
+		$prev_label = (isset($this->options['nav-prev-label']))? $this->options['nav-prev-label'] : __("Previous", "catablog");
+		$next_label = (isset($this->options['nav-next-label']))? $this->options['nav-next-label'] : __("Next", "catablog");
+		
+		$args = array(
+			'base'     => get_permalink() . "%_%",
+			'add_args' => $query_vars,
+			'format'   => "?" . $this->pagination_query_label . "=%#%",
+			'total'    => $total,
+			'current'  => max(1, $paged),
+			'mid_size' => 2,
+			'end_size' => 1,
+			'prev_text' => $prev_label,
+			'next_text' => $next_label,
+		);
+		
+		echo "<div class='catablog-navigation'>";
+		
+		if ($paged < 2) {
+			echo "<span class='catablog-navigation-link catablog-first-page-link catablog-disabled'>".$this->options['nav-prev-label']."</span> ";
 		}
+		
+		echo paginate_links($args);
+		
+		if ($paged == $total) {
+			echo " <span class='catablog-navigation-link catablog-first-page-link catablog-disabled'>".$this->options['nav-next-label']."</span>";
+		}
+		
+		echo "</div>";
 	}
 	
 	
@@ -3480,6 +3503,10 @@ class CataBlog {
 	
 	public function get_options() {
 		return get_option($this->options_name);
+	}
+	
+	public function get_custom_user_meta_name() {
+		return $this->custom_user_meta_name;
 	}
 	
 	public function get_terms($reload=false) {
