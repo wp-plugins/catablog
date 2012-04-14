@@ -86,25 +86,25 @@ function possibly_disable_save_button() {
 
 
 
-function renderCataBlogItems(images, type, nonce, callback) {
+function renderCataBlogItems(images, type, nonce, key, callback) {
 	jQuery('body').ajaxError(function(event, j, a) {
 		jQuery('#catablog-console').append('<li class="error">' + j.responseText + '</li>');
-		renderCataBlogItem(images.shift(), type, images, nonce, total_count, callback);
+		renderCataBlogItem(images.shift(), type, images, nonce, total_count, key, callback);
 	});
 	
 	total_count = images.length;
-	renderCataBlogItem(images.shift(), type, images, nonce, total_count, callback);
+	renderCataBlogItem(images.shift(), type, images, nonce, total_count, key, callback);
 }
 
-function renderCataBlogItem(image, type, a, nonce, total_count, callback) {
+function renderCataBlogItem(image, type, a, nonce, total_count, key, callback) {
 	var progress_bar  = jQuery('#catablog-progress-' + type + ' .catablog-progress-bar');
 	var progress_text = jQuery('#catablog-progress-' + type + ' .catablog-progress-text');
 	var percent_complete = 100 - ((a.length / total_count) * 100);
 	
-	
 	var params = {
 		'image':    image,
 		'type':     type,
+		'key':      key,
 		'count':    a.length,
 		'total':    total_count,
 		'action':   'catablog_render_images',
@@ -113,7 +113,7 @@ function renderCataBlogItem(image, type, a, nonce, total_count, callback) {
 	
 	jQuery.post(ajaxurl, params, function(data, textStatus, jqXHR) {
 		try {
-			data = eval(data);
+			data = jQuery.parseJSON(data);
 
 			var progress_message = data.message;
 			progress_text.html(percent_complete.toFixed(1)+'% <small>'+progress_message+'</small>');
@@ -129,7 +129,7 @@ function renderCataBlogItem(image, type, a, nonce, total_count, callback) {
 		
 		if (a.length > 0) {
 			progress_bar.css('width', percent_complete + '%');
-			renderCataBlogItem(a.shift(), type, a, nonce, total_count, callback);
+			renderCataBlogItem(a.shift(), type, a, nonce, total_count, key, callback);
 		}
 		else {
 			progress_bar.css('width', '100%');

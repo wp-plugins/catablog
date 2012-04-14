@@ -11,24 +11,6 @@
 	
 	<?php $this->render_catablog_admin_message() ?>
 	
-	<?php if ($recalculate_thumbnails): ?>
-		<div id="catablog-progress-thumbnail" class="catablog-progress">
-			<div class="catablog-progress-bar"></div>
-			<h3 class="catablog-progress-text"><?php _e("Processing Thumbnail Images...", "catablog"); ?></h3>
-		</div>
-	<?php endif ?>
-	
-	<?php if ($recalculate_fullsize): ?>
-		<div id="catablog-progress-fullsize" class="catablog-progress">
-			<div class="catablog-progress-bar"></div>
-			<h3 class="catablog-progress-text"><?php _e("Waiting For LightBox Rendering To Finish...", "catablog"); ?></h3>
-		</div>
-	<?php endif ?>
-	
-	<?php if ($recalculate_thumbnails || $recalculate_fullsize): ?>
-		<ul id="catablog-console" class="catablog-console-mini"></ul>
-	<?php endif ?>
-	
 	<form action="admin.php?page=catablog-options" id="catablog-options" class="catablog-form" method="post">
 		
 		<ul id="catablog-options-menu" class="catablog-panel-tabs">
@@ -39,10 +21,7 @@
 			<li><a href="#navigation" title=""><?php _e("Navigation", "catablog"); ?></a></li>
 			<li><a href="#title" title=""><?php _e("Title Link", "catablog"); ?></a></li>
 			<li><a href="#description" title=""><?php _e("Description", "catablog"); ?></a></li>
-
 			<?php /*
-			<li><a href="#template" title="Control how your catalog is rendered"><?php _e("Template", "catablog"); ?></a></li>
-			<li><a href="#store" title=""><?php _e("Store", "catablog"); ?></a></li>
 			<li><a href="#fields" title=""><?php _e("Custom Fields", "catablog"); ?></a></li>
 			*/ ?>
 			<li><a href="#import" title=""><?php _e("Import", "catablog"); ?></a></li>
@@ -707,67 +686,6 @@
 			});
 		});
 		
-		
-		
-		
-		
-		
-		
-		/****************************************
-		** RECALCULATE IMAGES IF NECESSARY
-		****************************************/
-	<?php if ($recalculate_thumbnails || $recalculate_fullsize): ?>
-		discourage_leaving_page('<?php _e("Please allow the rendering to complete before leaving this page. Click cancel to go back and let the rendering complete.", "catablog"); ?>');
-		
-		$('#save_changes').attr('disabled', true);
-		var nonce   = '<?php echo wp_create_nonce("catablog-render-images") ?>';		
-		var images  = ["<?php echo implode('", "', $image_names) ?>"];
-		var warning = '<?php _e("Image rendering is not complete, you should let image rendering complete before leaving this page.", "catablog"); ?>';
-		
-	<?php endif ?>
-	
-	
-	
-	<?php if ($recalculate_thumbnails): ?>
-		var thumbs = images.slice(0);
-		renderCataBlogItems(thumbs, 'thumbnail', nonce, function() {
-			// jQuery('#catablog-progress-thumbnail .catablog-progress-text').html(message);
-			
-			var t = setTimeout(function() {
-				jQuery('#catablog-progress-thumbnail').hide('medium');
-				jQuery('#message').hide('medium');
-			}, 2000);
-
-			$('#save_changes').attr('disabled', false);
-			
-			<?php if ($recalculate_fullsize == false): ?>
-				unbind_discourage_leaving_page();
-			<?php endif ?>
-		});
-	<?php endif ?>
-	
-	
-	
-	<?php if ($recalculate_fullsize): ?>
-		var fullsize = images.slice(0);
-		renderCataBlogItems(fullsize, 'fullsize', nonce, function() {
-			// jQuery('#catablog-progress-fullsize .catablog-progress-text').html(message);
-			
-			var t = setTimeout(function() {
-				jQuery('#catablog-progress-thumbnail').hide('medium');
-				jQuery('#catablog-progress-fullsize').hide('medium');
-				jQuery('#message').hide('medium');
-			}, 2000);
-			
-			$('#save_changes').attr('disabled', false);
-			
-			unbind_discourage_leaving_page();
-		});
-	<?php endif ?>
-
-			
-			
-			
 		
 	}); // end onReady method
 	

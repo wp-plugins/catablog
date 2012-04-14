@@ -1017,6 +1017,13 @@ table.catablog_stats td {
 	display: none;
 }
 
+input.button.catablog-button-delete {
+	color: #c00;
+}
+
+
+
+
 #catablog_gallery_id {
 	width: 200px;
 }

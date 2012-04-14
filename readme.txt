@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, widget, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce
 Requires at least: 3.1
 Tested up to: 3.3.1
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -102,6 +102,12 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.6.2 =
+* New: Regenerate thumbnail and lightbox images for a selected group of library items.
+* New: Delete custom templates directly from the CataBlog Templates Admin Panel.
+* Fix: LightBox generated images with transparency will now use the thumbnail background color.
+* Fix: Should now save default values for the catablog-view-cookie in the cookie before explicitly being set.
 
 = 1.6.1 =
 * New: Flash Upload's Micro Save Form now has configurable fields.

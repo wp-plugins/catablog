@@ -60,12 +60,18 @@
 			<form action="admin.php?page=catablog-templates-save" method="post">
 				<textarea name="template-code" id="catablog-template-code" class="catablog-code" rows="10" cols="30" disabled="disabled"></textarea>
 				
-				<fieldset>
+				<fieldset style="float:left; width:80%;">
 					<input type="hidden" id="catablog-template-filename" name="catablog-template-filename" value="" />
 					<?php wp_nonce_field( 'catablog_templates_save', '_catablog_templates_save_nonce', false, true ) ?>
 					<input type="submit" id="catablog-template-save-button" name="save" class="button-primary button-disabled" disabled="disabled" value="<?php _e('Save Changes', 'catablog') ?>" />
 					<span><?php printf(__('or %sundo current changes%s', 'catablog'), '<a href="admin.php?page=catablog-templates">', '</a>'); ?></span>
 				</fieldset>
+			</form>
+			
+			<form id="catablog-template-delete-form" action="admin.php?page=catablog-templates-delete" method="post" style="margin-left:81%; text-align:right;">
+				<input type="hidden" id="catablog-template-filename-delete" name="catablog-template-filename" value="" />
+				<?php wp_nonce_field( 'catablog_templates_delete', '_catablog_templates_delete_nonce', false, true ) ?>
+				<input type="submit" id="catablog-template-delete-button" name="delete" class="button catablog-button-delete button-disabled" disabled="disabled" value="<?php _e("Delete Template", "catablog"); ?>" />
 			</form>
 			
 			<p><small>
@@ -146,13 +152,23 @@
 				
 				if (tab_link.hasClass('catablog-template')) {
 					$('#catablog-template-name input').val("[catablog template=\"" + tab_link.html() + "\"]").show();
+					$('#catablog-template-filename-delete').val(filename);
+					$('#catablog-template-delete-button').removeClass('button-disabled').attr('disabled', false);
 				}
 				else {
 					$('#catablog-template-name input').hide();
+					$('#catablog-template-filename-delete').val('');
+					$('#catablog-template-delete-button').addClass('button-disabled').attr('disabled', true);
 				}
 			});
 			
 		});
+		
+		$('#catablog-template-delete-form').submit(function() {
+			if (false == confirm('<?php _e("Are you sure you want to delete this template?", "catablog"); ?>')) {
+				return false;
+			}
+		})
 		
 		var path = '';
 		var hash = window.location.hash;

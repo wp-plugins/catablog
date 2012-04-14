@@ -42,11 +42,11 @@
 		
 		discourage_leaving_page('<?php _e("Please allow the rendering to complete before leaving this page. Click cancel to go back and let the rendering complete.", "catablog"); ?>');
 		
-		renderCataBlogItems(images, 'thumbnail', nonce, function() {
+		renderCataBlogItems(images, 'thumbnail', nonce, 'img-name', function() {
 			
 			<?php if ($this->options['lightbox-render']): ?>
 				var images = ["<?php echo implode('", "', $image_names) ?>"];
-				renderCataBlogItems(images, 'fullsize', nonce, function() {
+				renderCataBlogItems(images, 'fullsize', nonce, 'img-name', function() {
 					jQuery('#catablog-console').append('<li class="updated">'+message+'</li>');
 					unbind_discourage_leaving_page();
 				});

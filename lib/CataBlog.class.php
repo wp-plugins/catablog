@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.6.1
+ * @version 1.6.2
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.6.1";
+	private $version     = "1.6.2";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -345,25 +345,38 @@ class CataBlog {
 			$this->admin_add_subimage(true);
 		}
 		
+		// go straight to create template action
+		if(strpos($_SERVER['QUERY_STRING'], 'catablog-templates-create') !== false) {
+			$this->admin_templates_create(true);
+		}
+		
 		// go straight to save template action
 		if(strpos($_SERVER['QUERY_STRING'], 'catablog-templates-save') !== false) {
 			$this->admin_templates_save(true);
 		}
 		
-		// go straight to create template action
-		if(strpos($_SERVER['QUERY_STRING'], 'catablog-templates-create') !== false) {
-			$this->admin_templates_create(true);
+		// go straight to delete template action
+		if(strpos($_SERVER['QUERY_STRING'], 'catablog-templates-delete') !== false) {
+			$this->admin_templates_delete(true);
 		}
 		
 		
 		// set cookie to remember the admin view settings
 		if(isset($_GET['page']) && $_GET['page'] == 'catablog') {
 			$options = array('sort', 'order', 'view');
-			foreach ($options as $option) {
+			$option_defaults = array(
+				'sort'  => 'date',
+				'order' => 'asc',
+				'view'  => 'list',
+			);
+			
+			foreach ($option_defaults as $option => $default_value) {
 				if(isset($_GET[$option])) {
 					setCookie("catablog-view-cookie[$option]", $_REQUEST[$option], (time()+36000000));
 				}
-				
+				else {
+					setCookie("catablog-view-cookie[$option]", $default_value, (time()+36000000));
+				}
 			}
 			// remove old view cookie if still present
 			setCookie("catablog-view-cookie", false, (time() - 36000));
@@ -419,6 +432,7 @@ class CataBlog {
 		// register template modification actions to hidden menu
 		add_submenu_page('catablog-hidden', "Create CataBlog Template", "Create Template", $this->user_level, 'catablog-templates-create', array(&$this, 'admin_templates_create'));
 		add_submenu_page('catablog-hidden', "Save CataBlog Template", "Save Template", $this->user_level, 'catablog-templates-save', array(&$this, 'admin_templates_save'));
+		add_submenu_page('catablog-hidden', "Delete CataBlog Template", "Delete Template", $this->user_level, 'catablog-templates-delete', array(&$this, 'admin_templates_delete'));
 		
 		// register about page actions to hidden menu
 		// add_submenu_page('catablog-hidden', "CataBlog Install", "Install", $this->user_level, 'catablog-install', array(&$this, 'admin_install'));
@@ -738,9 +752,7 @@ class CataBlog {
 	}
 	
 	public function admin_options() {
-		$recalculate = false;
-		$recalculate_thumbnails = false;
-		$recalculate_fullsize   = false;
+		$recalculate_images = false;
 		
 		if (isset($_REQUEST['save'])) {
 			$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_options_nonce'], 'catablog_options' );
@@ -782,6 +794,7 @@ class CataBlog {
 				// set default values for post message and image recalculation
 				$save_message = __("CataBlog Options Saved", 'catablog');
 				
+				$fullsize_dir = new CataBlogDirectory($this->directories['fullsize']);
 				
 				// get image size and rendering differences
 				$image_width_different  = $post_vars['thumbnail_width'] != $this->options['thumbnail-width'];
@@ -790,19 +803,12 @@ class CataBlog {
 				
 				$bg_color_different     = $post_vars['bg_color'] != $this->options['background-color'];
 				$keep_ratio_different   = isset($post_vars['keep_aspect_ratio']) != $this->options['keep-aspect-ratio'];
-				$fullsize_different     = $post_vars['lightbox_image_size'] != $this->options['image-size'];
+				$lightbox_enabled       = (isset($post_vars['lightbox_enabled'])) && (isset($post_vars['lightbox_render'])) && ($fullsize_dir->getCount() < 1);
+				$fullsize_different     = (isset($post_vars['lightbox_enabled'])) && $post_vars['lightbox_image_size'] != $this->options['image-size'];
 				
 				// set recalculation of thumbnails and update post message
-				if ($image_size_different || $bg_color_different || $keep_ratio_different) {
-					$recalculate_thumbnails = true;
-				}
-				
-				// set recalculation of fullsize images and update post message
-				if (isset($post_vars['lightbox_render'])) {
-					$fullsize_dir = new CataBlogDirectory($this->directories['fullsize']);
-					if ($fullsize_different || $fullsize_dir->getCount() < 1) {
-						$recalculate_fullsize = true;
-					}
+				if ($image_size_different || $bg_color_different || $keep_ratio_different || $lightbox_enabled || $fullsize_different) {
+					$recalculate_images = true;
 				}
 				
 				// save new plugins options to database
@@ -831,21 +837,10 @@ class CataBlog {
 				$this->save_wp_options();
 				
 				// recalculate thumbnail and fullsize images if necessary
-				if ($recalculate_thumbnails || $recalculate_fullsize) {
+				if ($recalculate_images) {
 					$save_message .= " - ";
-					$save_message .= __("Please Let The Rendering Below Complete Before Navigating Away From This Page", 'catablog');
-					
-					delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
-					
-					$items       = CataBlogItem::getItems();
-					$image_names = array();
-
-					foreach ($items as $item) {
-						$image_names[] = $item->getImage();
-						foreach ($item->getSubImages() as $image) {
-							$image_names[] = $image;
-						}
-					}					
+					$link = wp_nonce_url('admin.php?page=catablog-regenerate-images', 'catablog-regenerate-images');
+					$save_message .= sprintf(__("You have changed your image settings, please %sRegenerate All Images Now%s", 'catablog'), '<a href="'.$link.'">', '</a>');
 				}
 				
 				$this->wp_message($save_message);
@@ -908,13 +903,16 @@ class CataBlog {
 					$this->wp_error(__('Form Validation Error. Please reload the page and try again.', 'catablog'));
 					break;
 				case 5:
-					$this->wp_error(sprintf(__('File Creation Error. Please make sure WordPress can write to this directory:<br /><code>%s</code>', 'catablog'), $this->directories['user_views']));
+					$this->wp_error(sprintf(__('File Write Error. Please make sure WordPress can write to this directory:<br /><code>%s</code>', 'catablog'), $this->directories['user_views']));
 					break;
 				case 6:
 					$this->wp_error(__('File Creation Error. A template already exists with that name.', 'catablog'));
 					break;
 				case 7:
 					$this->wp_error(__('File Creation Error. A template name may only consist of underscores, hyphens and alphanumeric characters.', 'catablog'));
+					break;
+				case 8:
+					$this->wp_message(__('Template Deleted Successfully.', 'catablog'));
 					break;
 			}
 		}
@@ -924,34 +922,6 @@ class CataBlog {
 		include_once($this->directories['template'] . '/admin-templates-editor.php');
 	}
 	
-	
-	public function admin_templates_save($init_run=true) {
-		if (isset($_REQUEST['save'])) {
-			
-			$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_templates_save_nonce'], 'catablog_templates_save' );
-			if ($nonce_verified) {
-				
-				$fn = $_REQUEST['catablog-template-filename'];
-				$filepath = $this->directories['user_views'] . '/' . $fn;
-				
-				$file = fopen($filepath, "w"); 
-				$size = filesize($filepath); 
-				
-				$post_vars = array_map('stripslashes_deep', $_POST);
-				if ($post_vars['template-code']) {
-					fwrite($file, $post_vars['template-code']);
-				} 
-				
-				fclose($file);
-				
-				header('Location: admin.php?page=catablog-templates&message=1#'.$fn); die;
-			}
-			else {
-				header('Location: admin.php?page=catablog-templates&message=3'); die;
-			}
-		}
-	}
-	
 	public function admin_templates_create($init_run=true) {
 		if (isset($_REQUEST['save'])) {
 			
@@ -959,14 +929,14 @@ class CataBlog {
 			if ($nonce_verified) {
 				
 				// check id the file name contains only valid characters
-				$fn = $_REQUEST['new_template_name'];
-				if (preg_match('/[^a-z0-9\_\-]/i', $fn)) {
+				$filename = $_REQUEST['new_template_name'];
+				if (preg_match('/[^a-z0-9\_\-]/i', $filename)) {
 					header('Location: admin.php?page=catablog-templates&message=7'); die;
 				}
 				
 				// add htm file extension and build file path
-				$fn .= '.htm';
-				$filepath = $this->directories['user_views'] . '/' . $fn;
+				$filename .= '.htm';
+				$filepath = $this->directories['user_views'] . '/' . $filename;
 				
 				// check if a file already exists with the name
 				if (is_file($filepath)) {
@@ -984,13 +954,69 @@ class CataBlog {
 				fclose($file);
 				
 				// redirect back to templates panel
-				header('Location: admin.php?page=catablog-templates&message=2#'.$fn); die;
+				header('Location: admin.php?page=catablog-templates&message=2#'.$filename); die;
 			}
 			else {
 				header('Location: admin.php?page=catablog-templates&message=4'); die;
 			}
 		}
 	}
+	
+	public function admin_templates_save($init_run=true) {
+		if (isset($_REQUEST['save'])) {
+			
+			$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_templates_save_nonce'], 'catablog_templates_save' );
+			if ($nonce_verified) {
+				
+				$filename = $_REQUEST['catablog-template-filename'];
+				$filepath = $this->directories['user_views'] . '/' . $filename;
+				
+				$file = fopen($filepath, "w");
+				
+				if ($file === false) {
+					header('Location: admin.php?page=catablog-templates&message=5'); die;
+				}
+				
+				$post_vars = array_map('stripslashes_deep', $_POST);
+				if (isset($post_vars['template-code'])) {
+					if (fwrite($file, $post_vars['template-code']) === false) {
+						header('Location: admin.php?page=catablog-templates&message=5'); die;
+					}
+				}
+				
+				fclose($file);
+				
+				header('Location: admin.php?page=catablog-templates&message=1#'.$filename); die;
+			}
+			else {
+				header('Location: admin.php?page=catablog-templates&message=3'); die;
+			}
+		}
+	}
+	
+	public function admin_templates_delete($init_run=true) {
+		if (isset($_REQUEST['delete'])) {
+			
+			$nonce_verified = wp_verify_nonce( $_REQUEST['_catablog_templates_delete_nonce'], 'catablog_templates_delete');
+			if ($nonce_verified) {
+				
+				$filename = $_REQUEST['catablog-template-filename'];
+				$filepath = $this->directories['user_views'] . '/' . $filename;
+				
+				$delete_success = unlink($filepath);
+				if ($delete_success === false) {
+					header('Location: admin.php?page=catablog-templates&message=5'); die;
+				}
+				
+				header('Location: admin.php?page=catablog-templates&message=8'); die;
+			}
+			else {
+				header('Location: admin.php?page=catablog-templates&message=3'); die;
+			}
+		}
+	}
+	
+	
 	
 	
 	public function admin_about() {
@@ -1777,6 +1803,8 @@ class CataBlog {
 		
 		check_admin_referer('catablog-regenerate-images');
 		
+		delete_transient('dirsize_cache'); // WARNING!!! transient label hard coded.
+		
 		$items       = CataBlogItem::getItems();
 		$image_names = array();
 		
@@ -2051,31 +2079,45 @@ class CataBlog {
 		$count = $_REQUEST['count'];
 		$total = $_REQUEST['total'];
 		
-		$item = new CataBlogItem();
-		
-		switch ($type) {
-			case 'thumbnail':
-				$success = $item->MakeThumbnail($name);
-				break;
-			case 'fullsize';
-				$success = $item->MakeFullsize($name);
-				break;
-			default:
-				$success = __("unsupported image size type", 'catablog');
-				break;
+		if (isset($_REQUEST['key']) && $_REQUEST['key'] == 'id') {
+			$id = (int) $name;
+			$item = CataBlogItem::getItem($id);
+			$image_names = array();
+			$image_names[] = $item->getImage();
+			foreach ($item->getSubImages() as $image) {
+				$image_names[] = $image;
+			}
+		}
+		else {
+			$item = new CataBlogItem();
+			$image_names = array();
+			$image_names[] = $name;
 		}
 		
+		foreach($image_names as $image_name) {
+			switch ($type) {
+				case 'thumbnail':
+					$success = $item->MakeThumbnail($image_name);
+					break;
+				case 'fullsize';
+					$success = $item->MakeFullsize($image_name);
+					break;
+				default:
+					$success = __("unsupported image size type", 'catablog');
+					break;
+			}
+		}
 		
 		if ($success !== true) {
 			$message = $success;
-			echo "({'success':false, 'error':'$message'})";
+			echo "{\"success\":false, \"error\":\"$message\"}";
 		}
 		else {
 			$message = sprintf(__('Rendering... %s of %s', 'catablog'), $total - $count, $total);
 			if ($count == 0) {
 				$message = __('Image rendering is now complete.', 'catablog');
 			}
-			echo "({'success':true, 'message':'$message'})";
+			echo "{\"success\":true, \"message\":\"$message\"}";
 		}
 		
 		

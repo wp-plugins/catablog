@@ -32,8 +32,9 @@
 				
 				<select id="bulk-action" name="bulk-action">
 					<option value="">- <?php _e("Bulk Actions", 'catablog'); ?></option>
-					<option value="edit-category"><?php _e("Edit Categories", 'catablog'); ?></option>
 					<option value="add-to-gallery"><?php _e("Add to Gallery", 'catablog'); ?></option>
+					<option value="edit-category"><?php _e("Edit Categories", 'catablog'); ?></option>
+					<option value="regenerate-images"><?php _e("Regenerate Images", 'catablog'); ?></option>
 					<option value="delete"><?php _e("Delete", 'catablog'); ?></option>
 				</select>
 				
@@ -229,6 +230,33 @@
 			</form>
 		</div>
 		
+		
+		<div id="regenerate-images-window" class="catablog-modal">
+			<form id="catablog-regenerate-images" class="catablog-form" method="post" action="">
+				<h3 class="catablog-modal-title">
+					<strong><?php _e("Regenerate Images", 'catablog'); ?></strong>
+				</h3>
+				
+				<div class="catablog-modal-body">
+					<div id="catablog-progress-thumbnail" class="catablog-progress">
+						<div class="catablog-progress-bar"></div>
+						<h3 class="catablog-progress-text"><?php _e("Processing Thumbnail Images...", "catablog"); ?></h3>
+					</div>
+
+					<?php if ($this->options['lightbox-render']): ?>
+					<div id="catablog-progress-fullsize" class="catablog-progress">
+						<div class="catablog-progress-bar"></div>
+						<h3 class="catablog-progress-text"><?php _e("Waiting For Thumbnail Rendering To Finish...", "catablog"); ?></h3>
+					</div>
+					<?php endif ?>
+
+					<ul id="catablog-console">
+						<li><?php _e('Rendering all images from their original files, this may take awhile so please be patient.', 'catablog') ?></li>
+					</ul>
+				</div>
+			</form>
+		</div>
+		
 </div>
 
 <script type="text/javascript">
@@ -256,6 +284,22 @@
 				return false;
 			}
 			
+			
+			// add library items to a gallery
+			if ($('#bulk-action').val() == 'add-to-gallery') {
+				
+				jQuery('#add-to-gallery-window').show();
+				jQuery('#catablog_load_curtain').fadeTo(200, 0.8);
+				
+				jQuery('#catablog-add-to-gallery').children('input[name="item_ids[]"]').remove();
+				
+				checked_catalog_items.each(function() {
+					$('#catablog-add-to-gallery').append("<input type='hidden' name='item_ids[]' value='"+this.value+"' />");
+				});
+				
+				return false;
+			}
+			
 			// change the category of multiple catalog items
 			if ($('#bulk-action').val() == 'edit-category') {
 				
@@ -269,16 +313,38 @@
 				return false;
 			}
 			
-			// add library items to a gallery
-			if ($('#bulk-action').val() == 'add-to-gallery') {
+			// regenerate library items
+			if ($('#bulk-action').val() == 'regenerate-images') {
 				
-				jQuery('#add-to-gallery-window').show();
+				jQuery('#regenerate-images-window').show();
 				jQuery('#catablog_load_curtain').fadeTo(200, 0.8);
 				
-				jQuery('#catablog-add-to-gallery').children('input[name="item_ids[]"]').remove();
-				
+				var images = [];
 				checked_catalog_items.each(function() {
-					$('#catablog-add-to-gallery').append("<input type='hidden' name='item_ids[]' value='"+this.value+"' />");
+					images.push(parseInt(this.value));
+				});
+				
+				var nonce   = '<?php echo wp_create_nonce("catablog-render-images") ?>';
+				var message = '<?php printf(__("Image rendering is now complete, please clear your browser cache and %srefresh the page%s.", "catablog"), "<a href=\"admin.php?page=catablog\">", "</a>"); ?>';
+
+				discourage_leaving_page('<?php _e("Please allow the rendering to complete before leaving this page. Click cancel to go back and let the rendering complete.", "catablog"); ?>');
+
+				renderCataBlogItems(images, 'thumbnail', nonce, 'id', function() {
+
+					<?php if ($this->options['lightbox-render']): ?>
+						images = [];
+						checked_catalog_items.each(function() {
+							images.push(this.value);
+						});
+						
+						renderCataBlogItems(images, 'fullsize', nonce, 'id', function() {
+							jQuery('#catablog-console').append('<li class="updated">'+message+'</li>');
+							unbind_discourage_leaving_page();
+						});
+					<?php else: ?>	
+						jQuery('#catablog-console').append('<li class="updated">'+message+'</li>');
+						unbind_discourage_leaving_page();
+					<?php endif ?>
 				});
 				
 				return false;

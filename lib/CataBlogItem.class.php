@@ -4,7 +4,7 @@
  *
  * This file contains the class for each CataBlog Item that is fetched from the database.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.6.1
+ * @version 1.6.2
  * @package catablog
  */
 
@@ -661,10 +661,11 @@ class CataBlogItem {
 		$new_width  = $width * $ratio;
 		
 		
-		// create a blank canvas of user specified size
+		// create a blank canvas of user specified size and fill it with background color
 		$bg_color = $this->html2rgb($this->_options['background-color']);
 		$canvas   = imagecreatetruecolor($new_width, $new_height);
-		
+		$bg_color = imagecolorallocate($canvas, $bg_color[0], $bg_color[1], $bg_color[2]);
+		imagefilledrectangle($canvas, 0, 0, $new_width, $new_height, $bg_color);
 		
 		switch($format) {
 			case IMAGETYPE_GIF:
