@@ -2,7 +2,7 @@
 Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, widget, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce
-Requires at least: 3.1
+Requires at least: 3.3
 Tested up to: 3.3.1
 Stable tag: 1.6.1
 
