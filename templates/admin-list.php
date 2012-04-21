@@ -5,7 +5,7 @@
 				<th class="cb_icon_column"><?php _e("Image", "catablog"); ?></th>
 				<?php $css_sort = ($sort=='title')? "sorted" : "sortable" ?>
 				<?php $sort_url = ($order=='asc')? "&amp;order=desc" : "&amp;order=asc" ?>
-				<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".$_GET['category'] : "" ?>
+				<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".intval($_GET['category']) : "" ?>
 				<th class="<?php echo "$css_sort $order" ?>" style="width:120px;">
 					<a href="admin.php?page=catablog&amp;sort=title<?php echo $sort_url . $cat_url ?>">
 						<span><?php _e("Title", "catablog"); ?></span>
@@ -22,7 +22,7 @@
 				<th class="column-categories <?php echo $categories_col_class ?>"><?php _e("Categories", "catablog"); ?></th>				
 				<?php $css_sort = ($sort=='menu_order')? "sorted" : "sortable" ?>
 				<?php $sort_url = ($order=='asc')? "&amp;order=desc" : "&amp;order=asc" ?>
-				<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".$_GET['category'] : "" ?>
+				<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".intval($_GET['category']) : "" ?>
 				<th class="column-order <?php echo "$css_sort $order" ?> <?php echo $order_col_class ?>" style="width:80px;">
 					<a href="admin.php?page=catablog&amp;sort=menu_order<?php echo $sort_url . $cat_url ?>">
 						<span><?php _e("Order", "catablog"); ?></span>
@@ -32,7 +32,7 @@
 				
 				<?php $css_sort = ($sort=='date')? "sorted" : "sortable" ?>
 				<?php $sort_url = ($order=='asc')? "&amp;order=desc" : "&amp;order=asc" ?>
-				<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".$_GET['category'] : "" ?>
+				<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".intval($_GET['category']) : "" ?>
 				<th class="column-date <?php echo "$css_sort $order" ?> <?php echo $date_col_class ?>" style="width:100px;">
 					<a href="admin.php?page=catablog&amp;sort=date<?php echo $sort_url . $cat_url ?>">
 						<span><?php _e("Date", "catablog"); ?></span>

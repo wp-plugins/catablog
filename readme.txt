@@ -4,7 +4,7 @@ Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, widget, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce
 Requires at least: 3.3
 Tested up to: 3.3.1
-Stable tag: 1.6.2
+Stable tag: 1.6.3
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -102,6 +102,9 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.6.3 =
+* Fix: XSS attack vulnerabilities have been hardened.
 
 = 1.6.2 =
 * New: Regenerate thumbnail and lightbox images for a selected group of library items.
@@ -383,6 +386,10 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 * Fix: Small interface bugs in LightBox when using an old browser.
 
 == Upgrade Notice ==
+
+= 1.6.3 =
+
+This version of CataBlog has patched some vital security holes, we recommend you upgrade to this version or better as soon as possible.
 
 = 1.2.5 =
 

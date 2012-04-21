@@ -50,9 +50,8 @@
 					
 					<?php $css_sort = ($sort=='title')? "sorted" : "sortable" ?>
 					<?php $sort_url = ($order=='asc')? "&amp;order=desc" : "&amp;order=asc" ?>
-					<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".$_GET['category'] : "" ?>
 					<th class="column-title <?php echo "$css_sort $order" ?>" style="width:120px;">
-						<a href="admin.php?page=catablog-gallery&amp;sort=title<?php echo $sort_url . $cat_url ?>">
+						<a href="admin.php?page=catablog-gallery&amp;sort=title<?php echo $sort_url ?>">
 							<span><?php _e("Title", "catablog"); ?></span>
 							<span class="sorting-indicator">&nbsp;</span>
 						</a>
@@ -64,9 +63,8 @@
 					
 					<?php $css_sort = ($sort=='date')? "sorted" : "sortable" ?>
 					<?php $sort_url = ($order=='asc')? "&amp;order=desc" : "&amp;order=asc" ?>
-					<?php $cat_url  = (isset($_GET['category']))? "&amp;category=".$_GET['category'] : "" ?>
 					<th class="column-date <?php echo "$css_sort $order" ?> <?php echo $date_col_class ?>" style="width:100px;">
-						<a href="admin.php?page=catablog-gallery&amp;sort=date<?php echo $sort_url . $cat_url ?>">
+						<a href="admin.php?page=catablog-gallery&amp;sort=date<?php echo $sort_url ?>">
 							<span><?php _e("Date", "catablog"); ?></span>
 							<span class="sorting-indicator">&nbsp;</span>
 						</a>

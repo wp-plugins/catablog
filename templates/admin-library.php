@@ -1,5 +1,5 @@
-<?php $current_cat = (isset($_GET['category']))? '&amp;category='.$_GET['category'] : '' ?>
-<?php $current_page = (isset($_GET['paged']))? '&amp;paged='.$_GET['paged'] : ''?>
+<?php $current_cat = (isset($_GET['category']))? '&amp;category='.intval($_GET['category']) : '' ?>
+<?php $current_page = (isset($_GET['paged']))? '&amp;paged='.intval($_GET['paged']) : ''?>
 
 
 <div class="wrap">
