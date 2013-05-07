@@ -577,7 +577,7 @@
 		// check for errors when form is submitted
 		$('#catablog-options').bind('submit', function(event) {
 			if (jQuery('#catablog-options .catablog-form-field.error:not(.hidden)').size() > 0) {
-				alert("<?php _e('There are errors, please correct them before saving.', 'catablog'); ?>");
+				alert("<?php echo addslashes(__('There are errors, please correct them before saving.', 'catablog')); ?>");
 				return false;
 			}
 			

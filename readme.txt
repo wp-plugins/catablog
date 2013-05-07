@@ -3,8 +3,8 @@ Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, widget, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce
 Requires at least: 3.3
-Tested up to: 3.5
-Stable tag: 1.6.3
+Tested up to: 3.5.1
+Stable tag: 1.6.4
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
 
@@ -63,10 +63,10 @@ Please remember that CataBlog is written, maintained, supported and documented b
 
 The CataBlog Admin section is made and tested to work best with these browsers:
 
-1. Internet Explorer 9
-1. FireFox 11
-1. Safari 5
-1. Chrome 17
+1. Internet Explorer 9+
+1. FireFox 11+
+1. Safari 5+
+1. Chrome 17+
 1. JavaScript should be enabled for full support.
 
 The CataBlog LightBox and Templates are tested to work in these browsers:
@@ -102,6 +102,10 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.6.4 =
+* New: Added Russian localization. (Thanks Дмитрий)
+* Fix: Localized strings are properly escaped for JavaScript syntax.
 
 = 1.6.3 =
 * Fix: XSS attack vulnerabilities have been hardened.
@@ -389,7 +393,7 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 
 = 1.6.3 =
 
-This version of CataBlog has patched some vital security holes, we recommend you upgrade to this version or better as soon as possible.
+This version of CataBlog fixes a few security holes, we recommend you upgrade to this version or better as soon as possible.
 
 = 1.2.5 =
 

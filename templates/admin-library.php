@@ -273,14 +273,14 @@
 			var self = this;
 			
 			if ($('#bulk-action').val().length < 1) {
-				alert('<?php _e("Please select a bulk action to apply.", "catablog"); ?>');
+				alert('<?php echo addslashes(__("Please select a bulk action to apply.", "catablog")); ?>');
 				return false;
 			}
 			
 			// get selected (checked) catalog items
 			var checked_catalog_items = $('#catablog_items input.bulk_selection:checked');
 			if (checked_catalog_items.size() < 1) {
-				alert('<?php _e("Please select at least one catalog item first.", "catablog"); ?>');
+				alert('<?php echo addslashes(__("Please select at least one catalog item first.", "catablog")); ?>');
 				return false;
 			}
 			
@@ -327,7 +327,7 @@
 				var nonce   = '<?php echo wp_create_nonce("catablog-render-images") ?>';
 				var message = '<?php printf(__("Image rendering is now complete, please clear your browser cache and %srefresh the page%s.", "catablog"), "<a href=\"admin.php?page=catablog\">", "</a>"); ?>';
 
-				discourage_leaving_page('<?php _e("Please allow the rendering to complete before leaving this page. Click cancel to go back and let the rendering complete.", "catablog"); ?>');
+				discourage_leaving_page('<?php echo addslashes(__("Please allow the rendering to complete before leaving this page. Click cancel to go back and let the rendering complete.", "catablog")); ?>');
 
 				renderCataBlogItems(images, 'thumbnail', nonce, 'id', function() {
 
@@ -352,7 +352,7 @@
 			
 			// delete multiple catalog items
 			if ($('#bulk-action').val() == 'delete') {
-				if (!confirm('<?php _e("Are you sure you want to delete multiple items?", "catablog"); ?>')) {
+				if (!confirm('<?php echo addslashes(__("Are you sure you want to delete multiple items?", "catablog")); ?>')) {
 					return false;
 				}
 				
@@ -381,7 +381,7 @@
 		
 		// BIND TRASH CATALOG ITEM WARNING
 		$('.remove_link').bind('click', function(event) {
-			return (confirm('<?php _e("Are you sure you want to permanently delete this catalog items?", "catablog"); ?>'));
+			return (confirm('<?php echo addslashes(__("Are you sure you want to permanently delete this catalog items?", "catablog")); ?>'));
 		});
 		
 		

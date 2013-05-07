@@ -165,7 +165,7 @@
 		});
 		
 		$('#catablog-template-delete-form').submit(function() {
-			if (false == confirm('<?php _e("Are you sure you want to delete this template?", "catablog"); ?>')) {
+			if (false == confirm('<?php echo addslashes(__("Are you sure you want to delete this template?", "catablog")); ?>')) {
 				return false;
 			}
 		})

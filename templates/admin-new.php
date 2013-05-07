@@ -258,7 +258,7 @@
 		
 		// if the button is disabled, stop the script
 		if (button.attr('disabled') != undefined) {
-			alert("<?php _e('There are errors, please correct them before saving.', 'catablog'); ?>");
+			alert("<?php echo addslashes(__('There are errors, please correct them before saving.', 'catablog')); ?>");
 			return false;
 		}
 		

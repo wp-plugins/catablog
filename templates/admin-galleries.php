@@ -151,7 +151,7 @@
 		
 		// BIND TRASH CATALOG ITEM WARNING
 		$('.remove_link').bind('click', function(event) {
-			return (confirm('<?php _e("Are you sure you want to permanently delete this gallery?", "catablog"); ?>'));
+			return (confirm('<?php echo addslashes(__("Are you sure you want to permanently delete this gallery?", "catablog")); ?>'));
 		});
 		
 		// BIND NEW GALLERY FORM

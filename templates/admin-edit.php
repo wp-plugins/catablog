@@ -490,7 +490,7 @@
 		$('.catablog-delete-action').bind('click', function(event) {
 			
 			// confirm the deletion of the category
-			if (!confirm('<?php _e("Are you sure you want to delete this category? You can not undo this.", "catablog") ?>')) {
+			if (!confirm('<?php echo addslashes(__("Are you sure you want to delete this category? You can not undo this.", "catablog")); ?>')) {
 				return false;
 			}
 			
@@ -546,7 +546,7 @@
 			// check if category name is set
 			var category_name = $('#catablog-new-category-input').val();
 			if (category_name == '') {
-				alert('<?php _e("Please make sure to enter a category name", "catablog") ?>');
+				alert('<?php echo addslashes(__("Please make sure to enter a category name", "catablog")); ?>');
 				return false;
 			}
 			
@@ -571,7 +571,7 @@
 						var html = '<li id="catablog-category-'+json.id+'" class="highlight"><label class="catablog-category-row">';
 						html    += ' <input id="in-category-'+json.id+'" class="term-id" type="checkbox" name="categories[]" value="'+json.id+'" /> ';
 						html    += ' <input class="term-slug" type="hidden" value="'+json.slug+'" />'
-						html    += ' <a href="#edit-category-'+json.id+'" class="catablog-category-edit hide"><small><?php _e("EDIT", "catablog"); ?></small></a>';
+						html    += ' <a href="#edit-category-'+json.id+'" class="catablog-category-edit hide"><small><?php echo addslashes(__("EDIT", "catablog")); ?></small></a>';
 						html    += ' <span class="term-name">'+json.name+'</span> ';
 						html    += '</label></li>';
 						
@@ -618,7 +618,7 @@
 		
 		// BIND DELETE SUB IMAGE
 		$('#catablog-sub-images .catablog-delete-subimage').bind('click', function(event) {
-			if (!confirm('<?php _e("Are you sure you want to permanently delete this image?", "catablog") ?>')) {
+			if (!confirm('<?php echo addslashes(__("Are you sure you want to permanently delete this image?", "catablog")); ?>')) {
 				return false;
 			}
 			
