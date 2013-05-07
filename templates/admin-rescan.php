@@ -46,7 +46,7 @@
 			return false;
 		<?php endif ?>
 		
-		discourage_leaving_page('<?php _e("Please allow the rendering to complete before leaving this page. Click cancel to go back and let the rendering complete.", "catablog"); ?>');
+		discourage_leaving_page('<?php echo addslashes(__("Please allow the rendering to complete before leaving this page. Click cancel to go back and let the rendering complete.", "catablog")); ?>');
 		
 		/****************************************
 		** CALCULATE NEW IMAGES

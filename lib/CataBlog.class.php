@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.6.3
+ * @version 1.6.4
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.6.3";
+	private $version     = "1.6.4";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
@@ -2295,12 +2295,12 @@ class CataBlog {
 				$javascript = array();
 				
 				$javascript[] = "var js_i18n=new Object;";
-				$javascript[] = 'js_i18n.prev_tip="'.__("You may also press &quot;P&quot; or the left arrow on your keyboard", 'catablog').'";';
-				$javascript[] = 'js_i18n.next_tip="'.__("You may also press &quot;N&quot; or the right arrow on your keyboard", 'catablog').'";';
-				$javascript[] = "js_i18n.close_tip='".__('Close LightBox Now', 'catablog')."';";
-				$javascript[] = "js_i18n.prev_label='".__('PREV', 'catablog')."';";
-				$javascript[] = "js_i18n.next_label='".__('NEXT', 'catablog')."';";
-				$javascript[] = "js_i18n.close_label='".__('CLOSE', 'catablog')."';";
+				$javascript[] = 'js_i18n.prev_tip="'.addslashes(__("You may also press &quot;P&quot; or the left arrow on your keyboard", 'catablog')).'";';
+				$javascript[] = 'js_i18n.next_tip="'.addslashes(__("You may also press &quot;N&quot; or the right arrow on your keyboard", 'catablog')).'";';
+				$javascript[] = "js_i18n.close_tip='".addslashes(__('Close LightBox Now', 'catablog'))."';";
+				$javascript[] = "js_i18n.prev_label='".addslashes(__('PREV', 'catablog'))."';";
+				$javascript[] = "js_i18n.next_label='".addslashes(__('NEXT', 'catablog'))."';";
+				$javascript[] = "js_i18n.close_label='".addslashes(__('CLOSE', 'catablog'))."';";
 				
 				$javascript[] = "jQuery(document).ready(function(){ jQuery('$selector').catablogLightbox($lightbox_navigation); });";
 				
