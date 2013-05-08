@@ -25,7 +25,7 @@ Highlighted Features:
 * Set separate height and width values for catalog thumbnails.
 * Generate individual and category pages for your entire catalog.
 * Filter by multiple categories with one ShortCode.
-* Localized for Spanish, French, Swedish and German.
+* Localized for Spanish, French, Swedish, German and Russian.
 * Sort your catalog by order, title, date or randomly.
 * Add multiple images to a catalog item.
 * Control exactly how your catalog HTML code is rendered.
