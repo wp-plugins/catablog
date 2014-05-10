@@ -3,7 +3,7 @@ Contributors: macguru2000
 Donate link: http://catablog.illproductions.com/donate/
 Tags: plugin, admin, image, images, posts, Post, widget, links, catalog, gallery, portfolio, product catalog, discography, library, collection, store, organize, media, photo, thumbnail, product, listing, list, BuddyPress, ecommerce
 Requires at least: 3.3
-Tested up to: 3.5.1
+Tested up to: 3.9
 Stable tag: 1.6.4
 
 CataBlog is a comprehensive and effortless tool that allows you to create catalogs, stores and galleries for your blog.
@@ -102,6 +102,10 @@ Go to http://catablog.illproductions.com, it is a place to learn and share more 
 6. CataBlog is now localized for Español.
 
 == Changelog ==
+
+= 1.6.5 =
+* Fix: Form elements positioned correctly in edit catalog item page.
+* Fix: Removed extrenious html in flash upload button label.
 
 = 1.6.4 =
 * New: Added Russian localization. (Thanks Дмитрий)
