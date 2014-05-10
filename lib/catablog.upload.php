@@ -14,7 +14,7 @@
  *
  * example: '/var/www/wordpress/';
  */
-$WP_ABS_PATH = '/var/www/wordpress';
+$WP_ABS_PATH = '/var/www/wordpress/';
 
 
 /* WordPress Administration Bootstrap */

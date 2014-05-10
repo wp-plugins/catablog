@@ -2,6 +2,10 @@
  * CataBlog Admin StyleSheet
  */
 
+#catablog-edit-main-content .wp-editor-container {
+	clear: right;
+}
+
 .error {
 	background-color: #FFEBE8;
 	padding: 0 0.6em;
@@ -401,6 +405,9 @@ th.catablog-sortable {
 }
 .catablog-category-row span {
 	vertical-align: middle;
+}
+#catablog-new-category-input {
+	width: 175px;
 }
 #catablog-new-category-submit {
 	float: right;

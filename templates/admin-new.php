@@ -156,8 +156,7 @@
 			button_image_url : "<?php echo $this->urls['images'] . '/upload.png'; ?>",
 			button_width : 190,
 			button_height: 23,
-			button_text : '<span class="button"><?php _e("Select Images", "catablog") ?></span>',
-			button_text_style : ".button { text-align:center; font-weight:bold; font-family:'Lucida Grande',Verdana,Arial,'Bitstream Vera Sans',sans-serif; font-size:10px; text-shadow: 0 1px 0 #FFFFFF; color:#464646;}",
+			button_text : '<?php _e("Select Images", "catablog") ?>',
 			button_text_top_padding: 3,
 			button_cursor: SWFUpload.CURSOR.HAND,
 		
