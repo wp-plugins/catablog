@@ -4,7 +4,7 @@
  *
  * This file contains the core class for the CataBlog WordPress Plugin.
  * @author Zachary Segal <zac@illproductions.com>
- * @version 1.6.4
+ * @version 1.6.5
  * @package catablog
  */
 
@@ -18,7 +18,7 @@
 class CataBlog {
 	
 	// plugin version number and blog url
-	private $version     = "1.6.4";
+	private $version     = "1.6.5";
 	private $blog_url    = 'http://catablog.illproductions.com/';
 	private $debug       = false;
 	
