@@ -2,7 +2,8 @@
  * CataBlog Admin StyleSheet
  */
 
-#catablog-edit-main-content .wp-editor-container {
+#catablog-edit-main-content .wp-editor-container,
+#catablog-edit-main-content .wp-editor-tools:after {
 	clear: right;
 }
 
